@@ -56,9 +56,7 @@ def get_dataset_metadata(dataset_id, access_token):
 	variables = {
 		"datasetId": dataset_id
 	}
-	print(variables)
 	data = query_conservator(query, variables, access_token)
-	print(data)
 	return data["generateDatasetMetadata"]
 
 def get_dataset_frame(dataset_frame_id, access_token):
@@ -76,9 +74,7 @@ def get_dataset_frame(dataset_frame_id, access_token):
 		"id": dataset_frame_id,
 		"searchText": None
 	}
-	print(variables)
 	data = query_conservator(query, variables, access_token)
-	print(data)
 	return data["datasetFrame"]
 
 def get_dataset_by_id(dataset_id, access_token):
@@ -499,9 +495,7 @@ def add_frames_to_dataset(dataset_id, frame_ids, access_token):
 			"frameIds": frame_ids
 		}
 	}
-	print(variables)
 	result = query_conservator(query, variables, access_token)
-	print(result)
 	return result["addFramesToDataset"]
 
 class InvalidRepoName(Exception):
