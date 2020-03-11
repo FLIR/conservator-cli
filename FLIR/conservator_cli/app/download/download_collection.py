@@ -25,25 +25,28 @@ def clone_dataset(user_email, id, name, parent_folder_path, conservator_token):
 
 def download_video_metadata(collection_id, parent_folder_path, conservator_token):
     videos = fca.get_videos_from_collection(collection_id, conservator_token)
+    video_names = []
     for video in videos:
         metadata = fca.get_video_metadata(video["id"], conservator_token)["metadata"]
         obj = json.loads(metadata)
         obj["videos"][0]["name"] = video["name"]
         filename = ".".join(video["name"].split(".")[:-1] + ["json"])
+        video_names.append(filename)
         with open(os.path.join(parent_folder_path, filename), "w") as file:
             json.dump(obj, file, indent=4, separators=(',', ': '))
+    return video_names
 
 def download_collection_recursive(user_email, collection_id, parent_folder_path, conservator_token, include_datasets, include_images,
-                               include_videos, include_associated_files, overwrite, tab_number=0):
+                               include_video_metadata, include_associated_files, overwrite, tab_number=0):
     data = fca.get_collection_by_id(collection_id, conservator_token)
     collection_path=os.path.join(parent_folder_path, data["name"])
     print("\t"*tab_number + "Entering: {}".format(collection_path))
     os.makedirs(collection_path, exist_ok=True)
 
-    if include_videos:
-        download_video_metadata(data["id"], collection_path, conservator_token)
-
     child_names = []
+    if include_video_metadata:
+        child_names += download_video_metadata(data["id"], collection_path, conservator_token)
+
     datasets = fca.get_datasets_from_collection(data["id"], conservator_token)
     child_names += [dataset["name"] for dataset in datasets]
     if include_datasets:
@@ -54,7 +57,7 @@ def download_collection_recursive(user_email, collection_id, parent_folder_path,
 
     for id in data["childIds"]:
         child_name = download_collection_recursive(user_email, id, collection_path, conservator_token,
-                                   include_datasets, include_images, include_videos, include_associated_files, overwrite, tab_number+1)
+                                   include_datasets, include_images, include_video_metadata, include_associated_files, overwrite, tab_number+1)
         child_names.append(child_name)
 
     if(overwrite):
@@ -80,17 +83,17 @@ def download_collection_recursive(user_email, collection_id, parent_folder_path,
 @click.option('-t', '--conservator_token', prompt="Conservator Token", help="Conservator API Token")
 @click.option('-d', '--include_datasets', help="download datasets", is_flag=True)
 @click.option('-i', '--include_images', help="download images", is_flag=True)
-@click.option('-v', '--include_videos', help="download videos", is_flag=True)
+@click.option('-m', '--include_video_metadata', help="download video metadata", is_flag=True)
 @click.option('-a', '--include_associated_files', help="download associated files", is_flag=True)
 @click.option('-o', '--overwrite', help="remove local files not present in conservator", is_flag=True)
-def download_collection_main(collection_path, email, conservator_token, include_datasets, include_images, include_videos,
+def download_collection_main(collection_path, email, conservator_token, include_datasets, include_images, include_video_metadata,
                           include_associated_files, overwrite):
     data = fca.get_collection_by_path(collection_path, conservator_token)
     if not data:
         print("Collection {} not found!".format(collection_path))
         exit()
     download_collection_recursive(email, data["id"], "", conservator_token, include_datasets, include_images,
-                               include_videos, include_associated_files, overwrite)
+                               include_video_metadata, include_associated_files, overwrite)
 
 if __name__ == "__main__":
     download_collection_main()
