@@ -7,11 +7,10 @@ import shutil
 
 from FLIR.conservator_cli.lib import conservator_api as fca
 
-def clone_dataset(user_email, conservator_token, id, name, path):
+def clone_dataset(user_email, id, name, parent_folder_path, conservator_token):
     save = os.getcwd()
-    os.chdir(path)
+    os.chdir(parent_folder_path)
     if os.path.exists(name):
-        print("Path exists")
         os.chdir(name)
         subp = subprocess.call(["git", "pull"])
         subp = subprocess.call(["./cvc.py", "pull"])
@@ -24,38 +23,38 @@ def clone_dataset(user_email, conservator_token, id, name, path):
         subp = subprocess.call(["./cvc.py", "pull"])
     os.chdir(save)
 
-def download_videos(collection_id, path, conservator_token):
+def download_video_metadata(collection_id, parent_folder_path, conservator_token):
     videos = fca.get_videos_from_collection(collection_id, conservator_token)
     for video in videos:
         metadata = fca.get_video_metadata(video["id"], conservator_token)["metadata"]
         obj = json.loads(metadata)
-        print(obj.keys())
         obj["videos"][0]["name"] = video["name"]
         filename = ".".join(video["name"].split(".")[:-1] + ["json"])
-        with open(os.path.join(path, filename), "w") as file:
+        with open(os.path.join(parent_folder_path, filename), "w") as file:
             json.dump(obj, file, indent=4, separators=(',', ': '))
 
-def download_collection_recursive(user_email, collection_id, path, conservator_token, include_datasets, include_images,
-                               include_videos, include_associated_files, overwrite):
+def download_collection_recursive(user_email, collection_id, parent_folder_path, conservator_token, include_datasets, include_images,
+                               include_videos, include_associated_files, overwrite, tab_number=0):
     data = fca.get_collection_by_id(collection_id, conservator_token)
-    collection_path=os.path.join(path, data["name"])
+    collection_path=os.path.join(parent_folder_path, data["name"])
+    print("\t"*tab_number + "Entering: {}".format(collection_path))
     os.makedirs(collection_path, exist_ok=True)
 
     if include_videos:
-        download_videos(data["id"], collection_path, conservator_token)
+        download_video_metadata(data["id"], collection_path, conservator_token)
 
     child_names = []
     datasets = fca.get_datasets_from_collection(data["id"], conservator_token)
     child_names += [dataset["name"] for dataset in datasets]
     if include_datasets:
         for dataset in datasets:
-            clone_dataset(user_email.replace("@", "%40"), conservator_token, dataset["id"], dataset["name"],
-                          collection_path)
-            print(dataset)
+            print("\t"*tab_number + "Cloning: {}".format(dataset["name"]))
+            clone_dataset(user_email.replace("@", "%40"), dataset["id"], dataset["name"],
+                          collection_path, conservator_token)
 
     for id in data["childIds"]:
         child_name = download_collection_recursive(user_email, id, collection_path, conservator_token,
-                                   include_datasets, include_images, include_videos, include_associated_files, overwrite)
+                                   include_datasets, include_images, include_videos, include_associated_files, overwrite, tab_number+1)
         child_names.append(child_name)
 
     if(overwrite):
@@ -71,8 +70,8 @@ def download_collection_recursive(user_email, collection_id, path, conservator_t
 
     if include_associated_files:
         for file in data["fileLockerFiles"]:
-            fca.download_file(os.path.join(path, data["name"], file["name"]), file["url"], conservator_token)
-
+            fca.download_file(os.path.join(collection_path, file["name"]), file["url"], conservator_token, tab_number=tab_number+1)
+    print("\t"*tab_number + "Exiting: {}".format(collection_path))
     return data["name"]
 
 @click.command()
