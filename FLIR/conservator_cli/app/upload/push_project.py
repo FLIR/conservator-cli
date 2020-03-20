@@ -2,8 +2,7 @@
 import json
 import os
 import subprocess
-
-import click
+import argparse
 
 from FLIR.conservator_cli.lib import graphql_api as fca
 
@@ -33,19 +32,17 @@ def upload_collection(folder_root, conservator_path, api_key, include_associated
                     continue
                 data = fca.get_signed_collection_locker_url(collection["id"], application_type, filename, api_key)
                 upload_results = fca.upload_video_to_s3(os.path.join(root, filename), data["signedUrl"], application_type)
-                print(upload_results)
-        print(root)
-        print(collection)
     return folder_paths
 
-@click.command()
-@click.argument('folder_root')
-@click.option('-p', '--conservator_path', prompt="Path of folder on Conservator", help="Conservator path", default="/")
-@click.option('-a', '--include_associated_files', help="download associated files", is_flag=True)
-@click.option('-k', '--api_key', prompt="Conservator Api Key", help="Conservator API Key")
-def upload_collection_main(folder_root, conservator_root, api_key, include_associated_files):
+def upload_collection_main():
     """This script recursively uploads FOLDER_ROOT to conservator at parent CONSERVATOR_PATH."""
-    upload_collection(folder_root, conservator_path, api_key, include_associated_files)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('folder_root', help="path of folder to upload to conservator as a collection")
+    parser.add_argument('-a', '--include_associated_files', help="download associated files", action='store_true')
+    parser.add_argument('-p', '--conservator_path', help="Conservator path", default="/")
+    parser.add_argument('-k', '--api_key', help="Conservator API Key", required=True)
+    args = parser.parse_args()
+    upload_collection(args.folder_root, args.conservator_path, args.api_key, args.include_associated_files)
 
 if __name__ == "__main__":
     upload_collection_main()
