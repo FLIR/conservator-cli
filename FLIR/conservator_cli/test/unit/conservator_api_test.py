@@ -1,8 +1,8 @@
 import os
 
-from FLIR.conservator_cli.lib.conservator_api import get_datasets_from_search
-from FLIR.conservator_cli.lib.conservator_api import get_dataset_by_id
-from FLIR.conservator_cli.lib.conservator_api import get_history
+from FLIR.conservator_cli.lib.graphql_api import get_datasets_from_search
+from FLIR.conservator_cli.lib.graphql_api import get_dataset_by_id
+from FLIR.conservator_cli.lib.graphql_api import get_history
 
 def get_datasets_from_search_test():
     access_token = os.environ["CONSERVATOR_TOKEN"]
