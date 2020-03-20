@@ -15,7 +15,8 @@ def upload_collection(folder_root, conservator_path, api_key, include_associated
         if "index.json" in files:
             dirs.clear()
             continue
-        collection = fca.get_collection_by_path(os.path.join(conservator_root, root), api_key)
+        collection_path = os.path.join(conservator_path, root)
+        collection = fca.get_collection_by_path(str(collection_path), api_key)
         collection = collection or fca.create_collection(basename, parent_ids[os.path.dirname(root)], api_key)
         parent_ids[root] = collection["id"]
         if include_associated_files:
