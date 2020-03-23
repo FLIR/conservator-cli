@@ -6,22 +6,26 @@ import argparse
 
 from FLIR.conservator_cli.lib import graphql_api as fca
 
-def upload_collection(folder_root, conservator_path, api_key, include_associated_files=False):
+def upload_collection(folder_root, root_collection_path, api_key, include_associated_files=False):
     folder_paths = []
     parent_ids = {}
-    conservator_root = fca.get_collection_by_path(str(collection_path), api_key)
-    if not conservator_root:
-        print("conservator_path {} does not exist".format(conservator_path))
-        exit()
-    parent_ids[os.path.dirname(folder_root)] = conservator_root["id"]
+    if root_collection_path != "/":
+        conservator_root = fca.get_collection_by_path(str(root_collection_path), api_key)
+        if not conservator_root:
+            print("root_collection_path {} does not exist".format(root_collection_path))
+            exit()
+        parent_ids[os.path.dirname(folder_root)] = conservator_root["id"]
     for root, dirs, files in os.walk(folder_root):
-        path = root.split(os.sep)
+        relpath = os.path.relpath(root, start=os.path.dirname(folder_root))
         basename = os.path.basename(root)
         if "index.json" in files:
             dirs.clear()
             continue
-        collection_path = os.path.join(conservator_path, root)
+        collection_path = os.path.join(root_collection_path, relpath)
         collection = fca.get_collection_by_path(str(collection_path), api_key)
+        if not collection and not os.path.dirname(root) in parent_ids:
+            print("Could not find {} at root / in conservator.".format(relpath))
+            exit()
         collection = collection or fca.create_collection(basename, parent_ids[os.path.dirname(root)], api_key)
         parent_ids[root] = collection["id"]
         if include_associated_files:
