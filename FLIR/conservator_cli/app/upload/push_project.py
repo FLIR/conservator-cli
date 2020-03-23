@@ -12,7 +12,7 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
     if root_collection_path != "/":
         conservator_root = fca.get_collection_by_path(str(root_collection_path), api_key)
         if not conservator_root:
-            print("root_collection_path {} does not exist".format(root_collection_path))
+            print("Error: root_collection_path {} does not exist".format(root_collection_path))
             exit()
         parent_ids[os.path.dirname(folder_root)] = conservator_root["id"]
     for root, dirs, files in os.walk(folder_root):
@@ -25,7 +25,7 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
         collection_path = os.path.abspath(os.path.join(root_collection_path, relpath))
         collection = fca.get_collection_by_path(str(collection_path), api_key)
         if not collection and not parent_path in parent_ids:
-            print("Could not find {} at root / in conservator.".format(relpath))
+            print("ERROR: Could not find {} at root / in conservator.".format(relpath))
             exit()
         collection = collection or fca.create_collection(basename, parent_ids[parent_path], api_key)
         parent_ids[root] = collection["id"]
@@ -40,7 +40,7 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
                 elif filename.endswith(".csv"):
                     application_type = "text/csv"
                 else:
-                    print("File type of {} not supported, contributions accepted!".format(filename))
+                    print("WARNING: File type of {} not supported, contributions accepted!".format(filename))
                     continue
                 data = fca.get_signed_collection_locker_url(collection["id"], application_type, filename, api_key)
                 upload_results = fca.upload_video_to_s3(os.path.join(root, filename), data["signedUrl"], application_type)
