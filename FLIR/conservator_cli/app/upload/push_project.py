@@ -40,6 +40,7 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
                 elif filename.endswith(".csv"):
                     application_type = "text/csv"
                 else:
+                    print("File type of {} not supported, contributions accepted!".format(filename))
                     continue
                 data = fca.get_signed_collection_locker_url(collection["id"], application_type, filename, api_key)
                 upload_results = fca.upload_video_to_s3(os.path.join(root, filename), data["signedUrl"], application_type)
