@@ -9,6 +9,11 @@ from FLIR.conservator_cli.lib import graphql_api as fca
 def upload_collection(folder_root, conservator_path, api_key, include_associated_files=False):
     folder_paths = []
     parent_ids = {}
+    conservator_root = fca.get_collection_by_path(str(collection_path), api_key)
+    if not conservator_root:
+        print("conservator_path {} does not exist".format(conservator_path))
+        exit()
+    parent_ids[os.path.dirname(folder_root)] = conservator_root["id"]
     for root, dirs, files in os.walk(folder_root):
         path = root.split(os.sep)
         basename = os.path.basename(root)
@@ -36,7 +41,7 @@ def upload_collection(folder_root, conservator_path, api_key, include_associated
     return folder_paths
 
 def upload_collection_main():
-    """This script recursively uploads FOLDER_ROOT to conservator at parent CONSERVATOR_PATH."""
+    """This script recursively uploads FOLDER_ROOT to conservator at parent CONSERVATOR_PATH. Folder is uploaded with the same name."""
     parser = argparse.ArgumentParser()
     parser.add_argument('folder_root', help="path of folder to upload to conservator as a collection")
     parser.add_argument('-a', '--include_associated_files', help="download associated files", action='store_true')
