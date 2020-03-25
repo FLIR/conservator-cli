@@ -46,7 +46,7 @@ class Project:
         folder_names = ["associated_files", "video_metadata"]
         folder_names += self.download_datasets(data["id"], collection_path, not include_datasets)
         for id in data["childIds"]:
-            name = self._download_collections_recursive(collection_path, id, delete)
+            name = self._download_collections_recursive(collection_path, id, delete, include_datasets, include_video_metadata, include_associated_files)
             folder_names.append(name)
         if delete:
             for node in os.listdir(collection_path):
