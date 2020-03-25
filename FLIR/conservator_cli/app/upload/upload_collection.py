@@ -69,7 +69,7 @@ def upload_collection_main():
     parser.add_argument('-p', '--conservator_parent_path', help="conservator path to the parent collection", default="/")
     parser.add_argument('-k', '--api_key', help="Conservator API Key", required=True)
     args = parser.parse_args()
-    upload_collection(os.path.abspath(args.folder_root), os.path.abspath(args.conservator_path), args.api_key, args.include_associated_files)
+    upload_collection(os.path.abspath(args.folder_root), os.path.abspath(args.conservator_parent_path), args.api_key, args.include_associated_files)
 
 if __name__ == "__main__":
     upload_collection_main()
