@@ -60,13 +60,13 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
 
 def upload_collection_main():
     """
-    This script recursively uploads FOLDER_ROOT to conservator at parent CONSERVATOR_PATH. Folder is uploaded with the same name.
+    This script recursively uploads FOLDER_ROOT to conservator at parent CONSERVATOR_PARENT_PATH. Folder is uploaded with the same name that is on disk.
     See upload_associated_file for a list of supported file extensions.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('folder_root', help="path of folder to upload to conservator as a collection")
     parser.add_argument('-a', '--include_associated_files', help="upload associated files", action='store_true')
-    parser.add_argument('-p', '--conservator_path', help="Conservator path", default="/")
+    parser.add_argument('-p', '--conservator_parent_path', help="conservator path to the parent collection", default="/")
     parser.add_argument('-k', '--api_key', help="Conservator API Key", required=True)
     args = parser.parse_args()
     upload_collection(os.path.abspath(args.folder_root), os.path.abspath(args.conservator_path), args.api_key, args.include_associated_files)
