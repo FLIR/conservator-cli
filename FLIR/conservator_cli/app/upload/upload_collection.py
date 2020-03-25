@@ -34,9 +34,6 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
             exit()
         parent_ids[os.path.dirname(folder_root)] = conservator_root["id"]
     for root, dirs, files in os.walk(folder_root):
-        print("root {}".format(root))
-        print("dirs {}".format(dirs))
-        print("files {}".format(files))
         relpath = os.path.relpath(root, start=os.path.dirname(folder_root))
         parent_path = os.path.dirname(root)
         basename = os.path.basename(root)
@@ -52,10 +49,11 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
             exit()
         collection = collection or fca.create_collection(basename, parent_ids[parent_path], api_key)
         parent_ids[root] = collection["id"]
-
         if "associated_files" in dirs and include_associated_files:
             upload_associated_files(os.path.join(root, "associated_files"), collection["id"], api_key)
             dirs.remove("associated_files")
+        for file in files:
+            print("WARNING: File type of {} not supported, contributions accepted!".format(os.path.join(root, file)))
     return folder_paths
 
 def upload_collection_main():
