@@ -34,6 +34,9 @@ def upload_collection(folder_root, root_collection_path, api_key, include_associ
             exit()
         parent_ids[os.path.dirname(folder_root)] = conservator_root["id"]
     for root, dirs, files in os.walk(folder_root):
+        print("root {}".format(root))
+        print("dirs {}".format(dirs))
+        print("files {}".format(files))
         relpath = os.path.relpath(root, start=os.path.dirname(folder_root))
         parent_path = os.path.dirname(root)
         basename = os.path.basename(root)
