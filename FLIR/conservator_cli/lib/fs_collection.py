@@ -5,22 +5,24 @@ import shutil
 
 from FLIR.conservator_cli.lib import graphql_api as fca
 
-class Project:
-    #call classmethod instead to have it return None on error.
-    def __init__(self, collection_id, credentials, parent_folder=None):
+
+class Collection:
+    # call classmethod instead to have it return None on error.
+    def __init__(self, parent_folder, name, collection_id=None, credentials=None):
         self.id = collection_id
         self.credentials = credentials
         self.parent_folder = os.path.abspath(parent_folder)
+        self.root_folder = os.path.join(self.parent_folder, name)
 
     @classmethod
     def create(cls, collection_path, credentials, parent_folder=os.getcwd()):
         data = fca.get_collection_by_path(collection_path, credentials.token)
         if not data:
             raise LookupError("Collection {} not found!".format(collection_path))
-        result = cls(data["id"], credentials, parent_folder=parent_folder)
+        result = cls(parent_folder, data["name"], data["id"], credentials)
         return result
 
-    def pull_dataset(self, id, name, parent_folder):
+    def _pull_dataset(self, id, name, parent_folder):
         email = self.credentials.email.replace("@", "%40")
         save = os.getcwd()
         os.chdir(parent_folder)
@@ -41,10 +43,10 @@ class Project:
         data = fca.get_collection_by_id(collection_id, self.credentials.token)
         collection_path = os.path.join(parent_folder, data["name"])
         os.makedirs(collection_path, exist_ok=True)
-        self.download_video_metadata(data["id"], collection_path, not include_video_metadata, delete)
-        self.download_associated_files(data["fileLockerFiles"], collection_path, not include_associated_files, delete)
+        self._download_video_metadata(data["id"], collection_path, not include_video_metadata, delete)
+        self._download_associated_files(data["fileLockerFiles"], collection_path, not include_associated_files, delete)
         folder_names = ["associated_files", "video_metadata"]
-        folder_names += self.download_datasets(data["id"], collection_path, not include_datasets)
+        folder_names += self._download_datasets(data["id"], collection_path, not include_datasets)
         for id in data["childIds"]:
             name = self._download_collections_recursive(collection_path, id, delete, include_datasets, include_video_metadata, include_associated_files)
             folder_names.append(name)
@@ -59,9 +61,10 @@ class Project:
         return data["name"]
 
     def download_collections_recursively(self, include_datasets=False, include_video_metadata=False, include_associated_files=False, delete=False):
+        assert self.credentials is not None, "self.credentials must be set"
         self._download_collections_recursive(self.parent_folder, self.id, delete, include_datasets, include_video_metadata, include_associated_files)
 
-    def download_associated_files(self, file_locker, parent_folder, dry_run=True, delete=False):
+    def _download_associated_files(self, file_locker, parent_folder, dry_run=True, delete=False):
         os.makedirs(os.path.join(parent_folder, "associated_files"), exist_ok=True)
         if not dry_run:
             for file in file_locker:
@@ -78,14 +81,14 @@ class Project:
                 break
         return associated_filenames
 
-    def download_datasets(self, collection_id, parent_folder, dry_run=True):
+    def _download_datasets(self, collection_id, parent_folder, dry_run=True):
         datasets = fca.get_datasets_from_collection(collection_id, self.credentials.token)
         if not dry_run:
             for dataset in datasets:
-                self.pull_dataset(dataset["id"], dataset["name"], parent_folder)
+                self._pull_dataset(dataset["id"], dataset["name"], parent_folder)
         return [dataset["name"] for dataset in datasets]
 
-    def download_video_metadata(self, collection_id, parent_folder, dry_run=True, delete=False):
+    def _download_video_metadata(self, collection_id, parent_folder, dry_run=True, delete=False):
         os.makedirs(os.path.join(parent_folder, "video_metadata"), exist_ok=True)
         videos = fca.get_videos_from_collection(collection_id, self.credentials.token)
         video_names = []
@@ -108,3 +111,28 @@ class Project:
                             os.remove(os.path.join(root, file))
                 break
         return video_names
+
+        def find_performance_folders(self, rename_map={}):
+            folder_paths = {}
+            for root, dirs, files in os.walk(self.root_folder):
+                path = root.split(os.sep)
+                basename = os.path.basename(root)
+                if "nntc-config" in basename:
+                    if "nntc_config.json" in files:
+                        print("Found performance folder: {}".format(root))
+                        performance_name = "-".join(os.path.basename(root).split("-")[1:])
+                        performance_name = rename_map.get(performance_name, performance_name)
+                        folder_paths[performance_name] = root
+            return folder_paths
+
+        def find_dataset_folders(self, rename_map={}):
+            folder_paths = {}
+            for root, dirs, files in os.walk(self.root_folder):
+                path = root.split(os.sep)
+                basename = os.path.basename(root)
+                if "index.json" in files:
+                    print("Found dataset: {}".format(root))
+                    dataset_name = os.path.basename(root)
+                    dataset_name = rename_map.get(dataset_name, dataset_name)
+                    folder_paths[dataset_name] = root
+            return folder_paths
