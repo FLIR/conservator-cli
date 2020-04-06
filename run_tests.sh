@@ -1,5 +1,6 @@
 #!/bin/bash
 DIR=$(realpath $(dirname ${BASH_SOURCE[0]}))
+set -e
 nosetests -w $DIR/FLIR/conservator_cli/test/unit -v $@
 
 echo "---- STARTING FUNCTIONAL TESTS ----"
