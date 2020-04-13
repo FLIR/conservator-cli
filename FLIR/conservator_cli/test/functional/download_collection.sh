@@ -4,7 +4,7 @@ source $DIR/assert_statements.sh
 APP=$(realpath $DIR/../../app)
 TMP=$DIR/tmp/download_collection
 FAILURE=0
-
+set -e
 trap exit_handler EXIT TERM
 
 mkdir -p $TMP
