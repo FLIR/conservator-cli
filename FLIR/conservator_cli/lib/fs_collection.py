@@ -115,25 +115,17 @@ class Collection:
     def find_performance_folders(self, rename_map={}):
         folder_paths = {}
         for root, dirs, files in os.walk(self.root_folder):
-            # path = root.split(os.sep)
             basename = os.path.basename(root)
             if "nntc-config" in basename:
-                # if "nntc_config.json" in files:
-                # print("Found performance folder: {}".format(root))
-                # performance_name = "-".join(os.path.basename(root).split("-")[2:])
-                # performance_name = rename_map.get(performance_name, performance_name)
                 performance_name = os.path.relpath(root, self.root_folder)
-                # folder_paths.append(root)
                 folder_paths[performance_name] = root
         return folder_paths
 
     def find_dataset_folders(self, rename_map={}):
         folder_paths = {}
         for root, dirs, files in os.walk(self.root_folder):
-            # path = root.split(os.sep)
             dataset_name = os.path.basename(root)
             if "index.json" in files:
-                print("Found dataset: {}".format(root))
                 dataset_name = rename_map.get(dataset_name, dataset_name)
                 folder_paths[dataset_name] = root
         return folder_paths
