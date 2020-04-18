@@ -8,7 +8,4 @@ echo "---- STARTING FUNCTIONAL TESTS ----"
 echo "---- Running download_collection.sh test ----"
 $DIR/FLIR/conservator_cli/test/functional/download_collection.sh
 
-echo "---- Running index_tools_test.sh test ----"
-$DIR/FLIR/conservator_cli/test/functional/index_tools_test.sh
-
 echo "----  ENDING FUNCTIONAL TESTS  ----"

@@ -241,7 +241,7 @@ def get_datasets_from_collection(collection_id, access_token):
 	"""
 	variables = {
 		"id": collection_id,
-		"n":0,
+		"n":200,
 		"searchText":""
 	}
 	return query_conservator(query, variables, access_token)["getFirstNDatasets"]

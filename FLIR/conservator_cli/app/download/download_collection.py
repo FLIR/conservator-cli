@@ -6,7 +6,7 @@ import subprocess
 import shutil
 
 from FLIR.conservator_cli.lib import graphql_api as fca
-from FLIR.conservator_cli.lib.fs_collection import Project
+from FLIR.conservator_cli.lib.fs_collection import Collection
 from FLIR.conservator_cli.lib.common import ConservatorCredentials
 
 @click.command()
@@ -31,8 +31,8 @@ def download_collection_main(collection_path,
         print("Collection {} not found!".format(collection_path))
         exit()
     credentials = ConservatorCredentials(email, conservator_token)
-    project = Project.create(collection_path, credentials)
-    project.download_collections_recursively(include_datasets, include_video_metadata, include_associated_files, delete)
+    collection = Collection.create(collection_path, credentials)
+    collection.download_collections_recursively(include_datasets, include_video_metadata, include_associated_files, delete)
 
 if __name__ == "__main__":
     download_collection_main()
