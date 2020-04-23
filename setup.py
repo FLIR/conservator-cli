@@ -13,7 +13,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/FLIR/conservator-cli",
-    packages=setuptools.find_packages(),
+    packages=["FLIR.conservator_cli.lib", "FLIR.conservator_cli.app"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
