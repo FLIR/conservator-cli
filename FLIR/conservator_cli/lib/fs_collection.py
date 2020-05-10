@@ -39,16 +39,17 @@ class Collection:
             subp = subprocess.call(["./cvc.py", "pull"])
         os.chdir(save)
 
-    def _download_collections_recursive(self, parent_folder, collection_id, delete=False, include_datasets=False, include_video_metadata=False, include_associated_files=False):
+    def _download_collections_recursive(self, parent_folder, collection_id, delete=False, include_datasets=False, include_video_metadata=False, include_associated_files=False, include_media=False):
         data = fca.get_collection_by_id(collection_id, self.credentials.token)
         collection_path = os.path.join(parent_folder, data["name"])
         os.makedirs(collection_path, exist_ok=True)
         self._download_video_metadata(data["id"], collection_path, not include_video_metadata, delete)
         self._download_associated_files(data["fileLockerFiles"], collection_path, not include_associated_files, delete)
+        self._download_media(collection_id, collection_path, not include_media, delete)
         folder_names = ["associated_files", "video_metadata"]
         folder_names += self._download_datasets(data["id"], collection_path, not include_datasets)
         for id in data["childIds"]:
-            name = self._download_collections_recursive(collection_path, id, delete, include_datasets, include_video_metadata, include_associated_files)
+            name = self._download_collections_recursive(collection_path, id, delete, include_datasets, include_video_metadata, include_associated_files, include_media)
             folder_names.append(name)
         if delete:
             for node in os.listdir(collection_path):
@@ -60,9 +61,9 @@ class Collection:
                     os.remove(os.path.join(collection_path, node))
         return data["name"]
 
-    def download_collections_recursively(self, include_datasets=False, include_video_metadata=False, include_associated_files=False, delete=False):
+    def download_collections_recursively(self, include_datasets=False, include_video_metadata=False, include_associated_files=False, include_media=False, delete=False):
         assert self.credentials is not None, "self.credentials must be set"
-        self._download_collections_recursive(self.parent_folder, self.id, delete, include_datasets, include_video_metadata, include_associated_files)
+        self._download_collections_recursive(self.parent_folder, self.id, delete, include_datasets, include_video_metadata, include_associated_files, include_media)
 
     def _download_associated_files(self, file_locker, parent_folder, dry_run=True, delete=False):
         os.makedirs(os.path.join(parent_folder, "associated_files"), exist_ok=True)
@@ -111,6 +112,22 @@ class Collection:
                             os.remove(os.path.join(root, file))
                 break
         return video_names
+
+    def _download_media(self, collection_id, parent_folder, dry_run=True, delete=False):
+        if (delete):
+            print("Warning: delete NYI for downloading media")
+
+        videos = fca.get_video_filelist(collection_id, self.credentials.token)
+        if not dry_run:
+            for video in videos:
+                print("{} -> {}".format(video["url"], os.path.join(parent_folder, video["filename"])))
+                fca.download_file(os.path.join(parent_folder, video["filename"]), video["url"], self.credentials.token)
+
+        images = fca.get_image_filelist(collection_id, self.credentials.token)
+        if not dry_run:
+            for image in images:
+                print("{} -> {}".format(image["url"], os.path.join(parent_folder, image["filename"])))
+                fca.download_file(os.path.join(parent_folder, image["filename"]), image["url"], self.credentials.token)
 
     def find_performance_folders(self, rename_map={}):
         folder_paths = {}
