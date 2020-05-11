@@ -5,13 +5,25 @@ import sys
 from FLIR.common.lib import terminal_progress_bar as tpb
 
 
+class ConservatorGraphQLServerError(Exception):
+	def __init__(self, status_code, message, server_error):
+		self.status_code = status_code
+		self.message = message
+		self.server_error = server_error
+
+
 def query_conservator(query, variables, access_token):
 	graphql_endpoint = 'https://flirconservator.com/graphql'
 	headers = {'authorization': "{}".format(access_token) }
 	r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
 	response = r.json()
-	if "errors" in response:
-  		print(response)
+	if r.status_code not in (200, 201):
+		server_message = ""
+		if "errors" in response:
+			server_message = response['errors']
+		raise ConservatorGraphQLServerError(
+			r.status_code, "Unexpected status code: {}, server message: {}".format(
+				r.status_code, server_message), server_message)
 	return response["data"]
 
 
