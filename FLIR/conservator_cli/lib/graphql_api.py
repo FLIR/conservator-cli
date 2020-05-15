@@ -224,6 +224,21 @@ def get_collection_by_id(id, access_token):
 	}
 	return query_conservator(query, variables, access_token)["collection"]
 
+def get_videos_by_collectionID(collectionID, access_token):
+	query = """
+	query videos($collectionId: ID!) {
+		videos(collectionId: $collectionId, limit:100000) {
+			id 
+			filename
+			url
+			tags
+		} 
+	}
+	"""
+	variables = {
+		"collectionId": collectionID
+	}
+	return query_conservator(query, variables, access_token)
 
 def get_datasets_from_collection(collection_id, access_token):
 	query = """
