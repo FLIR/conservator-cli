@@ -32,7 +32,7 @@ def download_collection_main(collection_path,
         exit()
     credentials = ConservatorCredentials(email, conservator_token)
     collection = Collection.create(collection_path, credentials)
-    collection.download_collections_recursively(include_datasets, include_video_metadata, include_associated_files, delete)
+    collection.download_collections_recursively(include_datasets, include_video_metadata, include_associated_files, include_images, delete)
 
 if __name__ == "__main__":
     download_collection_main()
