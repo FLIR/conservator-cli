@@ -1,6 +1,6 @@
 {
   "python_modules": [
-    "$NTKROOT/conservator-cli/FLIR/conservator_cli/lib/run_tasks_support/bridge/define_config.py",
+    "$NTKROOT/task_runner/lib/plugins/define_config.py",
     "$NTKROOT/conservator-cli/FLIR/conservator_cli/lib/run_tasks_support/bridge/load_credentials.py",
     "$NTKROOT/conservator-cli/FLIR/conservator_cli/lib/run_tasks_support/bridge/conservator_download_folder.py"
   ]
