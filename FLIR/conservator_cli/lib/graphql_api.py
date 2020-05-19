@@ -16,7 +16,11 @@ def query_conservator(query, variables, access_token):
 	graphql_endpoint = 'https://flirconservator.com/graphql'
 	headers = {'authorization': "{}".format(access_token) }
 	r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
-	response = r.json()
+	try:
+		response = r.json()
+	except:
+		raise ConservatorGraphQLServerError(
+			r.status_code, "Invalid server response", r.content)
 	if r.status_code not in (200, 201):
 		server_message = ""
 		if "errors" in response:
