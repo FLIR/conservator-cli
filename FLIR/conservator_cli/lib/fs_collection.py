@@ -134,7 +134,7 @@ class Collection:
         for root, dirs, files in os.walk(self.root_folder):
             basename = os.path.basename(root)
             if "nntc-config" in basename:
-                performance_name = os.path.relpath(root, self.root_folder)
+                performance_name = os.path.relpath(root, self.root_folder).replace("nntc-config-", "")
                 folder_paths[performance_name] = root
         return folder_paths
 
