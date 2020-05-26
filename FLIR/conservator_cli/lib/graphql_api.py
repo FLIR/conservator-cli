@@ -352,6 +352,7 @@ def get_videos_from_collection(collection_id, access_token):
 	  getFirstNVideos(id: $id, n: $n, searchText: $searchText) {
 	  	id
 		name
+		filename
 		url
 		tags
 		framesCount
