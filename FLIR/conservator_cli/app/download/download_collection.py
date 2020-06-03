@@ -11,18 +11,20 @@ from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredenti
 
 @click.command()
 @click.argument('collection_path')
+@click.argument('local_folder')
 @click.option('-u', '--email', prompt="Conservator Email", help="The email of the conservator account to use for auth")
 @click.option('-t', '--conservator_token', prompt="Conservator Token", help="Conservator API Token")
 @click.option('-d', '--include_datasets', help="download datasets", is_flag=True)
-@click.option('-i', '--include_images', help="download images", is_flag=True)
+@click.option('-i', '--include_media', help="download images / videos", is_flag=True)
 @click.option('-m', '--include_video_metadata', help="download video metadata", is_flag=True)
 @click.option('-a', '--include_associated_files', help="download associated files", is_flag=True)
 @click.option('-o', '--delete', help="remove local files not present in conservator", is_flag=True)
-def download_collection_main(collection_path,
+
+def download_collection_main(collection_path, local_folder,
                                 email,
                                 conservator_token,
                                 include_datasets,
-                                include_images,
+                                include_media,
                                 include_video_metadata,
                                 include_associated_files,
                                 delete):
@@ -31,8 +33,8 @@ def download_collection_main(collection_path,
         print("Collection {} not found!".format(collection_path))
         exit()
     credentials = ConservatorCredentials(email, conservator_token)
-    collection = Collection.create(collection_path, credentials)
-    collection.download_collections_recursively(include_datasets, include_video_metadata, include_associated_files, include_images, delete)
+    collection = Collection.create(collection_path, credentials, parent_folder=local_folder)
+    collection.download_collections_recursively(include_datasets, include_video_metadata, include_associated_files, include_media, delete)
 
 if __name__ == "__main__":
     download_collection_main()
