@@ -44,7 +44,7 @@ class DatasetCache:
         return None
 
     def get_index_filepath(self, dataset_name, dataset_version):
-        cached_index_path = os.path.join(self.cache_path, ".annotations", dataset_name, dataset_version, "index.json")
+        cached_index_path = os.path.join(self.cache_path, ".version", dataset_name, dataset_version, "index.json")
         if os.path.exists(cached_index_path):
             return cached_index_path
         self._pull_checkout_dataset(None, dataset_name, dataset_version)
@@ -53,7 +53,7 @@ class DatasetCache:
         return cached_index_path
 
     def get_data_folder(self, dataset_name, dataset_version):
-        cached_data_path = os.path.join(self.cache_path, ".data", dataset_name, dataset_version, "data")
+        cached_data_path = os.path.join(self.cache_path, ".version", dataset_name, dataset_version, "data")
         if os.path.exists(cached_data_path):
             return cached_data_path
 
