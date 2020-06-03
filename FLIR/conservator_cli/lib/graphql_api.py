@@ -481,16 +481,18 @@ def get_datasets_from_collection(collection_id, access_token):
 	}
 	return query_conservator(query, variables, access_token)["getFirstNDatasets"]
 
-def create_video(filename, access_token):
+def create_video(filename, collection_id, access_token):
 	query = """
-	mutation CreateVideo($filename: String!) {
-	  createVideo(filename: $filename) {
+	mutation CreateVideo($filename: String!, $collectionId: ID!) {
+	  createVideo(filename: $filename, collectionId: $collectionId) {
 	    id
+	    state
 	  }
 	}
 	"""
 	variables = {
-		"filename": filename
+		"filename": filename,
+		"collectionId": collection_id
 	}
 	return query_conservator(query, variables, access_token)["createVideo"]
 
