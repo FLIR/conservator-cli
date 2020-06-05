@@ -126,7 +126,7 @@ def get_history(commit_hash, access_token):
 def get_videos_from_search(search_text, access_token):
 	query = """
 	query videos($searchText: String) {
-	  videos(searchText: $searchText, collectionId: 0, limit: 100, page: 0) {
+	  videos(searchText: $searchText, limit: 100, page: 0) {
 		id
 		filename
 		url
