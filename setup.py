@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="conservator-cli",
-    version="0.0.3",
+    version="0.0.4",
     author="FLIR",
     author_email="someone@somewhere",
     description="Command-line tools using the FLIR Conservator API",
