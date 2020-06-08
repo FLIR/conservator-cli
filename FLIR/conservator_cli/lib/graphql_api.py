@@ -137,7 +137,7 @@ def funcgen_get_x_from_search(media_type):
 		medias = media_type + "s" # e.g. "videos" or "images"
 		query = """
 		query {medias}($searchText: String) {{
-		    {medias}(searchText: $searchText, collectionId: 0, limit: 100, page: 0) {{
+		    {medias}(searchText: $searchText, limit: 100, page: 0) {{
 			id
 			filename
 			url
@@ -241,7 +241,7 @@ def funcgen_get_x_filelist(media_type):
 
 		page_size = 200   # number of entries returned per query 
 		count = get_media_counts(collection_id, access_token)[media_count]
-		num_pages = vid_count // page_size
+		num_pages = count // page_size
 		if count % page_size:
 			# one more if there is a partial page at end
 			num_pages += 1
@@ -249,12 +249,12 @@ def funcgen_get_x_filelist(media_type):
 		result = []
 		for page_offset in range(0, num_pages):
 			query = """
-			query filenames($id: ID!, $limit: Int, $page: Int) {
-				{medias}(collectionId: $id, limit: $limit, page: $page) {
+			query filenames($id: ID!, $limit: Int, $page: Int) {{
+				{medias}(collectionId: $id, limit: $limit, page: $page) {{
 				filename
 				url
-			  }
-			}
+			  }}
+			}}
 			""".format(medias=medias)
 			variables = {
 				"id": collection_id,
@@ -311,7 +311,9 @@ get_images_by_collection_id = funcgen_get_x_by_collection_id("image")
 def get_media_by_collection_id(collection_id, access_token):
 	videos = get_videos_by_collection_id(collection_id, access_token)
 	images = get_images_by_collection_id(collection_id, access_token)
-	return videos + images
+	# merge lists of "videos" and "images" and call it "media"
+	media = {"media": videos["videos"] + images["images"]}
+	return media
 
 # function generator with common code to be specialized for media type
 def funcgen_get_x_from_collection(media_type):
