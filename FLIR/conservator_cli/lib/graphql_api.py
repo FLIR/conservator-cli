@@ -162,6 +162,42 @@ def get_media_from_search(search_text, access_token):
 	images = get_images_from_search(search_text, access_token)
 	return videos + images
 
+##------------------
+## query on filename
+##------------------
+
+# function generator with common code to be specialized for media type
+def funcgen_get_x_from_filename(media_type):
+	def get_x_from_filename(filename, collection_id, access_token):
+		medias = media_type + "s" # e.g. "videos" or "images"
+		query = """
+		query {medias}($searchText: String, $collectionId: ID!) {{
+		    {medias}(searchText: $searchText, collectionId: $collectionId, limit: 100, page: 0) {{
+			id
+			filename
+			url
+		    }}
+		}}
+		""".format(medias=medias)
+		variables = {
+		    "searchText": "filename:"+filename,
+			"collectionId": collection_id
+		}
+		return query_conservator(query, variables, access_token)[medias]
+	return get_x_from_filename
+
+# generate query function for videos
+get_videos_from_filename = funcgen_get_x_from_filename("video")
+
+# generate query function for images
+get_images_from_filename = funcgen_get_x_from_filename("image")
+
+# query including both videos AND images
+def get_media_from_filename(filename, collection_id, access_token):
+	videos = get_videos_from_filename(filename, collection_id, access_token)
+	images = get_images_from_filename(filename, collection_id, access_token)
+	return videos + images
+
 ##------------
 ## query on id
 ##------------

@@ -5,6 +5,7 @@ from FLIR.conservator_cli.lib.graphql_api import get_collection_by_path
 from FLIR.conservator_cli.lib.graphql_api import get_dataset_by_id
 from FLIR.conservator_cli.lib.graphql_api import get_history
 from FLIR.conservator_cli.lib.graphql_api import get_videos_from_search, get_images_from_search, get_media_from_search
+from FLIR.conservator_cli.lib.graphql_api import get_videos_from_filename, get_images_from_filename, get_media_from_filename
 from FLIR.conservator_cli.lib.graphql_api import get_video_from_id, get_image_from_id, get_media_from_id
 from FLIR.conservator_cli.lib.graphql_api import get_video_filelist, get_image_filelist, get_media_filelist
 from FLIR.conservator_cli.lib.graphql_api import get_videos_by_collection_id, get_images_by_collection_id, get_media_by_collection_id
@@ -57,6 +58,32 @@ def get_media_from_search_test():
     image_id = "gDC359JXq5y7BRzpg"
     images = get_images_from_search(image_search, access_token)
     media = get_media_from_search(image_search, access_token)
+    print("Images:",images)
+    print("Media:",media)
+    found_in_images = image_id in [i["id"] for i in images] 
+    found_in_media = image_id in [m["id"] for m in media] 
+    assert(found_in_images)
+    assert(found_in_media)
+
+def get_media_from_filename_test():
+    access_token = os.environ["CONSERVATOR_TOKEN"]
+    collection_id = "LwWYEXHEGKTCRCc8C"
+    # look for a test video
+    video_filename = "5_second_cut.mp4"
+    video_id = "D3uDd2T3x7JTh6jb3"
+    videos = get_videos_from_filename(video_filename, collection_id, access_token)
+    media = get_media_from_filename(video_filename, collection_id, access_token)
+    print("Videos:",videos)
+    print("Media:",media)
+    found_in_videos = video_id in [v["id"] for v in videos] 
+    found_in_media = video_id in [m["id"] for m in media] 
+    assert(found_in_videos)
+    assert(found_in_media)
+    # look for a test image
+    image_filename = "20190921_105506_459_8b.JPG"
+    image_id = "gDC359JXq5y7BRzpg"
+    images = get_images_from_filename(image_filename, collection_id, access_token)
+    media = get_media_from_filename(image_filename, collection_id, access_token)
     print("Images:",images)
     print("Media:",media)
     found_in_images = image_id in [i["id"] for i in images] 
