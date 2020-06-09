@@ -253,9 +253,8 @@ class Collection:
 
             # don't create multiple copies of same filename in same folder...
             # could implement moving aside old copy, for now keep things simple and just punt
-#@@@@@@@ FIXME: this does not deal with duplicate images, only videos
-            video_exists = fca.get_videos_from_filename(filename, collection_id, self.credentials.token)
-            if video_exists:
+            media_exists = fca.get_media_from_filename(filename, collection_id, self.credentials.token)
+            if media_exists:
                 print("WARNING: file {} already exists in folder {}, skipping".format(filename, collection_id))
                 continue
 
