@@ -97,7 +97,7 @@ class Collection:
             metadata = fca.get_video_metadata(video["id"], self.credentials.token)["metadata"]
             obj = json.loads(metadata)
             obj["videos"][0]["name"] = video["name"]
-            filename = ".".join(video["name"].split(".")[:-1] + ["json"])
+            filename = ".".join(video["filename"].split(".")[:-1] + ["json"])
             video_names.append(filename)
             if not dry_run:
                 with open(os.path.join(parent_folder, "video_metadata", filename), "w") as file:
