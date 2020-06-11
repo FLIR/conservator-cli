@@ -209,6 +209,7 @@ def funcgen_get_x_from_id(media_type):
 		query {media}($id: String!, $src: String) {{
 		  {media}(id: $id, src: $src) {{
 			id
+			name
 			filename
 			url
 			frames {{
@@ -447,6 +448,7 @@ def get_collection_by_id(id, access_token):
 	  collection(id: $id) {
 	  	id
 		name
+		parentId
 		childIds
 		fileLockerFiles {
 			url

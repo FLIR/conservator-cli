@@ -2,6 +2,7 @@ import os
 import glob
 import json
 import mimetypes
+import re
 import subprocess
 import shutil
 
@@ -50,6 +51,15 @@ class Collection:
 
         result = cls(parent_folder, data["name"], data["id"], credentials)
         return result
+
+    def conservator_path(self):
+        data = fca.get_collection_by_id(self.id, self.credentials.token)
+        conservator_path = data["name"]
+        while data["parentId"]:
+            data = fca.get_collection_by_id(data["parentId"], self.credentials.token)
+            conservator_path = data["name"] + "/" + conservator_path
+        conservator_path = "/" + conservator_path
+        return conservator_path
 
     def _pull_dataset(self, id, name, parent_folder):
         email = self.credentials.email.replace("@", "%40")
@@ -158,51 +168,133 @@ class Collection:
                 print("{} -> {}".format(image["url"], os.path.join(parent_folder, image["filename"])))
                 fca.download_file(os.path.join(parent_folder, image["filename"]), image["url"], self.credentials.token)
 
-    def _upload_collections_recursive(self, parent_folder, collection_id, include_datasets=False, include_video_metadata=False, include_associated_files=False, include_media=False):
-        print("FIXME: this is not actually recursive yet")
+    def _upload_collections_recursive(self, parent_folder, conservator_path, include_datasets=False, include_video_metadata=False, include_associated_files=False, include_media=False):
         #dry_run = True
         dry_run = False # can switch to True for debugging
+
+        # look for files of interest inside local folder 
+
+        # metadata files are in local subfolder called "video_metadata"
+        metadata_regex = re.compile(r"/video_metadata$")
+        # associated files are in local subfolder called "associated_files"
+        associated_regex = re.compile(r"/associated_files$")
+        # media files have one of the known filename suffixes
+        suffixes = ["\.{}$".format(suffix) for suffix in DEFAULT_MEDIA_SUFFIXES]
+        media_regex = re.compile("|".join(suffixes))
+        dataset_dirs = []
+        metadata_files = []
+        associated_files = []
+        media_files = []
+        for root, dirs, files in os.walk(parent_folder):
+            # don't collect files inside datasets, 
+            # they should be handled separately
+            if "index.json" in files:
+                dataset_dirs.append(root)
+                dirs[:] = [] # this prevents os.walk() descending into subdirs
+                continue
+
+            for filename in files:
+                # metadata and associated file patterns are on parent of file, 
+                # media file pattern is on filename itself
+                if metadata_regex.search(root):
+                    metadata_files.append(os.path.join(root, filename))
+                elif associated_regex.search(root):
+                    associated_files.append(os.path.join(root, filename))
+                elif media_regex.search(filename):
+                    media_files.append(os.path.join(root, filename))
+        #print("DATASETS:", dataset_dirs)
+        #print("METADATA:", metadata_files)
+        #print("ASSOCIATED:", associated_files)
+        #print("MEDIA:", media_files)
+
         if include_datasets:
-            print("upload of datasets NYI")
-        if include_media:
-            media_list = []
-            for suffix in DEFAULT_MEDIA_SUFFIXES:
-                media_list += glob.glob(parent_folder + "/*." + suffix)
-            self._upload_media(media_list, collection_id, dry_run)
+            print("WARNING: upload of datasets NYI")
+          
         if include_video_metadata:
-            # handle any metadata files in local subfolder called "video_metadata"
-            metadata_files = glob.glob(parent_folder + "/video_metadata/*")
-            media_info = {}
-            metadata = {}
             metadata_list = []
+            metadata = {}
+            media_info = {}
             for local_path in metadata_files:
                 metadata["local_path"] = local_path
                 # find conservator video/image this metadata corresponds to
                 with open(local_path) as fp:
                     try:
                        contents = json.load(fp)
-                       media_filename = contents["videos"][0]["name"]
+                       media_id = contents["videos"][0]["id"]
                     except:
-                       print("ERROR: could not find media filename in metadata '{}'".format(local_path))
-                if media_filename:
-                    media_info = fca.get_videos_from_filename(media_filename, collection_id, 
-                                                              self.credentials.token)
+                       print("ERROR: could not find media id in metadata '{}'".format(local_path))
+                if media_id:
+                    media_info = fca.get_media_from_id(media_id, self.credentials.token)
+
                 if media_info:
                     # found it in conservator
-                    metadata["media_id"] = media_info[0]["id"]
-                    metadata_list.append(metadata)
+                    metadata["media_id"] = media_info["id"]
+                    metadata["media_name"] = media_info["name"]
+                    metadata_list.append(dict(metadata))
                 else:
-                    print("WARNING: no Conservator video corresponding to metadata '{}'".format(local_path))
+                    print("WARNING: no Conservator media corresponding to metadata '{}'".format(local_path))
             self._upload_video_metadata(metadata_list, dry_run)
+
         if include_associated_files:
-            # handle any associated files in local subfolder called "associated_files"
-            associated_files = glob.glob(parent_folder + "/associated_files/*")
-            print("FOUND:", associated_files)
-            self._upload_associated_files(associated_files, collection_id, dry_run)
+            associated_list = []
+            associated = {}
+            collection_info = {}
+            for local_path in associated_files:
+                associated["local_path"] = local_path
+
+                # folder path inside conservator matches relative path
+                # inside local base directory, except skip "associated_files" 
+                # and always use forward slashes
+                relative_path = os.path.relpath(local_path, start=parent_folder)
+                path_components = relative_path.split(os.sep)
+                relative_path = "/".join(path_components[:-2])
+                if relative_path:
+                    collection_path = conservator_path + "/" + relative_path
+                else:
+                    collection_path = conservator_path
+
+                collection_info = fca.get_collection_by_path(collection_path, self.credentials.token)
+                if collection_info:
+                    # found it in conservator
+                    associated["collection_path"] = collection_path
+                    associated["collection_id"] = collection_info["id"]
+                    associated_list.append(dict(associated))
+                else:
+                    print("WARNING: Conservator path '{}' not found".format(collection_path))
+
+            self._upload_associated_files(associated_list, dry_run)
+
+        if include_media:
+            media_list = []
+            media = {}
+            collection_info = {}
+            for local_path in media_files:
+                media["local_path"] = local_path
+
+                # folder path inside conservator matches relative path
+                # inside local base directory, except always use forward slashes
+                relative_path = os.path.relpath(local_path, start=parent_folder)
+                path_components = relative_path.split(os.sep)
+                relative_path = "/".join(path_components[:-1])
+                if relative_path:
+                    collection_path = conservator_path + "/" + relative_path
+                else:
+                    collection_path = conservator_path
+
+                collection_info = fca.get_collection_by_path(collection_path, self.credentials.token)
+                if collection_info:
+                    # found it in conservator
+                    media["collection_path"] = collection_path
+                    media["collection_id"] = collection_info["id"]
+                    media_list.append(dict(media))
+                else:
+                    print("WARNING: Conservator path '{}' not found".format(collection_path))
+
+            self._upload_media(media_list, dry_run)
 
     def upload_collections_recursively(self, include_datasets=False, include_video_metadata=False, include_associated_files=False, include_media=False):
         assert self.credentials is not None, "self.credentials must be set"
-        self._upload_collections_recursive(self.parent_folder, self.id, include_datasets, include_video_metadata, include_associated_files, include_media)
+        self._upload_collections_recursive(self.parent_folder, self.conservator_path(), include_datasets, include_video_metadata, include_associated_files, include_media)
 
     def _detect_content_type(self, local_path):
         (content_type, encoding) = mimetypes.guess_type(local_path)
@@ -218,11 +310,15 @@ class Collection:
 
         return content_type
 
-    def _upload_associated_files(self, associated_list, collection_id, dry_run=True):
-        for local_path in associated_list:
+    def _upload_associated_files(self, associated_list, dry_run=True):
+        for associated in associated_list:
+            local_path = associated["local_path"]
+            collection_id = associated["collection_id"]
+            collection_path = associated["collection_path"]
             filename = os.path.basename(local_path)
             content_type = self._detect_content_type(local_path)
-            print("Upload associated file {} as {} into folder {}".format(filename, content_type, collection_id))
+            print("Upload associated file {} as {} into folder {}".format(filename, content_type, 
+                                                                          collection_path))
             if not dry_run:
                 url_info = fca.get_signed_collection_locker_url(collection_id, content_type, filename, 
                                                                 self.credentials.token)
@@ -230,32 +326,37 @@ class Collection:
 
     def _upload_datasets(self, datasets, collection_id, dry_run=True):
         # descend into dataset directories and push any changes that have been committed?
-        print("_upload_datasets NYI")
+        print("WARNING: upload of datasets NYI")
 
     def _upload_video_metadata(self, metadata_list, dry_run=True):
         content_type = "application/json" # metadata files are always supposed to be json
         for metadata in metadata_list:
             local_path = metadata["local_path"]
             filename = os.path.basename(local_path)
+            media_name = metadata["media_name"]
             media_id = metadata["media_id"]
-            print("Upload metadata file '{}' as {} for video {}".format(local_path, content_type, media_id))
+            print("Upload metadata file '{}' as {} for media {} ({})".format(local_path, content_type, 
+                                                                             media_name, media_id))
             if not dry_run:
                 url_info = fca.get_signed_meta_upload_url(media_id, content_type, filename,
                                                           self.credentials.token)
                 fca.upload_video_to_s3(metadata["local_path"], url_info["signedUrl"], content_type)
                 fca.mark_annotation_as_uploaded(media_id, url_info["signedUrl"], self.credentials.token)
 
-    def _upload_media(self, media_list, collection_id, dry_run=True):
-        for local_path in media_list:
+    def _upload_media(self, media_list, dry_run=True):
+        for media in media_list:
+            local_path = media["local_path"]
+            collection_id = media["collection_id"]
+            collection_path = media["collection_path"]
             filename = os.path.basename(local_path)
             content_type = self._detect_content_type(local_path)
-            print("Upload media file {} as {} into folder {}".format(filename, content_type, collection_id))
+            print("Upload media file {} as {} into folder {}".format(filename, content_type, collection_path))
 
             # don't create multiple copies of same filename in same folder...
             # could implement moving aside old copy, for now keep things simple and just punt
             media_exists = fca.get_media_from_filename(filename, collection_id, self.credentials.token)
             if media_exists:
-                print("WARNING: file {} already exists in folder {}, skipping".format(filename, collection_id))
+                print("WARNING: file {} already exists in folder {}, skipping".format(filename, collection_path))
                 continue
 
             if not dry_run:
