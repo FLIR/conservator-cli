@@ -235,7 +235,7 @@ class Collection:
                     metadata["media_name"] = media_info["name"]
                     metadata_list.append(dict(metadata))
                 else:
-                    print("WARNING: no Conservator media corresponding to metadata '{}'".format(local_path))
+                    print("WARNING: no Conservator media corresponding to metadata '{}', skipping".format(local_path))
             self._upload_video_metadata(metadata_list, dry_run)
 
         if include_associated_files:
@@ -268,7 +268,7 @@ class Collection:
                     associated["collection_id"] = collection_info["id"]
                     associated_list.append(dict(associated))
                 else:
-                    print("WARNING: Conservator path '{}' not found".format(collection_path))
+                    print("WARNING: Conservator path '{}' not found, skipping {}".format(collection_path, local_path))
 
             self._upload_associated_files(associated_list, dry_run)
 
@@ -301,7 +301,7 @@ class Collection:
                     media["collection_id"] = collection_info["id"]
                     media_list.append(dict(media))
                 else:
-                    print("WARNING: Conservator path '{}' not found".format(collection_path))
+                    print("WARNING: Conservator path '{}' not found, skipping {}".format(collection_path, local_path))
 
             self._upload_media(media_list, dry_run)
 
