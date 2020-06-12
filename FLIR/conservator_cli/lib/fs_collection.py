@@ -22,11 +22,12 @@ DEFAULT_MEDIA_SUFFIXES = IMAGE_FILE_SUFFIXES + VIDEO_FILE_SUFFIXES
 
 class Collection:
     # call classmethod instead to have it return None on error.
-    def __init__(self, parent_folder, name, collection_id=None, credentials=None):
+    def __init__(self, parent_folder, name, collection_id=None, credentials=None, create_nonexistent=False):
         self.id = collection_id
         self.credentials = credentials
         self.parent_folder = os.path.abspath(parent_folder)
         self.root_folder = os.path.join(self.parent_folder, name)
+        self.create_nonexistent = create_nonexistent
 
     @classmethod
     def create(cls, collection_path, credentials, parent_folder=os.getcwd(), create_nonexistent=False):
@@ -34,22 +35,11 @@ class Collection:
         if not data:
             if create_nonexistent:
                 # try to create missing collections along given conservator path
-
-                components = collection_path.split("/")
-                parent_id = None
-                folder_path = ""
-                for folder_name in components[1:]:
-                    folder_path += "/" + folder_name
-                    data = fca.get_collection_by_path(folder_path, credentials.token)
-                    if not data:
-                        data = fca.create_collection(folder_name, parent_id, credentials.token)
-
-                    # this folder will be parent of next one
-                    parent_id = data["id"]
+                self.create_collection_by_path(collection_path)
             else:
                 raise LookupError("Collection {} not found!".format(collection_path))
 
-        result = cls(parent_folder, data["name"], data["id"], credentials)
+        result = cls(parent_folder, data["name"], data["id"], credentials, create_nonexistent)
         return result
 
     def conservator_path(self):
@@ -60,6 +50,19 @@ class Collection:
             conservator_path = data["name"] + "/" + conservator_path
         conservator_path = "/" + conservator_path
         return conservator_path
+
+    def create_collection_by_path(self, collection_path):
+        components = collection_path.split("/")
+        parent_id = None
+        folder_path = ""
+        for folder_name in components[1:]:
+            folder_path += "/" + folder_name
+            data = fca.get_collection_by_path(folder_path, self.credentials.token)
+            if not data:
+                data = fca.create_collection(folder_name, parent_id, self.credentials.token)
+
+            # this folder will be parent of next one
+            parent_id = data["id"]
 
     def _pull_dataset(self, id, name, parent_folder):
         email = self.credentials.email.replace("@", "%40")
@@ -254,6 +257,11 @@ class Collection:
                     collection_path = conservator_path
 
                 collection_info = fca.get_collection_by_path(collection_path, self.credentials.token)
+                if not collection_info and self.create_nonexistent:
+                    # try to create missing collections along given conservator path
+                    self.create_collection_by_path(collection_path)
+                    collection_info = fca.get_collection_by_path(collection_path, self.credentials.token)
+
                 if collection_info:
                     # found it in conservator
                     associated["collection_path"] = collection_path
@@ -282,6 +290,11 @@ class Collection:
                     collection_path = conservator_path
 
                 collection_info = fca.get_collection_by_path(collection_path, self.credentials.token)
+                if not collection_info and self.create_nonexistent:
+                    # try to create missing collections along given conservator path
+                    self.create_collection_by_path(collection_path)
+                    collection_info = fca.get_collection_by_path(collection_path, self.credentials.token)
+
                 if collection_info:
                     # found it in conservator
                     media["collection_path"] = collection_path
