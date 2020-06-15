@@ -2,7 +2,7 @@
 import requests
 import sys
 
-from FLIR.common.lib import terminal_progress_bar as tpb
+from FLIR.conservator_cli.lib import terminal_progress_bar as tpb
 
 
 class ConservatorGraphQLServerError(Exception):
