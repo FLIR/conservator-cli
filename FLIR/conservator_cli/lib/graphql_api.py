@@ -123,51 +123,135 @@ def get_history(commit_hash, access_token):
 	}
 	return query_conservator(query, variables, access_token)["commitHistoryById"]
 
-def get_videos_from_search(search_text, access_token):
-	query = """
-	query videos($searchText: String) {
-	  videos(searchText: $searchText, collectionId: 0, limit: 100, page: 0) {
-		id
-		filename
-		url
-	  }
-	}
-	"""
-	variables = {
-		"searchText": search_text
-	}
-	return query_conservator(query, variables, access_token)["videos"]
+#######################
+## videos and images ##
+#######################
 
-def get_videos_from_id(video_id, access_token):
-	query = """
-	query video($id: String!, $src: String) {
-	  video(id: $id, src: $src) {
-		id
-		filename
-		url
-		frames {
+##---------------------
+## query on search text 
+##---------------------
+
+# function generator with common code to be specialized for media type
+def funcgen_get_x_from_search(media_type):
+	def get_x_from_search(search_text, access_token):
+		medias = media_type + "s" # e.g. "videos" or "images"
+		query = """
+		query {medias}($searchText: String) {{
+		    {medias}(searchText: $searchText, limit: 100, page: 0) {{
 			id
+			filename
 			url
-			frameIndex
-			annotations {
-				id
-				labels
-				boundingBox {
-					x
-					y
-					w
-					h
-				}
-			}
+		    }}
+		}}
+		""".format(medias=medias)
+		variables = {
+		    "searchText": search_text
 		}
-	  }
-	}
-	"""
-	variables = {
-		"id": video_id,
-		"src": ""
-	}
-	return query_conservator(query, variables, access_token)["video"]
+		return query_conservator(query, variables, access_token)[medias]
+	return get_x_from_search
+
+# generate query function for videos
+get_videos_from_search = funcgen_get_x_from_search("video")
+
+# generate query function for images
+get_images_from_search = funcgen_get_x_from_search("image")
+
+# query including both videos AND images
+def get_media_from_search(search_text, access_token):
+	videos = get_videos_from_search(search_text, access_token)
+	images = get_images_from_search(search_text, access_token)
+	return videos + images
+
+##------------------
+## query on filename
+##------------------
+
+# function generator with common code to be specialized for media type
+def funcgen_get_x_from_filename(media_type):
+	def get_x_from_filename(filename, collection_id, access_token):
+		medias = media_type + "s" # e.g. "videos" or "images"
+		query = """
+		query {medias}($searchText: String, $collectionId: ID!) {{
+		    {medias}(searchText: $searchText, collectionId: $collectionId, limit: 100, page: 0) {{
+			id
+			filename
+			url
+		    }}
+		}}
+		""".format(medias=medias)
+		variables = {
+		    "searchText": "filename:"+filename,
+			"collectionId": collection_id
+		}
+		return query_conservator(query, variables, access_token)[medias]
+	return get_x_from_filename
+
+# generate query function for videos
+get_videos_from_filename = funcgen_get_x_from_filename("video")
+
+# generate query function for images
+get_images_from_filename = funcgen_get_x_from_filename("image")
+
+# query including both videos AND images
+def get_media_from_filename(filename, collection_id, access_token):
+	videos = get_videos_from_filename(filename, collection_id, access_token)
+	images = get_images_from_filename(filename, collection_id, access_token)
+	return videos + images
+
+##------------
+## query on id
+##------------
+
+# function generator with common code to be specialized for media type
+def funcgen_get_x_from_id(media_type):
+	def get_x_from_id(media_id, access_token):
+		query = """
+		query {media}($id: String!, $src: String) {{
+		  {media}(id: $id, src: $src) {{
+			id
+			filename
+			url
+			frames {{
+				id
+				url
+				frameIndex
+				annotations {{
+					id
+					labels
+					boundingBox {{
+						x
+						y
+						w
+						h
+					}}
+				}}
+			}}
+		  }}
+		}}
+		""".format(media=media_type)
+		variables = {
+			"id": media_id,
+			"src": ""
+		}
+		return query_conservator(query, variables, access_token)[media_type]
+	return get_x_from_id
+
+# generate query function for videos
+get_video_from_id = funcgen_get_x_from_id("video")
+
+# generate query function for images
+get_image_from_id = funcgen_get_x_from_id("image")
+
+# query including both videos AND images
+def get_media_from_id(media_id, access_token):
+	result = get_video_from_id(media_id, access_token)
+	if not result:
+		result = get_image_from_id(media_id, access_token)
+	return result
+
+##-------------------------
+## list files in collection
+##-------------------------
 
 def get_media_counts(collection_id, access_token):
 	query = """
@@ -185,58 +269,125 @@ def get_media_counts(collection_id, access_token):
 	}
 	return query_conservator(query, variables, access_token)["collection"]
 
+# function generator with common code to be specialized for media type
+def funcgen_get_x_filelist(media_type):
+	def get_x_filelist(collection_id, access_token):
+		medias = media_type + "s"          # e.g. "videos" or "images"
+		media_count = media_type + "Count" # e.g. "videoCount" or "imageCount"
 
-def get_video_filelist(collection_id, access_token):
-	page_size = 200   # number of entries returned per query 
-	vid_count = get_media_counts(collection_id, access_token)["videoCount"]
-	num_pages = vid_count // page_size
-	if vid_count % page_size:
-		# one more if there is a partial page at end
-		num_pages += 1
+		page_size = 200   # number of entries returned per query 
+		count = get_media_counts(collection_id, access_token)[media_count]
+		num_pages = count // page_size
+		if count % page_size:
+			# one more if there is a partial page at end
+			num_pages += 1
 
-	result = []
-	for page_offset in range(0, num_pages):
+		result = []
+		for page_offset in range(0, num_pages):
+			query = """
+			query filenames($id: ID!, $limit: Int, $page: Int) {{
+				{medias}(collectionId: $id, limit: $limit, page: $page) {{
+				filename
+				url
+			  }}
+			}}
+			""".format(medias=medias)
+			variables = {
+				"id": collection_id,
+				"limit": page_size,
+				"page": page_offset
+			}
+			result += query_conservator(query, variables, access_token)[medias]
+		return result
+	return get_x_filelist
+
+# generate query function for videos
+get_video_filelist = funcgen_get_x_filelist("video")
+
+# generate query function for images
+get_image_filelist = funcgen_get_x_filelist("image")
+
+# query including both videos AND images
+def get_media_filelist(collection_id, access_token):
+	videos = get_video_filelist(collection_id, access_token)
+	images = get_image_filelist(collection_id, access_token)
+	return videos + images
+
+##--------------------
+## query by collection
+##--------------------
+
+# function generator with common code to be specialized for media type
+def funcgen_get_x_by_collection_id(media_type):
+	def get_x_by_collection_id(collection_id, access_token):
+		medias = media_type + "s" # e.g. "videos" or "images"
 		query = """
-		query video_filenames($id: ID!, $limit: Int, $page: Int) {
-			videos(collectionId: $id, limit: $limit, page: $page) {
+		query {medias}($collectionId: ID!) {{
+			{medias}(collectionId: $collectionId, limit:100000) {{
+				id 
+				filename
+				url
+				tags
+			}} 
+		}}
+		""".format(medias=medias)
+		variables = {
+			"collectionId": collection_id
+		}
+		return query_conservator(query, variables, access_token)
+	return get_x_by_collection_id
+
+# generate query function for videos
+get_videos_by_collection_id = funcgen_get_x_by_collection_id("video")
+
+# generate query function for images
+get_images_by_collection_id = funcgen_get_x_by_collection_id("image")
+
+# query including both videos AND images
+def get_media_by_collection_id(collection_id, access_token):
+	videos = get_videos_by_collection_id(collection_id, access_token)
+	images = get_images_by_collection_id(collection_id, access_token)
+	# merge lists of "videos" and "images" and call it "media"
+	media = {"media": videos["videos"] + images["images"]}
+	return media
+
+# function generator with common code to be specialized for media type
+def funcgen_get_x_from_collection(media_type):
+	def get_x_from_collection(collection_id, access_token):
+		first = "getFirstN" + media_type.capitalize() + "s" # e.g. "getFirstNVideos" or "getFirstNImages"
+		query = """
+		query {first}($id: ID!, $n: Int, $searchText: String) {{
+		  {first}(id: $id, n: $n, searchText: $searchText) {{
+		  	id
+			name
 			filename
 			url
-		  }
-		}
-		"""
+			tags
+			framesCount
+		  }}
+		}}
+		""".format(first=first)
 		variables = {
 			"id": collection_id,
-			"limit": page_size,
-			"page": page_offset
+			"n":1000,
+			"searchText":""
 		}
-		result += query_conservator(query, variables, access_token)["videos"]
-	return result
+		return query_conservator(query, variables, access_token)[first]
+	return get_x_from_collection
 
-def get_image_filelist(collection_id, access_token):
-	page_size = 200   # number of entries returned per query 
-	img_count = get_media_counts(collection_id, access_token)["imageCount"]
-	num_pages = img_count // page_size
-	if img_count % page_size:
-		# one more if there is a partial page at end
-		num_pages += 1
+# generate query function for videos
+get_videos_from_collection = funcgen_get_x_from_collection("video")
 
-	result = []
-	for page_offset in range(0, num_pages):
-		query = """
-		query image_filenames($id: ID!, $limit: Int, $page: Int) {
-			images(collectionId: $id, limit: $limit, page: $page) {
-			filename
-			url
-		  }
-		}
-		"""
-		variables = {
-			"id": collection_id,
-			"limit": page_size,
-			"page": page_offset
-		}
-		result += query_conservator(query, variables, access_token)["images"]
-	return result
+# generate query function for images
+get_images_from_collection = funcgen_get_x_from_collection("image")
+
+# query including both videos AND images
+def get_media_from_collection(collection_id, access_token):
+	videos = get_videos_from_collection(collection_id, access_token)
+	images = get_images_from_collection(collection_id, access_token)
+	return videos + images
+
+##----------------------------
 
 def download_file(filename, url, show_progress=True, tab_number=0):
 	r = requests.get(url, stream=True)
@@ -309,22 +460,6 @@ def get_collection_by_id(id, access_token):
 	}
 	return query_conservator(query, variables, access_token)["collection"]
 
-def get_videos_by_collection_id(collection_id, access_token):
-	query = """
-	query videos($collectionId: ID!) {
-		videos(collectionId: $collectionId, limit:100000) {
-			id 
-			filename
-			url
-			tags
-		} 
-	}
-	"""
-	variables = {
-		"collectionId": collection_id
-	}
-	return query_conservator(query, variables, access_token)
-
 def get_datasets_from_collection(collection_id, access_token):
 	query = """
 	query getFirstNDatasets($id: ID!, $n: Int, $searchText: String) {
@@ -345,26 +480,6 @@ def get_datasets_from_collection(collection_id, access_token):
 		"searchText":""
 	}
 	return query_conservator(query, variables, access_token)["getFirstNDatasets"]
-
-def get_videos_from_collection(collection_id, access_token):
-	query = """
-	query getFirstNVideos($id: ID!, $n: Int, $searchText: String) {
-	  getFirstNVideos(id: $id, n: $n, searchText: $searchText) {
-	  	id
-		name
-		filename
-		url
-		tags
-		framesCount
-	  }
-	}
-	"""
-	variables = {
-		"id": collection_id,
-		"n":1000,
-		"searchText":""
-	}
-	return query_conservator(query, variables, access_token)["getFirstNVideos"]
 
 def create_video(filename, access_token):
 	query = """
