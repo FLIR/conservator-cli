@@ -29,3 +29,11 @@ def get_lines_from_file(file_path):
         lines = map(str.lower, lines)
         lines = list(set(lines))
     return lines
+
+
+def get_unique_classes_from_files(files: list) -> list:
+    unique_words = []
+    for path in files:
+        lines_from_path = get_lines_from_file(path)
+        unique_words.extend(lines_from_path)
+    return list(set(unique_words))
