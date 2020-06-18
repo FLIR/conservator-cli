@@ -7,7 +7,7 @@ import shutil
 
 from FLIR.conservator_cli.lib import graphql_api as fca
 from FLIR.conservator_cli.lib.fs_collection import Collection
-from FLIR.conservator_cli.lib.common import ConservatorCredentials
+from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredentials
 
 @click.command()
 @click.argument('collection_path')
