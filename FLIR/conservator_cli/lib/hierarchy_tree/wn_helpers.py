@@ -8,8 +8,8 @@ from nltk.corpus import wordnet_ic
 from nltk.corpus.reader import Synset
 from nltk.wsd import lesk
 
-nltk.download('wordnet')
-nltk.download('wordnet_ic')
+nltk.download('wordnet', quiet=True)
+nltk.download('wordnet_ic', quiet=True)
 
 brown_ic = wordnet_ic.ic('ic-brown.dat')
 
