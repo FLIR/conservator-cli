@@ -1,11 +1,24 @@
 import setuptools
+import re
+import glob
 
 
 try:
     from setuptools import find_namespace_packages
 except ImportError:
     from setuptools import PEP420PackageFinder
-    find_namespace_packages = PEP420PackageFinder.find
+
+    # don't mistake 'build' area for a place to find packages
+    def fix_PEP420PackageFinder_find(**args):
+        pkgs = PEP420PackageFinder.find(**args)
+        regex = re.compile("build")
+        selected_pkgs = list(filter(lambda p: not regex.match(p), pkgs))
+        return selected_pkgs
+
+    find_namespace_packages = fix_PEP420PackageFinder_find
+
+def find_scripts():
+    return list(glob.iglob("**/app/**/*.py", recursive=True))
 
 with open("README.md", "r") as fh:
         long_description = fh.read()
@@ -19,7 +32,9 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/FLIR/conservator-cli",
-    packages=find_namespace_packages(),
+    packages=find_namespace_packages(include=["FLIR.*"], exclude=["*.test.*"]),
+    scripts=find_scripts(),
+    zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
