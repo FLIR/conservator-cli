@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas
 
 from FLIR.conservator_cli.lib.hierarchy_tree.constants import DATA_PATH
-from FLIR.conservator_cli.lib.hierarchy_tree.hierarchy import get_unique_classes_from_files
+from FLIR.conservator_cli.lib.hierarchy_tree.utils import get_unique_classes_from_files
 from FLIR.conservator_cli.lib.hierarchy_tree.wn_helpers import get_synsets
 
 
