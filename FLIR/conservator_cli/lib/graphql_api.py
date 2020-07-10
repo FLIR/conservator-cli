@@ -287,17 +287,12 @@ def get_media_counts(collection_id, access_token):
 def funcgen_get_x_filelist(media_type):
 	def get_x_filelist(collection_id, access_token):
 		medias = media_type + "s"          # e.g. "videos" or "images"
-		media_count = media_type + "Count" # e.g. "videoCount" or "imageCount"
-
 		page_size = 200   # number of entries returned per query 
-		count = get_media_counts(collection_id, access_token)[media_count]
-		num_pages = count // page_size
-		if count % page_size:
-			# one more if there is a partial page at end
-			num_pages += 1
 
 		result = []
-		for page_offset in range(0, num_pages):
+		page_result = []
+		page_offset = 0
+		while True:
 			query = """
 			query filenames($id: ID!, $limit: Int, $page: Int) {{
 				{medias}(collectionId: $id, limit: $limit, page: $page) {{
@@ -311,7 +306,13 @@ def funcgen_get_x_filelist(media_type):
 				"limit": page_size,
 				"page": page_offset
 			}
-			result += query_conservator(query, variables, access_token)[medias]
+			page_result = query_conservator(query, variables, access_token)[medias]
+			# keep going as long as there are new results
+			if page_result:
+				result += page_result
+				page_offset += 1
+			else:
+				break
 		return result
 	return get_x_filelist
 
