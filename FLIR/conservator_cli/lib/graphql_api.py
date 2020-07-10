@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import requests
 import sys
+import time
 
 from FLIR.conservator_cli.lib import terminal_progress_bar as tpb
 
@@ -11,25 +12,38 @@ class ConservatorGraphQLServerError(Exception):
 		self.message = message
 		self.server_error = server_error
 
+# default time before next attempt to retry a failed graphql query
+RETRY_DELAY = 1.0
 
-def query_conservator(query, variables, access_token):
+# default number of retry attempts for a failed graphql query
+MAX_RETRIES = 10
+
+def query_conservator(query, variables, access_token, retry_delay=RETRY_DELAY, max_retries=MAX_RETRIES):
 	graphql_endpoint = 'https://flirconservator.com/graphql'
 	headers = {'authorization': "{}".format(access_token) }
-	r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
-	try:
-		response = r.json()
-	except:
-		raise ConservatorGraphQLServerError(
-			r.status_code, "Invalid server response", r.content)
-	if r.status_code not in (200, 201):
-		server_message = ""
-		if "errors" in response:
-			server_message = response['errors']
-		raise ConservatorGraphQLServerError(
-			r.status_code, "Unexpected status code: {}, server message: {}".format(
-				r.status_code, server_message), server_message)
-	return response["data"]
+	response = {}
 
+	for attempt in range(0, max_retries):
+		# request can fail with flaky network connections;
+		# parsing can fail if server responds, but with an http error
+		try:
+			r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
+			response = r.json()
+			break
+		except:
+			pass
+
+		# something went wrong, wait before retrying
+		time.sleep(retry_delay)
+
+	# response with 'data' but not 'errors' means valid results
+	if response.get("errors"):
+		raise ConservatorGraphQLServerError(r.status_code, "Server rejected query", r.content)
+	elif response.get("data"):
+		result = response["data"]
+	else:
+		raise ConservatorGraphQLServerError(r.status_code, "Invalid server response", r.content)
+	return result
 
 def get_user_data(access_token):
 	graphql_endpoint = 'https://flirconservator.com/graphql'
