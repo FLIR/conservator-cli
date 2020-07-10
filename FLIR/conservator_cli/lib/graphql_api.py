@@ -23,18 +23,28 @@ def query_conservator(query, variables, access_token, retry_delay=RETRY_DELAY, m
 	headers = {'authorization': "{}".format(access_token) }
 	response = {}
 
+	last_exception = None
 	for attempt in range(0, max_retries):
 		# request can fail with flaky network connections;
 		# parsing can fail if server responds, but with an http error
 		try:
 			r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
 			response = r.json()
+			last_exception = None
 			break
-		except:
+		# Bail out on signal exceptions.
+		except KeyboardInterrupt:
+			raise
+		except Exception as exc:
+		    # Capture exception to re-throw it later.
+			last_exception = exc
 			pass
 
 		# something went wrong, wait before retrying
 		time.sleep(retry_delay)
+
+	if last_exception is not None:
+		raise last_exception
 
 	# response with 'data' but not 'errors' means valid results
 	if response.get("errors"):
