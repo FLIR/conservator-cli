@@ -6,6 +6,8 @@ from FLIR.common.lib.execute_command import execute_command
 from FLIR.conservator_cli.lib.graphql_api import get_datasets_from_search
 from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredentials
 
+python_command = "python" if os.name == "nt" else "python3"
+
 class DatasetCache:
     def __init__(self, cache_path, credentials):
         self.cache_path = cache_path
@@ -26,7 +28,7 @@ class DatasetCache:
         if not os.path.exists(name):
             subp = subprocess.call(["git", "clone", "https://{}@flirconservator.com/git/dataset_{}".format(email, id), "{}".format(name)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir(name)
-            subp = subprocess.call(["python3", "cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subp = subprocess.call([python_command, "./cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir("..")
 
         os.chdir(name)
@@ -37,8 +39,8 @@ class DatasetCache:
         dataset_version = dataset_version_completed_process.stdout.decode("utf-8")[:-1]
         subp = subprocess.call(["git", "fetch"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subp = subprocess.call(["git", "checkout", dataset_version], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        subp = subprocess.call(["python3", "cvc.py", "pull"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        subp = subprocess.call(["python3", "cvc.py", "pull"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subp = subprocess.call([python_command, "./cvc.py", "pull"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subp = subprocess.call([python_command, "./cvc.py", "pull"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         os.chdir(save)
         return dataset_version
 
@@ -56,7 +58,7 @@ class DatasetCache:
         if not os.path.exists(name):
             subp = subprocess.call(["git", "clone", "https://{}@flirconservator.com/git/dataset_{}".format(email, id), "{}".format(name)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir(name)
-            subp = subprocess.call(["python3", "cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subp = subprocess.call([python_command, "./cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir("..")
 
         os.chdir(name)
