@@ -650,6 +650,21 @@ def get_signed_video_locker_upload_url(video_id, content_type,filename, access_t
 	}
 	return query_conservator(query, variables, access_token)["generateSignedFileLockerUploadUrl"]
 
+def get_signed_dataset_locker_url(dataset_id, content_type, filename, access_token):
+	query = """
+	mutation generateSignedDatasetFileLockerUploadUrl($datasetId: ID!, $contentType: String!, $filename: String!) {
+	  generateSignedDatasetFileLockerUploadUrl(datasetId: $datasetId, contentType: $contentType, filename: $filename) {
+	    signedUrl
+	  }
+	}
+	"""
+	variables = {
+		"datasetId": dataset_id,
+		"contentType": content_type,
+		"filename": filename
+	}
+	return query_conservator(query, variables, access_token)["generateSignedDatasetFileLockerUploadUrl"]
+
 def get_signed_collection_locker_url(collection_id, content_type, filename, access_token):
 	query = """
 	mutation generateSignedCollectionFileLockerUploadUrl($collectionId: ID!, $contentType: String!, $filename: String!) {
