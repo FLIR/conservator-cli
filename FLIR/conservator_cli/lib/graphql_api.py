@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import requests
 import sys
+import time
 
 from FLIR.conservator_cli.lib import terminal_progress_bar as tpb
 
@@ -11,25 +12,48 @@ class ConservatorGraphQLServerError(Exception):
 		self.message = message
 		self.server_error = server_error
 
+# default time before next attempt to retry a failed graphql query
+RETRY_DELAY = 1.0
 
-def query_conservator(query, variables, access_token):
+# default number of retry attempts for a failed graphql query
+MAX_RETRIES = 10
+
+def query_conservator(query, variables, access_token, retry_delay=RETRY_DELAY, max_retries=MAX_RETRIES):
 	graphql_endpoint = 'https://flirconservator.com/graphql'
 	headers = {'authorization': "{}".format(access_token) }
-	r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
-	try:
-		response = r.json()
-	except:
-		raise ConservatorGraphQLServerError(
-			r.status_code, "Invalid server response", r.content)
-	if r.status_code not in (200, 201):
-		server_message = ""
-		if "errors" in response:
-			server_message = response['errors']
-		raise ConservatorGraphQLServerError(
-			r.status_code, "Unexpected status code: {}, server message: {}".format(
-				r.status_code, server_message), server_message)
-	return response["data"]
+	response = {}
 
+	last_exception = None
+	for attempt in range(0, max_retries):
+		# request can fail with flaky network connections;
+		# parsing can fail if server responds, but with an http error
+		try:
+			r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
+			response = r.json()
+			last_exception = None
+			break
+		# Bail out on signal exceptions.
+		except KeyboardInterrupt:
+			raise
+		except Exception as exc:
+		    # Capture exception to re-throw it later.
+			last_exception = exc
+			pass
+
+		# something went wrong, wait before retrying
+		time.sleep(retry_delay)
+
+	if last_exception is not None:
+		raise last_exception
+
+	# response with 'data' but not 'errors' means valid results
+	if response.get("errors"):
+		raise ConservatorGraphQLServerError(r.status_code, "Server rejected query", r.content)
+	elif response.get("data"):
+		result = response["data"]
+	else:
+		raise ConservatorGraphQLServerError(r.status_code, "Invalid server response", r.content)
+	return result
 
 def get_user_data(access_token):
 	graphql_endpoint = 'https://flirconservator.com/graphql'
@@ -249,13 +273,15 @@ def get_media_from_id(media_id, access_token):
 		result = get_image_from_id(media_id, access_token)
 	return result
 
-##-------------------------
-## list files in collection
-##-------------------------
+##----------------------------
+## query media in a collection
+##----------------------------
 
+# WARNING: there is currently a Conservator bug where the non-recursive
+#          counts can be too small, so don't trust them too much...
 def get_media_counts(collection_id, access_token):
 	query = """
-	query imageCountRecursive($id: ID!) {
+	query mediaCountRecursive($id: ID!) {
 		collection(id: $id) {
 			recursiveVideoCount
 			videoCount
@@ -270,42 +296,48 @@ def get_media_counts(collection_id, access_token):
 	return query_conservator(query, variables, access_token)["collection"]
 
 # function generator with common code to be specialized for media type
-def funcgen_get_x_filelist(media_type):
-	def get_x_filelist(collection_id, access_token):
+# and list of media object fields to be returned
+def funcgen_paged_query(media_type, query_list):
+	def paged_query(collection_id, access_token):
 		medias = media_type + "s"          # e.g. "videos" or "images"
-		media_count = media_type + "Count" # e.g. "videoCount" or "imageCount"
-
-		page_size = 200   # number of entries returned per query 
-		count = get_media_counts(collection_id, access_token)[media_count]
-		num_pages = count // page_size
-		if count % page_size:
-			# one more if there is a partial page at end
-			num_pages += 1
+		page_size = 200   # number of entries returned per query
+		query_fields = "\n".join(query_list) # fields of interest, e.g. "id" or "name"
 
 		result = []
-		for page_offset in range(0, num_pages):
+		page_result = []
+		page_offset = 0
+		while True:
 			query = """
-			query filenames($id: ID!, $limit: Int, $page: Int) {{
+			query paged_query($id: ID!, $limit: Int, $page: Int) {{
 				{medias}(collectionId: $id, limit: $limit, page: $page) {{
-				filename
-				url
+				{query_fields}
 			  }}
 			}}
-			""".format(medias=medias)
+			""".format(medias=medias, query_fields=query_fields)
 			variables = {
 				"id": collection_id,
 				"limit": page_size,
 				"page": page_offset
 			}
-			result += query_conservator(query, variables, access_token)[medias]
+			page_result = query_conservator(query, variables, access_token)[medias]
+			# keep going as long as there are new results
+			if page_result:
+				result += page_result
+				page_offset += 1
+			else:
+				break
 		return result
-	return get_x_filelist
+	return paged_query
+
+##
+## get_*_filelist: list files with url
+##
 
 # generate query function for videos
-get_video_filelist = funcgen_get_x_filelist("video")
+get_video_filelist = funcgen_paged_query("video", ["id", "filename", "url"])
 
 # generate query function for images
-get_image_filelist = funcgen_get_x_filelist("image")
+get_image_filelist = funcgen_paged_query("image", ["id", "filename", "url"])
 
 # query including both videos AND images
 def get_media_filelist(collection_id, access_token):
@@ -313,35 +345,24 @@ def get_media_filelist(collection_id, access_token):
 	images = get_image_filelist(collection_id, access_token)
 	return videos + images
 
-##--------------------
-## query by collection
-##--------------------
-
-# function generator with common code to be specialized for media type
-def funcgen_get_x_by_collection_id(media_type):
-	def get_x_by_collection_id(collection_id, access_token):
-		medias = media_type + "s" # e.g. "videos" or "images"
-		query = """
-		query {medias}($collectionId: ID!) {{
-			{medias}(collectionId: $collectionId, limit:100000) {{
-				id 
-				filename
-				url
-				tags
-			}} 
-		}}
-		""".format(medias=medias)
-		variables = {
-			"collectionId": collection_id
-		}
-		return query_conservator(query, variables, access_token)
-	return get_x_by_collection_id
+##
+## get_*_by_collection_id: list files with url and tags
+##                         note result list is returned as field in a dict
+##
 
 # generate query function for videos
-get_videos_by_collection_id = funcgen_get_x_by_collection_id("video")
+get_videos_by_collection_id_helper = funcgen_paged_query("video", ["id", "filename", "url", "tags"])
+
+def get_videos_by_collection_id(collection_id, access_token):
+	video_list = get_videos_by_collection_id_helper(collection_id, access_token) 
+	return {"videos": video_list}
 
 # generate query function for images
-get_images_by_collection_id = funcgen_get_x_by_collection_id("image")
+get_images_by_collection_id_helper = funcgen_paged_query("image", ["id", "filename", "url", "tags"])
+
+def get_images_by_collection_id(collection_id, access_token):
+	image_list = get_images_by_collection_id_helper(collection_id, access_token) 
+	return {"images": image_list}
 
 # query including both videos AND images
 def get_media_by_collection_id(collection_id, access_token):
@@ -351,35 +372,15 @@ def get_media_by_collection_id(collection_id, access_token):
 	media = {"media": videos["videos"] + images["images"]}
 	return media
 
-# function generator with common code to be specialized for media type
-def funcgen_get_x_from_collection(media_type):
-	def get_x_from_collection(collection_id, access_token):
-		first = "getFirstN" + media_type.capitalize() + "s" # e.g. "getFirstNVideos" or "getFirstNImages"
-		query = """
-		query {first}($id: ID!, $n: Int, $searchText: String) {{
-		  {first}(id: $id, n: $n, searchText: $searchText) {{
-		  	id
-			name
-			filename
-			url
-			tags
-			framesCount
-		  }}
-		}}
-		""".format(first=first)
-		variables = {
-			"id": collection_id,
-			"n":1000,
-			"searchText":""
-		}
-		return query_conservator(query, variables, access_token)[first]
-	return get_x_from_collection
+##
+## get_*_from_collection: list files with url, tags, and number of frames
+##
 
 # generate query function for videos
-get_videos_from_collection = funcgen_get_x_from_collection("video")
+get_videos_from_collection = funcgen_paged_query("video", ["id", "filename", "url", "tags", "framesCount"])
 
 # generate query function for images
-get_images_from_collection = funcgen_get_x_from_collection("image")
+get_images_from_collection = funcgen_paged_query("image", ["id", "filename", "url", "tags", "framesCount"])
 
 # query including both videos AND images
 def get_media_from_collection(collection_id, access_token):
