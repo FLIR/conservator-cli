@@ -1,7 +1,7 @@
 {
   "name": "Download conservator folder example",
   "description": "Download a conservator folder",
-  "plugin_registry": { "$ref": "$NTKROOT/conservator-cli/FLIR/conservator_cli/run_tasks_support/valid_tasks.json"},
+  "plugin_registry": { "$ref": "$NTKROOT/conservator-cli/FLIR/conservator_cli/run_tasks_plugins/valid_tasks.json"},
   "tasks": [
     {
       "name": "get_creds",
