@@ -377,10 +377,10 @@ def get_media_by_collection_id(collection_id, access_token):
 ##
 
 # generate query function for videos
-get_videos_from_collection = funcgen_paged_query("video", ["id", "filename", "url", "tags", "framesCount"])
+get_videos_from_collection = funcgen_paged_query("video", ["id", "name", "filename", "url", "tags", "framesCount"])
 
 # generate query function for images
-get_images_from_collection = funcgen_paged_query("image", ["id", "filename", "url", "tags", "framesCount"])
+get_images_from_collection = funcgen_paged_query("image", ["id", "name", "filename", "url", "tags", "framesCount"])
 
 # query including both videos AND images
 def get_media_from_collection(collection_id, access_token):
