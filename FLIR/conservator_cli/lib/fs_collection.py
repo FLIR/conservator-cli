@@ -29,14 +29,14 @@ class Collection:
         if os.path.exists(name):
             os.chdir(name)
             subp = subprocess.call(["git", "pull"])
-            subp = subprocess.call(["./cvc.py", "pull"])
-            subp = subprocess.call(["./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
         else:
             subp = subprocess.call(["git", "clone", "https://{}@flirconservator.com/git/dataset_{}".format(email, id), "{}".format(name)])
             os.chdir(name)
-            subp = subprocess.call(["./cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)])
-            subp = subprocess.call(["./cvc.py", "pull"])
-            subp = subprocess.call(["./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
         os.chdir(save)
 
     def _download_collections_recursive(self, parent_folder, collection_id, delete=False, include_datasets=False, include_video_metadata=False, include_associated_files=False, include_media=False):
@@ -97,7 +97,7 @@ class Collection:
             metadata = fca.get_video_metadata(video["id"], self.credentials.token)["metadata"]
             obj = json.loads(metadata)
             obj["videos"][0]["name"] = video["name"]
-            filename = ".".join(video["name"].split(".")[:-1] + ["json"])
+            filename = ".".join(video["filename"].split(".")[:-1] + ["json"])
             video_names.append(filename)
             if not dry_run:
                 with open(os.path.join(parent_folder, "video_metadata", filename), "w") as file:
