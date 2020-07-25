@@ -5,13 +5,29 @@ import sys
 from FLIR.common.lib import terminal_progress_bar as tpb
 
 
+class ConservatorGraphQLServerError(Exception):
+	def __init__(self, status_code, message, server_error):
+		self.status_code = status_code
+		self.message = message
+		self.server_error = server_error
+
+
 def query_conservator(query, variables, access_token):
 	graphql_endpoint = 'https://flirconservator.com/graphql'
 	headers = {'authorization': "{}".format(access_token) }
 	r = requests.post(graphql_endpoint, headers=headers, json={"query":query, "variables":variables})
-	response = r.json()
-	if "errors" in response:
-  		print(response)
+	try:
+		response = r.json()
+	except:
+		raise ConservatorGraphQLServerError(
+			r.status_code, "Invalid server response", r.content)
+	if r.status_code not in (200, 201):
+		server_message = ""
+		if "errors" in response:
+			server_message = response['errors']
+		raise ConservatorGraphQLServerError(
+			r.status_code, "Unexpected status code: {}, server message: {}".format(
+				r.status_code, server_message), server_message)
 	return response["data"]
 
 
@@ -153,6 +169,75 @@ def get_videos_from_id(video_id, access_token):
 	}
 	return query_conservator(query, variables, access_token)["video"]
 
+def get_media_counts(collection_id, access_token):
+	query = """
+	query imageCountRecursive($id: ID!) {
+		collection(id: $id) {
+			recursiveVideoCount
+			videoCount
+			recursiveImageCount
+			imageCount
+		}
+	}
+	"""
+	variables = {
+		"id": collection_id
+	}
+	return query_conservator(query, variables, access_token)["collection"]
+
+
+def get_video_filelist(collection_id, access_token):
+	page_size = 200   # number of entries returned per query 
+	vid_count = get_media_counts(collection_id, access_token)["videoCount"]
+	num_pages = vid_count // page_size
+	if vid_count % page_size:
+		# one more if there is a partial page at end
+		num_pages += 1
+
+	result = []
+	for page_offset in range(0, num_pages):
+		query = """
+		query video_filenames($id: ID!, $limit: Int, $page: Int) {
+			videos(collectionId: $id, limit: $limit, page: $page) {
+			filename
+			url
+		  }
+		}
+		"""
+		variables = {
+			"id": collection_id,
+			"limit": page_size,
+			"page": page_offset
+		}
+		result += query_conservator(query, variables, access_token)["videos"]
+	return result
+
+def get_image_filelist(collection_id, access_token):
+	page_size = 200   # number of entries returned per query 
+	img_count = get_media_counts(collection_id, access_token)["imageCount"]
+	num_pages = img_count // page_size
+	if img_count % page_size:
+		# one more if there is a partial page at end
+		num_pages += 1
+
+	result = []
+	for page_offset in range(0, num_pages):
+		query = """
+		query image_filenames($id: ID!, $limit: Int, $page: Int) {
+			images(collectionId: $id, limit: $limit, page: $page) {
+			filename
+			url
+		  }
+		}
+		"""
+		variables = {
+			"id": collection_id,
+			"limit": page_size,
+			"page": page_offset
+		}
+		result += query_conservator(query, variables, access_token)["images"]
+	return result
+
 def download_file(filename, url, show_progress=True, tab_number=0):
 	r = requests.get(url, stream=True)
 	print("\t"*tab_number + "Downloading {} ({:.2f} MB) ...".format(filename, int(r.headers["content-length"])/1024/1024))
@@ -224,6 +309,21 @@ def get_collection_by_id(id, access_token):
 	}
 	return query_conservator(query, variables, access_token)["collection"]
 
+def get_videos_by_collection_id(collection_id, access_token):
+	query = """
+	query videos($collectionId: ID!) {
+		videos(collectionId: $collectionId, limit:100000) {
+			id 
+			filename
+			url
+			tags
+		} 
+	}
+	"""
+	variables = {
+		"collectionId": collection_id
+	}
+	return query_conservator(query, variables, access_token)
 
 def get_datasets_from_collection(collection_id, access_token):
 	query = """
@@ -252,6 +352,7 @@ def get_videos_from_collection(collection_id, access_token):
 	  getFirstNVideos(id: $id, n: $n, searchText: $searchText) {
 	  	id
 		name
+		filename
 		url
 		tags
 		framesCount

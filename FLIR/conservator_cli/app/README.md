@@ -3,7 +3,7 @@ The upload and download script for conservator collections tries to create an ac
 
 The following is the general structure of a Project
 
-`/
+```/
     integration-test/
       image1.jpg
       image2.jpg
@@ -18,7 +18,7 @@ The following is the general structure of a Project
         video_metadata/
         associated_files/
           uav.png
-`
+```
 Key ideas:
   video_metadata is now a reserved folder name
   associated_files is now a reserved folder name

@@ -1,3 +1,4 @@
 *.pyc
 *.swp
 FLIR/conservator_cli/test/functional/tmp
+FLIR/conservator_cli/test/unit/tmp
