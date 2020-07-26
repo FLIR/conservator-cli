@@ -26,6 +26,7 @@ def download_collection_main(collection_path,
                                 include_video_metadata,
                                 include_associated_files,
                                 delete):
+    print(collection_path)
     data = fca.get_collection_by_path(collection_path, conservator_token)
     if not data:
         print("Collection {} not found!".format(collection_path))

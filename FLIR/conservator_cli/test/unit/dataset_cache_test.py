@@ -4,6 +4,7 @@ import shutil
 from FLIR.conservator_cli.lib.dataset_cache import DatasetCache
 from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredentials
 
+
 def get_dataset_annotations_test():
     credentials = ConservatorCredentials(os.environ["CONSERVATOR_EMAIL"], os.environ["CONSERVATOR_TOKEN"])
     os.makedirs("tmp", exist_ok=True)

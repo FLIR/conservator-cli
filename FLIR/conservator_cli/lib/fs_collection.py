@@ -29,14 +29,14 @@ class Collection:
         if os.path.exists(name):
             os.chdir(name)
             subp = subprocess.call(["git", "pull"])
-            subp = subprocess.call(["./cvc.py", "pull"])
-            subp = subprocess.call(["./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
         else:
             subp = subprocess.call(["git", "clone", "https://{}@flirconservator.com/git/dataset_{}".format(email, id), "{}".format(name)])
             os.chdir(name)
-            subp = subprocess.call(["./cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)])
-            subp = subprocess.call(["./cvc.py", "pull"])
-            subp = subprocess.call(["./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
+            subp = subprocess.call(["python", "./cvc.py", "pull"])
         os.chdir(save)
 
     def _download_collections_recursive(self, parent_folder, collection_id, delete=False, include_datasets=False, include_video_metadata=False, include_associated_files=False, include_media=False):
@@ -134,7 +134,7 @@ class Collection:
         for root, dirs, files in os.walk(self.root_folder):
             basename = os.path.basename(root)
             if "nntc-config" in basename:
-                performance_name = os.path.relpath(root, self.root_folder).replace("nntc-config-", "")
+                performance_name = os.path.relpath(root, self.root_folder).replace('nntc-config-','')
                 folder_paths[performance_name] = root
         return folder_paths
 
