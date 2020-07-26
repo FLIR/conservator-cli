@@ -2,7 +2,7 @@ import os
 import subprocess
 import shutil
 
-from FLIR.common.lib.execute_command import execute_command
+from FLIR.conservator_cli.lib.execute_command import execute_command
 from FLIR.conservator_cli.lib.graphql_api import get_datasets_from_search
 from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredentials
 
