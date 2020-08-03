@@ -1,6 +1,7 @@
 import setuptools
 import re
 import glob
+import version
 
 
 try:
@@ -20,12 +21,15 @@ except ImportError:
 def find_scripts():
     return list(glob.iglob("**/app/**/*.py", recursive=True))
 
+git_version=version.get_git_version()
+print("VERSION: ", git_version)
+
 with open("README.md", "r") as fh:
         long_description = fh.read()
 
 setuptools.setup(
     name="conservator-cli",
-    version="0.0.4",
+    version=git_version,
     author="FLIR",
     author_email="someone@somewhere",
     description="Command-line tools using the FLIR Conservator API",
@@ -41,4 +45,9 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.5',
+    # NOTE: add new requirements to requirements.txt as well
+    install_requires=[
+        "requests",
+        "eventlet"
+    ],
 )
