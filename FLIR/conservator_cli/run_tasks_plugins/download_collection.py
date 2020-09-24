@@ -6,7 +6,7 @@ import blessed
 
 t = blessed.Terminal()
 
-def conservator_download_folder(credentials, local_folder, conservator_folder, 
+def download_collection(credentials, local_folder, conservator_folder, 
                                 include_datasets=False, include_video_metadata=False, 
                                 include_associated_files=False, include_media=False,
                                 delete=False, task=None):
@@ -20,4 +20,4 @@ def conservator_download_folder(credentials, local_folder, conservator_folder,
         print(e)
         return False
 
-exports = [conservator_download_folder]
+exports = [download_collection]
