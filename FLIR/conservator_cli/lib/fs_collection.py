@@ -23,7 +23,6 @@ class Collection:
         return result
 
     def _pull_dataset(self, id, name, parent_folder):
-        email = self.credentials.email.replace("@", "%40")
         save = os.getcwd()
         os.chdir(parent_folder)
         if os.path.exists(name):
@@ -32,9 +31,12 @@ class Collection:
             subp = subprocess.call(["python", "./cvc.py", "pull"])
             subp = subprocess.call(["python", "./cvc.py", "pull"])
         else:
-            subp = subprocess.call(["git", "clone", "https://{}@flirconservator.com/git/dataset_{}".format(email, id), "{}".format(name)])
+            subp = subprocess.call(["git", "clone",
+                                    "https://{}@flirconservator.com/git/dataset_{}".format(self.credentials.get_url_format(), id),
+                                    "{}".format(name)])
             os.chdir(name)
-            subp = subprocess.call(["python", "./cvc.py", "remote", "add", "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)])
+            subp = subprocess.call(["python", "./cvc.py", "remote", "add",
+                                    "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())])
             subp = subprocess.call(["python", "./cvc.py", "pull"])
             subp = subprocess.call(["python", "./cvc.py", "pull"])
         os.chdir(save)
