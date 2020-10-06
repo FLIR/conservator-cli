@@ -53,6 +53,7 @@ setuptools.setup(
     # NOTE: add new requirements to requirements.txt as well
     install_requires=[
         "requests",
-        "eventlet"
+        "eventlet",
+        "sphinx",
     ],
 )
