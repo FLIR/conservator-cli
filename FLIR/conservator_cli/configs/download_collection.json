@@ -1,7 +1,9 @@
 {
   "name": "Download conservator folder example",
   "description": "Download a conservator folder",
-  "plugin_registry": { "$ref": "$NTKROOT/conservator-cli/FLIR/conservator_cli/run_tasks_plugins/valid_tasks.json"},
+  "plugin_registry": {
+    "$ref": "$NTKROOT/conservator-cli/FLIR/conservator_cli/run_tasks_plugins/valid_tasks.json"
+  },
   "tasks": [
     {
       "name": "get_creds",
@@ -15,7 +17,9 @@
       "name": "download_folder",
       "description": "Download folder from Conservator",
       "task_type": "download_collection",
-      "depends": ["get_creds"],
+      "depends": [
+        "get_creds"
+      ],
       "task_config": {
         "local_folder": "/mnt/data/local_datasets/download_folder_test",
         "conservator_folder": "/AndresTest",

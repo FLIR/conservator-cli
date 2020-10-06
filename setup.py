@@ -1,13 +1,15 @@
-import setuptools
-import re
 import glob
-import version
+import re
 
+import setuptools
+
+import version
 
 try:
     from setuptools import find_namespace_packages
 except ImportError:
     from setuptools import PEP420PackageFinder
+
 
     # don't mistake 'build' area for a place to find packages
     def fix_PEP420PackageFinder_find(**args):
@@ -16,16 +18,19 @@ except ImportError:
         selected_pkgs = list(filter(lambda p: not regex.match(p), pkgs))
         return selected_pkgs
 
+
     find_namespace_packages = fix_PEP420PackageFinder_find
+
 
 def find_scripts():
     return list(glob.iglob("**/app/**/*.py", recursive=True))
 
-git_version=version.get_git_version()
+
+git_version = version.get_git_version()
 print("VERSION: ", git_version)
 
 with open("README.md", "r") as fh:
-        long_description = fh.read()
+    long_description = fh.read()
 
 setuptools.setup(
     name="conservator-cli",

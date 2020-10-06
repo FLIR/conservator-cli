@@ -1,8 +1,8 @@
 import os
 import shutil
 
-from FLIR.conservator_cli.lib.dataset_cache import DatasetCache
 from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredentials
+from FLIR.conservator_cli.lib.dataset_cache import DatasetCache
 
 
 def get_dataset_annotations_test():
@@ -13,7 +13,9 @@ def get_dataset_annotations_test():
     cache = DatasetCache("tmp/dataset_cache", credentials)
     index_path = cache.get_index_filepath("mini-integration-dataset", "478d77e5865382225867a84dd47f813259c05d96")
     print(os.path.relpath(index_path))
-    assert os.path.relpath(index_path) == "tmp/dataset_cache/.version/mini-integration-dataset/478d77e5865382225867a84dd47f813259c05d96/index.json"
+    assert os.path.relpath(
+        index_path) == "tmp/dataset_cache/.version/mini-integration-dataset/478d77e5865382225867a84dd47f813259c05d96/index.json"
+
 
 def get_dataset_data_tests():
     credentials = ConservatorCredentials(os.environ["CONSERVATOR_EMAIL"], os.environ["CONSERVATOR_TOKEN"])
@@ -23,4 +25,5 @@ def get_dataset_data_tests():
     cache = DatasetCache("tmp/dataset_cache", credentials)
     folder_path = cache.get_data_folder("mini-integration-dataset", "478d77e5865382225867a84dd47f813259c05d96")
     print(os.path.relpath(folder_path))
-    assert os.path.relpath(folder_path) == "tmp/dataset_cache/.version/mini-integration-dataset/478d77e5865382225867a84dd47f813259c05d96/data"
+    assert os.path.relpath(
+        folder_path) == "tmp/dataset_cache/.version/mini-integration-dataset/478d77e5865382225867a84dd47f813259c05d96/data"

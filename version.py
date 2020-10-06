@@ -80,6 +80,7 @@ def write_release_version(version):
     f.write("%s\n" % version)
     f.close()
 
+
 def get_git_version(abbrev=7):
     # Read in the version that's currently in RELEASE-VERSION.
 
