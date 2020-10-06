@@ -1,7 +1,8 @@
 import os
 
+
 # Print iterations progress, modified from https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
-def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
     """
     Call in a loop to create terminal progress bar
     @params:
@@ -18,9 +19,10 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
-    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r', flush=True)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end='\r', flush=True)
 
-#Wraps a File so we can print the progress as requests uploads the file
+
+# Wraps a File so we can print the progress as requests uploads the file
 class ProgressFileWrapper:
     def __init__(self, filename, mode,
                  cb_args=(),
@@ -50,7 +52,7 @@ class ProgressFileWrapper:
     def read(self, size=-1):
         data = self._file.read(size)
         num_bytes_read = len(data)
-        if(num_bytes_read):
+        if (num_bytes_read):
             self._progress += num_bytes_read
         printProgressBar(self._progress, self._len, "Upload Progress:", "Complete", 1, 50)
         return data

@@ -1,15 +1,15 @@
-import blessed
-import os
 import subprocess
+
+import blessed
 
 t = blessed.Terminal()
 
-def execute_command(args=[], silent=False, cwd=None, abort_on_failure=False, env=None):
 
+def execute_command(args=[], silent=False, cwd=None, abort_on_failure=False, env=None):
     # Run command
     cmd_str = " ".join(args)
     print(t.blue(cmd_str))
-    stdout = stderr = [None,subprocess.PIPE][silent]
+    stdout = stderr = [None, subprocess.PIPE][silent]
     status = subprocess.run(args, cwd=cwd, stdout=stdout, stderr=stderr, env=env).returncode
 
     # Report possible error
