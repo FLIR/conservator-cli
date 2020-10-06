@@ -1,5 +1,7 @@
 # Conservator CLI
 
+Conservator CLI is a private repo. Make sure you have set up [git using SSH](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/connecting-to-github-with-ssh).
+
 ## Installation for Users
 
 **Note: You may want to perform a developer install (see below) to be able to 
@@ -24,8 +26,6 @@ documentation.
 
 #### Download
 
-Conservator CLI is a private repo.  Make sure you have set up [git using SSH](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/connecting-to-github-with-ssh).
-
 ```
 git clone git@github.com:FLIR/conservator-cli.git
 cd conservator-cli
@@ -33,7 +33,7 @@ cd conservator-cli
 
 #### Install
 
-Install the package and dependencies in a virtual environment.  Make sure
+Install the package and dependencies in a virtual environment. Make sure
 you're using Python 3 to create your virtual environment.
 
 ```
