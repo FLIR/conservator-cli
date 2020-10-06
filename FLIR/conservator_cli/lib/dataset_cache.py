@@ -13,7 +13,7 @@ class DatasetCache:
 
     def _pull_checkout_dataset(self, id, name, dataset_version):
         parent_folder = self.cache_path
-        email = self.credentials.email.replace("@", "%40")
+        email = self.credentials.get_email_for_url()
         print(email)
         if not id and name:
             id = self._get_dataset_id(name)
@@ -23,12 +23,13 @@ class DatasetCache:
         os.chdir(parent_folder)
 
         if not os.path.exists(name):
-            subp = subprocess.call(
-                ["git", "clone", "https://{}@flirconservator.com/git/dataset_{}".format(email, id), "{}".format(name)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subp = subprocess.call(["git", "clone",
+                                    "https://{}@flirconservator.com/git/dataset_{}".format(
+                                        self.credentials.get_url_format(), id),
+                                    "{}".format(name)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir(name)
             subp = subprocess.call([python_command, "./cvc.py", "remote", "add",
-                                    "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)],
+                                    "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())],
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir("..")
 
@@ -51,7 +52,7 @@ class DatasetCache:
 
     def _fetch_dataset(self, id, name, dataset_version):
         parent_folder = self.cache_path
-        email = self.credentials.email.replace("@", "%40")
+        email = self.credentials.get_email_for_url()
         print(email)
         if not id and name:
             id = self._get_dataset_id(name)
@@ -61,12 +62,13 @@ class DatasetCache:
         os.chdir(parent_folder)
 
         if not os.path.exists(name):
-            subp = subprocess.call(
-                ["git", "clone", "https://{}@flirconservator.com/git/dataset_{}".format(email, id), "{}".format(name)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subp = subprocess.call(["git", "clone",
+                                    "https://{}@flirconservator.com/git/dataset_{}".format(
+                                        self.credentials.get_url_format(), id),
+                                    "{}".format(name)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir(name)
             subp = subprocess.call([python_command, "./cvc.py", "remote", "add",
-                                    "https://{}:{}@flirconservator.com/dvc".format(email, self.credentials.token)],
+                                    "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())],
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             os.chdir("..")
 
