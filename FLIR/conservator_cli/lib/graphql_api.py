@@ -63,13 +63,13 @@ def get_user_data(access_token):
     graphql_endpoint = 'https://flirconservator.com/graphql'
     headers = {'authorization': "{}".format(access_token)}
     query = """
-	{
-	  user {
-	    id
-	    email
-	  }
-	}
-	"""
+    {
+      user {
+        id
+        email
+      }
+    }
+    """
     r = requests.post(graphql_endpoint, headers=headers, json={"query": query})
     response = r.json()
     return response["data"]["user"]
@@ -77,16 +77,16 @@ def get_user_data(access_token):
 
 def get_datasets_from_search(search_text, access_token):
     query = """
-	query datasets($searchText: String!) {
-	  datasets(searchText: $searchText, page: 0, limit: 50) {
-	    name
-		id
-		repository {
-			master
-		}
-	  }
-	}
-	"""
+    query datasets($searchText: String!) {
+      datasets(searchText: $searchText, page: 0, limit: 50) {
+        name
+        id
+        repository {
+            master
+        }
+      }
+    }
+    """
     variables = {
         "searchText": search_text
     }
@@ -95,10 +95,10 @@ def get_datasets_from_search(search_text, access_token):
 
 def get_dataset_metadata(dataset_id, access_token):
     query = """
-	mutation generateDatasetMetadata($datasetId: ID!) {
-	  generateDatasetMetadata(datasetId: $datasetId)
-	}
-	"""
+    mutation generateDatasetMetadata($datasetId: ID!) {
+      generateDatasetMetadata(datasetId: $datasetId)
+    }
+    """
     variables = {
         "datasetId": dataset_id
     }
@@ -108,15 +108,15 @@ def get_dataset_metadata(dataset_id, access_token):
 
 def get_dataset_frame(dataset_frame_id, access_token):
     query = """
-	query datasetFrame($id: ID!, $searchText: String) {
-	  datasetFrame(id: $id, searchText: $searchText) {
-	    id
-		frameId
-		videoId
-		frameIndex
-	  }
-	}
-	"""
+    query datasetFrame($id: ID!, $searchText: String) {
+      datasetFrame(id: $id, searchText: $searchText) {
+        id
+        frameId
+        videoId
+        frameIndex
+      }
+    }
+    """
     variables = {
         "id": dataset_frame_id,
         "searchText": None
@@ -127,16 +127,16 @@ def get_dataset_frame(dataset_frame_id, access_token):
 
 def get_dataset_by_id(dataset_id, access_token):
     query = """
-	query dataset($datasetId: ID!) {
-	  dataset(id: $datasetId) {
-	    name
-		id
-		repository {
-			master
-		}
-	  }
-	}
-	"""
+    query dataset($datasetId: ID!) {
+      dataset(id: $datasetId) {
+        name
+        id
+        repository {
+            master
+        }
+      }
+    }
+    """
     variables = {
         "datasetId": dataset_id
     }
@@ -145,12 +145,12 @@ def get_dataset_by_id(dataset_id, access_token):
 
 def get_history(commit_hash, access_token):
     query = """
-	query commitHistoryById($hash: String!) {
-	  commitHistoryById(id: $hash) {
-	  	_id
-	  }
-	}
-	"""
+    query commitHistoryById($hash: String!) {
+      commitHistoryById(id: $hash) {
+          _id
+      }
+    }
+    """
     variables = {
         "hash": commit_hash
     }
@@ -162,7 +162,7 @@ def get_history(commit_hash, access_token):
 #######################
 
 ##---------------------
-## query on search text 
+## query on search text
 ##---------------------
 
 # function generator with common code to be specialized for media type
@@ -170,14 +170,14 @@ def funcgen_get_x_from_search(media_type):
     def get_x_from_search(search_text, access_token):
         medias = media_type + "s"  # e.g. "videos" or "images"
         query = """
-		query {medias}($searchText: String) {{
-		    {medias}(searchText: $searchText, limit: 100, page: 0) {{
-			id
-			filename
-			url
-		    }}
-		}}
-		""".format(medias=medias)
+        query {medias}($searchText: String) {{
+            {medias}(searchText: $searchText, limit: 100, page: 0) {{
+            id
+            filename
+            url
+            }}
+        }}
+        """.format(medias=medias)
         variables = {
             "searchText": search_text
         }
@@ -209,14 +209,14 @@ def funcgen_get_x_from_filename(media_type):
     def get_x_from_filename(filename, collection_id, access_token):
         medias = media_type + "s"  # e.g. "videos" or "images"
         query = """
-		query {medias}($searchText: String, $collectionId: ID!) {{
-		    {medias}(searchText: $searchText, collectionId: $collectionId, limit: 100, page: 0) {{
-			id
-			filename
-			url
-		    }}
-		}}
-		""".format(medias=medias)
+        query {medias}($searchText: String, $collectionId: ID!) {{
+            {medias}(searchText: $searchText, collectionId: $collectionId, limit: 100, page: 0) {{
+            id
+            filename
+            url
+            }}
+        }}
+        """.format(medias=medias)
         variables = {
             "searchText": "filename:" + filename,
             "collectionId": collection_id
@@ -248,29 +248,29 @@ def get_media_from_filename(filename, collection_id, access_token):
 def funcgen_get_x_from_id(media_type):
     def get_x_from_id(media_id, access_token):
         query = """
-		query {media}($id: String!, $src: String) {{
-		  {media}(id: $id, src: $src) {{
-			id
-			filename
-			url
-			frames {{
-				id
-				url
-				frameIndex
-				annotations {{
-					id
-					labels
-					boundingBox {{
-						x
-						y
-						w
-						h
-					}}
-				}}
-			}}
-		  }}
-		}}
-		""".format(media=media_type)
+        query {media}($id: String!, $src: String) {{
+          {media}(id: $id, src: $src) {{
+            id
+            filename
+            url
+            frames {{
+                id
+                url
+                frameIndex
+                annotations {{
+                    id
+                    labels
+                    boundingBox {{
+                        x
+                        y
+                        w
+                        h
+                    }}
+                }}
+            }}
+          }}
+        }}
+        """.format(media=media_type)
         variables = {
             "id": media_id,
             "src": ""
@@ -303,15 +303,15 @@ def get_media_from_id(media_id, access_token):
 #          counts can be too small, so don't trust them too much...
 def get_media_counts(collection_id, access_token):
     query = """
-	query mediaCountRecursive($id: ID!) {
-		collection(id: $id) {
-			recursiveVideoCount
-			videoCount
-			recursiveImageCount
-			imageCount
-		}
-	}
-	"""
+    query mediaCountRecursive($id: ID!) {
+        collection(id: $id) {
+            recursiveVideoCount
+            videoCount
+            recursiveImageCount
+            imageCount
+        }
+    }
+    """
     variables = {
         "id": collection_id
     }
@@ -331,12 +331,12 @@ def funcgen_paged_query(media_type, query_list):
         page_offset = 0
         while True:
             query = """
-			query paged_query($id: ID!, $limit: Int, $page: Int) {{
-				{medias}(collectionId: $id, limit: $limit, page: $page) {{
-				{query_fields}
-			  }}
-			}}
-			""".format(medias=medias, query_fields=query_fields)
+            query paged_query($id: ID!, $limit: Int, $page: Int) {{
+                {medias}(collectionId: $id, limit: $limit, page: $page) {{
+                {query_fields}
+              }}
+            }}
+            """.format(medias=medias, query_fields=query_fields)
             variables = {
                 "id": collection_id,
                 "limit": page_size,
@@ -443,18 +443,18 @@ def download_file(filename, url, show_progress=True, tab_number=0):
 
 def get_collection_by_path(path, access_token):
     query = """
-	query collectionByPath($path: String!) {
-	  collectionByPath(path: $path) {
-	  	id
-		name
-		childIds
-		fileLockerFiles {
-			url
-			name
-		}
-	  }
-	}
-	"""
+    query collectionByPath($path: String!) {
+      collectionByPath(path: $path) {
+          id
+        name
+        childIds
+        fileLockerFiles {
+            url
+            name
+        }
+      }
+    }
+    """
     variables = {
         "path": path
     }
@@ -463,18 +463,18 @@ def get_collection_by_path(path, access_token):
 
 def create_collection(name, parent_id, access_token):
     query = """
-	mutation createCollection($input: CreateCollectionInput!) {
-	  createCollection(input: $input) {
-	  	id
-		name
-		childIds
-		fileLockerFiles {
-			url
-			name
-		}
-	  }
-	}
-	"""
+    mutation createCollection($input: CreateCollectionInput!) {
+      createCollection(input: $input) {
+          id
+        name
+        childIds
+        fileLockerFiles {
+            url
+            name
+        }
+      }
+    }
+    """
     variables = {
         "input": {"name": name, "parentId": parent_id}
     }
@@ -483,18 +483,18 @@ def create_collection(name, parent_id, access_token):
 
 def get_collection_by_id(id, access_token):
     query = """
-	query collection($id: ID!) {
-	  collection(id: $id) {
-	  	id
-		name
-		childIds
-		fileLockerFiles {
-			url
-			name
-		}
-	  }
-	}
-	"""
+    query collection($id: ID!) {
+      collection(id: $id) {
+          id
+        name
+        childIds
+        fileLockerFiles {
+            url
+            name
+        }
+      }
+    }
+    """
     variables = {
         "id": id
     }
@@ -503,18 +503,18 @@ def get_collection_by_id(id, access_token):
 
 def get_datasets_from_collection(collection_id, access_token):
     query = """
-	query getFirstNDatasets($id: ID!, $n: Int, $searchText: String) {
-	  getFirstNDatasets(id: $id, n: $n, searchText: $searchText) {
-	  	id
-		name
-		tags
-		frameCount
-		repository {
-			master
-		}
-	  }
-	}
-	"""
+    query getFirstNDatasets($id: ID!, $n: Int, $searchText: String) {
+      getFirstNDatasets(id: $id, n: $n, searchText: $searchText) {
+          id
+        name
+        tags
+        frameCount
+        repository {
+            master
+        }
+      }
+    }
+    """
     variables = {
         "id": collection_id,
         "n": 200,
@@ -525,12 +525,12 @@ def get_datasets_from_collection(collection_id, access_token):
 
 def create_video(filename, access_token):
     query = """
-	mutation CreateVideo($filename: String!) {
-	  createVideo(filename: $filename) {
-	    id
-	  }
-	}
-	"""
+    mutation CreateVideo($filename: String!) {
+      createVideo(filename: $filename) {
+        id
+      }
+    }
+    """
     variables = {
         "filename": filename
     }
@@ -539,15 +539,15 @@ def create_video(filename, access_token):
 
 def get_frames_from_video(video_id, access_token):
     query = """
-	query getFrames($video_id: String!) {
-	  video(id: $video_id) {
-	    frames {
-			id
-			frameIndex
-		}
-	  }
-	}
-	"""
+    query getFrames($video_id: String!) {
+      video(id: $video_id) {
+        frames {
+            id
+            frameIndex
+        }
+      }
+    }
+    """
     variables = {
         "video_id": video_id
     }
@@ -556,12 +556,12 @@ def get_frames_from_video(video_id, access_token):
 
 def get_video_metadata(id, access_token):
     query = """
-	query video($id: String!) {
-	  video(id: $id) {
-	    metadata
-	  }
-	}
-	"""
+    query video($id: String!) {
+      video(id: $id) {
+        metadata
+      }
+    }
+    """
     variables = {
         "id": id
     }
@@ -570,28 +570,28 @@ def get_video_metadata(id, access_token):
 
 def get_annotations(video_id, access_token):
     query = """
-	query annotationsByVideoId($id: ID!) {
-	  annotationsByVideoId(id: $id) {
-		id
-		labels
-		boundingBox {
-			x
-			y
-			w
-			h
-		}
-		source {
-			type
-			meta {
-				tool
-				classifierId
-				originalId
-				comment
-			}
-		}
-	  }
-	}
-	"""
+    query annotationsByVideoId($id: ID!) {
+      annotationsByVideoId(id: $id) {
+        id
+        labels
+        boundingBox {
+            x
+            y
+            w
+            h
+        }
+        source {
+            type
+            meta {
+                tool
+                classifierId
+                originalId
+                comment
+            }
+        }
+      }
+    }
+    """
     variables = {
         "id": video_id
     }
@@ -600,28 +600,28 @@ def get_annotations(video_id, access_token):
 
 def create_annotation(frame_id, label, bounding_box, access_token):
     query = """
-	mutation createAnnotation($frameId: String!, $annotation: AnnotationCreate!) {
-	  createAnnotation(frameId: $frameId, annotation: $annotation) {
-		id
-		labels
-		boundingBox {
-			x
-			y
-			w
-			h
-		}
-		source {
-			type
-			meta {
-				tool
-				classifierId
-				originalId
-				comment
-			}
-		}
-	  }
-	}
-	"""
+    mutation createAnnotation($frameId: String!, $annotation: AnnotationCreate!) {
+      createAnnotation(frameId: $frameId, annotation: $annotation) {
+        id
+        labels
+        boundingBox {
+            x
+            y
+            w
+            h
+        }
+        source {
+            type
+            meta {
+                tool
+                classifierId
+                originalId
+                comment
+            }
+        }
+      }
+    }
+    """
     variables = {
         "frameId": frame_id,
         "annotation": {
@@ -640,10 +640,10 @@ def create_annotation(frame_id, label, bounding_box, access_token):
 
 def mark_annotation_as_uploaded(id, url, access_token):
     query = """
-	mutation markAnnotationAsUploaded($id: String!, $url: String!) {
-	  markAnnotationAsUploaded(id: $id, url: $url)
-	}
-	"""
+    mutation markAnnotationAsUploaded($id: String!, $url: String!) {
+      markAnnotationAsUploaded(id: $id, url: $url)
+    }
+    """
     variables = {
         "id": id,
         "url": url
@@ -653,13 +653,13 @@ def mark_annotation_as_uploaded(id, url, access_token):
 
 def get_signed_meta_upload_url(video_id, content_type, filename, access_token):
     query = """
-	mutation generateSignedMetadataUploadUrl($videoId: String!, $contentType: String!, $filename: String!) {
-	  generateSignedMetadataUploadUrl(videoId: $videoId, contentType: $contentType, filename: $filename) {
-	  	url
-		signedUrl
-	  }
-	}
-	"""
+    mutation generateSignedMetadataUploadUrl($videoId: String!, $contentType: String!, $filename: String!) {
+      generateSignedMetadataUploadUrl(videoId: $videoId, contentType: $contentType, filename: $filename) {
+          url
+        signedUrl
+      }
+    }
+    """
     variables = {
         "videoId": video_id,
         "contentType": content_type,
@@ -670,12 +670,12 @@ def get_signed_meta_upload_url(video_id, content_type, filename, access_token):
 
 def get_signed_upload_url(video_id, content_type, access_token):
     query = """
-	mutation GenerateSignedVideoUploadUrl($videoId: String!, $contentType: String!) {
-	  generateSignedVideoUploadUrl(videoId: $videoId, contentType: $contentType) {
-	    signedUrl
-	  }
-	}
-	"""
+    mutation GenerateSignedVideoUploadUrl($videoId: String!, $contentType: String!) {
+      generateSignedVideoUploadUrl(videoId: $videoId, contentType: $contentType) {
+        signedUrl
+      }
+    }
+    """
     variables = {
         "videoId": video_id,
         "contentType": content_type
@@ -685,12 +685,12 @@ def get_signed_upload_url(video_id, content_type, access_token):
 
 def get_signed_video_locker_upload_url(video_id, content_type, filename, access_token):
     query = """
-	mutation generateSignedFileLockerUploadUrl($videoId: String!, $contentType: String!, $filename: String!) {
-	  generateSignedFileLockerUploadUrl(videoId: $videoId, contentType: $contentType, filename: $filename) {
-	    signedUrl
-	  }
-	}
-	"""
+    mutation generateSignedFileLockerUploadUrl($videoId: String!, $contentType: String!, $filename: String!) {
+      generateSignedFileLockerUploadUrl(videoId: $videoId, contentType: $contentType, filename: $filename) {
+        signedUrl
+      }
+    }
+    """
     variables = {
         "videoId": video_id,
         "contentType": content_type,
@@ -701,12 +701,12 @@ def get_signed_video_locker_upload_url(video_id, content_type, filename, access_
 
 def get_signed_dataset_locker_url(dataset_id, content_type, filename, access_token):
     query = """
-	mutation generateSignedDatasetFileLockerUploadUrl($datasetId: ID!, $contentType: String!, $filename: String!) {
-	  generateSignedDatasetFileLockerUploadUrl(datasetId: $datasetId, contentType: $contentType, filename: $filename) {
-	    signedUrl
-	  }
-	}
-	"""
+    mutation generateSignedDatasetFileLockerUploadUrl($datasetId: ID!, $contentType: String!, $filename: String!) {
+      generateSignedDatasetFileLockerUploadUrl(datasetId: $datasetId, contentType: $contentType, filename: $filename) {
+        signedUrl
+      }
+    }
+    """
     variables = {
         "datasetId": dataset_id,
         "contentType": content_type,
@@ -717,12 +717,12 @@ def get_signed_dataset_locker_url(dataset_id, content_type, filename, access_tok
 
 def get_signed_collection_locker_url(collection_id, content_type, filename, access_token):
     query = """
-	mutation generateSignedCollectionFileLockerUploadUrl($collectionId: ID!, $contentType: String!, $filename: String!) {
-	  generateSignedCollectionFileLockerUploadUrl(collectionId: $collectionId, contentType: $contentType, filename: $filename) {
-	    signedUrl
-	  }
-	}
-	"""
+    mutation generateSignedCollectionFileLockerUploadUrl($collectionId: ID!, $contentType: String!, $filename: String!) {
+      generateSignedCollectionFileLockerUploadUrl(collectionId: $collectionId, contentType: $contentType, filename: $filename) {
+        signedUrl
+      }
+    }
+    """
     variables = {
         "collectionId": collection_id,
         "contentType": content_type,
@@ -741,10 +741,10 @@ def upload_video_to_s3(filename, s3_url, content_type, show_progress=True):
 
 def delete_video(id, access_token):
     query = """
-	mutation removeVideo($id: String!) {
-	  removeVideo(id: $id)
-	}
-	"""
+    mutation removeVideo($id: String!) {
+      removeVideo(id: $id)
+    }
+    """
     variables = {
         "id": id
     }
@@ -753,12 +753,12 @@ def delete_video(id, access_token):
 
 def trigger_video_processing(id, metadata_url, should_notify, access_token):
     query = """
-	mutation ProcessVideo($id: String!, $metadataUrl: String, $shouldNotify: Boolean) {
-  		processVideo(id: $id, metadataUrl: $metadataUrl, shouldNotify: $shouldNotify) {
-    		id
-  		}
-	}
-	"""
+    mutation ProcessVideo($id: String!, $metadataUrl: String, $shouldNotify: Boolean) {
+          processVideo(id: $id, metadataUrl: $metadataUrl, shouldNotify: $shouldNotify) {
+            id
+          }
+    }
+    """
     variables = {
         "id": id,
         "metadataUrl": metadata_url,
@@ -769,12 +769,12 @@ def trigger_video_processing(id, metadata_url, should_notify, access_token):
 
 def add_frames_to_dataset(dataset_id, frame_ids, access_token):
     query = """
-	mutation addFramesToDataset($input: AddFramesToDatasetInput!) {
-  		addFramesToDataset(input: $input) {
-    		id
-  		}
-	}
-	"""
+    mutation addFramesToDataset($input: AddFramesToDatasetInput!) {
+          addFramesToDataset(input: $input) {
+            id
+          }
+    }
+    """
     variables = {
         "input": {
             "datasetId": dataset_id,
