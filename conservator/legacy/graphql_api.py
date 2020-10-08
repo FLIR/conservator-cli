@@ -4,7 +4,7 @@ import time
 
 import requests
 
-from FLIR.conservator_cli.lib import terminal_progress_bar as tpb
+from pyconservator.legacy import terminal_progress_bar as tpb
 
 
 class ConservatorGraphQLServerError(Exception):

@@ -3,8 +3,8 @@ import pprint
 
 import click
 
-from FLIR.conservator_cli.lib import graphql_api as fca
-from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredentials
+from pyconservator.legacy import graphql_api as fca
+from pyconservator.legacy.conservator_credentials import ConservatorCredentials
 
 
 def custom_video_query(video_id, properties, conservator_token):
@@ -44,9 +44,9 @@ def search_videos_main(search_text, email, conservator_token, properties):
         properties = properties.split(",")
 
     credentials = ConservatorCredentials(email, conservator_token)
-    found_videos = fca.get_videos_from_search(search_text, credentials.token)
+    found_videos = fca.get_videos_from_search(search_text, credentials.key)
     for video in found_videos:
-        display_video(video["id"], properties, credentials.token)
+        display_video(video["id"], properties, credentials.key)
 
 
 if __name__ == "__main__":

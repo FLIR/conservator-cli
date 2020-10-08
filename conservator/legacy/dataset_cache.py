@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from FLIR.conservator_cli.lib.graphql_api import get_datasets_from_search
+from pyconservator.legacy.graphql_api import get_datasets_from_search
 
 python_command = "python" if os.name == "nt" else "python3"
 
@@ -31,7 +31,7 @@ class DatasetCache:
             subp = subprocess.call([python_command, "./cvc.py", "remote", "add",
                                     "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())],
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            os.chdir("..")
+            os.chdir("../../FLIR/conservator_cli")
 
         os.chdir(name)
         dataset_version_completed_process = subprocess.run(["git", "rev-parse", dataset_version],
@@ -70,7 +70,7 @@ class DatasetCache:
             subp = subprocess.call([python_command, "./cvc.py", "remote", "add",
                                     "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())],
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            os.chdir("..")
+            os.chdir("../../FLIR/conservator_cli")
 
         os.chdir(name)
         subp = subprocess.call(["git", "fetch"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -84,7 +84,7 @@ class DatasetCache:
         return dataset_version
 
     def _get_dataset_id(self, name):
-        results = get_datasets_from_search(name, self.credentials.token)
+        results = get_datasets_from_search(name, self.credentials.key)
         for result in results:
             if result["name"] == name:
                 return result["id"]

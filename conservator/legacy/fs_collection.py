@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess
 
-from FLIR.conservator_cli.lib import graphql_api as fca
+from pyconservator.legacy import graphql_api as fca
 
 
 class Collection:
@@ -16,7 +16,7 @@ class Collection:
 
     @classmethod
     def create(cls, collection_path, credentials, parent_folder=os.getcwd()):
-        data = fca.get_collection_by_path(collection_path, credentials.token)
+        data = fca.get_collection_by_path(collection_path, credentials.key)
         if not data:
             raise LookupError("Collection {} not found!".format(collection_path))
         result = cls(parent_folder, data["name"], data["id"], credentials)
@@ -45,7 +45,7 @@ class Collection:
     def _download_collections_recursive(self, parent_folder, collection_id, delete=False, include_datasets=False,
                                         include_video_metadata=False, include_associated_files=False,
                                         include_media=False):
-        data = fca.get_collection_by_id(collection_id, self.credentials.token)
+        data = fca.get_collection_by_id(collection_id, self.credentials.key)
         collection_path = os.path.join(parent_folder, data["name"])
         os.makedirs(collection_path, exist_ok=True)
         self._download_video_metadata(data["id"], collection_path, not include_video_metadata, delete)
@@ -78,7 +78,7 @@ class Collection:
         if not dry_run:
             for file in file_locker:
                 fca.download_file(os.path.join(parent_folder, "associated_files", file["name"]), file["url"],
-                                  self.credentials.token)
+                                  self.credentials.key)
         associated_filenames = [associated_file["name"] for associated_file in file_locker]
         if delete:
             for root, dirs, files in os.walk(os.path.join(parent_folder, "associated_files")):
@@ -92,7 +92,7 @@ class Collection:
         return associated_filenames
 
     def _download_datasets(self, collection_id, parent_folder, dry_run=True):
-        datasets = fca.get_datasets_from_collection(collection_id, self.credentials.token)
+        datasets = fca.get_datasets_from_collection(collection_id, self.credentials.key)
         if not dry_run:
             for dataset in datasets:
                 self._pull_dataset(dataset["id"], dataset["name"], parent_folder)
@@ -100,10 +100,10 @@ class Collection:
 
     def _download_video_metadata(self, collection_id, parent_folder, dry_run=True, delete=False):
         os.makedirs(os.path.join(parent_folder, "video_metadata"), exist_ok=True)
-        videos = fca.get_videos_from_collection(collection_id, self.credentials.token)
+        videos = fca.get_videos_from_collection(collection_id, self.credentials.key)
         video_names = []
         for video in videos:
-            metadata = fca.get_video_metadata(video["id"], self.credentials.token)["metadata"]
+            metadata = fca.get_video_metadata(video["id"], self.credentials.key)["metadata"]
             obj = json.loads(metadata)
             obj["videos"][0]["name"] = video["name"]
             filename = ".".join(video["filename"].split(".")[:-1] + ["json"])
@@ -126,17 +126,17 @@ class Collection:
         if (delete):
             print("Warning: delete NYI for downloading media")
 
-        videos = fca.get_video_filelist(collection_id, self.credentials.token)
+        videos = fca.get_video_filelist(collection_id, self.credentials.key)
         if not dry_run:
             for video in videos:
                 print("{} -> {}".format(video["url"], os.path.join(parent_folder, video["filename"])))
-                fca.download_file(os.path.join(parent_folder, video["filename"]), video["url"], self.credentials.token)
+                fca.download_file(os.path.join(parent_folder, video["filename"]), video["url"], self.credentials.key)
 
-        images = fca.get_image_filelist(collection_id, self.credentials.token)
+        images = fca.get_image_filelist(collection_id, self.credentials.key)
         if not dry_run:
             for image in images:
                 print("{} -> {}".format(image["url"], os.path.join(parent_folder, image["filename"])))
-                fca.download_file(os.path.join(parent_folder, image["filename"]), image["url"], self.credentials.token)
+                fca.download_file(os.path.join(parent_folder, image["filename"]), image["url"], self.credentials.key)
 
     def find_performance_folders(self, rename_map={}):
         folder_paths = {}

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import click
 
-from FLIR.conservator_cli.lib import graphql_api as fca
-from FLIR.conservator_cli.lib.conservator_credentials import ConservatorCredentials
-from FLIR.conservator_cli.lib.fs_collection import Collection
+from pyconservator.legacy import graphql_api as fca
+from pyconservator.legacy.conservator_credentials import ConservatorCredentials
+from pyconservator.legacy.fs_collection import Collection
 
 
 @click.command()

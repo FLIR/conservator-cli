@@ -2,7 +2,7 @@
 import argparse
 import os
 
-from FLIR.conservator_cli.lib import graphql_api as fca
+from pyconservator.legacy import graphql_api as fca
 
 
 def upload_associated_files(associated_file_folder, collection_id, api_key):
