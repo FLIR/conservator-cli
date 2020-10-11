@@ -55,5 +55,6 @@ setuptools.setup(
         "requests",
         "eventlet",
         "sphinx",
+        "sgqlc",
     ],
 )

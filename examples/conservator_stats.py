@@ -1,8 +1,5 @@
 from conservator import Conservator, Credentials
 
-credentials = Credentials.default()
-
-conservator = Conservator(credentials)
-print(conservator)
+conservator = Conservator(Credentials.default(), "https://flirconservator.com/graphql")
 print(conservator.stats)
 

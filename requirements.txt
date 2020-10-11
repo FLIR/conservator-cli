@@ -2,3 +2,4 @@
 requests
 eventlet
 sphinx
+sgqlc

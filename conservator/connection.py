@@ -6,32 +6,47 @@ __all__ = [
     "ConservatorConnection",
 ]
 
+from sgqlc.endpoint.http import HTTPEndpoint
+from sgqlc.operation import Operation
+
+from conservator.generated.schema import Query
+from conservator.util import to_clean_string
+
+
 class ConservatorGraphQLServerError(Exception):
-    def __init__(self, status_code, message, server_error):
-        self.status_code = status_code
+    def __init__(self, message, operation, errors):
         self.message = message
-        self.server_error = server_error
+        self.operation = operation
+        self.errors = errors
 
 
 class ConservatorConnection:
     def __init__(self, credentials, url):
         self.credentials = credentials
         self.url = url
+        headers = {
+            "authorization": credentials.key,
+        }
+        self.endpoint = HTTPEndpoint(url, base_headers=headers)
 
-    def query(self, query, variables):
-        graphql_endpoint = 'https://flirconservator.com/graphql'
-        headers = {'Authorization': "{}".format(self.credentials.key)}
+    def run(self, operation, variables=None):
+        # TODO remove after flirconservator PR #1988
+        if variables is None:
+            variables = {}
 
-        r = requests.post(graphql_endpoint, headers=headers, json={"query": query, "variables": variables})
-        response = r.json()
+        json_response = self.endpoint(operation, variables)
+        if 'errors' in json_response:
+            raise ConservatorGraphQLServerError("Encountered Conservator GraphQL Error on Operation", operation, json_response['errors'])
 
-        # response with 'data' but not 'errors' means valid results
-        if response.get("errors"):
-            raise ConservatorGraphQLServerError(r.status_code, "Server rejected query", r.content)
+        response = (operation + json_response)
 
-        if response.get("data"):
-            return response["data"]
+        return response
 
-        raise ConservatorGraphQLServerError(r.status_code, "Invalid server response", r.content)
-
+    def query(self, field, exclude=(), **kwargs):
+        op = Operation(Query)
+        name = field.name
+        query = getattr(op, name)
+        query(**kwargs)
+        query.__fields__(__exclude__=exclude)
+        return getattr(self.run(op), name)
 
