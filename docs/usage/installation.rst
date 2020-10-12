@@ -56,4 +56,7 @@ You can view the documentation by opening ``/docs/_build/html/index.html``.
 
 Refer to the Quickstart Guide in the generated documentation for your next steps.
 
-
+Next Steps
+^^^^^^^^^^
+Next, check out the :doc:`usage/cli_quickstart` to start using the CLI. Or, jump
+straight into using Conservator CLI via Python with the :doc:`usage/api_quickstart`.
