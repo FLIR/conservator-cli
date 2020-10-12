@@ -7,7 +7,7 @@ conservator = Conservator(Credentials.default(), "https://flirconservator.com/gr
 print(conservator.projects.count())
 
 # count projects with cars:
-print(len(conservator.projects.search("has\\car")))
+print(len(conservator.projects.search("has:car")))
 
 projects = conservator.projects.all().with_fields("name", "created_by_name")
 

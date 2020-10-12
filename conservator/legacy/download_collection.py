@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 import click
 
-from pyconservator.legacy import graphql_api as fca
-from pyconservator.legacy.conservator_credentials import ConservatorCredentials
-from pyconservator.legacy.fs_collection import Collection
+from conservator.legacy import graphql_api as fca
+from conservator.legacy.fs_collection import Collection
 
 
 @click.command()

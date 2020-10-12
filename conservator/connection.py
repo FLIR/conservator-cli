@@ -8,6 +8,7 @@ __all__ = [
 
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
+from sgqlc.types import Variable
 
 from conservator.generated.schema import Query
 
@@ -17,6 +18,10 @@ class ConservatorGraphQLServerError(Exception):
         self.message = message
         self.operation = operation
         self.errors = errors
+
+
+class ConservatorMalformedQueryException(Exception):
+    pass
 
 
 class ConservatorConnection:
@@ -35,7 +40,8 @@ class ConservatorConnection:
 
         json_response = self.endpoint(operation, variables)
         if 'errors' in json_response:
-            raise ConservatorGraphQLServerError("Encountered Conservator GraphQL Error on Operation", operation, json_response['errors'])
+            raise ConservatorGraphQLServerError("Encountered Conservator GraphQL Error on Operation",
+                                                operation, json_response['errors'])
 
         response = (operation + json_response)
 

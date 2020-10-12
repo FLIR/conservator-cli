@@ -1,7 +1,7 @@
 import abc
 import functools
 
-from conservator.connection import ConservatorGraphQLServerError
+from conservator.connection import ConservatorGraphQLServerError, ConservatorMalformedQueryException
 from conservator.generated import schema
 from conservator.util import to_python_field_name
 
@@ -104,7 +104,18 @@ def create_queryable_type_from_name(name):
     )
 
 
-Project = create_queryable_type_from_name("project")
+class Project(create_queryable_type_from_name("project")):
+    @classmethod
+    def query(cls, conservator, **kwargs):
+        search_text = kwargs.get("search_text", "")
+        # TODO: find out what other characters break projects queries
+        bad_chars = ":?\\"
+        for char in bad_chars:
+            if char in search_text:
+                raise ConservatorMalformedQueryException(f"You can't include '{char}' in a projects search string")
+        return super(Project, cls).query(conservator, **kwargs)
+
+
 Video = create_queryable_type_from_name("video")
 Dataset = create_queryable_type_from_name("dataset")
 Collection = create_queryable_type_from_name("collection")

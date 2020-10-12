@@ -57,5 +57,3 @@ class ProgressFileWrapper:
         printProgressBar(self._progress, self._len, "Upload Progress:", "Complete", 1, 50)
         return data
 
-    def close():
-        return self._file.close()

@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from pyconservator.legacy.graphql_api import get_datasets_from_search
+from conservator.legacy.graphql_api import get_datasets_from_search
 
 python_command = "python" if os.name == "nt" else "python3"
 

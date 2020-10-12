@@ -35,8 +35,6 @@ setuptools.setup(
     python_requires='>=3.5',
     # NOTE: add new requirements to requirements.txt as well
     install_requires=[
-        "requests",
-        "eventlet",
         "sphinx",
         "sgqlc",
         "click",

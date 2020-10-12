@@ -4,7 +4,7 @@ import time
 
 import requests
 
-from pyconservator.legacy import terminal_progress_bar as tpb
+from conservator.legacy import terminal_progress_bar as tpb
 
 
 class ConservatorGraphQLServerError(Exception):
@@ -802,13 +802,7 @@ class Repo:
         if (self.dataset_id == None):
             raise InvalidRepoName("Could not find repo '{}' in Conservator".format(self.name))
 
-    def get_latest_commit(self):
-        data = get_repository(self.dataset_id, self.conservator_token)
-        return data["dataset"]["repository"]["master"]
 
     def get_dataset_id(self):
         return self.dataset_id
 
-
-if __name__ == "__main__":
-    main(sys.argv)

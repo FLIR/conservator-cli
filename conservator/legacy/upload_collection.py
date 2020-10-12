@@ -2,7 +2,7 @@
 import argparse
 import os
 
-from pyconservator.legacy import graphql_api as fca
+from conservator.legacy import graphql_api as fca
 
 
 def upload_associated_files(associated_file_folder, collection_id, api_key):

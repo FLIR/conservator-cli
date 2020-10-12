@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess
 
-from pyconservator.legacy import graphql_api as fca
+from conservator.legacy import graphql_api as fca
 
 
 class Collection:

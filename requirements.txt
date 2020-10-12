@@ -1,6 +1,4 @@
 # NOTE: add new requirements to setup.py 'install_requires' as well
-requests
-eventlet
 sphinx
 sgqlc
 click
