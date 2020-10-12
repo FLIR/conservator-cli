@@ -60,7 +60,6 @@ class QueryableCollection:
         return len(self.search(search_text))
 
     def get(self, idx, fields=(), all_fields=False):
-        print('get')
         if all_fields:
             fields = self.queryable_type.get_all_fields()
         item = self.queryable_type.from_id(self.conservator, idx)

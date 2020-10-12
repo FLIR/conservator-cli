@@ -47,7 +47,6 @@ def from_queryable_collection(name):
     @click.option("-p", "--properties", default="", help="If specified, a comma-separated list of properties to "
                                                          "be displayed. Otherwise, gets all properties.")
     def get(id, properties):
-        print('hi')
         properties = list(filter(lambda p: p != "", properties.split(",")))
         if len(properties) == 0:
             item = get_collection().get(idx=id, all_fields=True)
@@ -55,10 +54,9 @@ def from_queryable_collection(name):
             item = get_collection().get(idx=id, fields=properties)
         click.echo(to_clean_string(item))
 
-    @g.command()
+    @g.command(name="list")
     @click.option('-p', '--properties', default="", help="comma-separated list of properties to be displayed")
     def list_(properties):
-        print('list')
         properties = filter(lambda p: p != "", properties.split(","))
 
         items = get_collection().all().with_fields(*properties)
