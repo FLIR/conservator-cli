@@ -1,13 +1,13 @@
 from conservator import Conservator, Config
 from conservator.util import to_clean_string
 
-conservator = Conservator(Config.default(), "https://flirconservator.com/graphql")
+conservator = Conservator.default()
 
 # count projects:
 print(conservator.projects.count())
 
 # count projects with cars:
-print(len(conservator.projects.search("has:car")))
+print(len(conservator.projects.search("adas")))
 
 projects = conservator.projects.all().with_fields("name", "created_by_name")
 

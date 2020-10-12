@@ -20,13 +20,14 @@ class Config:
 
     :param email: The user's email.
     :param key: The user's API key or token.
+    :param url: The URL of the conservator instance.
     """
     EMAIL = "CONSERVATOR_EMAIL"
     API_KEY = "CONSERVATOR_API_KEY"
     URL = "CONSERVATOR_URL"
     DEFAULT_URL = "https://flirconservator.com/"
 
-    def __init__(self, email, key, url):
+    def __init__(self, email, key, url=DEFAULT_URL):
         self.email = email
         self.key = key
         self.url = url

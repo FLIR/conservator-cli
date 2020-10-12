@@ -1,16 +1,22 @@
 """
-Conservator is the core class in this library. You can create an instance
-at flirconserator.com::
+:class:`Conservator` is the highest level class of this library. It should be the
+starting point for all queries and operations.
 
-    >>> Conservator(Credentials.default())
-    <Conservator at flirconservator.com>
+To get an instance using the default :class:`Config`::
 
-Or specify your own url::
+    >>> Conservator.default()
+    <Conservator at https://flirconservator.com>
 
-    >>> Conservator(Credentials.default(), url="https://localhost:3000")
-    <Conservator at localhost:3000>
+
+You can create also create an instance by passing any :class:`Config`
+object.
+
+    >>> config = Config(my_email, my_key, "https://localhost:3000")
+    >>> Conservator(config)
+    <Conservator at https://localhost:3000>
 
 """
+from conservator.config import Config
 from conservator.connection import ConservatorConnection
 from conservator.queryable_collection import QueryableCollection
 from conservator.stats import ConservatorStatsManager
@@ -19,8 +25,6 @@ from conservator.type import Project, Collection, Dataset, Video
 
 class Conservator(ConservatorConnection):
     """
-    The main interface for interacting with an instance of Conservator.
-
     :param config: The :class:`Config` object to use for this connection.
     """
     def __init__(self, config):
@@ -33,3 +37,10 @@ class Conservator(ConservatorConnection):
 
     def __repr__(self):
         return f"<Conservator at {self.config.url}>"
+
+    @staticmethod
+    def default():
+        """
+        Returns a :class:`Conservator` using :func:`Config.default`.
+        """
+        return Conservator(Config.default())

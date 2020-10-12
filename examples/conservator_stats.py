@@ -1,5 +1,5 @@
-from conservator import Conservator, Config
+from conservator import Conservator
 
-conservator = Conservator(Config.default(), "https://flirconservator.com/graphql")
+conservator = Conservator.default()
 print(conservator.stats)
 

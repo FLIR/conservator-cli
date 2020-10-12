@@ -45,9 +45,10 @@ class TypeProxy(abc.ABC):
             # can't handle this error
             raise
 
-    def get_all_fields(self):
+    @classmethod
+    def get_all_fields(cls):
         fields = []
-        for field in self.underlying_type:
+        for field in cls.underlying_type:
             fields.append(field.name)
         return fields
 
@@ -70,6 +71,11 @@ class TypeProxy(abc.ABC):
             self.handle_query_error(e)
             self.populate(fields)
 
+    @classmethod
+    def from_id(cls, conservator, id_):
+        base_item = cls.underlying_type({"id": id_})
+        return cls(conservator, base_item)
+        
 
 class QueryableType(TypeProxy):
     @classmethod
@@ -116,7 +122,10 @@ class Project(create_queryable_type_from_name("project")):
         return super(Project, cls).query(conservator, **kwargs)
 
 
+class Dataset(create_queryable_type_from_name("dataset")):
+    problematic_fields = ["shared_with", "archived_at", "created_at", "modified_at"]
+
+
 Video = create_queryable_type_from_name("video")
-Dataset = create_queryable_type_from_name("dataset")
 Collection = create_queryable_type_from_name("collection")
 

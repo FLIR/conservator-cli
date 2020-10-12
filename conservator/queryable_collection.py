@@ -1,3 +1,6 @@
+from conservator.type import QueryableType
+
+
 class PaginatedResults:
     def __init__(self, collection, page_size=100, fields=(), **kwargs):
         self.collection = collection
@@ -56,7 +59,11 @@ class QueryableCollection:
     def count(self, search_text=""):
         return len(self.search(search_text))
 
-
-
-
+    def get(self, idx, fields=(), all_fields=False):
+        print('get')
+        if all_fields:
+            fields = self.queryable_type.get_all_fields()
+        item = self.queryable_type.from_id(self.conservator, idx)
+        item.populate(fields)
+        return item
 

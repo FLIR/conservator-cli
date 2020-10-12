@@ -43,7 +43,7 @@ for exploring all of them.
 
 We can query for a specific project::
 
-    $ conservator projects get --id [some id]
+    $ conservator projects get [some id]
 
 Or get a list of all Projects::
 
@@ -70,7 +70,7 @@ And of course, with works with projects, videos and collections.
 .. warning::
 
     When searching projects, conservator doesn't support Advanced Search. You
-    can't include certain characters in your query (for instance, `:`, `\`, or `?`).
+    can't include certain characters in your query (like ``:``, ``\``, and ``?``).
 
 Downloading Data
 ----------------

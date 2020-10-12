@@ -1,7 +1,7 @@
 from conservator import Conservator, Config
 from conservator.util import to_clean_string
 
-conservator = Conservator(Config.default(), "https://flirconservator.com/graphql")
+conservator = Conservator.default()
 
 datasets = conservator.datasets.all()
 
