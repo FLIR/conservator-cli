@@ -12,7 +12,7 @@ def from_queryable_collection(name):
         assert isinstance(collection, QueryableCollection)
         return collection
 
-    @click.group(name=name)
+    @click.group(name=name, help=f"Search and view details about {name}")
     def g():
         pass
 
