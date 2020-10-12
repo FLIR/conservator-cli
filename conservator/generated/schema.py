@@ -1,5 +1,5 @@
 import sgqlc.types
-import sgqlc.types.datetime
+import conservator.generated.date
 
 
 schema = sgqlc.types.Schema()
@@ -45,7 +45,7 @@ class AttributeSource(sgqlc.types.Enum):
 
 Boolean = sgqlc.types.Boolean
 
-Date = sgqlc.types.datetime.Date
+Date = conservator.generated.date.Date
 
 class FavoriteAssetType(sgqlc.types.Enum):
     __schema__ = schema

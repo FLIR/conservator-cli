@@ -123,7 +123,7 @@ class Project(create_queryable_type_from_name("project")):
 
 
 class Dataset(create_queryable_type_from_name("dataset")):
-    problematic_fields = ["shared_with", "archived_at", "created_at", "modified_at"]
+    problematic_fields = ["shared_with"]
 
 
 Video = create_queryable_type_from_name("video")

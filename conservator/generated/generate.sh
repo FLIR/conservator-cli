@@ -14,3 +14,6 @@ python3 -m sgqlc.introspection \
   schema.json
 
 sgqlc-codegen schema.json schema.py
+
+sed -i 's/sgqlc.types.datetime.Date/conservator.generated.date.Date/g' schema.py
+sed -i 's/import sgqlc.types.datetime/import conservator.generated.date/g' schema.py
