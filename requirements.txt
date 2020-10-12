@@ -3,3 +3,4 @@ requests
 eventlet
 sphinx
 sgqlc
+click

@@ -1,20 +1,24 @@
-from sgqlc.types import BaseItem
-
-from conservator.connection import ConservatorGraphQLServerError
-from conservator.generated.schema import Query
-from conservator.util import to_python_field_name
-
-
 class PaginatedResults:
-    def __init__(self, collection, page=0, limit=10, **kwargs):
+    def __init__(self, collection, page_size=100, fields=(), **kwargs):
         self.collection = collection
         self.contents = []
-        self.page = page
-        self.limit = limit
+        self.page = 0
+        self.limit = page_size
         self.kwargs = kwargs
+        self.fields = list(fields)
+        self.done = False
+
+    def with_fields(self, *fields):
+        for field in fields:
+            if field not in self.fields:
+                self.fields.append(field)
+        return self
 
     def next_page(self):
-        results = self.collection.get_page(page=self.page, limit=self.limit, **self.kwargs)
+        results = self.collection.get_page(fields=self.fields,
+                                           page=self.page,
+                                           limit=self.limit,
+                                           **self.kwargs)
         self.page += 1
         return results
 
@@ -22,46 +26,35 @@ class PaginatedResults:
         for item in self.contents:
             yield item
 
-        while True:
+        while not self.done:
             next_page = self.next_page()
-            if len(next_page) == 0:
-                break
             for item in next_page:
                 self.contents.append(item)
                 yield item
+            if len(next_page) < self.limit:
+                self.done = True
+                return
+
+    def __len__(self):
+        return len(list(self.__iter__()))
 
 
 class QueryableCollection:
-    def __init__(self, conservator, query_type):
+    def __init__(self, conservator, queryable_type):
         self.conservator = conservator
-        self.query_type = query_type
+        self.queryable_type = queryable_type
 
     def all(self):
         return self.search("")
 
     def get_page(self, page=0, limit=100, **kwargs):
-        try:
-            return self.conservator.query(self.query_type.collection_query,
-                                          exclude=self.query_type.excluded,
-                                          page=page, limit=limit, **kwargs)
-        except ConservatorGraphQLServerError as e:
-            for error in e.errors:
-                if "Cannot return null for non-nullable field" in error["message"]:
-                    problematic_field = error["path"][2]
-                    name = to_python_field_name(self.query_type.qtype, problematic_field)
-                    if name not in self.query_type.excluded:
-                        print("Server encountered an error due to a null value for a non-nullable field.")
-                        print("Attempting to resolve by excluding field in future queries.")
-                        print("Excluded field:", name)
-                        self.query_type.excluded.append(name)
-                    continue
+        return self.queryable_type.query(self.conservator, page=page, limit=limit, **kwargs)
 
-                # can't handle this error
-                raise
-            return self.get_page(page, limit, **kwargs)
+    def search(self, search_text):
+        return PaginatedResults(self, search_text=search_text)
 
-    def search(self, search):
-        return PaginatedResults(self, search_text=search)
+    def count(self, search_text=""):
+        return len(self.search(search_text))
 
 
 

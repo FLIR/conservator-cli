@@ -21,8 +21,11 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/FLIR/conservator-cli",
-    packages=["conservator"],
-    scripts=["conservator"],
+    packages=setuptools.find_namespace_packages(),
+    entry_points='''
+        [console_scripts]
+        conservator=conservator.cli:main
+    ''',
     zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -36,5 +39,6 @@ setuptools.setup(
         "eventlet",
         "sphinx",
         "sgqlc",
+        "click",
     ],
 )

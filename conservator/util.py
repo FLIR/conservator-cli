@@ -8,6 +8,13 @@ def to_clean_string(o, first=True):
         for key, value in o.items():
             s += f"\n{key}: {to_clean_string(value, False)}"
         s += "\n}"
+    elif hasattr(o.__class__, 'underlying_type'):
+        for field in o.underlying_type.__field_names__:
+            if not hasattr(o, field):
+                continue
+            value = getattr(o, field)
+            s += f"\n{field}: {to_clean_string(value, False)}"
+
     elif hasattr(o, '__field_names__'):
         for field in o.__field_names__:
             if not hasattr(o, field):

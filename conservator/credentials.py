@@ -1,6 +1,3 @@
-import os
-import json
-
 """
 Credentials allow you to connect to Conservator. There are a variety of
 ways to create an instance of Credentials:
@@ -9,6 +6,9 @@ ways to create an instance of Credentials:
  - Config File
  - Manually using constructor
 """
+
+import os
+import json
 
 
 class Credentials:

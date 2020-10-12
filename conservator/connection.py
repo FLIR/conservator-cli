@@ -10,7 +10,6 @@ from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 
 from conservator.generated.schema import Query
-from conservator.util import to_clean_string
 
 
 class ConservatorGraphQLServerError(Exception):
@@ -42,11 +41,12 @@ class ConservatorConnection:
 
         return response
 
-    def query(self, field, exclude=(), **kwargs):
+    def query(self, field, exclude=(), fields=(), **kwargs):
         op = Operation(Query)
         name = field.name
         query = getattr(op, name)
         query(**kwargs)
-        query.__fields__(__exclude__=exclude)
+        if len(fields) > 0 or len(exclude) > 0:
+            query.__fields__(*fields, __exclude__=exclude)
         return getattr(self.run(op), name)
 

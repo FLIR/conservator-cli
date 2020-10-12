@@ -12,10 +12,9 @@ Or specify your own url::
 
 """
 from conservator.connection import ConservatorConnection
-from conservator.generated.schema import Query, Project, Dataset, Video, Collection, Image
 from conservator.queryable_collection import QueryableCollection
-from conservator.queryable_type import QueryableType, ProjectQueryableType
 from conservator.stats import ConservatorStatsManager
+from conservator.type import Project, Collection, Dataset, Video
 
 
 class Conservator(ConservatorConnection):
@@ -26,23 +25,10 @@ class Conservator(ConservatorConnection):
         """
         super().__init__(credentials, url)
         self.stats = ConservatorStatsManager(self)
-        self.projects = QueryableCollection(self, ProjectQueryableType)
-        self.datasets = QueryableCollection(self, QueryableType(Dataset,
-                                                                Query.datasets,
-                                                                Query.datasets_query_count,
-                                                                ["frames", "shared_with", "collections", "repository", "created_at", "modified_at", "default_label_set"]))
-        self.videos = QueryableCollection(self, QueryableType(Video,
-                                                              Query.videos,
-                                                              Query.videos_query_count,
-                                                              []))
-        self.collections = QueryableCollection(self, QueryableType(Collection,
-                                                                   Query.collections,
-                                                                   Query.collections_query_count,
-                                                                   []))
-        self.images = QueryableCollection(self, QueryableType(Image,
-                                                              Query.images,
-                                                              Query.images_query_count,
-                                                              []))
+        self.projects = QueryableCollection(self, Project)
+        self.collections = QueryableCollection(self, Collection)
+        self.datasets = QueryableCollection(self, Dataset)
+        self.videos = QueryableCollection(self, Video)
 
     def __repr__(self):
         return f"<Conservator at {self.url}>"
