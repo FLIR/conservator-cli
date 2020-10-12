@@ -15,5 +15,8 @@ python3 -m sgqlc.introspection \
 
 sgqlc-codegen schema.json schema.py
 
+# HACK!!!
+# The built in sgqlc Date type doesn't work with Conservator.
+# We need to use our own instead.
 sed -i 's/sgqlc.types.datetime.Date/conservator.generated.date.Date/g' schema.py
 sed -i 's/import sgqlc.types.datetime/import conservator.generated.date/g' schema.py
