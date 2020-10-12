@@ -1,6 +1,6 @@
 import click
 
-from conservator import Conservator, Credentials, QueryableCollection
+from conservator import Conservator, Config, QueryableCollection
 from conservator.generated import schema
 from conservator.util import to_clean_string
 
@@ -19,7 +19,7 @@ def from_queryable_collection(name):
         # property names are separated by commas in --properties option
         properties = filter(lambda p: p != "", properties.split(","))
 
-        conservator = Conservator(Credentials.default())
+        conservator = Conservator(Config.default())
         collection = getattr(conservator, name)
         assert isinstance(collection, QueryableCollection)
 
@@ -31,7 +31,7 @@ def from_queryable_collection(name):
     @g.command()
     @click.argument('search_text', default="")
     def count(search_text):
-        conservator = Conservator(Credentials.default())
+        conservator = Conservator(Config.default())
         collection = getattr(conservator, name)
         assert isinstance(collection, QueryableCollection)
 

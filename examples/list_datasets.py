@@ -1,7 +1,7 @@
-from conservator import Conservator, Credentials
+from conservator import Conservator, Config
 from conservator.util import to_clean_string
 
-conservator = Conservator(Credentials.default(), "https://flirconservator.com/graphql")
+conservator = Conservator(Config.default(), "https://flirconservator.com/graphql")
 
 datasets = conservator.datasets.all()
 

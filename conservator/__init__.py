@@ -1,6 +1,6 @@
 import conservator.util
 from conservator.connection import *
-from conservator.credentials import *
+from conservator.config import *
 from conservator.conservator import *
 
 

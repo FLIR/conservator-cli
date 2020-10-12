@@ -1,17 +1,19 @@
 """
-Credentials allow you to connect to Conservator. There are a variety of
-ways to create an instance of Credentials:
+Config allows you to connect to Conservator. There are a variety of
+ways to create an instance of config:
  - Standard input
  - Environment variables
  - Config File
  - Manually using constructor
+
+In general, use :func:`Config.default`, as this will try all of the above.
 """
 
 import os
 import json
 
 
-class Credentials:
+class Config:
     """
     Contains a user's Email and API Key (token), to be used
     when authenticating operations on an instance of :class:`Conservator`.
@@ -21,72 +23,80 @@ class Credentials:
     """
     EMAIL = "CONSERVATOR_EMAIL"
     API_KEY = "CONSERVATOR_API_KEY"
+    URL = "CONSERVATOR_URL"
+    DEFAULT_URL = "https://flirconservator.com/"
 
-    def __init__(self, email, key):
+    def __init__(self, email, key, url):
         self.email = email
         self.key = key
+        self.url = url
 
     def save_to_file(self, path):
         data = {
-            Credentials.EMAIL: self.email,
-            Credentials.API_KEY: self.key,
+            Config.EMAIL: self.email,
+            Config.API_KEY: self.key,
+            Config.URL: self.url,
         }
         with open(path, "w") as f:
             json.dump(data, f)
 
     def save_to_default_config(self):
-        self.save_to_file(Credentials.default_config_path())
+        self.save_to_file(Config.default_config_path())
 
     @staticmethod
     def from_dict(data):
-        email = data.get(Credentials.EMAIL, None)
-        key = data.get(Credentials.API_KEY, None)
-        if email is None or key is None:
+        email = data.get(Config.EMAIL, None)
+        key = data.get(Config.API_KEY, None)
+        url = data.get(Config.URL, None)
+        if email is None or key is None or url is None:
             return None
-        return Credentials(email, key)
+        return Config(email, key, url)
 
     @staticmethod
     def from_file(path):
         """
-        Creates a :class:`Credentials` object from a JSON config file.
+        Creates a :class:`Config` object from a JSON config file.
 
         :param path: The path to the JSON config file.
         """
         try:
             with open(path, 'r') as config:
                 data = json.load(config)
-            return Credentials.from_dict(data)
+            return Config.from_dict(data)
         except FileNotFoundError:
             return None
 
     @staticmethod
     def from_config():
         """
-        Creates a :class:`Credentials` object from the JSON config file
+        Creates a :class:`Config` object from the JSON config file
         at the `default_config_path`.
         """
-        return Credentials.from_file(Credentials.default_config_path())
+        return Config.from_file(Config.default_config_path())
 
     @staticmethod
     def from_environ():
         """
-        Creates a :class:`Credentials` object from environment variables.
+        Creates a :class:`Config` object from environment variables.
         """
-        return Credentials.from_dict(os.environ)
+        return Config.from_dict(os.environ)
 
     @staticmethod
     def from_input():
         """
-        Creates a :class:`Credentials` object from standard input.
+        Creates a :class:`Config` object from standard input.
         """
         email = input("Conservator Email: ")
         key = input("Conservator API key: ")
-        return Credentials(email, key)
+        url = input(f"Conservator URL (leave empty for {Config.DEFAULT_URL}): ")
+        if len(url.strip()) == 0:
+            url = Config.DEFAULT_URL
+        return Config(email, key, url)
 
     @staticmethod
     def default(save=True):
         """
-        Gets the default credentials.
+        Gets the default config.
 
         This works by iterating through the various credential sources, and returning
         the first one that works. Sources are queried in this order:
@@ -94,13 +104,13 @@ class Credentials:
          - Environment variables
          - User input
 
-        :param save: If `True`, save the credentials for future use. This means a user
+        :param save: If `True`, save the config for future use. This means a user
             won't need to type them again.
         """
-        for source in [Credentials.from_config, Credentials.from_environ, Credentials.from_input]:
+        for source in [Config.from_config, Config.from_environ, Config.from_input]:
             creds = source()
             if creds is not None:
-                if save and source != Credentials.from_config:
+                if save and source != Config.from_config:
                     creds.save_to_default_config()
                 return creds
         return None
@@ -108,23 +118,24 @@ class Credentials:
     @staticmethod
     def default_config_path():
         """
-        By default, your credentials are saved in ``~/.conservator_config.json``.
+        By default, your config are saved in ``~/.conservator_config.json``.
         """
         return os.path.join(os.path.expanduser("~"), ".conservator_config.json")
 
     @staticmethod
     def delete_saved_default_config():
         """
-        Deletes default saved credentials, if they exist.
+        Deletes default saved config, if they exist.
         """
-        path = Credentials.default_config_path()
+        path = Config.default_config_path()
         if os.path.exists(path):
             os.remove(path)
 
     def __repr__(self):
-        return f"<Credentials for {self.email}>"
+        return f"<config for {self.email} at {self.url}>"
 
     def __eq__(self, other):
-        return isinstance(other, Credentials) \
+        return isinstance(other, Config) \
                and other.email == self.email \
-               and other.key == self.key
+               and other.key == self.key \
+               and other.url == self.url

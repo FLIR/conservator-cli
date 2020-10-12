@@ -25,12 +25,17 @@ class ConservatorMalformedQueryException(Exception):
 
 
 class ConservatorConnection:
-    def __init__(self, credentials, url):
-        self.credentials = credentials
-        self.url = url
+    def __init__(self, config):
+        self.config = config
         headers = {
-            "authorization": credentials.key,
+            "authorization": config.key,
         }
+        url = config.url
+        if url.endswith("/"):
+            url = config.url[:-1]
+        if not url.endswith("graphql"):
+            url = url + "/graphql"
+        self.graphql_url = url
         self.endpoint = HTTPEndpoint(url, base_headers=headers)
 
     def run(self, operation, variables=None):

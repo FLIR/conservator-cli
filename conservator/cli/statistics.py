@@ -1,9 +1,9 @@
 import click
-from conservator import Credentials, Conservator
+from conservator import Config, Conservator
 
 
 @click.command()
 def stats():
-    conservator = Conservator(Credentials.default())
+    conservator = Conservator(Config.default())
     click.echo(conservator.stats)
 

@@ -18,12 +18,13 @@ from conservator.type import Project, Collection, Dataset, Video
 
 
 class Conservator(ConservatorConnection):
-    def __init__(self, credentials, url="https://flirconservator.com/graphql"):
-        """
-        :param credentials: The :class:`Credentials` object to use for this connection.
-        :param url: The URL of your conservator instance.
-        """
-        super().__init__(credentials, url)
+    """
+    The main interface for interacting with an instance of Conservator.
+
+    :param config: The :class:`Config` object to use for this connection.
+    """
+    def __init__(self, config):
+        super().__init__(config)
         self.stats = ConservatorStatsManager(self)
         self.projects = QueryableCollection(self, Project)
         self.collections = QueryableCollection(self, Collection)
@@ -31,4 +32,4 @@ class Conservator(ConservatorConnection):
         self.videos = QueryableCollection(self, Video)
 
     def __repr__(self):
-        return f"<Conservator at {self.url}>"
+        return f"<Conservator at {self.config.url}>"
