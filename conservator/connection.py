@@ -59,5 +59,7 @@ class ConservatorConnection:
         query(**kwargs)
         if len(fields) > 0 or len(exclude) > 0:
             query.__fields__(*fields, __exclude__=exclude)
+        else:
+            query.__fields__()
         return getattr(self.run(op), name)
 
