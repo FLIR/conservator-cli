@@ -1,9 +1,14 @@
 import abc
 import functools
+import os
 
 from conservator.connection import ConservatorGraphQLServerError, ConservatorMalformedQueryException
 from conservator.generated import schema
 from conservator.util import to_python_field_name
+
+
+class TypeProxyMetaclass:
+    pass
 
 
 class TypeProxy(abc.ABC):
@@ -29,21 +34,26 @@ class TypeProxy(abc.ABC):
 
         raise AttributeError
 
-    def handle_query_error(self, e):
+    @classmethod
+    def handle_query_error(cls, e):
+        new_problematic_fields = cls.problematic_fields[:]
         for error in e.errors:
             if "Cannot return null for non-nullable field" in error["message"]:
                 fields = filter(lambda i: isinstance(i, str), error["path"])
                 problematic_field = list(fields)[1]
-                name = to_python_field_name(self.underlying_type, problematic_field)
-                if name not in self.problematic_fields:
+                name = to_python_field_name(cls.underlying_type, problematic_field)
+                if name not in new_problematic_fields:
                     print("Server encountered an error due to a null value for a non-nullable field.")
                     print("Attempting to resolve by excluding field in future queries.")
                     print("Excluded field:", name)
-                    self.problematic_fields.append(name)
+                    new_problematic_fields.append(name)
+                if name in cls.problematic_fields:
+                    raise Exception(f"Field '{name}' was included despite being problematic.")
                 continue
 
             # can't handle this error
             raise
+        cls.problematic_fields = new_problematic_fields
 
     @classmethod
     def get_all_fields(cls):
@@ -85,32 +95,32 @@ class QueryableType(TypeProxy):
 
     @classmethod
     def do_query(cls, conservator, fields=(), **kwargs):
-        requested_fields = cls.always_fields + tuple(fields)
-        results = conservator.query(cls.search_query,
-                                    fields=requested_fields,
-                                    **kwargs)
-        return results
+        try:
+            unfiltered_fields = cls.always_fields + tuple(fields)
+            requested_fields = tuple(filter(lambda f: f not in cls.problematic_fields, unfiltered_fields))
+            results = conservator.query(cls.search_query,
+                                        fields=requested_fields,
+                                        **kwargs)
+            return results
+        except ConservatorGraphQLServerError as e:
+            # Some errors are recoverable.
+            # If it isn't, the handler will re-raise the exception.
+            cls.handle_query_error(e)
+            return cls.do_query(conservator, fields, **kwargs)
 
 
-def create_queryable_type_from_name(name):
-    assert name == name.lower()
-    capitalized = name.capitalize()
-    plural = name + "s"
-    count = plural + "_query_count"
-    return type(
-        capitalized,
-        (QueryableType,),
-        {
-            "underlying_type": getattr(schema, capitalized),
-            "search_query": getattr(schema.Query, plural),
-            "by_id_query": getattr(schema.Query, name),
-            "count_query": getattr(schema.Query, count),
-            "problematic_fields": [],
-        }
-    )
+class DownloadableType(abc.ABC):
+    @abc.abstractmethod
+    def download(self, path, **kwargs):
+        raise NotImplementedError
 
 
-class Project(create_queryable_type_from_name("project")):
+class Project(QueryableType):
+    underlying_type = schema.Project
+    search_query = schema.Query.projects
+    by_id_query = schema.Query.project
+    problematic_fields = []
+
     @classmethod
     def query(cls, conservator, **kwargs):
         search_text = kwargs.get("search_text", "")
@@ -122,10 +132,82 @@ class Project(create_queryable_type_from_name("project")):
         return super(Project, cls).query(conservator, **kwargs)
 
 
-class Dataset(create_queryable_type_from_name("dataset")):
+class Dataset(QueryableType):
+    underlying_type = schema.Dataset
+    search_query = schema.Query.datasets
+    by_id_query = schema.Query.dataset
     problematic_fields = ["shared_with"]
 
 
-Video = create_queryable_type_from_name("video")
-Collection = create_queryable_type_from_name("collection")
+class Video(QueryableType):
+    underlying_type = schema.Video
+    search_query = schema.Query.videos
+    by_id_query = schema.Query.video
+    problematic_fields = []
+
+
+class Collection(QueryableType, DownloadableType):
+    underlying_type = schema.Collection
+    search_query = schema.Query.collections
+    by_id_query = schema.Query.collection
+    problematic_fields = []
+
+    def download(self, path,
+                 include_media=False,
+                 include_associated_files=False,
+                 include_videos=False,
+                 include_images=False,
+                 include_metadata=False,
+                 recursive=False):
+        """
+        Download a Collection to the specified ``path``.
+
+        :param path: The directory to download this collection into. Files will be saved
+            at ``os.path.join(path, Collection.name)``.
+        :param recursive: If ``True``, recursively download this collection's children
+            as subdirectories.
+        :param include_media: If ``True``, equivalent to passing ``include_videos=True`` and ``include_images=True``.
+        :param include_videos: If ``True``, download videos.
+        :param include_images: If ``True``, download images.
+        :param include_associated_files: If ``True``, download file locker files, such as the word cloud.
+        :param include_metadata: "If ``True``, download a JSON file containing metadata about this Collection.
+        """
+        self.populate(("name", "children", "video_ids", "file_locker_files"))
+
+        path = os.path.join(path, self.name)
+        if not os.path.exists(path):
+            os.mkdir(path)
+        print(f"Downloading into {path}")
+
+        if include_media or include_videos:
+            self.download_videos(path)
+
+        if include_media or include_images:
+            self.download_images(path)
+
+        if include_associated_files:
+            self.download_associated_files(path)
+
+        if include_metadata:
+            self.download_metadata(path)
+
+        if recursive:
+            for child in self.children:
+                child.download(path, include_media, include_associated_files, recursive=recursive)
+
+    def download_metadata(self, path):
+        pass
+
+    def download_videos(self, path):
+        for video_id in self.video_ids:
+            video = Video.from_id(self._conservator, video_id)
+            video.download(path)
+
+    def download_images(self, path):
+        for image in self.image_ids:
+            pass
+
+    def download_associated_files(self, path):
+        for file in self.file_locker_files:
+            pass
 

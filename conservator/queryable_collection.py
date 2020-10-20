@@ -12,9 +12,15 @@ class PaginatedResults:
         self.done = False
 
     def with_fields(self, *fields):
+        if len(fields) == 0:
+            return self.with_all_fields()
         for field in fields:
             if field not in self.fields:
                 self.fields.append(field)
+        return self
+
+    def with_all_fields(self):
+        self.with_fields(*self.collection.queryable_type.underlying_type.__field_names__)
         return self
 
     def next_page(self):

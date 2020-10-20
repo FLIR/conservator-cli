@@ -4,13 +4,13 @@ import time
 __all__ = [
     "ConservatorGraphQLServerError",
     "ConservatorConnection",
+    "ConservatorMalformedQueryException",
 ]
 
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
-from sgqlc.types import Variable
 
-from conservator.generated.schema import Query
+from conservator.generated.schema import schema
 
 
 class ConservatorGraphQLServerError(Exception):
@@ -52,8 +52,8 @@ class ConservatorConnection:
 
         return response
 
-    def query(self, field, exclude=(), fields=(), **kwargs):
-        op = Operation(Query)
+    def query(self, field, base=schema.query_type, exclude=(), fields=(), **kwargs):
+        op = Operation(base)
         name = field.name
         query = getattr(op, name)
         query(**kwargs)
