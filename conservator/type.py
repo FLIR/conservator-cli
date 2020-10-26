@@ -1,5 +1,4 @@
 import abc
-import functools
 import os
 
 from conservator.connection import ConservatorGraphQLServerError, ConservatorMalformedQueryException
@@ -7,18 +6,12 @@ from conservator.generated import schema
 from conservator.util import to_python_field_name
 
 
-class TypeProxyMetaclass:
-    pass
-
-
-class TypeProxy(abc.ABC):
+class TypeProxy(object):
     underlying_type = None
     by_id_query = None
     search_query = None
     problematic_fields = None
-    always_fields = (
-        'id',
-    )
+    always_fields = ('id',)
 
     def __init__(self, conservator, instance):
         self._conservator = conservator
@@ -65,11 +58,25 @@ class TypeProxy(abc.ABC):
     def populate_all(self):
         self.populate(self.get_all_fields())
 
-    def populate(self, fields=()):
+    def populate(self, *args):
+        fields = []
+        for arg in args:
+            if isinstance(arg, str):
+                fields.append(arg)
+            else:
+                fields += list(arg)
+
+        request_fields = []
+        for field in fields:
+            if field not in self.problematic_fields and field not in self._initialized_fields:
+                request_fields.append(field)
+
+        if len(request_fields) == 0:
+            return
+
         if self.by_id_query is None:
             raise NotImplementedError
         try:
-            request_fields = tuple(filter(lambda f: f not in self.problematic_fields, fields))
             result = self._conservator.query(self.by_id_query, id=self.id, fields=request_fields)
             for field in request_fields:
                 v = getattr(result, field)
@@ -139,11 +146,22 @@ class Dataset(QueryableType):
     problematic_fields = ["shared_with"]
 
 
-class Video(QueryableType):
+class Video(QueryableType, DownloadableType):
     underlying_type = schema.Video
     search_query = schema.Query.videos
     by_id_query = schema.Query.video
-    problematic_fields = []
+    problematic_fields = ["shared_with"]
+
+    def download(self, path, include_frames=True, include_metadata=False):
+        fields = ["name", "url"]
+        if include_metadata:
+            fields.append("metadata")
+        if include_frames:
+            fields.append("frames")
+
+        self.populate(fields)
+        path = os.path.join(path, self.name)
+        print(path)
 
 
 class Collection(QueryableType, DownloadableType):
@@ -157,7 +175,7 @@ class Collection(QueryableType, DownloadableType):
                  include_associated_files=False,
                  include_videos=False,
                  include_images=False,
-                 include_metadata=False,
+                 include_video_metadata=False,
                  recursive=False):
         """
         Download a Collection to the specified ``path``.
@@ -170,7 +188,7 @@ class Collection(QueryableType, DownloadableType):
         :param include_videos: If ``True``, download videos.
         :param include_images: If ``True``, download images.
         :param include_associated_files: If ``True``, download file locker files, such as the word cloud.
-        :param include_metadata: "If ``True``, download a JSON file containing metadata about this Collection.
+        :param include_video_metadata: "If ``True``, download a JSON file containing metadata for each video
         """
         self.populate(("name", "children", "video_ids", "file_locker_files"))
 
@@ -180,7 +198,7 @@ class Collection(QueryableType, DownloadableType):
         print(f"Downloading into {path}")
 
         if include_media or include_videos:
-            self.download_videos(path)
+            self.download_videos(path, include_metadata=include_video_metadata)
 
         if include_media or include_images:
             self.download_images(path)
@@ -188,20 +206,15 @@ class Collection(QueryableType, DownloadableType):
         if include_associated_files:
             self.download_associated_files(path)
 
-        if include_metadata:
-            self.download_metadata(path)
-
         if recursive:
             for child in self.children:
                 child.download(path, include_media, include_associated_files, recursive=recursive)
 
-    def download_metadata(self, path):
-        pass
-
-    def download_videos(self, path):
+    def download_videos(self, path, include_metadata):
         for video_id in self.video_ids:
+            self.populate("videos")
             video = Video.from_id(self._conservator, video_id)
-            video.download(path)
+            video.download(path, include_metadata=include_metadata)
 
     def download_images(self, path):
         for image in self.image_ids:

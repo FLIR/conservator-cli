@@ -72,3 +72,6 @@ class QueryableCollection:
         item.populate(fields)
         return item
 
+    def first(self, **kwargs):
+        return self.queryable_type.query(self.conservator, page=0, limit=1, **kwargs)[0]
+

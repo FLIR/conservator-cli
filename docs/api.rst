@@ -5,7 +5,7 @@ This part of the documentation covers all of the interfaces in
 Conservator CLI.
 
 Config
------------
+------
 
 .. automodule:: conservator.config
 
