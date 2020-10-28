@@ -58,6 +58,8 @@ class ConservatorConnection:
         query = getattr(op, query_name)
         query(**kwargs)
 
+        include_fields = set(filter(lambda f: f not in exclude_fields, include_fields))
+
         def recursive_add_fields(obj, path=""):
             field_names = [name for name in dir(obj) if not name.startswith("_")]
             if len(field_names) == 0:

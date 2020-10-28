@@ -3,7 +3,7 @@ from conservator.util import to_clean_string
 
 conservator = Conservator.default()
 
-datasets = conservator.datasets.all().with_fields("repository.master")
+datasets = conservator.datasets.all().with_fields("name")
 
 for index, dataset in enumerate(datasets):
     print("Dataset", index)
