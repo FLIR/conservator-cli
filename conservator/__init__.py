@@ -1,7 +1,4 @@
-import conservator.util
-from conservator.connection import *
-from conservator.config import *
-from conservator.conservator import *
+from conservator.conservator import Conservator
 
 
 if __name__ == "__main__":

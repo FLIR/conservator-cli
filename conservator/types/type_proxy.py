@@ -1,5 +1,5 @@
 from conservator.connection import ConservatorGraphQLServerError
-from conservator.util import to_python_field_name
+from conservator.util import graphql_to_python
 
 
 class TypeProxy(object):
@@ -27,16 +27,15 @@ class TypeProxy(object):
         new_problematic_fields = cls.problematic_fields[:]
         for error in e.errors:
             if "Cannot return null for non-nullable field" in error["message"]:
-                fields = filter(lambda i: isinstance(i, str), error["path"])
-                problematic_field = list(fields)[1]
-                name = to_python_field_name(cls.underlying_type, problematic_field)
-                if name not in new_problematic_fields:
+                fields = tuple(filter(lambda i: isinstance(i, str), error["path"]))
+                problematic_field = ".".join(map(graphql_to_python, fields[1:]))
+                if problematic_field not in new_problematic_fields:
                     print("Server encountered an error due to a null value for a non-nullable field.")
                     print("Attempting to resolve by excluding field in future queries.")
-                    print("Excluded field:", name)
-                    new_problematic_fields.append(name)
-                if name in cls.problematic_fields:
-                    raise Exception(f"Field '{name}' was included despite being problematic.")
+                    print("Excluded field:", problematic_field)
+                    new_problematic_fields.append(problematic_field)
+                if problematic_field in cls.problematic_fields:
+                    raise Exception(f"Field '{problematic_field}' was included despite being problematic.")
                 continue
 
             # can't handle this error
@@ -76,7 +75,7 @@ class TypeProxy(object):
         if self.by_id_query is None:
             raise NotImplementedError
         try:
-            result = self._conservator.query(self.by_id_query, id=self.id, fields=request_fields)
+            result = self._conservator.query(self.by_id_query, id=self.id, include_fields=request_fields)
             for field in request_fields:
                 v = getattr(result, field)
                 setattr(self._instance, field, v)

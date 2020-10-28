@@ -1,4 +1,4 @@
-from conservator import Config
+from conservator.config import Config
 
 # The first time you run this, you will need to input your credentials.
 c = Config.default()

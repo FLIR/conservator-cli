@@ -1,4 +1,4 @@
-from conservator import Conservator, Config
+from conservator import Conservator
 from conservator.util import to_clean_string
 
 conservator = Conservator.default()

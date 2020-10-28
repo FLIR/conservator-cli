@@ -4,7 +4,7 @@ conservator = Conservator.default()
 
 video = conservator.videos.first()
 
-video.download(".", include_frames=True, include_metadata=True)
+video.download_assets(".", include_frames=True, include_metadata=True)
 
 
 

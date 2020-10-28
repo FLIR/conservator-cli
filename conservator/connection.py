@@ -1,5 +1,7 @@
-import requests
-import time
+from sgqlc.endpoint.http import HTTPEndpoint
+from sgqlc.operation import Operation
+
+from conservator.generated.schema import schema
 
 __all__ = [
     "ConservatorGraphQLServerError",
@@ -7,10 +9,9 @@ __all__ = [
     "ConservatorMalformedQueryException",
 ]
 
-from sgqlc.endpoint.http import HTTPEndpoint
-from sgqlc.operation import Operation
 
-from conservator.generated.schema import schema
+class ConservatorMalformedQueryException(Exception):
+    pass
 
 
 class ConservatorGraphQLServerError(Exception):
@@ -20,23 +21,22 @@ class ConservatorGraphQLServerError(Exception):
         self.errors = errors
 
 
-class ConservatorMalformedQueryException(Exception):
-    pass
-
-
 class ConservatorConnection:
     def __init__(self, config):
         self.config = config
+        self.graphql_url = ConservatorConnection.to_graphql_url(config.url)
         headers = {
             "authorization": config.key,
         }
-        url = config.url
+        self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
+
+    @staticmethod
+    def to_graphql_url(url):
         if url.endswith("/"):
-            url = config.url[:-1]
+            url = url[:-1]
         if not url.endswith("graphql"):
             url = url + "/graphql"
-        self.graphql_url = url
-        self.endpoint = HTTPEndpoint(url, base_headers=headers)
+        return url
 
     def run(self, operation, variables=None):
         # TODO remove after flirconservator PR #1988
@@ -52,14 +52,32 @@ class ConservatorConnection:
 
         return response
 
-    def query(self, field, base=schema.query_type, exclude=(), fields=(), **kwargs):
-        op = Operation(base)
-        name = field.name
-        query = getattr(op, name)
+    def query(self, query, operation_base=schema.query_type, include_fields=(), exclude_fields=(), **kwargs):
+        op = Operation(operation_base)
+        query_name = query.name
+        query = getattr(op, query_name)
         query(**kwargs)
-        if len(fields) > 0 or len(exclude) > 0:
-            query.__fields__(*fields, __exclude__=exclude)
-        else:
-            query.__fields__()
-        return getattr(self.run(op), name)
+
+        def recursive_add_fields(obj, path=""):
+            field_names = [name for name in dir(obj) if not name.startswith("_")]
+            if len(field_names) == 0:
+                obj()
+                return
+
+            for field_name in field_names:
+                field = getattr(obj, field_name)
+                prefix = ("" if path == "" else path + ".")
+                cur_path = prefix + field_name
+                # a field is included it's path is in include_fields
+                # or it is more specific than something in include_fields
+                for included in include_fields:
+                    if (cur_path.startswith(included) or included.startswith(cur_path))\
+                            and cur_path not in exclude_fields:
+                        # unless it is excluded
+                        recursive_add_fields(field, cur_path)
+                        break
+
+        recursive_add_fields(query)
+
+        return getattr(self.run(op), query_name)
 

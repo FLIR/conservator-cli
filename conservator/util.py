@@ -1,3 +1,6 @@
+import keyword
+import re
+
 from sgqlc.types import BaseItem
 
 
@@ -37,7 +40,15 @@ def to_clean_string(o, first=True):
     return s
 
 
-def to_python_field_name(graphql_type, graphql_name):
-    for name in graphql_type.__field_names__:
-        if BaseItem._to_graphql_name(name) == graphql_name:
-            return name
+re_camel_case_words = re.compile('([^A-Z]+|[A-Z]+[^A-Z]*)')
+
+
+def graphql_to_python(name):
+    """This code copied from SGQLC codegen"""
+    s = []
+    for w in re_camel_case_words.findall(name):
+        s.append(w.lower())
+    name = '_'.join(s)
+    if keyword.iskeyword(name):
+        return name + '_'
+    return name

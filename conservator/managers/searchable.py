@@ -1,7 +1,8 @@
-from conservator.type import QueryableType
+from conservator.managers.type_manager import TypeManager
+from conservator.types.searchable import SearchableType
 
 
-class PaginatedResults:
+class PaginatedSearchResults:
     def __init__(self, collection, page_size=100, fields=(), **kwargs):
         self.collection = collection
         self.contents = []
@@ -20,14 +21,14 @@ class PaginatedResults:
         return self
 
     def with_all_fields(self):
-        self.with_fields(*self.collection.queryable_type.underlying_type.__field_names__)
+        self.with_fields(*self.collection.underlying_type.underlying_type.__field_names__)
         return self
 
     def next_page(self):
         results = self.collection.get_page(fields=self.fields,
-                                           page=self.page,
-                                           limit=self.limit,
-                                           **self.kwargs)
+                                            page=self.page,
+                                            limit=self.limit,
+                                            **self.kwargs)
         self.page += 1
         return results
 
@@ -48,30 +49,23 @@ class PaginatedResults:
         return len(list(self.__iter__()))
 
 
-class QueryableCollection:
-    def __init__(self, conservator, queryable_type):
-        self.conservator = conservator
-        self.queryable_type = queryable_type
+class SearchableTypeManager(TypeManager):
+    def __init__(self, conservator, searchable_type):
+        assert issubclass(searchable_type, SearchableType)
+        super().__init__(conservator, searchable_type)
 
     def all(self):
         return self.search("")
 
     def get_page(self, page=0, limit=100, **kwargs):
-        return self.queryable_type.query(self.conservator, page=page, limit=limit, **kwargs)
+        return self.underlying_type.search(self.conservator, page=page, limit=limit, **kwargs)
 
-    def search(self, search_text):
-        return PaginatedResults(self, search_text=search_text)
+    def search(self, search_text, **kwargs):
+        return PaginatedSearchResults(self, search_text=search_text, **kwargs)
 
     def count(self, search_text=""):
         return len(self.search(search_text))
 
-    def get(self, idx, fields=(), all_fields=False):
-        if all_fields:
-            fields = self.queryable_type.get_all_fields()
-        item = self.queryable_type.from_id(self.conservator, idx)
-        item.populate(fields)
-        return item
-
     def first(self, **kwargs):
-        return self.queryable_type.query(self.conservator, page=0, limit=1, **kwargs)[0]
+        return self.underlying_type.search(self.conservator, page=0, limit=1, **kwargs)[0]
 

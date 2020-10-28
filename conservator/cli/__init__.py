@@ -1,8 +1,9 @@
 import click
 
-from conservator.cli.collections import from_queryable_collection
+from conservator.cli.managers import from_manager_class
 from conservator.cli.config import config
 from conservator.cli.statistics import stats
+from conservator.managers import VideosManager, DatasetsManager, ProjectsManager, CollectionsManager
 
 
 @click.group()
@@ -13,7 +14,7 @@ def main():
 
 main.add_command(stats)
 main.add_command(config)
-main.add_command(from_queryable_collection("videos"))
-main.add_command(from_queryable_collection("datasets"))
-main.add_command(from_queryable_collection("projects"))
-main.add_command(from_queryable_collection("collections"))
+main.add_command(from_manager_class(VideosManager, "videos"))
+main.add_command(from_manager_class(DatasetsManager, "datasets"))
+main.add_command(from_manager_class(ProjectsManager, "projects"))
+main.add_command(from_manager_class(CollectionsManager, "collections"))

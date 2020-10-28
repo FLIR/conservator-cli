@@ -18,9 +18,8 @@ object.
 """
 from conservator.config import Config
 from conservator.connection import ConservatorConnection
-from conservator.queryable_collection import QueryableCollection
-from conservator.stats import ConservatorStatsManager
-from conservator.type import Project, Collection, Dataset, Video
+from conservator.managers import ProjectsManager, CollectionsManager, DatasetsManager, VideosManager
+from conservator.managers.conservator_stats import ConservatorStatsManager
 
 
 class Conservator(ConservatorConnection):
@@ -30,10 +29,10 @@ class Conservator(ConservatorConnection):
     def __init__(self, config):
         super().__init__(config)
         self.stats = ConservatorStatsManager(self)
-        self.projects = QueryableCollection(self, Project)
-        self.collections = QueryableCollection(self, Collection)
-        self.datasets = QueryableCollection(self, Dataset)
-        self.videos = QueryableCollection(self, Video)
+        self.projects = ProjectsManager(self)
+        self.collections = CollectionsManager(self)
+        self.datasets = DatasetsManager(self)
+        self.videos = VideosManager(self)
 
     def __repr__(self):
         return f"<Conservator at {self.config.url}>"

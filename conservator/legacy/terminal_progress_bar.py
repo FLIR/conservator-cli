@@ -52,7 +52,7 @@ class ProgressFileWrapper:
     def read(self, size=-1):
         data = self._file.read(size)
         num_bytes_read = len(data)
-        if (num_bytes_read):
+        if num_bytes_read:
             self._progress += num_bytes_read
         printProgressBar(self._progress, self._len, "Upload Progress:", "Complete", 1, 50)
         return data
