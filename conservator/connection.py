@@ -58,11 +58,14 @@ class ConservatorConnection:
         query = getattr(op, query_name)
         query(**kwargs)
 
-        include_fields = set(filter(lambda f: f not in exclude_fields, include_fields))
+        exclude_fields = tuple(set(exclude_fields))
+        include_fields = tuple(filter(lambda f: f not in exclude_fields, set(include_fields)))
 
-        def recursive_add_fields(obj, path=""):
+        max_depth = max(map(lambda f: f.count("."), include_fields + exclude_fields)) + 1
+
+        def recursive_add_fields(obj, path="", depth=0):
             field_names = [name for name in dir(obj) if not name.startswith("_")]
-            if len(field_names) == 0:
+            if len(field_names) == 0 or depth >= max_depth:
                 obj()
                 return
 
@@ -76,7 +79,7 @@ class ConservatorConnection:
                     if (cur_path.startswith(included) or included.startswith(cur_path))\
                             and cur_path not in exclude_fields:
                         # unless it is excluded
-                        recursive_add_fields(field, cur_path)
+                        recursive_add_fields(field, cur_path, depth + 1)
                         break
 
         recursive_add_fields(query)
