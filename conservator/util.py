@@ -1,6 +1,9 @@
 import keyword
+import os
 import re
 
+import requests
+import tqdm
 from sgqlc.types import BaseItem
 
 
@@ -52,3 +55,17 @@ def graphql_to_python(name):
     if keyword.iskeyword(name):
         return name + '_'
     return name
+
+
+def download_file(path, name, url):
+    r = requests.get(url, stream=True)
+    size = int(r.headers["content-length"])
+    size_mb = int(size / 1024 / 1024)
+    progress = tqdm.tqdm(total=size)
+    progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")
+    chunk_size = 1024
+    with open(os.path.join(path, name), 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            progress.update(len(chunk))
+            fd.write(chunk)
+    progress.close()

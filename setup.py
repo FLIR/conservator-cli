@@ -38,5 +38,6 @@ setuptools.setup(
         "sphinx",
         "sgqlc",
         "click",
+        "tqdm",
     ],
 )

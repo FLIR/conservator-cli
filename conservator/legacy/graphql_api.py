@@ -457,28 +457,6 @@ def get_collection_by_id(id, access_token):
     return query_conservator(query, variables, access_token)["collection"]
 
 
-def get_datasets_from_collection(collection_id, access_token):
-    query = """
-    query getFirstNDatasets($id: ID!, $n: Int, $searchText: String) {
-      getFirstNDatasets(id: $id, n: $n, searchText: $searchText) {
-          id
-        name
-        tags
-        frameCount
-        repository {
-            master
-        }
-      }
-    }
-    """
-    variables = {
-        "id": collection_id,
-        "n": 200,
-        "searchText": ""
-    }
-    return query_conservator(query, variables, access_token)["getFirstNDatasets"]
-
-
 def create_video(filename, access_token):
     query = """
     mutation CreateVideo($filename: String!) {

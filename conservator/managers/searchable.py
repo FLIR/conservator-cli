@@ -24,11 +24,21 @@ class PaginatedSearchResults:
         self.with_fields(*self.collection.underlying_type.underlying_type.__field_names__)
         return self
 
+    def first(self):
+        if len(self.contents) > 0:
+            return self.contents[0]
+        first = self.collection.get_page(fields=self.fields,
+                                         page=0,
+                                         limit=1,
+                                         **self.kwargs)[0]
+        self.contents.append(first)
+        return first
+
     def next_page(self):
         results = self.collection.get_page(fields=self.fields,
-                                            page=self.page,
-                                            limit=self.limit,
-                                            **self.kwargs)
+                                           page=self.page,
+                                           limit=self.limit,
+                                           **self.kwargs)
         self.page += 1
         return results
 
