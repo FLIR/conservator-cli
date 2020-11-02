@@ -1,3 +1,5 @@
+import urllib.parse
+
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 
@@ -29,6 +31,14 @@ class ConservatorConnection:
             "authorization": config.key,
         }
         self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
+
+    def get_git_user(self):
+        email = urllib.parse.quote(self.config.email.lower(), safe='.')
+        key = self.config.key
+        return f"{email}:{key}"
+
+    def get_domain(self):
+        return urllib.parse.urlparse(self.config.url).netloc
 
     @staticmethod
     def to_graphql_url(url):

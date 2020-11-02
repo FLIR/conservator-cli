@@ -57,8 +57,14 @@ def graphql_to_python(name):
     return name
 
 
+class FileDownloadException(Exception):
+    pass
+
+
 def download_file(path, name, url):
-    r = requests.get(url, stream=True)
+    r = requests.get(url, stream=True, allow_redirects=True)
+    if r.status_code != 200:
+        raise FileDownloadException(url)
     size = int(r.headers["content-length"])
     size_mb = int(size / 1024 / 1024)
     progress = tqdm.tqdm(total=size)

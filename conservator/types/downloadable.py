@@ -52,7 +52,7 @@ class SubtypeDownload(DownloadableAsset):
     def download(self, instance, path, asset_names, **kwargs):
         for subtype_id in getattr(instance, self.field_name):
             subtype_instance = self.field_type.from_id(subtype_id)
-            subtype_instance.download(path)
+            subtype_instance.download(path, **kwargs)
 
 
 class RecursiveDownload(DownloadableAsset):
@@ -110,4 +110,4 @@ class DatasetsFromCollectionDownload(DownloadableAsset):
 
     def download(self, instance, path, asset_names, **kwargs):
         for dataset in instance.get_datasets():
-            dataset.download(path)
+            dataset.download(path, **kwargs)

@@ -1,4 +1,7 @@
+import json
+import multiprocessing
 import os
+import subprocess
 
 from conservator.generated.schema import Query
 from conservator.types.downloadable import DownloadableType, RecursiveDownload, AssociatedFilesDownload, \
@@ -17,6 +20,8 @@ __all__ = [
     "TypeProxy",
 ]
 
+from conservator.util import FileDownloadException, download_file
+
 
 class Project(SearchableType, DownloadableType):
     underlying_type = schema.Project
@@ -33,8 +38,77 @@ class Dataset(SearchableType, DownloadableType):
     problematic_fields = ["shared_with"]
     downloadable_assets = {}
 
-    def download(self, path):
-        self.populate("name", "repository.master")
+    def get_git_url(self):
+        return f"https://{self._conservator.get_git_user()}@{self._conservator.get_domain()}/git/dataset_{self.id}"
+
+    def get_dvc_url(self):
+        return f"https://{self._conservator.get_git_user()}@{self._conservator.get_domain()}/dvc"
+
+    def clone(self, path):
+        subprocess.call(["git", "clone",
+                         self.get_git_url(),
+                         path])
+
+    def pull(self, path, include_analytics=False, include_eight_bit=True, process_count=None):
+        data_dir = os.path.join(path, 'data')
+        if include_eight_bit:
+            os.makedirs(data_dir, exist_ok=True)
+
+        analytics_dir = os.path.join(path, 'analyticsData')
+        if include_analytics:
+            os.makedirs(analytics_dir, exist_ok=True)
+
+        pool = multiprocessing.Pool(process_count)  # defaults to CPU count
+
+        index_file = os.path.join(path, "index.json")
+        assets = []  # (md5, path, name, url)
+        base_url = self.get_dvc_url()
+        with open(index_file) as f:
+            data = json.load(f)
+            for frame in data.get('frames', []):
+                video_metadata = frame.get('videoMetadata', {})
+                video_id = video_metadata.get("videoId", "")
+                frame_index = video_metadata['frameIndex']
+                dataset_frame_id = frame['datasetFrameId']
+                if include_eight_bit:
+                    md5 = frame['md5']
+                    url = f"{base_url}/{md5[:2]}/{md5[2:]}"
+                    name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
+                    assets.append((md5, data_dir, name, url))
+
+                if include_analytics and ('analyticsMd5' in frame):
+                    md5 = frame['analyticsMd5']
+                    url = f"{base_url}/{md5[:2]}/{md5[2:]}"
+                    name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
+                    assets.append((md5, analytics_dir, name, url))
+
+        results = pool.starmap(self.download_image, assets)
+
+        # See if we have any errors
+        total = len(results)
+        num_errors = results.count('ERROR')
+        print(f"Number of Files: {total - num_errors}, Errors: {num_errors}")
+
+    @staticmethod
+    def download_image(md5, path, name, url):
+        # TODO: Use a cache and os.link
+        try:
+            download_file(path, name, url)
+        except FileDownloadException:
+            print(f"Error downloading {url}")
+            return "ERROR"
+
+        # Hard link named image file
+        # TODO os.link(filename, os.path.join(folder, imageFilename))
+        return True
+
+    def download(self, path, pull=True):
+        self.populate("name")
+        path = os.path.join(path, self.name)
+        os.makedirs(path, exist_ok=True)
+        self.clone(path)
+        if pull:
+            self.pull(path)
 
 
 class Video(SearchableType, DownloadableType):
@@ -58,20 +132,18 @@ class Collection(SearchableType, DownloadableType):
         "associated_files": AssociatedFilesDownload(),
         # "images": SubtypeDownload(None, "image_ids"),
         "datasets": DatasetsFromCollectionDownload(),
-        "metadata": FieldAsJsonDownload("metadata"),
         "recursive": RecursiveDownload("child_ids"),
     }
 
     def get_datasets(self):
-        dataset_ids = self._conservator.query(Query.get_first_ndatasets,
-                                              id=self.id,
-                                              search_text="",
-                                              n=200,
-                                              include_fields=["id"])
+        dataset_objs = self._conservator.query(Query.get_first_ndatasets,
+                                               id=self.id,
+                                               search_text="",
+                                               n=200,
+                                               include_fields=["id", "name"])
         datasets = []
-        for dataset_id in dataset_ids:
-            dataset = Dataset.from_id(self._conservator, dataset_id.id)
-            datasets.append(dataset)
+        for dataset_obj in dataset_objs:
+            datasets.append(Dataset(self._conservator, dataset_obj))
         return datasets
 
     def download(self, path):
@@ -83,8 +155,8 @@ class Collection(SearchableType, DownloadableType):
                         include_associated_files=False,
                         include_videos=False,
                         include_images=False,
-                        include_metadata=False,
-                        recursive=False):
+                        recursive=False,
+                        **kwargs):
         """
         Download a Collection to the specified ``path``.
 
@@ -97,18 +169,17 @@ class Collection(SearchableType, DownloadableType):
         :param include_videos: If ``True``, download videos.
         :param include_images: If ``True``, download images.
         :param include_associated_files: If ``True``, download file locker files, such as the word cloud.
-        :param include_metadata: "If ``True``, download a JSON file containing metadata for each video
         """
         assets = []
+        if include_datasets:
+            assets.append("datasets")
         if include_media or include_videos:
             assets.append("videos")
         if include_media or include_images:
             assets.append("images")
         if include_associated_files:
             assets.append("associated_files")
-        if include_metadata:
-            assets.append("metadata")
         if recursive:
             assets.append("recursive")
 
-        super().download_assets(path, assets)
+        super().download_assets(path, assets, **kwargs)
