@@ -2,55 +2,22 @@
 
 Conservator CLI is a private repo. Make sure you have set up [git using SSH](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/connecting-to-github-with-ssh).
 
-## Installation for Users
+## Legacy
 
-**Note: You may want to perform a developer install (see below) to be able to 
-generate and read the documentation**
+This branch is a fork of the `main` branch prior to some major refactoring.  It should be used
+by `ConservatorTools` and other toolkits that have not been updated to the new Conservator CLI.
 
-You can install Conservator CLI using PIP.
-
-```
-pip install -e git+ssh://git@github.com/FLIR/conservator-cli@main
-```
-
-You can also add Conservator CLI to your `requirements.txt`.
+You can install Legacy Conservator CLI using PIP.
 
 ```
--e git+ssh://git@github.com/FLIR/conservator-cli@main
+pip install -e git+ssh://git@github.com/FLIR/conservator-cli@legacy
 ```
 
-## Installation for Developers
-
-Use this method if you're developing Conservator CLI, or want to use the 
-documentation.
-
-#### Download
+You can also add Legacy Conservator CLI to your `requirements.txt`.
 
 ```
-git clone git@github.com:FLIR/conservator-cli.git
-cd conservator-cli
+-e git+ssh://git@github.com/FLIR/conservator-cli@legacy
 ```
 
-#### Install
-
-Install the package and dependencies in a virtual environment. Make sure
-you're using Python 3 to create your virtual environment.
-
-```
-python -m virtualenv venv
-source venv/bin/activate
-pip install .
-```
-
-#### Documentation
-
-Documentation is generated using Sphinx.
-
-```
-cd docs
-make html
-```
-
-You can view the documentation by opening `/docs/_build/html/index.html`.
-
-Refer to the Quickstart Guide in the generated documentation for your next steps.
+If you are starting a new toolkit or project, **please use the newer, refactored Conservator CLI**. 
+Refer to the README in the `main` branch for more information.
