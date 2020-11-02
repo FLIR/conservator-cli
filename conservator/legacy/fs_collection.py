@@ -22,25 +22,6 @@ class Collection:
         result = cls(parent_folder, data["name"], data["id"], credentials)
         return result
 
-    def _pull_dataset(self, id, name, parent_folder):
-        save = os.getcwd()
-        os.chdir(parent_folder)
-        if os.path.exists(name):
-            os.chdir(name)
-            subp = subprocess.call(["git", "pull"])
-            subp = subprocess.call(["python", "./cvc.py", "pull"])
-            subp = subprocess.call(["python", "./cvc.py", "pull"])
-        else:
-            subp = subprocess.call(["git", "clone",
-                                    "https://{}@flirconservator.com/git/dataset_{}".format(
-                                        self.credentials.get_url_format(), id),
-                                    "{}".format(name)])
-            os.chdir(name)
-            subp = subprocess.call(["python", "./cvc.py", "remote", "add",
-                                    "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())])
-            subp = subprocess.call(["python", "./cvc.py", "pull"])
-            subp = subprocess.call(["python", "./cvc.py", "pull"])
-        os.chdir(save)
 
     def _download_collections_recursive(self, parent_folder, collection_id, delete=False, include_datasets=False,
                                         include_video_metadata=False, include_associated_files=False,
@@ -58,13 +39,6 @@ class Collection:
         assert self.credentials is not None, "self.credentials must be set"
         self._download_collections_recursive(self.parent_folder, self.id, delete, include_datasets,
                                              include_video_metadata, include_associated_files, include_media)
-
-    def _download_datasets(self, collection_id, parent_folder, dry_run=True):
-        datasets = fca.get_datasets_from_collection(collection_id, self.credentials.key)
-        if not dry_run:
-            for dataset in datasets:
-                self._pull_dataset(dataset["id"], dataset["name"], parent_folder)
-        return [dataset["name"] for dataset in datasets]
 
     def _download_video_metadata(self, collection_id, parent_folder, dry_run=True, delete=False):
         os.makedirs(os.path.join(parent_folder, "video_metadata"), exist_ok=True)

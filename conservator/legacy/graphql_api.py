@@ -380,23 +380,6 @@ def get_media_from_collection(collection_id, access_token):
 
 ##----------------------------
 
-def download_file(filename, url, show_progress=True, tab_number=0):
-    r = requests.get(url, stream=True)
-    print("\t" * tab_number + "Downloading {} ({:.2f} MB) ...".format(filename,
-                                                                      int(r.headers["content-length"]) / 1024 / 1024))
-    total = 0
-    chunk_size = 1024
-    with open(filename, 'wb') as fd:
-        for chunk in r.iter_content(chunk_size=chunk_size):
-            total += chunk_size
-            if show_progress:
-                tpb.printProgressBar(total, int(r.headers["content-length"]), "\t" * tab_number + "Download Progress:",
-                                     "Complete", 1, 50)
-            fd.write(chunk)
-    if show_progress:
-        print()
-
-
 def get_collection_by_path(path, access_token):
     query = """
     query collectionByPath($path: String!) {
