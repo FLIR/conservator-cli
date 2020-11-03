@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python API Quickstart &#8212; conservator-cli  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api.html" />
+    <link rel="prev" title="CLI Quickstart" href="cli_quickstart.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="python-api-quickstart">
+<h1>Python API Quickstart<a class="headerlink" href="#python-api-quickstart" title="Permalink to this headline">¶</a></h1>
+<p>This page assumes you already have Conservator CLI installed.  If you do not,
+follow the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> instructions first.</p>
+<p>This guide will show you how to perform basic operations using the Python API.
+Please see the <a class="reference internal" href="cli_quickstart.html"><span class="doc">CLI Quickstart</span></a> to get started using the CLI.</p>
+<div class="section" id="config">
+<h2>Config<a class="headerlink" href="#config" title="Permalink to this headline">¶</a></h2>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code> object is required to connect to an instance of Conservator.
+It specifies an email, API key, and URL. <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code> objects can be created manually,
+or loaded from a variety of sources.</p>
+<dl>
+<dt>The recommended way to get an instance is by using <code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">conservator</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>This will attempt to load a config from various sources, and eventually fallback to <cite>stdin</cite>.</p>
+<p>See the <a class="reference internal" href="../api.html"><span class="doc">API Reference</span></a> for more details.</p>
+</div>
+<div class="section" id="getting-connected">
+<h2>Getting Connected<a class="headerlink" href="#getting-connected" title="Permalink to this headline">¶</a></h2>
+<dl>
+<dt>Once you have a <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code> object, you can instantiate <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">conservator</span> <span class="kn">import</span> <span class="n">Conservator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conservator</span> <span class="o">=</span> <span class="n">Conservator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Equivalently, you can use <code class="xref py py-func docutils literal notranslate"><span class="pre">Conservator.default()</span></code> to create a <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code> instance using
+<code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code>.</p>
+<dl>
+<dt>Once you have an instance, you can check that the connection is working by querying for some statistics.</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conservator</span><span class="o">.</span><span class="n">stats</span>
+<span class="go">&lt;Statistics for &lt;Conservator at https://flirconservator.com/&gt;&gt;:</span>
+<span class="go">    id: ...</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>This should print out statistics for your conservator instance. If it doesn’t,
+you may be using a local developer installation that hasn’t generated statistics
+yet.</p>
+</div>
+<div class="section" id="exploring-conservator-data">
+<h2>Exploring Conservator Data<a class="headerlink" href="#exploring-conservator-data" title="Permalink to this headline">¶</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code> provides several <code class="xref py py-class docutils literal notranslate"><span class="pre">QueryableCollection</span></code> s for searching and manipulating
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QueryableType</span></code> s. These types include <cite>projects</cite>, <cite>datasets</cite>, <cite>videos</cite>, and <cite>collections</cite>.</p>
+<p>In the following examples, you should be able to replace one type with another without trouble.</p>
+<div class="section" id="listing">
+<h3>Listing<a class="headerlink" href="#listing" title="Permalink to this headline">¶</a></h3>
+<dl>
+<dt>You can easily iterate through all projects:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_projects</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">all_projects</span><span class="p">:</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="counting">
+<h3>Counting<a class="headerlink" href="#counting" title="Permalink to this headline">¶</a></h3>
+<dl>
+<dt>Count all projects:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="go">96</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># at the moment, this is equivalent to:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+<span class="go">96</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="searching">
+<h3>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h3>
+<dl>
+<dt>You can use Conservator’s advanced search feature to filter your queries:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adas_projects</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;adas&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">adas_projects</span><span class="p">:</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<p>Hopefully this guide has helped you understand the basics of Conservator CLI.</p>
+<p>Conservator CLI does it’s best to abstract away as much as possible,
+but sometimes that can get annoying. Check out the <span class="xref std std-doc">advanced_guide</span> to learn how
+the underlying features work, and how you can take advantage of them to build
+your own tools.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">conservator-cli</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_quickstart.html">CLI Quickstart</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python API Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#config">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-connected">Getting Connected</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exploring-conservator-data">Exploring Conservator Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="cli_quickstart.html" title="previous chapter">CLI Quickstart</a></li>
+      <li>Next: <a href="../api.html" title="next chapter">API Reference</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, FLIR Systems.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/usage/api_quickstart.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,5 +1,0 @@
-# NOTE: add new requirements to setup.py 'install_requires' as well
-sphinx
-sgqlc
-click
-tqdm
