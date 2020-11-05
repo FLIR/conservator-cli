@@ -31,7 +31,7 @@ class DatasetCache:
             subp = subprocess.call([python_command, "./cvc.py", "remote", "add",
                                     "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())],
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            os.chdir("..")
+            os.chdir("../../FLIR/conservator_cli")
 
         os.chdir(name)
         dataset_version_completed_process = subprocess.run(["git", "rev-parse", dataset_version],
@@ -70,7 +70,7 @@ class DatasetCache:
             subp = subprocess.call([python_command, "./cvc.py", "remote", "add",
                                     "https://{}@flirconservator.com/dvc".format(self.credentials.get_url_format())],
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            os.chdir("..")
+            os.chdir("../../FLIR/conservator_cli")
 
         os.chdir(name)
         subp = subprocess.call(["git", "fetch"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
