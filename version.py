@@ -32,7 +32,7 @@
 #
 #   include RELEASE-VERSION
 
-__all__ = ("get_git_version")
+__all__ = ("get_git_version",)
 
 from subprocess import Popen, PIPE
 
@@ -43,8 +43,12 @@ def call_git_describe(abbrev):
                   stdout=PIPE, stderr=PIPE)
         p.stderr.close()
         line = p.stdout.readlines()[0]
-        return line.strip().decode('utf-8')
-
+        version = line.strip().decode('utf-8')
+        # Find the second -, replace it with + - otherwise pip just break
+        # See PEP 440 for more details
+        version = version.replace("-", "+", 2)
+        version = version.replace("+", "-", 1)
+        return version
     except:
         return None
 
