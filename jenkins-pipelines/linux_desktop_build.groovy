@@ -34,8 +34,8 @@ pipeline {
         sh "mv temp/ docs/"
         sh "touch docs/.nojeykll"
         sh "git add docs/"
-        git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'
-        git push || echo "Push failed. There is probably nothing to push."
+        sh "git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'"
+        sh "git push || echo 'Push failed. There is probably nothing to push.'"
       }
     }
   }
