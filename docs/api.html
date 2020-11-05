@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>API Reference &#8212; conservator-cli  documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <title>API Reference &#8212; Conservator CLI  documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -15,7 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Python API Quickstart" href="usage/api_quickstart.html" />
+    <link rel="prev" title="Installation" href="usage/installation.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -34,57 +34,120 @@
             
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<p>This part of the documentation covers all of the interfaces in
-Conservator CLI.</p>
 <div class="section" id="module-conservator.config">
 <span id="config"></span><h2>Config<a class="headerlink" href="#module-conservator.config" title="Permalink to this headline">¶</a></h2>
-<p>Config allows you to connect to Conservator. There are a variety of
+<p>A <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object is required connect to Conservator. There are a variety of
 ways to create an instance of config:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Standard input</p></li>
-<li><p>Environment variables</p></li>
 <li><p>Config File</p></li>
+<li><p>Environment variables</p></li>
+<li><p>Standard input</p></li>
 <li><p>Manually using constructor</p></li>
 </ul>
 </div></blockquote>
-<p>In general, use <code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code>, as this will try all of the above.</p>
-</div>
-<div class="section" id="module-conservator.conservator">
-<span id="conservator"></span><h2>Conservator<a class="headerlink" href="#module-conservator.conservator" title="Permalink to this headline">¶</a></h2>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code> is the highest level class of this library. It should be the
-starting point for all queries and operations.</p>
-<p>To get an instance using the default <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
-<span class="go">&lt;Conservator at https://flirconservator.com&gt;</span>
-</pre></div>
-</div>
-<p>You can create also create an instance by passing any <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code>
-object.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">my_email</span><span class="p">,</span> <span class="n">my_key</span><span class="p">,</span> <span class="s2">&quot;https://localhost:3000&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="go">&lt;Conservator at https://localhost:3000&gt;</span>
-</pre></div>
-</div>
+<p>In general, use <a class="reference internal" href="#conservator.config.Config.default" title="conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>, as this will try all of the above.</p>
 <dl class="py class">
-<dt id="conservator.Conservator">
-<em class="property">class </em><code class="sig-prename descclassname">conservator.</code><code class="sig-name descname">Conservator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.Conservator" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dt id="conservator.config.Config">
+<em class="property">class </em><code class="sig-prename descclassname">conservator.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">'https://flirconservator.com/'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains a user’s Email and API Key (token), to be used
+when authenticating operations on an instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code>
+at a certain URL.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>config</strong> – The <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code> object to use for this connection.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>email</strong> – The user’s email.</p></li>
+<li><p><strong>key</strong> – The user’s API key or token.</p></li>
+<li><p><strong>url</strong> – The URL of the conservator instance.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="conservator.Conservator.default">
-<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference internal" href="#conservator.Conservator" title="conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using <code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code>.</p>
+<dt id="conservator.config.Config.default">
+<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the default config.
+This works by iterating through the various credential sources, and returning
+the first one that works. Sources are queried in this order:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Config file</p></li>
+<li><p>Environment variables</p></li>
+<li><p>User input</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>save</strong> – If <cite>True</cite>, save the config for future use. This means a user
+won’t need to type them again.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.default_config_path">
+<em class="property">static </em><code class="sig-name descname">default_config_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.default_config_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>By default, your config is saved in <code class="docutils literal notranslate"><span class="pre">~/.conservator_config.json</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.delete_saved_default_config">
+<em class="property">static </em><code class="sig-name descname">delete_saved_default_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.delete_saved_default_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the default saved config, if it exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.from_config">
+<em class="property">static </em><code class="sig-name descname">from_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from the JSON config file
+at the <a class="reference internal" href="#conservator.config.Config.default_config_path" title="conservator.config.Config.default_config_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default_config_path()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.from_environ">
+<em class="property">static </em><code class="sig-name descname">from_environ</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_environ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from environment variables.</p>
+<p>The environment variables are <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_EMAIL</span></code>, <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.from_file">
+<em class="property">static </em><code class="sig-name descname">from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from a JSON config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – The path to the JSON config file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.from_input">
+<em class="property">static </em><code class="sig-name descname">from_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from standard input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.save_to_default_config">
+<code class="sig-name descname">save_to_default_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.save_to_default_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to the Default config file, meaning
+this config will be loaded by <a class="reference internal" href="#conservator.config.Config.default" title="conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="conservator.config.Config.save_to_file">
+<code class="sig-name descname">save_to_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.save_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to as JSON.</p>
+<p>This file can be loaded using <a class="reference internal" href="#conservator.config.Config.from_file" title="conservator.config.Config.from_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.from_file()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – The file path to save to.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-conservator.connection">
-<span id="conservatorconnection"></span><h2>ConservatorConnection<a class="headerlink" href="#module-conservator.connection" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -95,7 +158,7 @@ object.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">conservator-cli</a></h1>
+<h1 class="logo"><a href="index.html">Conservator CLI</a></h1>
 
 
 
@@ -108,12 +171,8 @@ object.</p>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="usage/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/cli_quickstart.html">CLI Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-conservator.config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-conservator.conservator">Conservator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-conservator.connection">ConservatorConnection</a></li>
 </ul>
 </li>
 </ul>
@@ -122,7 +181,7 @@ object.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="usage/api_quickstart.html" title="previous chapter">Python API Quickstart</a></li>
+      <li>Previous: <a href="usage/installation.html" title="previous chapter">Installation</a></li>
   </ul></li>
 </ul>
 </div>
@@ -152,7 +211,7 @@ object.</p>
       &copy;2020, FLIR Systems.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,5 +1,0 @@
-Advanced Guide
-============
-
-test
-

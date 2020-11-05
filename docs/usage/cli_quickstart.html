@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CLI Quickstart &#8212; conservator-cli  documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <title>CLI Quickstart &#8212; Conservator CLI  documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -15,8 +15,6 @@
     <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Python API Quickstart" href="api_quickstart.html" />
-    <link rel="prev" title="Installation" href="installation.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -47,71 +45,12 @@ Please see the <a class="reference internal" href="api_quickstart.html"><span cl
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config
 </pre></div>
 </div>
-<p>The first time you run this, Conservator CLI will ask you for your email and API key.
-These will be saved in a config file for future use. Running again will print your
-credentials. You can delete your config by running:</p>
+<p>Conservator CLI will ask you for your email and API key. These will be
+saved in a config file for future use. Running again will print your
+credentials. If you want to change them, you can delete your config by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config delete
 </pre></div>
 </div>
-</div>
-<div class="section" id="getting-connected">
-<h2>Getting Connected<a class="headerlink" href="#getting-connected" title="Permalink to this headline">¶</a></h2>
-<p>Now that we have our credentials, let’s try connecting to Conservator:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator stats
-</pre></div>
-</div>
-<p>This should print out statistics for your conservator instance. If it doesn’t,
-you may be using a local developer installation that hasn’t generated statistics
-yet.</p>
-</div>
-<div class="section" id="exploring-conservator-data">
-<h2>Exploring Conservator Data<a class="headerlink" href="#exploring-conservator-data" title="Permalink to this headline">¶</a></h2>
-<p>There are several data containers on Conservator, and conservator-cli has tools
-for exploring all of them.</p>
-<p>We can query for a specific project:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator projects get [some id]
-</pre></div>
-</div>
-<p>Or get a list of all Projects:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator projects list -p name
-</pre></div>
-</div>
-<p>The same works for videos, datasets, and collections:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets list -p name
-$ conservator videos list -p name
-$ conservator collections list -p name
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">-p</span></code> flag controls which fields to fetch and print. You can view all
-available fields using:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator projects fields  # try with videos, datasets, and collections
-</pre></div>
-</div>
-<p>We can also perform searches using Conservator’s Advanced Search. To list the ids
-of all datasets that contain a human annotated car, we can do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets search &quot;has:car&quot;
-</pre></div>
-</div>
-<p>And of course, with works with projects, videos and collections.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>When searching projects, conservator doesn’t support Advanced Search. You
-can’t include certain characters in your query (like <code class="docutils literal notranslate"><span class="pre">:</span></code>, <code class="docutils literal notranslate"><span class="pre">\</span></code>, and <code class="docutils literal notranslate"><span class="pre">?</span></code>).</p>
-</div>
-</div>
-<div class="section" id="downloading-data">
-<h2>Downloading Data<a class="headerlink" href="#downloading-data" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="uploading-data">
-<h2>Uploading Data<a class="headerlink" href="#uploading-data" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
-<p>Hopefully this guide has helped you understand the basics of Conservator CLI.</p>
-<p>Conservator CLI does it’s best to abstract away as much as possible,
-but sometimes you’ll want to do operations yourself. Check out the <a class="reference internal" href="api_quickstart.html"><span class="doc">Python API Quickstart</span></a>
-to learn how to use the Python API to build your own tools. Using the API
-is the preferred way to interface with Conservator.</p>
 </div>
 </div>
 
@@ -122,7 +61,7 @@ is the preferred way to interface with Conservator.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">conservator-cli</a></h1>
+<h1 class="logo"><a href="../index.html">Conservator CLI</a></h1>
 
 
 
@@ -133,18 +72,8 @@ is the preferred way to interface with Conservator.</p>
 
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">CLI Quickstart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#getting-connected">Getting Connected</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exploring-conservator-data">Exploring Conservator Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#downloading-data">Downloading Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#uploading-data">Uploading Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
@@ -152,8 +81,6 @@ is the preferred way to interface with Conservator.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
-      <li>Next: <a href="api_quickstart.html" title="next chapter">Python API Quickstart</a></li>
   </ul></li>
 </ul>
 </div>
@@ -183,7 +110,7 @@ is the preferred way to interface with Conservator.</p>
       &copy;2020, FLIR Systems.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
