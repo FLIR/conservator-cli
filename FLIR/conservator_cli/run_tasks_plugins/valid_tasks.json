@@ -1,7 +1,0 @@
-{
-  "python_modules": [
-    "$NTKROOT/task_runner/FLIR/task_runner/run_tasks_plugins/define_config.py",
-    "$NTKROOT/conservator-cli/FLIR/conservator_cli/run_tasks_plugins/load_credentials.py",
-    "$NTKROOT/conservator-cli/FLIR/conservator_cli/run_tasks_plugins/download_collection.py"
-  ]
-}
