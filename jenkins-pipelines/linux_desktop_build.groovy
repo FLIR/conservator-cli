@@ -32,7 +32,7 @@ pipeline {
         sh "git checkout gh_pages"
         sh "rm -rf docs/"
         sh "mv temp/ docs/"
-        sh "touch docs/.nojeykll"
+        sh "touch docs/.nojekyll"
         sh "git add docs/"
         sh "git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'"
         sh "git push || echo 'Push failed. There is probably nothing to push.'"
