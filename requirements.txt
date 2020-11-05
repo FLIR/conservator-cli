@@ -3,3 +3,4 @@ sphinx
 sgqlc
 click
 tqdm
+pytest

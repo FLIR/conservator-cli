@@ -36,5 +36,6 @@ setuptools.setup(
         "sgqlc",
         "click",
         "tqdm",
+        "pytest",
     ],
 )

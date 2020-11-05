@@ -7,6 +7,7 @@ Welcome to conservator-cli's documentation!
 
    usage/installation
    usage/quickstart
+   api
 
 
 Indices and tables
