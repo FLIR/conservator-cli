@@ -28,7 +28,7 @@ pipeline {
       }
       steps {
         echo "Deploying..."
-        sh "mv docs/html temp/"
+        sh "mv docs/_build/html temp/"
         sh "git checkout gh_pages"
         sh "rm -rf docs/"
         sh "mv temp/ docs/"
