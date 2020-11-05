@@ -34,7 +34,7 @@ pipeline {
         sh "mv temp/ docs/"
         sh "touch docs/.nojeykll"
         sh "git add docs/"
-        sh "git commit -m 'Build docs for ${BUILD_TAG}"
+        sh "git commit -m 'Build docs for ${BUILD_TAG}'"
       }
     }
   }
