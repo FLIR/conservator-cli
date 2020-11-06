@@ -1,5 +1,5 @@
 import click
-from conservator.config import Config
+from FLIR.conservator.config import Config
 
 
 @click.group()
