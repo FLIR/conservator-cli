@@ -1,6 +1,4 @@
 import sgqlc.types
-import conservator.generated.date
-
 
 schema = sgqlc.types.Schema()
 
@@ -45,7 +43,7 @@ class AttributeSource(sgqlc.types.Enum):
 
 Boolean = sgqlc.types.Boolean
 
-Date = conservator.generated.date.Date
+Date = FLIR.conservator.generated.date.Date
 
 class FavoriteAssetType(sgqlc.types.Enum):
     __schema__ = schema

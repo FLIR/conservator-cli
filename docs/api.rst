@@ -4,7 +4,7 @@ API Reference
 Config
 ------
 
-.. automodule:: conservator.config
+.. automodule:: FLIR.conservator.config
     :members:
 
 

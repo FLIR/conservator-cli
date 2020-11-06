@@ -21,7 +21,7 @@ setuptools.setup(
     packages=setuptools.find_namespace_packages(),
     entry_points='''
         [console_scripts]
-        conservator=conservator.cli:main
+        conservator=FLIR.conservator.cli:main
     ''',
     zip_safe=False,
     classifiers=[
@@ -29,7 +29,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     # NOTE: add new requirements to requirements.txt as well
     install_requires=[
         "sphinx",

@@ -6,7 +6,8 @@ Welcome to conservator-cli's documentation!
    :caption: Contents:
 
    usage/installation
-   usage/quickstart
+   usage/cli_quickstart
+   usage/api_quickstart
    api
 
 
