@@ -1,4 +1,6 @@
 import sgqlc.types
+import FLIR.conservator.generated.date
+
 
 schema = sgqlc.types.Schema()
 
