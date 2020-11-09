@@ -17,8 +17,9 @@ def test_add_fields_simple_exclude():
     op = Operation(Query)
     q = op.project
     q(id="123")
-    ConservatorConnection.recursive_add_fields(q, exclude_fields=("file_locker_files",))
+    ConservatorConnection.recursive_add_fields(q, exclude_fields=("file_locker_files",
+                                                                  "root_collection",))
     assert 'project(id: "123")' in str(op)
     assert 'fileLockerFiles' not in str(op)
-    assert 'repository' in str(op)
-
+    assert 'rootCollection' not in str(op)
+    assert 'createdBy' in str(op)

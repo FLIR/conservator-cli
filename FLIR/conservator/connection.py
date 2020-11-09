@@ -110,7 +110,7 @@ class ConservatorConnection:
         return getattr(self.run(op), query_name)
 
     @staticmethod
-    def recursive_add_fields(obj, include_fields=(), exclude_fields=(), path="", depth=0, max_depth=2):
+    def recursive_add_fields(obj, include_fields=("",), exclude_fields=(), path="", depth=0, max_depth=2):
         """
         Adds fields to an SGQLC operation.
 
