@@ -13,9 +13,10 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Installation" href="usage/installation.html" />
+    <link rel="prev" title="Python API Quickstart" href="usage/api_quickstart.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -34,9 +35,9 @@
             
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-conservator.config">
-<span id="config"></span><h2>Config<a class="headerlink" href="#module-conservator.config" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object is required connect to Conservator. There are a variety of
+<div class="section" id="module-FLIR.conservator.config">
+<span id="config"></span><h2>Config<a class="headerlink" href="#module-FLIR.conservator.config" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object is required connect to Conservator. There are a variety of
 ways to create an instance of config:</p>
 <blockquote>
 <div><ul class="simple">
@@ -46,10 +47,10 @@ ways to create an instance of config:</p>
 <li><p>Manually using constructor</p></li>
 </ul>
 </div></blockquote>
-<p>In general, use <a class="reference internal" href="#conservator.config.Config.default" title="conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>, as this will try all of the above.</p>
+<p>In general, use <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>, as this will try all of the above.</p>
 <dl class="py class">
-<dt id="conservator.config.Config">
-<em class="property">class </em><code class="sig-prename descclassname">conservator.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">'https://flirconservator.com/'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config" title="Permalink to this definition">¶</a></dt>
+<dt id="FLIR.conservator.config.Config">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">'https://flirconservator.com/'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contains a user’s Email and API Key (token), to be used
 when authenticating operations on an instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code>
 at a certain URL.</p>
@@ -63,8 +64,8 @@ at a certain URL.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="conservator.config.Config.default">
-<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.default" title="Permalink to this definition">¶</a></dt>
+<dt id="FLIR.conservator.config.Config.default">
+<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.default" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the default config.
 This works by iterating through the various credential sources, and returning
 the first one that works. Sources are queried in this order:</p>
@@ -84,36 +85,36 @@ won’t need to type them again.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.default_config_path">
-<em class="property">static </em><code class="sig-name descname">default_config_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.default_config_path" title="Permalink to this definition">¶</a></dt>
+<dt id="FLIR.conservator.config.Config.default_config_path">
+<em class="property">static </em><code class="sig-name descname">default_config_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.default_config_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>By default, your config is saved in <code class="docutils literal notranslate"><span class="pre">~/.conservator_config.json</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.delete_saved_default_config">
-<em class="property">static </em><code class="sig-name descname">delete_saved_default_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.delete_saved_default_config" title="Permalink to this definition">¶</a></dt>
+<dt id="FLIR.conservator.config.Config.delete_saved_default_config">
+<em class="property">static </em><code class="sig-name descname">delete_saved_default_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.delete_saved_default_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the default saved config, if it exists.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.from_config">
-<em class="property">static </em><code class="sig-name descname">from_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from the JSON config file
-at the <a class="reference internal" href="#conservator.config.Config.default_config_path" title="conservator.config.Config.default_config_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default_config_path()</span></code></a>.</p>
+<dt id="FLIR.conservator.config.Config.from_config">
+<em class="property">static </em><code class="sig-name descname">from_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from the JSON config file
+at the <a class="reference internal" href="#FLIR.conservator.config.Config.default_config_path" title="FLIR.conservator.config.Config.default_config_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default_config_path()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.from_environ">
-<em class="property">static </em><code class="sig-name descname">from_environ</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_environ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from environment variables.</p>
+<dt id="FLIR.conservator.config.Config.from_environ">
+<em class="property">static </em><code class="sig-name descname">from_environ</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_environ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from environment variables.</p>
 <p>The environment variables are <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_EMAIL</span></code>, <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.from_file">
-<em class="property">static </em><code class="sig-name descname">from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from a JSON config file.</p>
+<dt id="FLIR.conservator.config.Config.from_file">
+<em class="property">static </em><code class="sig-name descname">from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from a JSON config file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> – The path to the JSON config file.</p>
@@ -122,28 +123,94 @@ and <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.from_input">
-<em class="property">static </em><code class="sig-name descname">from_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.from_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from standard input.</p>
+<dt id="FLIR.conservator.config.Config.from_input">
+<em class="property">static </em><code class="sig-name descname">from_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from standard input.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.save_to_default_config">
-<code class="sig-name descname">save_to_default_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.save_to_default_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to the Default config file, meaning
-this config will be loaded by <a class="reference internal" href="#conservator.config.Config.default" title="conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
+<dt id="FLIR.conservator.config.Config.save_to_default_config">
+<code class="sig-name descname">save_to_default_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.save_to_default_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to the Default config file, meaning
+this config will be loaded by <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="conservator.config.Config.save_to_file">
-<code class="sig-name descname">save_to_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#conservator.config.Config.save_to_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the <a class="reference internal" href="#conservator.config.Config" title="conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to as JSON.</p>
-<p>This file can be loaded using <a class="reference internal" href="#conservator.config.Config.from_file" title="conservator.config.Config.from_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.from_file()</span></code></a>.</p>
+<dt id="FLIR.conservator.config.Config.save_to_file">
+<code class="sig-name descname">save_to_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.save_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to as JSON.</p>
+<p>This file can be loaded using <a class="reference internal" href="#FLIR.conservator.config.Config.from_file" title="FLIR.conservator.config.Config.from_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.from_file()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> – The file path to save to.</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.connection">
+<span id="conservator-connection"></span><h2>Conservator Connection<a class="headerlink" href="#module-FLIR.conservator.connection" title="Permalink to this headline">¶</a></h2>
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.query">
+<code class="sig-prename descclassname">ConservatorConnection.</code><code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">operation_base</span><span class="o">=</span><span class="default_value">Query</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides an alternative way to prepare and run SGQLC operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> – The SGQLC query to run.</p></li>
+<li><p><strong>operation_base</strong> – The base object of the query.
+Defaults to :class:<code class="docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Query</span></code>.</p></li>
+<li><p><strong>include_fields</strong> – List of field paths to include in the returned object(s).
+Fields of subtypes can be specified as a path separated by <code class="docutils literal notranslate"><span class="pre">.</span></code>.  For instance,
+when querying for a Dataset, you could add <code class="docutils literal notranslate"><span class="pre">repository.master</span></code> to only
+include the <code class="docutils literal notranslate"><span class="pre">master</span></code> field of <code class="docutils literal notranslate"><span class="pre">Dataset.repository</span></code>.
+If empty or not specified, all fields will be included.</p></li>
+<li><p><strong>exclude_fields</strong> – A list of field paths to exclude. These take the same form as
+included fields, and override them. In the above example, excluding <code class="docutils literal notranslate"><span class="pre">repository</span></code>
+will exclude all fields of <code class="docutils literal notranslate"><span class="pre">repository</span></code>.</p></li>
+<li><p><strong>kwargs</strong> – These named parameters are passed as arguments to the query.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">members</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</div>
+<div class="section" id="module-FLIR.conservator.conservator">
+<span id="conservator"></span><h2>Conservator<a class="headerlink" href="#module-FLIR.conservator.conservator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="FLIR.conservator.conservator.Conservator">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">Conservator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> is the highest level class of this library. It will likely be the
+starting point for all queries and operations.</p>
+<dl>
+<dt>You can get an instance using the default <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code>::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
+<span class="go">&lt;Conservator at https://flirconservator.com&gt;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>You can create also create an instance by passing any <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code>
+object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">my_email</span><span class="p">,</span> <span class="n">my_key</span><span class="p">,</span> <span class="s2">&quot;https://localhost:3000&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="go">&lt;Conservator at https://localhost:3000&gt;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> – The <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code> object to use for this connection.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.default">
+<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using <code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -158,6 +225,9 @@ this config will be loaded by <a class="reference internal" href="#conservator.c
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.webp" alt="Logo"/>
+            </a></p>
 <h1 class="logo"><a href="index.html">Conservator CLI</a></h1>
 
 
@@ -168,11 +238,14 @@ this config will be loaded by <a class="reference internal" href="#conservator.c
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/cli_quickstart.html">CLI Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-conservator.config">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
 </ul>
 </li>
 </ul>
@@ -181,7 +254,7 @@ this config will be loaded by <a class="reference internal" href="#conservator.c
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="usage/installation.html" title="previous chapter">Installation</a></li>
+      <li>Previous: <a href="usage/api_quickstart.html" title="previous chapter">Python API Quickstart</a></li>
   </ul></li>
 </ul>
 </div>
