@@ -1,5 +1,5 @@
 import os
-from conservator.config import Config
+from FLIR.conservator.config import Config
 
 TEST_DICT = {
     Config.EMAIL: "test@example.com",
