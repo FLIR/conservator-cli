@@ -22,7 +22,7 @@ class TypeProxy(object):
     """
     underlying_type = None
     by_id_query = None
-    problematic_fields = None
+    problematic_fields = []
     always_fields = ('id',)
 
     def __init__(self, conservator, instance):
