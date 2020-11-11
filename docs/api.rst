@@ -22,3 +22,15 @@ Conservator
 .. automodule:: FLIR.conservator.conservator
     :members:
 
+Types and TypeProxies
+---------------------
+
+.. automodule:: FLIR.conservator.types
+    :members:
+
+TypeProxy
+^^^^^^^^^
+
+.. automodule:: FLIR.conservator.types.type_proxy
+    :members:
+
