@@ -13,10 +13,21 @@ __all__ = [
 
 
 class ConservatorMalformedQueryException(Exception):
+    """
+    There was a problem with a GraphQL query, and it's the client's
+    fault.
+    """
     pass
 
 
 class ConservatorGraphQLServerError(Exception):
+    """
+    There was a problem with a GraphQL query, and it's unclear
+    what the cause was.
+
+    :param operation: The SGQLC operation that caused the error.
+    :param errors: A list of errors returned by the server.
+    """
     def __init__(self, operation, errors):
         self.operation = operation
         self.errors = errors
