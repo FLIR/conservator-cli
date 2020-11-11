@@ -150,43 +150,13 @@ this config will be loaded by <a class="reference internal" href="#FLIR.conserva
 </dd></dl>
 
 </div>
-<div class="section" id="module-FLIR.conservator.connection">
-<span id="conservator-connection"></span><h2>Conservator Connection<a class="headerlink" href="#module-FLIR.conservator.connection" title="Permalink to this headline">¶</a></h2>
-<dl class="py method">
-<dt id="FLIR.conservator.connection.ConservatorConnection.query">
-<code class="sig-prename descclassname">ConservatorConnection.</code><code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">operation_base</span><span class="o">=</span><span class="default_value">Query</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.query" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides an alternative way to prepare and run SGQLC operations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> – The SGQLC query to run.</p></li>
-<li><p><strong>operation_base</strong> – The base object of the query.
-Defaults to :class:<code class="docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Query</span></code>.</p></li>
-<li><p><strong>include_fields</strong> – List of field paths to include in the returned object(s).
-Fields of subtypes can be specified as a path separated by <code class="docutils literal notranslate"><span class="pre">.</span></code>.  For instance,
-when querying for a Dataset, you could add <code class="docutils literal notranslate"><span class="pre">repository.master</span></code> to only
-include the <code class="docutils literal notranslate"><span class="pre">master</span></code> field of <code class="docutils literal notranslate"><span class="pre">Dataset.repository</span></code>.
-If empty or not specified, all fields will be included.</p></li>
-<li><p><strong>exclude_fields</strong> – A list of field paths to exclude. These take the same form as
-included fields, and override them. In the above example, excluding <code class="docutils literal notranslate"><span class="pre">repository</span></code>
-will exclude all fields of <code class="docutils literal notranslate"><span class="pre">repository</span></code>.</p></li>
-<li><p><strong>kwargs</strong> – These named parameters are passed as arguments to the query.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="field-list simple">
-<dt class="field-odd">members</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</div>
 <div class="section" id="module-FLIR.conservator.conservator">
 <span id="conservator"></span><h2>Conservator<a class="headerlink" href="#module-FLIR.conservator.conservator" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="FLIR.conservator.conservator.Conservator">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">Conservator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> is the highest level class of this library. It will likely be the
+<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection" title="FLIR.conservator.connection.ConservatorConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.connection.ConservatorConnection</span></code></a></p>
+<p><a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> is the highest level class of this library. It will likely be the
 starting point for all queries and operations.</p>
 <dl>
 <dt>You can get an instance using the default <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code>::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
@@ -204,15 +174,122 @@ object:</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>config</strong> – The <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code> object to use for this connection.</p>
+<dd class="field-odd"><p><strong>config</strong> – The <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.config.Config</span></code></a> object to use for this connection.</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt id="FLIR.conservator.conservator.Conservator.default">
 <em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using <code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code>.</p>
+<dd><p>Returns a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">FLIR.conservator.config.Config.default()</span></code></a>.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.connection">
+<span id="conservator-connection"></span><h2>Conservator Connection<a class="headerlink" href="#module-FLIR.conservator.connection" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="FLIR.conservator.connection.ConservatorConnection">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.connection.</code><code class="sig-name descname">ConservatorConnection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acts as an intermediary between SGQLC and a remote Conservator instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> – <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.config.Config</span></code></a> providing Conservator URL and user
+authentication info.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.get_domain">
+<code class="sig-name descname">get_domain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the domain name of the Conservator instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.get_git_user">
+<code class="sig-name descname">get_git_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_git_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the encoded email-key combination used to authenticate
+git operations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.query">
+<code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">operation_base</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides an alternative way to prepare and run SGQLC operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> – The SGQLC query to run.</p></li>
+<li><p><strong>operation_base</strong> – The base object of the query.
+Defaults to <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Query</span></code>.</p></li>
+<li><p><strong>include_fields</strong> – List of field paths to include in the returned object(s).
+Fields of subtypes can be specified as a path separated by <code class="docutils literal notranslate"><span class="pre">.</span></code>.  For instance,
+when querying for a Dataset, you could add <code class="docutils literal notranslate"><span class="pre">repository.master</span></code> to only
+include the <code class="docutils literal notranslate"><span class="pre">master</span></code> field of <code class="docutils literal notranslate"><span class="pre">Dataset.repository</span></code>.
+If empty or not specified, all fields will be included.</p></li>
+<li><p><strong>exclude_fields</strong> – A list of field paths to exclude. These take the same form as
+included fields, and override them. In the above example, excluding <code class="docutils literal notranslate"><span class="pre">repository</span></code>
+will exclude all fields of <code class="docutils literal notranslate"><span class="pre">repository</span></code>.</p></li>
+<li><p><strong>kwargs</strong> – These named parameters are passed as arguments to the query.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.recursive_add_fields">
+<em class="property">static </em><code class="sig-name descname">recursive_add_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">('')</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">max_depth</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.recursive_add_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds fields to an SGQLC operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – The SGQLC object to add fields to.</p></li>
+<li><p><strong>include_fields</strong> – List of field paths to include in the returned object(s).
+Fields of subtypes can be specified as a path separated by <code class="docutils literal notranslate"><span class="pre">.</span></code>.  For instance,
+when querying for a Dataset, you could add <code class="docutils literal notranslate"><span class="pre">repository.master</span></code> to only
+include the <code class="docutils literal notranslate"><span class="pre">master</span></code> field of <code class="docutils literal notranslate"><span class="pre">Dataset.repository</span></code>.
+If empty or not specified, all fields will be included.</p></li>
+<li><p><strong>exclude_fields</strong> – A list of field paths to exclude. These take the same form as
+included fields, and override them. In the above example, excluding <code class="docutils literal notranslate"><span class="pre">repository</span></code>
+will exclude all fields of <code class="docutils literal notranslate"><span class="pre">repository</span></code>.</p></li>
+<li><p><strong>path</strong> – The current path, used to filter included and excluded path fields.</p></li>
+<li><p><strong>depth</strong> – How many times this has been called recursively.</p></li>
+<li><p><strong>max_depth</strong> – The maximum depth of fields to add.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">operation</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs an SGQLC operation on the remote instance, and returns
+the response, if there were no errors.</p>
+<p>If any errors are encountered, they will be raised with a
+<a class="reference internal" href="#FLIR.conservator.connection.ConservatorGraphQLServerError" title="FLIR.conservator.connection.ConservatorGraphQLServerError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConservatorGraphQLServerError</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.connection.ConservatorGraphQLServerError">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.connection.</code><code class="sig-name descname">ConservatorGraphQLServerError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">operation</span></em>, <em class="sig-param"><span class="n">errors</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorGraphQLServerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>There was a problem with a GraphQL query, and it’s unclear
+what the cause was.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>operation</strong> – The SGQLC operation that caused the error.</p></li>
+<li><p><strong>errors</strong> – A list of errors returned by the server.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.connection.ConservatorMalformedQueryException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.connection.</code><code class="sig-name descname">ConservatorMalformedQueryException</code><a class="headerlink" href="#FLIR.conservator.connection.ConservatorMalformedQueryException" title="Permalink to this definition">¶</a></dt>
+<dd><p>There was a problem with a GraphQL query, and it’s the client’s
+fault.</p>
 </dd></dl>
 
 </div>
@@ -244,8 +321,8 @@ object:</p>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
 </ul>
 </li>
 </ul>
