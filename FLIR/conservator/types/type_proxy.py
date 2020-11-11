@@ -13,10 +13,10 @@ class TypeProxy(object):
     Fields of the underlying instance can be accessed on this instance,
     and additional fields can be requested using :func:``populate``, which
     uses the underlying ``by_id_query``. For this reason, all instances must
-    also have a reference to a :class:``Conservator`` instance.
+    also have a reference to a :class:`Conservator` instance.
 
-    :param conservator: The instance of :class:``Conservator`` that created
-        the underlying instance.
+    :param conservator: The instance of :class:`FLIR.conservator.conservator.Conservator`
+        that created the underlying instance.
     :param instance: The SGQLC object to wrap, usually returned by running
         some query.
     """
@@ -67,6 +67,7 @@ class TypeProxy(object):
         return fields
 
     def populate_all(self):
+        """Query conservator for all missing fields."""
         self.populate(self.get_all_fields())
 
     def filter_new_fields(self, fields):
@@ -77,6 +78,7 @@ class TypeProxy(object):
         return filtered
 
     def populate(self, *args):
+        """Query conservator for the specified fields."""
         fields = []
         for arg in args:
             if isinstance(arg, str):
@@ -105,6 +107,8 @@ class TypeProxy(object):
 
     @classmethod
     def from_id(cls, conservator, id_):
+        """Create a proxied instance from an ID. The underlying type
+        of the class should match the type of the ID."""
         base_item = cls.underlying_type({"id": id_})
         return cls(conservator, base_item)
 
