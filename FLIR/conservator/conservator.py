@@ -17,7 +17,7 @@ class Conservator(ConservatorConnection):
         >>> Conservator(config)
         <Conservator at https://localhost:3000>
 
-    :param config: The :class:`Config` object to use for this connection.
+    :param config: The :class:`FLIR.conservator.config.Config` object to use for this connection.
     """
     def __init__(self, config):
         super().__init__(config)
@@ -28,6 +28,6 @@ class Conservator(ConservatorConnection):
     @staticmethod
     def default():
         """
-        Returns a :class:`Conservator` using :func:`Config.default`.
+        Returns a :class:`Conservator` using :func:`FLIR.conservator.config.Config.default`.
         """
         return Conservator(Config.default())

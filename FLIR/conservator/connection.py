@@ -26,7 +26,7 @@ class ConservatorConnection:
     """
     Acts as an intermediary between SGQLC and a remote Conservator instance.
 
-    :param config: :class:``Config`` providing Conservator URL and user
+    :param config: :class:`FLIR.conservator.config.Config` providing Conservator URL and user
         authentication info.
     """
     def __init__(self, config):
@@ -64,7 +64,7 @@ class ConservatorConnection:
         the response, if there were no errors.
 
         If any errors are encountered, they will be raised with a
-        :class:``ConservatorGraphQLServerError``.
+        :class:`ConservatorGraphQLServerError`.
         """
         # TODO: Remove after flirconservator PR #1988 in prod
         if variables is None:
@@ -78,13 +78,13 @@ class ConservatorConnection:
 
         return response
 
-    def query(self, query, operation_base=schema.query_type, include_fields=(), exclude_fields=(), **kwargs):
+    def query(self, query, operation_base=None, include_fields=(), exclude_fields=(), **kwargs):
         """
         Provides an alternative way to prepare and run SGQLC operations.
 
         :param query: The SGQLC query to run.
         :param operation_base: The base object of the query.
-            Defaults to :class:``FLIR.conservator.generated.schema.Query``.
+            Defaults to :class:`FLIR.conservator.generated.schema.Query`.
         :param include_fields: List of field paths to include in the returned object(s).
             Fields of subtypes can be specified as a path separated by ``.``.  For instance,
             when querying for a Dataset, you could add ``repository.master`` to only
@@ -95,6 +95,8 @@ class ConservatorConnection:
             will exclude all fields of ``repository``.
         :param kwargs: These named parameters are passed as arguments to the query.
         """
+        if operation_base is None:
+            operation_base = schema.query_type  # Query
         op = Operation(operation_base)
         query_name = query.name
         query = getattr(op, query_name)
