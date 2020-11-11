@@ -97,6 +97,7 @@ class ConservatorConnection:
         """
         if operation_base is None:
             operation_base = schema.query_type  # Query
+
         op = Operation(operation_base)
         query_name = query.name
         query = getattr(op, query_name)
