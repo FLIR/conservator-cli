@@ -33,7 +33,7 @@ class PaginatedQuery:
             raise ConcurrentQueryModificationException()
         if len(fields) == 0:
             return self.including_all_fields()
-        self.include_fields = fields
+        self.include_fields = tuple(fields) + ("id",)
         return self
 
     def excluding_fields(self, *fields):

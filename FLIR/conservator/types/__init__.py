@@ -15,3 +15,12 @@ For instance, a :class:`Collection` has :func:`Collection.get_datasets`,
 which runs the GraphQL query for a collection's datasets--and returns
 them as proxied :class:`Dataset` objects.
 """
+from FLIR.conservator.generated import schema
+from FLIR.conservator.types.type_proxy import TypeProxy
+
+
+class Project(TypeProxy):
+    underlying_type = schema.Project
+    by_id_query = schema.Query.project
+    search_query = schema.Query.projects
+

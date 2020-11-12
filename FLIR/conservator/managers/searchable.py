@@ -24,8 +24,8 @@ class SearchableTypeManager(TypeManager):
 
     def count(self, search_text=""):
         """Returns the number of instances that are returned by `search_text`"""
-        return len(self.search(search_text))
+        return len(self.search(search_text).including_fields("id"))
 
     def count_all(self):
         """Returns total number of instances"""
-        return len(self.search(""))
+        return len(self.search("").including_fields("id"))
