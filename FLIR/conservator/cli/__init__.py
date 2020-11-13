@@ -1,5 +1,8 @@
 import click
 from FLIR.conservator.config import Config
+from FLIR.conservator.cli.managers import get_manager_command
+from FLIR.conservator.generated import schema
+from FLIR.conservator.managers import ProjectsManager
 
 
 @click.group()
@@ -19,3 +22,7 @@ def config(delete):
     click.echo(f"  Email: {default_config.email}")
     click.echo(f"  Key: {default_config.key}")
     click.echo(f"  URL: {default_config.url}")
+
+
+main.add_command(get_manager_command(ProjectsManager, schema.Project, "projects", "Project"))
+
