@@ -213,7 +213,7 @@ git operations.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.connection.ConservatorConnection.query">
-<code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">operation_base</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.query" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">operation_base</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides an alternative way to prepare and run SGQLC operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -221,39 +221,9 @@ git operations.</p>
 <li><p><strong>query</strong> – The SGQLC query to run.</p></li>
 <li><p><strong>operation_base</strong> – The base object of the query.
 Defaults to <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Query</span></code>.</p></li>
-<li><p><strong>include_fields</strong> – List of field paths to include in the returned object(s).
-Fields of subtypes can be specified as a path separated by <code class="docutils literal notranslate"><span class="pre">.</span></code>.  For instance,
-when querying for a Dataset, you could add <code class="docutils literal notranslate"><span class="pre">repository.master</span></code> to only
-include the <code class="docutils literal notranslate"><span class="pre">master</span></code> field of <code class="docutils literal notranslate"><span class="pre">Dataset.repository</span></code>.
-If empty or not specified, all fields will be included.</p></li>
-<li><p><strong>exclude_fields</strong> – A list of field paths to exclude. These take the same form as
-included fields, and override them. In the above example, excluding <code class="docutils literal notranslate"><span class="pre">repository</span></code>
-will exclude all fields of <code class="docutils literal notranslate"><span class="pre">repository</span></code>.</p></li>
+<li><p><strong>fields</strong> – A <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.fields_request.FieldsRequest</span></code> of
+the fields to include (or exclude) in the results.</p></li>
 <li><p><strong>kwargs</strong> – These named parameters are passed as arguments to the query.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.connection.ConservatorConnection.recursive_add_fields">
-<em class="property">static </em><code class="sig-name descname">recursive_add_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">('')</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">max_depth</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.recursive_add_fields" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds fields to an SGQLC operation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – The SGQLC object to add fields to.</p></li>
-<li><p><strong>include_fields</strong> – List of field paths to include in the returned object(s).
-Fields of subtypes can be specified as a path separated by <code class="docutils literal notranslate"><span class="pre">.</span></code>.  For instance,
-when querying for a Dataset, you could add <code class="docutils literal notranslate"><span class="pre">repository.master</span></code> to only
-include the <code class="docutils literal notranslate"><span class="pre">master</span></code> field of <code class="docutils literal notranslate"><span class="pre">Dataset.repository</span></code>.
-If empty or not specified, all fields will be included.</p></li>
-<li><p><strong>exclude_fields</strong> – A list of field paths to exclude. These take the same form as
-included fields, and override them. In the above example, excluding <code class="docutils literal notranslate"><span class="pre">repository</span></code>
-will exclude all fields of <code class="docutils literal notranslate"><span class="pre">repository</span></code>.</p></li>
-<li><p><strong>path</strong> – The current path, used to filter included and excluded path fields.</p></li>
-<li><p><strong>depth</strong> – How many times this has been called recursively.</p></li>
-<li><p><strong>max_depth</strong> – The maximum depth of fields to add.</p></li>
 </ul>
 </dd>
 </dl>
@@ -348,7 +318,7 @@ of the class should match the type of the ID.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.types.type_proxy.TypeProxy.populate">
-<code class="sig-name descname">populate</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">populate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Query conservator for the specified fields.</p>
 </dd></dl>
 
@@ -358,13 +328,6 @@ of the class should match the type of the ID.</p>
 <dd><p>Query conservator for all missing fields.</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt id="FLIR.conservator.types.type_proxy.graphql_to_python">
-<code class="sig-prename descclassname">FLIR.conservator.types.type_proxy.</code><code class="sig-name descname">graphql_to_python</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.graphql_to_python" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a GraphQL name to python in the same way as SGQLC codegen.</p>
-<p>This code copied from SGQLC codegen</p>
 </dd></dl>
 
 </div>
@@ -448,7 +411,7 @@ of its execution.</p>
 
 <dl class="py class">
 <dt id="FLIR.conservator.paginated_query.PaginatedQuery">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">PaginatedQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">base_operation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">('')</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">PaginatedQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">base_operation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enables pagination of any query with <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> arguments.</p>
 <p>Assume you want to iterate through all the Projects in a project search
 query. You could do something like the following:</p>
