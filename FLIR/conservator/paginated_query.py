@@ -1,3 +1,6 @@
+from FLIR.conservator.fields_request import FieldsRequest
+
+
 class PaginatedQuery:
     """
     Enables pagination of any query with ``page`` and ``limit`` arguments.
@@ -11,13 +14,14 @@ class PaginatedQuery:
 
     """
     def __init__(self, conservator, query, base_operation=None,
-                 include_fields=("",), exclude_fields=(), page_size=100,
+                 fields=None, page_size=100,
                  **kwargs):
         self._conservator = conservator
         self._query = query
         self._base_operation = base_operation
-        self.include_fields = include_fields
-        self.exclude_fields = exclude_fields
+        if fields is None:
+            fields = FieldsRequest()
+        self.fields = fields
         self._page = 0
         self._limit = page_size
         self.results = []
@@ -33,7 +37,7 @@ class PaginatedQuery:
             raise ConcurrentQueryModificationException()
         if len(fields) == 0:
             return self.including_all_fields()
-        self.include_fields = tuple(fields) + ("id",)
+        self.fields.include_fields(fields)
         return self
 
     def excluding_fields(self, *fields):
@@ -42,7 +46,7 @@ class PaginatedQuery:
         """
         if self.started:
             raise ConcurrentQueryModificationException()
-        self.exclude_fields = fields
+        self.fields.exclude_fields(fields)
         return self
 
     def including_all_fields(self):
@@ -53,7 +57,7 @@ class PaginatedQuery:
             raise ConcurrentQueryModificationException()
         if self.started:
             raise
-        self.include_fields = ("",)
+        self.fields.include_field("")
         return self
 
     def first(self):
@@ -67,7 +71,7 @@ class PaginatedQuery:
 
     def _do_query(self, page, limit):
         return self._conservator.query(self._query, self._base_operation,
-                                       self.include_fields, self.exclude_fields,
+                                       self.fields,
                                        page=page,
                                        limit=limit,
                                        **self.kwargs)
