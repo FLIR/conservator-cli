@@ -31,3 +31,29 @@ TypeProxy
 
 .. automodule:: FLIR.conservator.types.type_proxy
     :members:
+
+Managers
+--------
+
+.. automodule:: FLIR.conservator.managers
+    :members:
+
+TypeManager
+^^^^^^^^^^^
+
+.. automodule:: FLIR.conservator.managers.type_manager
+    :members:
+
+SearchableTypeManager
+^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: FLIR.conservator.managers.searchable
+    :show-inheritance:
+    :members:
+
+PaginatedQuery
+--------------
+
+.. automodule:: FLIR.conservator.paginated_query
+    :members:
+

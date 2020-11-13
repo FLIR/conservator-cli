@@ -307,6 +307,17 @@ Loading from Directory, etc.</p>
 For instance, a <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code> has <code class="xref py py-func docutils literal notranslate"><span class="pre">Collection.get_datasets()</span></code>,
 which runs the GraphQL query for a collection’s datasets–and returns
 them as proxied <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code> objects.</p>
+<dl class="py class">
+<dt id="FLIR.conservator.types.Project">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.</code><code class="sig-name descname">Project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Project" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="FLIR.conservator.types.Project.underlying_type">
+<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.Project.underlying_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Project</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
 <div class="section" id="module-FLIR.conservator.types.type_proxy">
 <span id="typeproxy"></span><h3>TypeProxy<a class="headerlink" href="#module-FLIR.conservator.types.type_proxy" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
@@ -358,6 +369,130 @@ of the class should match the type of the ID.</p>
 
 </div>
 </div>
+<div class="section" id="module-FLIR.conservator.managers">
+<span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this headline">¶</a></h2>
+<p>A Manager is simply a bundle of utilities for querying a specific type.</p>
+<dl class="py class">
+<dt id="FLIR.conservator.managers.ProjectsManager">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">ProjectsManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ProjectsManager" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="section" id="module-FLIR.conservator.managers.type_manager">
+<span id="typemanager"></span><h3>TypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.type_manager" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.managers.type_manager.TypeManager">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.type_manager.</code><code class="sig-name descname">TypeManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">underlying_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base Manger class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conservator</strong> – Conservator instance to use for queries.</p></li>
+<li><p><strong>underlying_type</strong> – Underlying TypeProxy class to wrap.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.type_manager.TypeManager.from_id">
+<code class="sig-name descname">from_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager.from_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new instance of <cite>underlying_type</cite> from an ID.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.managers.searchable">
+<span id="searchabletypemanager"></span><h3>SearchableTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.searchable" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.managers.searchable.SearchableTypeManager">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.searchable.</code><code class="sig-name descname">SearchableTypeManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">underlying_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.type_manager.TypeManager" title="FLIR.conservator.managers.type_manager.TypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.type_manager.TypeManager</span></code></a></p>
+<p>Adds the ability to search using Conservator’s Advanced Search.</p>
+<p>The underlying instance must specify a <code class="docutils literal notranslate"><span class="pre">search_query</span></code>.</p>
+<p>Most queries return a <a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="FLIR.conservator.paginated_query.PaginatedQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.paginated_query.PaginatedQuery</span></code></a>.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.searchable.SearchableTypeManager.all">
+<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for all instances</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.searchable.SearchableTypeManager.count">
+<code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of instances that are returned by <cite>search_text</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.searchable.SearchableTypeManager.count_all">
+<code class="sig-name descname">count_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager.count_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns total number of instances</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.searchable.SearchableTypeManager.search">
+<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a search with the specified <cite>search_text</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-FLIR.conservator.paginated_query">
+<span id="paginatedquery"></span><h2>PaginatedQuery<a class="headerlink" href="#module-FLIR.conservator.paginated_query" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="FLIR.conservator.paginated_query.ConcurrentQueryModificationException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">ConcurrentQueryModificationException</code><a class="headerlink" href="#FLIR.conservator.paginated_query.ConcurrentQueryModificationException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a paginated query is modified in the middle
+of its execution.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="FLIR.conservator.paginated_query.PaginatedQuery">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">PaginatedQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">base_operation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">('')</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables pagination of any query with <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> arguments.</p>
+<p>Assume you want to iterate through all the Projects in a project search
+query. You could do something like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">PaginatedQuery</span><span class="p">(</span><span class="n">conservator</span><span class="p">,</span> <span class="n">Query</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span> <span class="n">search_text</span><span class="o">=</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">including_fields</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="FLIR.conservator.paginated_query.PaginatedQuery.excluding_fields">
+<code class="sig-name descname">excluding_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">fields</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.excluding_fields" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fields</strong> – Fields to exclude in the results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.paginated_query.PaginatedQuery.first">
+<code class="sig-name descname">first</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first result.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.paginated_query.PaginatedQuery.including_all_fields">
+<code class="sig-name descname">including_all_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.including_all_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Include all non-excluded fields in the results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.paginated_query.PaginatedQuery.including_fields">
+<code class="sig-name descname">including_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">fields</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.including_fields" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fields</strong> – Fields to include in the results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -389,6 +524,8 @@ of the class should match the type of the ID.</p>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.types">Types and TypeProxies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a></li>
 </ul>
 </li>
 </ul>
@@ -427,7 +564,7 @@ of the class should match the type of the ID.</p>
       &copy;2020, FLIR Systems.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
