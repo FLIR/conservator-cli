@@ -3,6 +3,8 @@ import urllib.parse
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 
+from FLIR.conservator.fields_manager import FieldsManager
+from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated.schema import schema
 
 __all__ = [
@@ -47,6 +49,7 @@ class ConservatorConnection:
             "authorization": config.key,
         }
         self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
+        self.fields_manager = FieldsManager()
 
     def get_git_user(self):
         """
@@ -82,83 +85,60 @@ class ConservatorConnection:
             variables = {}
 
         json_response = self.endpoint(operation, variables)
-        if 'errors' in json_response:
-            raise ConservatorGraphQLServerError(operation, json_response['errors'])
+        errors = json_response.get("errors", None)
+        if errors is not None:
+            raise ConservatorGraphQLServerError(operation, errors)
 
         response = (operation + json_response)
 
         return response
 
-    def query(self, query, operation_base=None, include_fields=(), exclude_fields=(), **kwargs):
+    def handle_errors(self, errors, type_=None):
+        for error in errors:
+            if type_ is not None and "Cannot return null for non-nullable field" in error["message"]:
+                graphql_fields = tuple(filter(lambda i: isinstance(i, str), error["path"]))
+                problematic_path = ".".join(map(FieldsManager.graphql_to_python, graphql_fields[1:]))
+                self.fields_manager.add_problematic_path(type_, problematic_path)
+                print("Server encountered an error due to a null value for a non-nullable field.")
+                print("Attempting to resolve by excluding field in future queries.")
+                print("Excluded field:", problematic_path)
+                continue
+
+            # we can't handle the errors. raise the exception.
+            raise
+
+    def query(self, query, operation_base=None, fields=None, **kwargs):
         """
         Provides an alternative way to prepare and run SGQLC operations.
 
         :param query: The SGQLC query to run.
         :param operation_base: The base object of the query.
             Defaults to :class:`FLIR.conservator.generated.schema.Query`.
-        :param include_fields: List of field paths to include in the returned object(s).
-            Fields of subtypes can be specified as a path separated by ``.``.  For instance,
-            when querying for a Dataset, you could add ``repository.master`` to only
-            include the ``master`` field of ``Dataset.repository``.
-            If empty or not specified, all fields will be included.
-        :param exclude_fields: A list of field paths to exclude. These take the same form as
-            included fields, and override them. In the above example, excluding ``repository``
-            will exclude all fields of ``repository``.
+        :param fields: A :class:`FLIR.conservator.fields_request.FieldsRequest` of
+            the fields to include (or exclude) in the results.
         :param kwargs: These named parameters are passed as arguments to the query.
         """
         if operation_base is None:
-            operation_base = schema.query_type  # Query
+            operation_base = schema.query_type
 
+        if fields is None:
+            # includes all fields by default
+            fields = FieldsRequest()
+
+        while True:
+            try:
+                return self._query(query, operation_base, fields, **kwargs)
+            except ConservatorGraphQLServerError as e:
+                self.handle_errors(e.errors, query.type)
+
+    def _query(self, query, operation_base, fields, **kwargs):
+        type_ = query.type
         op = Operation(operation_base)
         query_name = query.name
         query = getattr(op, query_name)
         query(**kwargs)
 
-        exclude_fields = tuple(set(exclude_fields))
-        include_fields = tuple(filter(lambda f: f not in exclude_fields, set(include_fields)))
-
-        max_depth = max(map(lambda f: f.count("."), include_fields + exclude_fields)) + 1
-
-        ConservatorConnection.recursive_add_fields(query, include_fields, exclude_fields, max_depth=max_depth)
+        fields.exclude_fields(self.fields_manager.get_problematic_paths(type_))
+        fields.add_fields_to_request(query)
 
         return getattr(self.run(op), query_name)
-
-    @staticmethod
-    def recursive_add_fields(obj, include_fields=("",), exclude_fields=(), path="", depth=0, max_depth=2):
-        """
-        Adds fields to an SGQLC operation.
-
-        :param obj: The SGQLC object to add fields to.
-        :param include_fields: List of field paths to include in the returned object(s).
-            Fields of subtypes can be specified as a path separated by ``.``.  For instance,
-            when querying for a Dataset, you could add ``repository.master`` to only
-            include the ``master`` field of ``Dataset.repository``.
-            If empty or not specified, all fields will be included.
-        :param exclude_fields: A list of field paths to exclude. These take the same form as
-            included fields, and override them. In the above example, excluding ``repository``
-            will exclude all fields of ``repository``.
-        :param path: The current path, used to filter included and excluded path fields.
-        :param depth: How many times this has been called recursively.
-        :param max_depth: The maximum depth of fields to add.
-        """
-        field_names = [name for name in dir(obj) if not name.startswith("_")]
-        if len(field_names) == 0 or depth >= max_depth:
-            # Fields are included in a query by calling them.
-            # View the SGQLC docs for more info.
-            obj()
-            return
-
-        for field_name in field_names:
-            field = getattr(obj, field_name)
-            prefix = ("" if path == "" else path + ".")
-            cur_path = prefix + field_name
-            # A field is included if its path is in include_fields
-            # or it is more specific than something in include_fields.
-            for included in include_fields:
-                # Unless it is excluded.
-                if (cur_path.startswith(included) or included.startswith(cur_path)) \
-                        and cur_path not in exclude_fields:
-                    ConservatorConnection.recursive_add_fields(field, include_fields,
-                                                               exclude_fields, cur_path,
-                                                               depth + 1, max_depth)
-                    break
