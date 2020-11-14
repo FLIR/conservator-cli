@@ -221,7 +221,7 @@ git operations.</p>
 <li><p><strong>query</strong> – The SGQLC query to run.</p></li>
 <li><p><strong>operation_base</strong> – The base object of the query.
 Defaults to <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Query</span></code>.</p></li>
-<li><p><strong>fields</strong> – A <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.fields_request.FieldsRequest</span></code> of
+<li><p><strong>fields</strong> – A <a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest" title="FLIR.conservator.fields_request.FieldsRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.fields_request.FieldsRequest</span></code></a> of
 the fields to include (or exclude) in the results.</p></li>
 <li><p><strong>kwargs</strong> – These named parameters are passed as arguments to the query.</p></li>
 </ul>
@@ -260,6 +260,124 @@ what the cause was.</p>
 <em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.connection.</code><code class="sig-name descname">ConservatorMalformedQueryException</code><a class="headerlink" href="#FLIR.conservator.connection.ConservatorMalformedQueryException" title="Permalink to this definition">¶</a></dt>
 <dd><p>There was a problem with a GraphQL query, and it’s the client’s
 fault.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.fields_manager">
+<span id="fields-manager"></span><h2>Fields Manager<a class="headerlink" href="#module-FLIR.conservator.fields_manager" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="FLIR.conservator.fields_manager.FieldsManager">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.fields_manager.</code><code class="sig-name descname">FieldsManager</code><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores a map of problematic fields for each SGQLC type. These
+are used during queries to avoid errors.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.fields_manager.FieldsManager.add_problematic_path">
+<code class="sig-name descname">add_problematic_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">typ</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.add_problematic_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a problematic field path for a given SGQLC <cite>type</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.fields_manager.FieldsManager.get_problematic_paths">
+<code class="sig-name descname">get_problematic_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">typ</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.get_problematic_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get problematic field paths for a given SGQLC <cite>type</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.fields_manager.FieldsManager.graphql_to_python">
+<em class="property">static </em><code class="sig-name descname">graphql_to_python</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.graphql_to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a GraphQL name to python in the same way as SGQLC codegen.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.fields_request">
+<span id="fields-request"></span><h2>Fields Request<a class="headerlink" href="#module-FLIR.conservator.fields_request" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="FLIR.conservator.fields_request.FieldsRequest">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.fields_request.</code><code class="sig-name descname">FieldsRequest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include_fields</span><span class="o">=</span><span class="default_value">('')</span></em>, <em class="sig-param"><span class="n">exclude_fields</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>A collection of fields to include (or exclude) in a query. Many different
+API calls will require specifying a list of fields using a <a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest" title="FLIR.conservator.fields_request.FieldsRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldsRequest</span></code></a>.</p>
+<dl>
+<dt>It can be used with <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.connection.Connection.query</span></code>::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conservator</span> <span class="o">=</span> <span class="n">Conservator</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="n">FieldsRequest</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">datasets</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Query</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span> <span class="n">search_text</span><span class="o">=</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>As used in this module, a <cite>field_path</cite> can refer to either:</dt><dd><ul class="simple">
+<li><p>A single field, like <cite>“name”</cite> to select <cite>Project.name</cite></p></li>
+<li><p>An entire subfield, like <cite>“repository”</cite> select all fields in <cite>Dataset.reposistory</cite></p></li>
+<li><p>A path to a field/subfield in a subfield, like <cite>“repository.master”</cite>
+to select the <cite>Reposistory.master</cite> field in <cite>Dataset.reposistory</cite></p></li>
+</ul>
+</dd>
+</dl>
+<p>These paths can be as long/specific as you want.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_fields</strong> – List of field paths to include in the returned object(s).
+Fields of subtypes can be specified as a path separated by <code class="docutils literal notranslate"><span class="pre">.</span></code>.  For instance,
+when querying for a Dataset, you could add <code class="docutils literal notranslate"><span class="pre">repository.master</span></code> to only
+include the <code class="docutils literal notranslate"><span class="pre">master</span></code> field of <code class="docutils literal notranslate"><span class="pre">Dataset.repository</span></code>.
+If empty or not specified, all fields will be included.</p></li>
+<li><p><strong>exclude_fields</strong> – A list of field paths to exclude. These take the same form as
+included fields, and override them. In the above example, excluding <code class="docutils literal notranslate"><span class="pre">repository</span></code>
+will exclude all fields of <code class="docutils literal notranslate"><span class="pre">repository</span></code>.</p></li>
+<li><p><strong>depth</strong> – Max depth for requested fields. Defaults to the maximum depth of any
+included field, plus 1.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="FLIR.conservator.fields_request.FieldsRequest.add_fields_to_request">
+<code class="sig-name descname">add_fields_to_request</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">current_path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">current_depth</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.add_fields_to_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds fields to an SGQLC object (usually initially called with an operation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – The SGQLC object to add fields to.</p></li>
+<li><p><strong>current_path</strong> – The current path, used to filter included and excluded path fields.</p></li>
+<li><p><strong>current_depth</strong> – How many times this has been called recursively.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.fields_request.FieldsRequest.exclude_field">
+<code class="sig-name descname">exclude_field</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">field_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.exclude_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Excludes <cite>field_path</cite> from the request.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.fields_request.FieldsRequest.exclude_fields">
+<code class="sig-name descname">exclude_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_paths</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.exclude_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Excludes <cite>field_paths</cite> from the request.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.fields_request.FieldsRequest.include_field">
+<code class="sig-name descname">include_field</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">field_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.include_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Includes <cite>field_path</cite> in the request.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.fields_request.FieldsRequest.include_fields">
+<code class="sig-name descname">include_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">field_paths</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.include_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Includes <cite>field_paths</cite> in the request.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.fields_request.FieldsRequest.should_include_path">
+<code class="sig-name descname">should_include_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.should_include_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>True</cite> if this request should include <cite>path</cite>.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -338,7 +456,8 @@ of the class should match the type of the ID.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.managers.ProjectsManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">ProjectsManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ProjectsManager" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+</dd></dl>
 
 <div class="section" id="module-FLIR.conservator.managers.type_manager">
 <span id="typemanager"></span><h3>TypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.type_manager" title="Permalink to this headline">¶</a></h3>
@@ -486,6 +605,8 @@ query. You could do something like the following:</p>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.types">Types and TypeProxies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a></li>
