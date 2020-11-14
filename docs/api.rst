@@ -20,6 +20,18 @@ Conservator Connection
 .. automodule:: FLIR.conservator.connection
     :members:
 
+Fields Manager
+--------------
+
+.. automodule:: FLIR.conservator.fields_manager
+    :members:
+
+Fields Request
+--------------
+
+.. automodule:: FLIR.conservator.fields_request
+    :members:
+
 Types and TypeProxies
 ---------------------
 
@@ -36,6 +48,7 @@ Managers
 --------
 
 .. automodule:: FLIR.conservator.managers
+    :show-inheritance:
     :members:
 
 TypeManager
