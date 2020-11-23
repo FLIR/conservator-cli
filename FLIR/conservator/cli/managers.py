@@ -32,13 +32,13 @@ def get_manager_command(type_manager, sgqlc_type, name):
     def group():
         pass
 
-    @group.command(name="fields")
+    @group.command(name="fields", help=f"List the fields of a {sgqlc_type}")
     def fields_():
         click.echo(f"Field names of {sgqlc_type}:")
         for field in sgqlc_type.__field_names__:
             click.echo(field)
 
-    @group.command()
+    @group.command(help=f"Print a {sgqlc_type} from an ID")
     @click.argument("id")
     @fields_request
     def get(fields, id):
@@ -47,7 +47,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         click.echo(item)
 
     if issubclass(type_manager, SearchableTypeManager):
-        @group.command()
+        @group.command(help=f"Search for {sgqlc_type}s")
         @click.argument('search_text')
         @fields_request
         def search(fields, search_text):
@@ -55,14 +55,14 @@ def get_manager_command(type_manager, sgqlc_type, name):
             for number, item in enumerate(items):
                 click.echo(item)
 
-        @group.command(name="list")
+        @group.command(name="list", help=f"List all {sgqlc_type}s")
         @fields_request
         def list_(fields):
             items = get_instance().all().with_fields(fields)
             for number, item in enumerate(items):
                 click.echo(item)
 
-        @group.command()
+        @group.command(help=f"Count all {sgqlc_type}s, or the number of {sgqlc_type}s returned in a search")
         @click.argument('search_text', default="")
         def count(search_text):
             click.echo(get_instance().count(search_text))
