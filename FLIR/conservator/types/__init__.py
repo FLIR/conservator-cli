@@ -19,8 +19,25 @@ from FLIR.conservator.generated import schema
 from FLIR.conservator.types.type_proxy import TypeProxy
 
 
+class Collection(TypeProxy):
+    underlying_type = schema.Collection
+    by_id_query = schema.Query.collection
+    search_query = schema.Query.collections
+
+
+class Dataset(TypeProxy):
+    underlying_type = schema.Dataset
+    by_id_query = schema.Query.dataset
+    search_query = schema.Query.datasets
+
+
 class Project(TypeProxy):
     underlying_type = schema.Project
     by_id_query = schema.Query.project
     search_query = schema.Query.projects
 
+
+class Video(TypeProxy):
+    underlying_type = schema.Video
+    by_id_query = schema.Query.video
+    search_query = schema.Query.videos

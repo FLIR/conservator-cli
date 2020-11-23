@@ -1,5 +1,5 @@
 pipeline {
-  agent {label "ubuntu && desktop && jenkins-caffe"}
+  agent {label "ubuntu && desktop"}
   stages {
     stage('Install') {
       steps {

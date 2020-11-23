@@ -1,6 +1,6 @@
 from FLIR.conservator.config import Config
 from FLIR.conservator.connection import ConservatorConnection
-from FLIR.conservator.managers import ProjectsManager
+from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
 
 
 class Conservator(ConservatorConnection):
@@ -22,7 +22,10 @@ class Conservator(ConservatorConnection):
     """
     def __init__(self, config):
         super().__init__(config)
-        self.projects = ProjectsManager(self)
+        self.collections = CollectionManager(self)
+        self.datasets = DatasetManager(self)
+        self.projects = ProjectManager(self)
+        self.videos = VideoManager(self)
 
     def __repr__(self):
         return f"<Conservator at {self.config.url}>"

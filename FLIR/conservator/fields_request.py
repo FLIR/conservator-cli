@@ -53,7 +53,7 @@ class FieldsRequest:
         :param current_path: The current path, used to filter included and excluded path fields.
         :param current_depth: How many times this has been called recursively.
         """
-        if current_depth > self.depth:
+        if current_depth >= self.depth:
             return
 
         field_names = [name for name in dir(obj) if not name.startswith("_")]
@@ -67,12 +67,25 @@ class FieldsRequest:
 
         for field_name in field_names:
             field_path = path_prefix + field_name
-            if self.should_include_path(field_path):
-                field = obj[field_name]
+            if self.should_include_all_subpaths(field_path):
+                obj[field_name]()
+            elif self.should_include_path(field_path):
+                field = getattr(obj, field_name)
                 self.add_fields_to_request(field, field_path, current_depth + 1)
 
+    def should_include_all_subpaths(self, path):
+        if path in self.excluded:
+            return False
+        for excluded in self.excluded:
+            if excluded.startswith(path):
+                return False
+        for included in self.included:
+            if path.startswith(included):
+                return True
+        return False
+
     def should_include_path(self, path):
-        """Returns `True` if this request should include `path`."""
+        """Returns `True` if this request should include something within `path`."""
         # if excluded, definitely no
         if path in self.excluded:
             return False

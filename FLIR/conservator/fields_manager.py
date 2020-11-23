@@ -1,6 +1,6 @@
 import re
 import keyword
-
+from FLIR.conservator.generated import schema
 
 class FieldsManager:
     """
@@ -8,7 +8,9 @@ class FieldsManager:
     are used during queries to avoid errors.
     """
     def __init__(self):
-        self.problematic_fields = {}
+        self.problematic_fields = {
+            schema.Video: {"shared_with"},
+        }
 
     def get_problematic_paths(self, typ):
         """Get problematic field paths for a given SGQLC `type`"""

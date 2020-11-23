@@ -21,7 +21,7 @@ def test_add_fields_simple_exclude():
     q = op.project
     q(id="123")
     fields = FieldsRequest()
-    fields.exclude_field("file_locker_files", "root_collection")
+    fields.exclude_field("file_locker_files", "acl", "root_collection")
     fields.add_fields_to_request(q)
     assert 'project(id: "123")' in str(op)
     assert 'fileLockerFiles' not in str(op)
@@ -49,3 +49,17 @@ def test_should_include_path():
     c.include_field("name")
     c.exclude_field("name")
     assert not b.should_include_path("name")
+
+
+def test_max_depth():
+    op = Operation(Query)
+    q = op.collection
+    q(id="123")
+    fields = FieldsRequest()
+    fields.exclude_field("children", "file_locker_files", "acl", "root_collection")
+    fields.set_depth(1)
+    fields.add_fields_to_request(q)
+    assert 'collection(id: "123")' in str(op)
+    assert 'fileLockerFiles' not in str(op)
+    assert 'rootCollection' not in str(op)
+    assert 'createdBy' in str(op)

@@ -2,7 +2,7 @@ import click
 from FLIR.conservator.config import Config
 from FLIR.conservator.cli.managers import get_manager_command
 from FLIR.conservator.generated import schema
-from FLIR.conservator.managers import ProjectsManager
+from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
 
 
 @click.group()
@@ -24,5 +24,10 @@ def config(delete):
     click.echo(f"  URL: {default_config.url}")
 
 
-main.add_command(get_manager_command(ProjectsManager, schema.Project, "projects", "Project"))
+main.add_command(get_manager_command(CollectionManager, schema.Collection, "collections"))
+main.add_command(get_manager_command(DatasetManager, schema.Dataset, "datasets"))
+main.add_command(get_manager_command(ProjectManager, schema.Project, "projects"))
+main.add_command(get_manager_command(VideoManager, schema.Video, "videos"))
 
+if __name__ == "__main__":
+    main()
