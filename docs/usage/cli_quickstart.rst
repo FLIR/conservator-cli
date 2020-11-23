@@ -24,3 +24,50 @@ credentials. If you want to change them, you can delete your config by running::
 
     $ conservator config delete
 
+Basic Queries
+-------------
+
+There are four queryable types
+    - Collections
+    - Datasets
+    - Videos
+    - Projects
+
+You can count them using `count`::
+
+    $ conservator projects count
+
+If you want to count the number of results in a search query, you can
+include some search text (using Conservator Advanced Search syntax)::
+
+    $ conservator projects count "ADAS"
+
+For more advanced queries (that print the actual objects), you need to specify
+which fields to include or exclude. You can use the `fields` command to list all
+fields::
+
+    $ conservator projects fields
+
+If you don't specify fields, Conservator CLI will ask for all possible fields. This
+can take a very long time to fetch for queries with more than a few results.
+
+To list the names of all projects::
+
+    $ conservator projects list -i name
+
+If you want to include multiple fields, separate them with a comma::
+
+    $ conservator projects list -i name,id
+
+Instead of listing all objects, you can also perform searches (using Conservator Advanced
+Search syntax)::
+
+    $ conservator projects search "ADAS" -i name
+
+These commands work with other types. For instance::
+
+    $ conservator datasets search "ADAS" -i name
+
+Be careful with large queries (like listing all collections), they will
+take a long time.
+
