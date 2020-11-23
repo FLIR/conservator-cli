@@ -1,3 +1,4 @@
+import re
 import urllib.parse
 
 from sgqlc.endpoint.http import HTTPEndpoint
@@ -84,10 +85,12 @@ class ConservatorConnection:
         if variables is None:
             variables = {}
 
-        json_response = self.endpoint(operation, variables)
+        gql = operation.__to_graphql__(auto_select_depth=1)
+        gql = re.sub(r'\w* {\s*}\s*', '', gql)
+        json_response = self.endpoint(gql, variables)
         errors = json_response.get("errors", None)
         if errors is not None:
-            raise ConservatorGraphQLServerError(operation, errors)
+            raise ConservatorGraphQLServerError(gql, errors)
 
         response = (operation + json_response)
 

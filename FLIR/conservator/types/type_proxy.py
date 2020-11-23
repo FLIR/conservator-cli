@@ -3,6 +3,7 @@ import re
 
 from FLIR.conservator.connection import ConservatorGraphQLServerError
 from FLIR.conservator.fields_request import FieldsRequest
+from FLIR.conservator.util import to_clean_string
 
 
 class TypeProxy(object):
@@ -27,7 +28,7 @@ class TypeProxy(object):
     def __init__(self, conservator, instance):
         self._conservator = conservator
         self._instance = instance
-        self._initialized_fields = [field.field_name for field in instance]
+        self._initialized_fields = [field for field in instance]
 
     def __getattr__(self, item):
         value = getattr(self._instance, item)
@@ -51,9 +52,9 @@ class TypeProxy(object):
 
         result = self._conservator.query(self.by_id_query, id=self.id, fields=fields)
         for field in result:
-            v = getattr(result, field.field_name)
-            setattr(self._instance, field.field_name, v)
-            self._initialized_fields.append(field.field_name)
+            v = getattr(result, field)
+            setattr(self._instance, field, v)
+            self._initialized_fields.append(field)
 
     @classmethod
     def from_id(cls, conservator, id_):
@@ -61,3 +62,8 @@ class TypeProxy(object):
         of the class should match the type of the ID."""
         base_item = cls.underlying_type({"id": id_})
         return cls(conservator, base_item)
+
+    def __str__(self):
+        return f"""{self.underlying_type}
+{to_clean_string(self)}"""
+

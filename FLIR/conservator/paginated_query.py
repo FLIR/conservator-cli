@@ -7,16 +7,17 @@ class PaginatedQuery:
 
     Assume you want to iterate through all the Projects in a project search
     query. You could do something like the following::
-        >>> results = PaginatedQuery(conservator, Query.projects, search_text="ADAS")
+        >>> results = PaginatedQuery(conservator, Project, Query.projects, search_text="ADAS")
         >>> results = results.including_fields("name")
         >>> for project in results:
         ...     print(project.name)
 
     """
-    def __init__(self, conservator, query, base_operation=None,
+    def __init__(self, conservator, underlying_type, query, base_operation=None,
                  fields=None, page_size=100,
                  **kwargs):
         self._conservator = conservator
+        self._underlying_type = underlying_type
         self._query = query
         self._base_operation = base_operation
         if fields is None:
@@ -28,6 +29,10 @@ class PaginatedQuery:
         self.kwargs = kwargs
         self.started = False
         self.done = False
+
+    def with_fields(self, fields):
+        self.fields = fields
+        return self
 
     def including_fields(self, *fields):
         """
@@ -70,11 +75,12 @@ class PaginatedQuery:
         return first
 
     def _do_query(self, page, limit):
-        return self._conservator.query(self._query, self._base_operation,
+        results = self._conservator.query(self._query, self._base_operation,
                                        self.fields,
                                        page=page,
                                        limit=limit,
                                        **self.kwargs)
+        return [self._underlying_type(self._conservator, i) for i in results]
 
     def _next_page(self):
         self.started = True
