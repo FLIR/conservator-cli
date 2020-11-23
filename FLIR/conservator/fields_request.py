@@ -73,7 +73,6 @@ class FieldsRequest:
                 field = getattr(obj, field_name)
                 self.add_fields_to_request(field, field_path, current_depth + 1)
 
-
     def should_include_all_subpaths(self, path):
         if path in self.excluded:
             return False

@@ -1,7 +1,3 @@
-import keyword
-import re
-
-from FLIR.conservator.connection import ConservatorGraphQLServerError
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.util import to_clean_string
 
