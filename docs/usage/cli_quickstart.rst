@@ -71,3 +71,27 @@ These commands work with other types. For instance::
 Be careful with large queries (like listing all collections), they will
 take a long time.
 
+Downloading Datasets
+--------------------
+
+The process for downloading a Dataset mirrors CVC. First, identify the ID of
+the dataset you want to download. You can find this using the website, or using
+a search query like ``conservator datasets search "deer" -i id``.
+
+Now, navigate to the directory where you want to download the dataset. Note that
+the dataset will be cloned in as a subdirectory, with the next of the dataset.
+So if you're in ``~/Desktop``, and want to download a Dataset called ``MyFirstDataset``,
+it will be cloned into ``~/Desktop/My First_Dataset`` by default.
+
+Then, run clone::
+
+    $ conservator datasets clone [YOUR_DATASET_ID]
+
+Next, ``cd`` into the directory, and run pull::
+
+    $ cd MyFirstDataset/
+    $ conservator datasets pull
+
+By default, this will pull the 8-bit images into the ``data/`` directory.
+
+Use ``--help`` with these commands to see more available options

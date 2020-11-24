@@ -9,11 +9,11 @@ class TypeProxy(object):
     Subclasses can add class and instance methods to add functionality.
 
     Fields of the underlying instance can be accessed on this instance,
-    and additional fields can be requested using :func:``populate``, which
+    and additional fields can be requested using :func:`~TypeProxy.populate`, which
     uses the underlying ``by_id_query``. For this reason, all instances must
-    also have a reference to a :class:`Conservator` instance.
+    also have a reference to a :class:`~FLIR.conservator.conservator.Conservator` instance.
 
-    :param conservator: The instance of :class:`FLIR.conservator.conservator.Conservator`
+    :param conservator: The instance of :class:`~FLIR.conservator.conservator.Conservator`
         that created the underlying instance.
     :param instance: The SGQLC object to wrap, usually returned by running
         some query.
@@ -34,6 +34,18 @@ class TypeProxy(object):
 
         raise AttributeError
 
+    def has_field(self, path):
+        """Returns `True` if the current instance has initialized the specified `path`.
+        
+        This is frequently used to test if a call to `populate` is required, or to
+        verify that a `populate` call worked."""
+        obj = self
+        for field in path.split("."):
+            if not hasattr(obj, field):
+                return False
+            obj = getattr(obj, field)
+        return True
+
     def populate_all(self):
         """Query conservator for all missing fields."""
         self.populate(fields=FieldsRequest())
@@ -45,6 +57,13 @@ class TypeProxy(object):
 
         if fields is None:
             fields = FieldsRequest()
+        else:
+            needs_new_fields = False
+            for field in fields.included:
+                if not self.has_field(field):
+                    needs_new_fields = True
+            if not needs_new_fields:
+                return
 
         result = self._conservator.query(self.by_id_query, id=self.id, fields=fields)
         for field in result:
@@ -60,6 +79,5 @@ class TypeProxy(object):
         return cls(conservator, base_item)
 
     def __str__(self):
-        return f"""{self.underlying_type}
-{to_clean_string(self)}"""
+        return f"{self.underlying_type}\n{to_clean_string(self)}"
 
