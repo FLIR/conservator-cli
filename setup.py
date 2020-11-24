@@ -37,5 +37,6 @@ setuptools.setup(
         "click",
         "tqdm",
         "pytest",
+        "requests"
     ],
 )

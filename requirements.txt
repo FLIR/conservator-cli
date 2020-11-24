@@ -4,3 +4,4 @@ sgqlc
 click
 tqdm
 pytest
+requests

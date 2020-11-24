@@ -42,12 +42,20 @@ class Dataset(TypeProxy):
     search_query = schema.Query.datasets
 
     def get_git_url(self):
+        """Returns the Git URL used for cloning this Dataset."""
         return f"{self._conservator.get_authenticated_url()}/git/dataset_{self.id}"
 
     def get_dvc_url(self):
+        """Returns the DVC URL used for downloading files."""
         return f"{self._conservator.get_authenticated_url()}/dvc"
 
     def clone(self, path="."):
+        """Clone this Dataset into a subdirectory of `path` based on
+        the Dataset's name.
+
+        For instance, if you pass `path`=``~/Desktop``, and want to download a Dataset
+        called ``MyFirstDataset``, it will be cloned into ``~/Desktop/My First_Dataset``.
+        """
         fields = FieldsRequest(include_fields=("name", "repository.master"))
         self.populate(fields)
         if not self.has_field("repository.master"):
@@ -60,17 +68,11 @@ class Dataset(TypeProxy):
         url = self.get_git_url()
         subprocess.call(["git", "clone", url, path])
 
-    def is_cloned(self, path="."):
-        fields = FieldsRequest(include_fields=("name",))
-        self.populate(fields)
-        if not self.has_field("repository.master"):
-            raise MissingFieldException(f"Dataset '{self.name}' does not have an associated git repository")
-
-        path = os.path.join(path, self.name, "index.json")
-        return os.path.exists(path)
-
     @classmethod
     def from_path(cls, conservator, path="."):
+        """Returns a new Dataset instance using the ID found in ``index.json``
+        at the provided `path`
+        """
         index_file = os.path.join(path, "index.json")
         if not os.path.exists(index_file):
             raise FileNotFoundError("Missing index.json, check the path")
@@ -80,6 +82,12 @@ class Dataset(TypeProxy):
             return cls.from_id(conservator, data['datasetId'])
 
     def pull(self, path=".", include_analytics=False, include_eight_bit=True, process_count=None):
+        """
+        Downloads the files listed in ``index.json`` at the provided `path`.
+
+        :param include_analytics: If `True`, download analytic data to ``analyticsData/``.
+        :param include_eight_bit: If `True`, download eight-bit images to ``data/``.
+        """
         index_file = os.path.join(path, "index.json")
         if not os.path.exists(index_file):
             raise FileNotFoundError("Missing index.json, check the path")
