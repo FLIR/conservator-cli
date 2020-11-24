@@ -103,6 +103,27 @@ Search syntax):</p>
 <p>Be careful with large queries (like listing all collections), they will
 take a long time.</p>
 </div>
+<div class="section" id="downloading-datasets">
+<h2>Downloading Datasets<a class="headerlink" href="#downloading-datasets" title="Permalink to this headline">¶</a></h2>
+<p>The process for downloading a Dataset mirrors CVC. First, identify the ID of
+the dataset you want to download. You can find this using the website, or using
+a search query like <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">datasets</span> <span class="pre">search</span> <span class="pre">&quot;deer&quot;</span> <span class="pre">-i</span> <span class="pre">id</span></code>.</p>
+<p>Now, navigate to the directory where you want to download the dataset. Note that
+the dataset will be cloned in as a subdirectory, with the next of the dataset.
+So if you’re in <code class="docutils literal notranslate"><span class="pre">~/Desktop</span></code>, and want to download a Dataset called <code class="docutils literal notranslate"><span class="pre">MyFirstDataset</span></code>,
+it will be cloned into <code class="docutils literal notranslate"><span class="pre">~/Desktop/My</span> <span class="pre">First_Dataset</span></code> by default.</p>
+<p>Then, run clone:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets clone [YOUR_DATASET_ID]
+</pre></div>
+</div>
+<p>Next, <code class="docutils literal notranslate"><span class="pre">cd</span></code> into the directory, and run pull:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd MyFirstDataset/
+$ conservator datasets pull
+</pre></div>
+</div>
+<p>By default, this will pull the 8-bit images into the <code class="docutils literal notranslate"><span class="pre">data/</span></code> directory.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--help</span></code> with these commands to see more available options</p>
+</div>
 </div>
 
 
@@ -130,6 +151,7 @@ take a long time.</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">CLI Quickstart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#config">Config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-queries">Basic Queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-datasets">Downloading Datasets</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>

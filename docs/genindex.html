@@ -42,6 +42,7 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
@@ -51,6 +52,7 @@
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  
 </div>
 <h2 id="A">A</h2>
@@ -70,6 +72,8 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.types.Dataset.clone">clone() (FLIR.conservator.types.Dataset method)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.types.Collection">Collection (class in FLIR.conservator.types)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.managers.CollectionManager">CollectionManager (class in FLIR.conservator.managers)</a>
@@ -78,10 +82,10 @@
 </li>
       <li><a href="api.html#FLIR.conservator.config.Config">Config (class in FLIR.conservator.config)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.conservator.Conservator">Conservator (class in FLIR.conservator.conservator)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.conservator.Conservator">Conservator (class in FLIR.conservator.conservator)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection">ConservatorConnection (class in FLIR.conservator.connection)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.connection.ConservatorGraphQLServerError">ConservatorGraphQLServerError</a>
@@ -182,8 +186,6 @@
         <li><a href="api.html#module-FLIR.conservator.managers">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     FLIR.conservator.managers.searchable
 
@@ -191,6 +193,8 @@
         <li><a href="api.html#module-FLIR.conservator.managers.searchable">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     FLIR.conservator.managers.type_manager
 
@@ -233,21 +237,41 @@
       </ul></li>
       <li><a href="api.html#FLIR.conservator.config.Config.from_input">from_input() (FLIR.conservator.config.Config static method)</a>
 </li>
+      <li><a href="api.html#FLIR.conservator.managers.DatasetManager.from_path">from_path() (FLIR.conservator.managers.DatasetManager method)</a>
+
+      <ul>
+        <li><a href="api.html#FLIR.conservator.types.Dataset.from_path">(FLIR.conservator.types.Dataset class method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_authenticated_url">get_authenticated_url() (FLIR.conservator.connection.ConservatorConnection method)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_domain">get_domain() (FLIR.conservator.connection.ConservatorConnection method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_git_user">get_git_user() (FLIR.conservator.connection.ConservatorConnection method)</a>
+      <li><a href="api.html#FLIR.conservator.types.Dataset.get_dvc_url">get_dvc_url() (FLIR.conservator.types.Dataset method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.types.Dataset.get_git_url">get_git_url() (FLIR.conservator.types.Dataset method)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.fields_manager.FieldsManager.get_problematic_paths">get_problematic_paths() (FLIR.conservator.fields_manager.FieldsManager method)</a>
 </li>
+      <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_url_encoded_user">get_url_encoded_user() (FLIR.conservator.connection.ConservatorConnection method)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.fields_manager.FieldsManager.graphql_to_python">graphql_to_python() (FLIR.conservator.fields_manager.FieldsManager static method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.types.type_proxy.TypeProxy.has_field">has_field() (FLIR.conservator.types.type_proxy.TypeProxy method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -271,6 +295,8 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.types.MissingFieldException">MissingFieldException</a>
+</li>
       <li>
     module
 
@@ -308,13 +334,15 @@
 </li>
       <li><a href="api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate">populate() (FLIR.conservator.types.type_proxy.TypeProxy method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate_all">populate_all() (FLIR.conservator.types.type_proxy.TypeProxy method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.types.Project">Project (class in FLIR.conservator.types)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.managers.ProjectManager">ProjectManager (class in FLIR.conservator.managers)</a>
+</li>
+      <li><a href="api.html#FLIR.conservator.types.Dataset.pull">pull() (FLIR.conservator.types.Dataset method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -389,6 +417,14 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.managers.VideoManager">VideoManager (class in FLIR.conservator.managers)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.paginated_query.PaginatedQuery.with_fields">with_fields() (FLIR.conservator.paginated_query.PaginatedQuery method)</a>
 </li>
   </ul></td>
 </tr></table>
