@@ -53,8 +53,8 @@ class Dataset(TypeProxy):
         """Clone this Dataset into a subdirectory of `path` based on
         the Dataset's name.
 
-        For instance, if you pass `path`=``~/Desktop``, and want to download a Dataset
-        called ``MyFirstDataset``, it will be cloned into ``~/Desktop/My First_Dataset``.
+        For instance, if you pass ``path="~/Desktop"``, and want to download a Dataset
+        called ``MyFirstDataset``, it will be cloned into ``~/Desktop/MyFirstDataset``.
         """
         fields = FieldsRequest(include_fields=("name", "repository.master"))
         self.populate(fields)
