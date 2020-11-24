@@ -52,10 +52,10 @@ class ConservatorConnection:
         self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
         self.fields_manager = FieldsManager()
 
-    def get_git_user(self):
+    def get_url_encoded_user(self):
         """
         Returns the encoded email-key combination used to authenticate
-        git operations.
+        URLs.
         """
         email = urllib.parse.quote(self.config.email.lower(), safe='.')
         key = self.config.key
@@ -64,6 +64,13 @@ class ConservatorConnection:
     def get_domain(self):
         """Returns the domain name of the Conservator instance."""
         return urllib.parse.urlparse(self.config.url).netloc
+
+    def get_authenticated_url(self):
+        """Returns an authenticated URL that contains an encoded username and token.
+
+        This URL is used when downloading files and repositories."""
+        r = urllib.parse.urlparse(self.config.url)
+        return f"{r.scheme}://{self.get_url_encoded_user()}@{r.netloc}"
 
     @staticmethod
     def to_graphql_url(url):

@@ -14,6 +14,9 @@ class DatasetManager(SearchableTypeManager):
     def __init__(self, conservator):
         super().__init__(conservator, Dataset)
 
+    def from_path(self, path="."):
+        return self._underlying_type.from_path(self._conservator, path)
+
 
 class ProjectManager(SearchableTypeManager):
     def __init__(self, conservator):

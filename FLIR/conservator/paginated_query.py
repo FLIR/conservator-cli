@@ -31,6 +31,9 @@ class PaginatedQuery:
         self.done = False
 
     def with_fields(self, fields):
+        """Sets the query's :class:`~FLIR.conservator.fields_request.FieldsRequest` to `fields`."""
+        if self.started:
+            raise ConcurrentQueryModificationException()
         self.fields = fields
         return self
 
@@ -76,10 +79,10 @@ class PaginatedQuery:
 
     def _do_query(self, page, limit):
         results = self._conservator.query(self._query, self._base_operation,
-                                       self.fields,
-                                       page=page,
-                                       limit=limit,
-                                       **self.kwargs)
+                                          self.fields,
+                                          page=page,
+                                          limit=limit,
+                                          **self.kwargs)
         return [self._underlying_type(self._conservator, i) for i in results]
 
     def _next_page(self):

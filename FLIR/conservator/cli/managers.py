@@ -3,7 +3,7 @@ import functools
 
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.managers import SearchableTypeManager
+from FLIR.conservator.managers import SearchableTypeManager, DatasetManager
 
 
 def fields_request(func):
@@ -66,6 +66,21 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @click.argument('search_text', default="")
         def count(search_text):
             click.echo(get_instance().count(search_text))
+
+    if issubclass(type_manager, DatasetManager):
+        @group.command(help="Clone a Dataset to the current directory, or the specified path.")
+        @click.argument('id')
+        @click.argument('path', default='.')
+        def clone(id, path):
+            dataset = get_instance().from_id(id)
+            dataset.clone(path)
+
+        @group.command(help="Pull a Dataset in the current directory, or the specified path.")
+        @click.argument('path', default='.')
+        @click.option('--analytics', '-a', is_flag=True, help="Include analytics")
+        def pull(path, analytics):
+            dataset = get_instance().from_path(path)
+            dataset.pull(path, include_analytics=analytics, include_eight_bit=True)
 
     return group
 

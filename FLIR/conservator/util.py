@@ -1,3 +1,9 @@
+import os
+
+import requests
+import tqdm
+
+
 def to_clean_string(o, first=True):
     s = ''
     if isinstance(o, dict):
@@ -35,3 +41,24 @@ def to_clean_string(o, first=True):
         s = s[1:]
 
     return s
+
+
+class FileDownloadException(Exception):
+    pass
+
+
+def download_file(path, name, url):
+    r = requests.get(url, stream=True, allow_redirects=True)
+    if r.status_code != 200:
+        raise FileDownloadException(url)
+    size = int(r.headers["content-length"])
+    size_mb = int(size / 1024 / 1024)
+    progress = tqdm.tqdm(total=size)
+    progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")
+    chunk_size = 1024
+    with open(os.path.join(path, name), 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            progress.update(len(chunk))
+            fd.write(chunk)
+    progress.close()
+
