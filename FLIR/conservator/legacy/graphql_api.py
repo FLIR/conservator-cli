@@ -1,63 +1,3 @@
-#!/usr/bin/env python3
-import sys
-import time
-
-import requests
-
-from FLIR.conservator_cli.lib import terminal_progress_bar as tpb
-
-
-class ConservatorGraphQLServerError(Exception):
-    def __init__(self, status_code, message, server_error):
-        self.status_code = status_code
-        self.message = message
-        self.server_error = server_error
-
-
-# default time before next attempt to retry a failed graphql query
-RETRY_DELAY = 1.0
-
-# default number of retry attempts for a failed graphql query
-MAX_RETRIES = 10
-
-
-def query_conservator(query, variables, access_token, retry_delay=RETRY_DELAY, max_retries=MAX_RETRIES):
-    graphql_endpoint = 'https://flirconservator.com/graphql'
-    headers = {'authorization': "{}".format(access_token)}
-    response = {}
-
-    last_exception = None
-    for attempt in range(0, max_retries):
-        # request can fail with flaky network connections;
-        # parsing can fail if server responds, but with an http error
-        try:
-            r = requests.post(graphql_endpoint, headers=headers, json={"query": query, "variables": variables})
-            response = r.json()
-            last_exception = None
-            break
-        # Bail out on signal exceptions.
-        except KeyboardInterrupt:
-            raise
-        except Exception as exc:
-            # Capture exception to re-throw it later.
-            last_exception = exc
-            pass
-
-        # something went wrong, wait before retrying
-        time.sleep(retry_delay)
-
-    if last_exception is not None:
-        raise last_exception
-
-    # response with 'data' but not 'errors' means valid results
-    if response.get("errors"):
-        raise ConservatorGraphQLServerError(r.status_code, "Server rejected query", r.content)
-    elif response.get("data"):
-        result = response["data"]
-    else:
-        raise ConservatorGraphQLServerError(r.status_code, "Invalid server response", r.content)
-    return result
-
 
 def get_user_data(access_token):
     graphql_endpoint = 'https://flirconservator.com/graphql'
@@ -73,24 +13,6 @@ def get_user_data(access_token):
     r = requests.post(graphql_endpoint, headers=headers, json={"query": query})
     response = r.json()
     return response["data"]["user"]
-
-
-def get_datasets_from_search(search_text, access_token):
-    query = """
-    query datasets($searchText: String!) {
-      datasets(searchText: $searchText, page: 0, limit: 50) {
-        name
-        id
-        repository {
-            master
-        }
-      }
-    }
-    """
-    variables = {
-        "searchText": search_text
-    }
-    return query_conservator(query, variables, access_token)["datasets"]
 
 
 def get_dataset_metadata(dataset_id, access_token):
@@ -125,24 +47,6 @@ def get_dataset_frame(dataset_frame_id, access_token):
     return data["datasetFrame"]
 
 
-def get_dataset_by_id(dataset_id, access_token):
-    query = """
-    query dataset($datasetId: ID!) {
-      dataset(id: $datasetId) {
-        name
-        id
-        repository {
-            master
-        }
-      }
-    }
-    """
-    variables = {
-        "datasetId": dataset_id
-    }
-    return query_conservator(query, variables, access_token)["dataset"]
-
-
 def get_history(commit_hash, access_token):
     query = """
     query commitHistoryById($hash: String!) {
@@ -156,93 +60,6 @@ def get_history(commit_hash, access_token):
     }
     return query_conservator(query, variables, access_token)["commitHistoryById"]
 
-
-#######################
-## videos and images ##
-#######################
-
-##---------------------
-## query on search text
-##---------------------
-
-# function generator with common code to be specialized for media type
-def funcgen_get_x_from_search(media_type):
-    def get_x_from_search(search_text, access_token):
-        medias = media_type + "s"  # e.g. "videos" or "images"
-        query = """
-        query {medias}($searchText: String) {{
-            {medias}(searchText: $searchText, limit: 100, page: 0) {{
-            id
-            filename
-            url
-            }}
-        }}
-        """.format(medias=medias)
-        variables = {
-            "searchText": search_text
-        }
-        return query_conservator(query, variables, access_token)[medias]
-
-    return get_x_from_search
-
-
-# generate query function for videos
-get_videos_from_search = funcgen_get_x_from_search("video")
-
-# generate query function for images
-get_images_from_search = funcgen_get_x_from_search("image")
-
-
-# query including both videos AND images
-def get_media_from_search(search_text, access_token):
-    videos = get_videos_from_search(search_text, access_token)
-    images = get_images_from_search(search_text, access_token)
-    return videos + images
-
-
-##------------------
-## query on filename
-##------------------
-
-# function generator with common code to be specialized for media type
-def funcgen_get_x_from_filename(media_type):
-    def get_x_from_filename(filename, collection_id, access_token):
-        medias = media_type + "s"  # e.g. "videos" or "images"
-        query = """
-        query {medias}($searchText: String, $collectionId: ID!) {{
-            {medias}(searchText: $searchText, collectionId: $collectionId, limit: 100, page: 0) {{
-            id
-            filename
-            url
-            }}
-        }}
-        """.format(medias=medias)
-        variables = {
-            "searchText": "filename:" + filename,
-            "collectionId": collection_id
-        }
-        return query_conservator(query, variables, access_token)[medias]
-
-    return get_x_from_filename
-
-
-# generate query function for videos
-get_videos_from_filename = funcgen_get_x_from_filename("video")
-
-# generate query function for images
-get_images_from_filename = funcgen_get_x_from_filename("image")
-
-
-# query including both videos AND images
-def get_media_from_filename(filename, collection_id, access_token):
-    videos = get_videos_from_filename(filename, collection_id, access_token)
-    images = get_images_from_filename(filename, collection_id, access_token)
-    return videos + images
-
-
-##------------
-## query on id
-##------------
 
 # function generator with common code to be specialized for media type
 def funcgen_get_x_from_id(media_type):
@@ -295,29 +112,6 @@ def get_media_from_id(media_id, access_token):
     return result
 
 
-##----------------------------
-## query media in a collection
-##----------------------------
-
-# WARNING: there is currently a Conservator bug where the non-recursive
-#          counts can be too small, so don't trust them too much...
-def get_media_counts(collection_id, access_token):
-    query = """
-    query mediaCountRecursive($id: ID!) {
-        collection(id: $id) {
-            recursiveVideoCount
-            videoCount
-            recursiveImageCount
-            imageCount
-        }
-    }
-    """
-    variables = {
-        "id": collection_id
-    }
-    return query_conservator(query, variables, access_token)["collection"]
-
-
 # function generator with common code to be specialized for media type
 # and list of media object fields to be returned
 def funcgen_paged_query(media_type, query_list):
@@ -354,10 +148,6 @@ def funcgen_paged_query(media_type, query_list):
     return paged_query
 
 
-##
-## get_*_filelist: list files with url
-##
-
 # generate query function for videos
 get_video_filelist = funcgen_paged_query("video", ["id", "filename", "url"])
 
@@ -371,11 +161,6 @@ def get_media_filelist(collection_id, access_token):
     images = get_image_filelist(collection_id, access_token)
     return videos + images
 
-
-##
-## get_*_by_collection_id: list files with url and tags
-##                         note result list is returned as field in a dict
-##
 
 # generate query function for videos
 get_videos_by_collection_id_helper = funcgen_paged_query("video", ["id", "filename", "url", "tags"])
@@ -420,25 +205,6 @@ def get_media_from_collection(collection_id, access_token):
     videos = get_videos_from_collection(collection_id, access_token)
     images = get_images_from_collection(collection_id, access_token)
     return videos + images
-
-
-##----------------------------
-
-def download_file(filename, url, show_progress=True, tab_number=0):
-    r = requests.get(url, stream=True)
-    print("\t" * tab_number + "Downloading {} ({:.2f} MB) ...".format(filename,
-                                                                      int(r.headers["content-length"]) / 1024 / 1024))
-    total = 0
-    chunk_size = 1024
-    with open(filename, 'wb') as fd:
-        for chunk in r.iter_content(chunk_size=chunk_size):
-            total += chunk_size
-            if show_progress:
-                tpb.printProgressBar(total, int(r.headers["content-length"]), "\t" * tab_number + "Download Progress:",
-                                     "Complete", 1, 50)
-            fd.write(chunk)
-    if show_progress:
-        print()
 
 
 def get_collection_by_path(path, access_token):
@@ -784,31 +550,3 @@ def add_frames_to_dataset(dataset_id, frame_ids, access_token):
     result = query_conservator(query, variables, access_token)
     return result["addFramesToDataset"]
 
-
-class InvalidRepoName(Exception):
-    pass
-
-
-class Repo:
-    def __init__(self, name, conservator_token):
-        self.name = name
-        self.conservator_token = conservator_token
-        data = get_datasets_from_search(self.name, self.conservator_token)
-        if (data['datasets'] == None):
-            raise InvalidRepoName("Could not find repo '{}' in Conservator".format(self.name))
-        for dataset in data['datasets']:
-            if (dataset["name"] == self.name):
-                self.dataset_id = dataset["id"]
-        if (self.dataset_id == None):
-            raise InvalidRepoName("Could not find repo '{}' in Conservator".format(self.name))
-
-    def get_latest_commit(self):
-        data = get_repository(self.dataset_id, self.conservator_token)
-        return data["dataset"]["repository"]["master"]
-
-    def get_dataset_id(self):
-        return self.dataset_id
-
-
-if __name__ == "__main__":
-    main(sys.argv)
