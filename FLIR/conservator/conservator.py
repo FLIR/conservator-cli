@@ -1,5 +1,7 @@
 from FLIR.conservator.config import Config
 from FLIR.conservator.connection import ConservatorConnection
+from FLIR.conservator.fields_request import FieldsRequest
+from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
 
 
@@ -29,6 +31,10 @@ class Conservator(ConservatorConnection):
 
     def __repr__(self):
         return f"<Conservator at {self.config.url}>"
+
+    def get_user(self):
+        """Returns the User that the provided API token authorizes"""
+        return self.query(Query.user)
 
     @staticmethod
     def default():
