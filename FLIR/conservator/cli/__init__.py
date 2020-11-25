@@ -1,8 +1,10 @@
 import click
 from FLIR.conservator.config import Config
 from FLIR.conservator.cli.managers import get_manager_command
+from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated import schema
 from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
+from FLIR.conservator.util import to_clean_string
 
 
 @click.group()
@@ -22,6 +24,13 @@ def config(delete):
     click.echo(f"  Email: {default_config.email}")
     click.echo(f"  Key: {default_config.key}")
     click.echo(f"  URL: {default_config.url}")
+
+
+@main.command(help="Print information on the current user")
+def whoami():
+    conservator = Conservator.default()
+    user = conservator.get_user()
+    click.echo(to_clean_string(user))
 
 
 main.add_command(get_manager_command(CollectionManager, schema.Collection, "collections"))

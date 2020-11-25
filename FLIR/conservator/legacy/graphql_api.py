@@ -1,19 +1,4 @@
 
-def get_user_data(access_token):
-    graphql_endpoint = 'https://flirconservator.com/graphql'
-    headers = {'authorization': "{}".format(access_token)}
-    query = """
-    {
-      user {
-        id
-        email
-      }
-    }
-    """
-    r = requests.post(graphql_endpoint, headers=headers, json={"query": query})
-    response = r.json()
-    return response["data"]["user"]
-
 
 def get_dataset_metadata(dataset_id, access_token):
     query = """

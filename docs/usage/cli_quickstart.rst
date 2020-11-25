@@ -20,7 +20,13 @@ Then run::
 
 Conservator CLI will ask you for your email and API key. These will be
 saved in a config file for future use. Running again will print your
-credentials. If you want to change them, you can delete your config by running::
+credentials. To verify that they're correct, run::
+
+    $ conservator whoami
+
+This should output information on your account.
+
+If you want to change credentials, you can delete your config by running::
 
     $ conservator config delete
 
