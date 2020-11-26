@@ -14,10 +14,10 @@ class DatasetManager(SearchableTypeManager):
     def __init__(self, conservator):
         super().__init__(conservator, Dataset)
 
-    def from_path(self, path="."):
+    def from_local_path(self, path="."):
         """Create a :class:`~FLIR.conservator.types.Dataset` from a `path`
         containing an ``index.json`` file."""
-        return self._underlying_type.from_path(self._conservator, path)
+        return self._underlying_type.from_local_path(self._conservator, path)
 
 
 class ProjectManager(SearchableTypeManager):

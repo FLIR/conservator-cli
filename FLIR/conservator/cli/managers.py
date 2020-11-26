@@ -3,14 +3,17 @@ import functools
 
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.managers import SearchableTypeManager, DatasetManager
+from FLIR.conservator.managers import SearchableTypeManager, DatasetManager, CollectionManager
+from FLIR.conservator.types.type_proxy import MissingFieldException
 
 
 def fields_request(func):
-    @click.option("-i", "-p", "--properties", default="", help="If specified, a comma-separated list of properties to "
-                                                         "be displayed. Otherwise, gets all properties.")
-    @click.option("-e", "--exclude", default="", help="If specified, a comma-separated list of properties to "
-                                                         "be displayed. Otherwise, gets all properties.")
+    @click.option("-i", "-p", "--properties", default="",
+                  help="If specified, a comma-separated list of properties to "
+                        "be displayed. Otherwise, gets all properties.")
+    @click.option("-e", "--exclude", default="",
+                  help="If specified, a comma-separated list of properties to "
+                       "be excluded, overriding the included properties.")
     @functools.wraps(func)
     def wrapper(properties="", exclude="", **kwargs):
         include = list(filter(lambda p: p != "", properties.split(",")))
@@ -73,14 +76,35 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @click.argument('path', default='.')
         def clone(id, path):
             dataset = get_instance().from_id(id)
-            dataset.clone(path)
+            try:
+                dataset.clone(path)
+            except MissingFieldException:
+                click.secho("Dataset is missing a required field. It may not have an associated repository.", fg="red")
 
         @group.command(help="Pull a Dataset in the current directory, or the specified path.")
         @click.argument('path', default='.')
         @click.option('--analytics', '-a', is_flag=True, help="Include analytics")
         def pull(path, analytics):
-            dataset = get_instance().from_path(path)
+            dataset = get_instance().from_local_path(path)
             dataset.pull(path, include_analytics=analytics, include_eight_bit=True)
+
+    if issubclass(type_manager, CollectionManager):
+        @group.command(help="Download a collection to the current directory, or the specified path.")
+        @click.argument('id')
+        @click.argument('path', default='.')
+        @click.option('-d', '--datasets', is_flag=True, help="Pull datasets")
+        @click.option('-v', '--video-metadata', is_flag=True, help="Include video metadata")
+        @click.option('-f', '--associated-files', is_flag=True, help="Include associated files")
+        @click.option('-m', '--media', is_flag=True, help="Include media (videos and images)")
+        @click.option('-r', '--recursive', is_flag=True, help="Include child collections recursively")
+        def download(id, path, datasets, video_metadata, associated_files, media, recursive):
+            collection = get_instance().from_id(id)
+            collection.download(path,
+                                datasets,
+                                video_metadata,
+                                associated_files,
+                                media,
+                                recursive)
 
     return group
 
