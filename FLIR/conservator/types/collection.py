@@ -7,7 +7,7 @@ from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.paginated_query import PaginatedQuery
 import FLIR.conservator.types as types
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
-from FLIR.conservator.util import download_file, download_files
+from FLIR.conservator.util import download_files
 
 
 class Collection(TypeProxy):
@@ -16,16 +16,19 @@ class Collection(TypeProxy):
     search_query = schema.Query.collections
 
     def get_images(self, fields=None):
+        """Returns a query for all images in this collection."""
         images = PaginatedQuery(self._conservator, types.Image, Query.datasets,
                                 fields=fields, collection_id=self.id)
         return images
 
     def get_videos(self, fields=None):
+        """Returns a query for all videos in this collection."""
         videos = PaginatedQuery(self._conservator, types.Video, Query.videos,
                                 fields=fields, collection_id=self.id)
         return videos
 
     def get_datasets(self, fields=None):
+        """Returns a query for all datasets in this collection."""
         datasets = PaginatedQuery(self._conservator, types.Dataset, Query.datasets,
                                   fields=fields, collection_id=self.id)
         return datasets
@@ -37,6 +40,8 @@ class Collection(TypeProxy):
                  include_associated_files=False,
                  include_media=False,
                  recursive=False):
+        """Downloads this collection to the `path` specified,
+        with the specified assets included."""
         path = os.path.join(path, self.name)
         os.makedirs(path, exist_ok=True)
 
@@ -59,6 +64,7 @@ class Collection(TypeProxy):
                                recursive)
 
     def download_video_metadata(self, path):
+        """Downloads video metadata to ``video_metadata/``."""
         path = os.path.join(path, "video_metadata")
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
@@ -73,16 +79,20 @@ class Collection(TypeProxy):
 
     @requires_fields("file_locker_files")
     def download_associated_files(self, path):
+        """Downloads associated files (from file locker) to
+        ``associated_files/``."""
         path = os.path.join(path, "associated_files")
         os.makedirs(path, exist_ok=True)
         assets = [(path, file.name, file.url) for file in self.file_locker_files]
         download_files(assets)
 
     def download_media(self, path):
+        """Downloads videos and images."""
         self.download_videos(path)
         self.download_images(path)
 
     def download_videos(self, path):
+        """Downloads videos to ``videos/``."""
         path = os.path.join(path, "videos")
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
@@ -92,6 +102,7 @@ class Collection(TypeProxy):
         download_files(assets)
 
     def download_images(self, path):
+        """Downloads images to ``images/``."""
         path = os.path.join(path, "images")
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
@@ -101,6 +112,7 @@ class Collection(TypeProxy):
         download_files(assets)
 
     def download_datasets(self, path):
+        """Clones and pulls all datasets in the collection."""
         fields = FieldsRequest()
         fields.include_field("name", "repository.master")
         datasets = self.get_datasets(fields=fields)

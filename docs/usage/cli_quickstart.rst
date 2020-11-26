@@ -101,3 +101,17 @@ Next, ``cd`` into the directory, and run pull::
 By default, this will pull the 8-bit images into the ``data/`` directory.
 
 Use ``--help`` with these commands to see more available options
+
+Downloading Collections
+-----------------------
+
+First, find the ID of a collection you want to download using
+the website, search, etc.
+Then, use ``conservator collections download --help`` to view
+the available options for assets to download.
+
+For instance, to download everything recursively to the current
+directory::
+
+    $ conservator collections download ID -r -d -v -f -m
+
