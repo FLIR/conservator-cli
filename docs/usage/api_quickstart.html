@@ -55,7 +55,7 @@ pretty easy:</p>
 </pre></div>
 </div>
 <p>If someone doesn’t have a config already, this will prompt them for their info,
-and save it in a file for the future. Now that you have an instance of <a class="reference internal" href="../api.html#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>,
+and save it in a file for the future. Now that you have an instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code>,
 you are free to start running queries.</p>
 </div>
 <div class="section" id="basic-queries">
@@ -71,18 +71,18 @@ on conservator:</p>
 <p>Running this will demonstrate a few things. First off, using <a class="reference internal" href="../api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.all" title="FLIR.conservator.managers.searchable.SearchableTypeManager.all"><code class="xref py py-meth docutils literal notranslate"><span class="pre">all()</span></code></a>
 doesn’t immediately execute the query. It returns a <a class="reference internal" href="../api.html#FLIR.conservator.paginated_query.PaginatedQuery" title="FLIR.conservator.paginated_query.PaginatedQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">PaginatedQuery</span></code></a>,
 which lets you specify which fields you want to include in the results. By
-default, it will request all fields of its type (in this case, <a class="reference internal" href="../api.html#FLIR.conservator.types.Project" title="FLIR.conservator.types.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>).
+default, it will request all fields of its type (in this case, <code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>).
 Since we only want to see the <cite>name</cite>, we call <code class="xref py py-meth docutils literal notranslate"><span class="pre">include_field()</span></code>
 with it specified.</p>
 <p>Once we’ve set up the fields we want to return from our query, we need to
 actually send it to Conservator and iterate through the results. This is
 done automatically when you attempt to iterate through a <a class="reference internal" href="../api.html#FLIR.conservator.paginated_query.PaginatedQuery" title="FLIR.conservator.paginated_query.PaginatedQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">PaginatedQuery</span></code></a>
 using <cite>for … in</cite> (or anything else that calls <cite>__iter__</cite>).</p>
-<p>The <a class="reference internal" href="../api.html#FLIR.conservator.types.Project" title="FLIR.conservator.types.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a> instances returned from the iteration
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code> instances returned from the iteration
 will contain the fields we included.</p>
 <div class="section" id="querying-for-all-fields">
 <h3>Querying for all Fields<a class="headerlink" href="#querying-for-all-fields" title="Permalink to this headline">¶</a></h3>
-<p>Let’s say we were interested in all of the fields in <a class="reference internal" href="../api.html#FLIR.conservator.types.Project" title="FLIR.conservator.types.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a>.
+<p>Let’s say we were interested in all of the fields in <code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>.
 We can repeat above, without including <code class="xref py py-meth docutils literal notranslate"><span class="pre">include_field()</span></code>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_projects</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">all_projects</span><span class="p">:</span>

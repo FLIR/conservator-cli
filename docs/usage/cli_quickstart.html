@@ -129,6 +129,18 @@ $ conservator datasets pull
 <p>By default, this will pull the 8-bit images into the <code class="docutils literal notranslate"><span class="pre">data/</span></code> directory.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">--help</span></code> with these commands to see more available options</p>
 </div>
+<div class="section" id="downloading-collections">
+<h2>Downloading Collections<a class="headerlink" href="#downloading-collections" title="Permalink to this headline">¶</a></h2>
+<p>First, find the ID of a collection you want to download using
+the website, search, etc.
+Then, use <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">collections</span> <span class="pre">download</span> <span class="pre">--help</span></code> to view
+the available options for assets to download.</p>
+<p>For instance, to download everything recursively to the current
+directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator collections download ID -r -d -v -f -m
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -157,6 +169,7 @@ $ conservator datasets pull
 <li class="toctree-l2"><a class="reference internal" href="#config">Config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-queries">Basic Queries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-datasets">Downloading Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-collections">Downloading Collections</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>

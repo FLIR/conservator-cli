@@ -44,6 +44,36 @@ TypeProxy
 .. automodule:: FLIR.conservator.types.type_proxy
     :members:
 
+Collection
+^^^^^^^^^^
+
+.. automodule:: FLIR.conservator.types.collection
+    :members:
+
+Dataset
+^^^^^^^
+
+.. automodule:: FLIR.conservator.types.dataset
+    :members:
+
+Image
+^^^^^
+
+.. automodule:: FLIR.conservator.types.image
+    :members:
+
+Project
+^^^^^^^
+
+.. automodule:: FLIR.conservator.types.project
+    :members:
+
+Video
+^^^^^
+
+.. automodule:: FLIR.conservator.types.video
+    :members:
+
 Managers
 --------
 

@@ -150,47 +150,8 @@ this config will be loaded by <a class="reference internal" href="#FLIR.conserva
 </dd></dl>
 
 </div>
-<div class="section" id="module-FLIR.conservator.conservator">
-<span id="conservator"></span><h2>Conservator<a class="headerlink" href="#module-FLIR.conservator.conservator" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="FLIR.conservator.conservator.Conservator">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">Conservator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection" title="FLIR.conservator.connection.ConservatorConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.connection.ConservatorConnection</span></code></a></p>
-<p><a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> is the highest level class of this library. It will likely be the
-starting point for all queries and operations.</p>
-<dl>
-<dt>You can get an instance using the default <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code>::</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
-<span class="go">&lt;Conservator at https://flirconservator.com&gt;</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-<p>You can create also create an instance by passing any <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code>
-object:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">my_email</span><span class="p">,</span> <span class="n">my_key</span><span class="p">,</span> <span class="s2">&quot;https://localhost:3000&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="go">&lt;Conservator at https://localhost:3000&gt;</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>config</strong> – The <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.config.Config</span></code></a> object to use for this connection.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="FLIR.conservator.conservator.Conservator.default">
-<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">FLIR.conservator.config.Config.default()</span></code></a>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.conservator.Conservator.get_user">
-<code class="sig-name descname">get_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.get_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the User that the provided API token authorizes</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="conservator">
+<h2>Conservator<a class="headerlink" href="#conservator" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-FLIR.conservator.connection">
 <span id="conservator-connection"></span><h2>Conservator Connection<a class="headerlink" href="#module-FLIR.conservator.connection" title="Permalink to this headline">¶</a></h2>
@@ -394,113 +355,17 @@ included field, plus 1.</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-FLIR.conservator.types">
-<span id="types-and-typeproxies"></span><h2>Types and TypeProxies<a class="headerlink" href="#module-FLIR.conservator.types" title="Permalink to this headline">¶</a></h2>
-<p>This modules contains types that wrap generated SGQLC types.</p>
-<p>These wrapped types all extend <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code>, and contain
-a private instance of the underling SGQLC object. Initialized fields
-can be accessed on the <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code> instance. <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code>
-also provides functions to fetch new fields from Conservator.</p>
-<p>Many of these types will also implement various Abstract
-Class Types, to add functionality such as Downloading, Uploading,
-Loading from Directory, etc.</p>
-<p>Often they will include additional functions that wrap SGQLC queries.
-For instance, a <a class="reference internal" href="#FLIR.conservator.types.Collection" title="FLIR.conservator.types.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> has <code class="xref py py-func docutils literal notranslate"><span class="pre">Collection.get_datasets()</span></code>,
-which runs the GraphQL query for a collection’s datasets–and returns
-them as proxied <a class="reference internal" href="#FLIR.conservator.types.Dataset" title="FLIR.conservator.types.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> objects.</p>
-<dl class="py class">
-<dt id="FLIR.conservator.types.Collection">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.</code><code class="sig-name descname">Collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Collection" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py attribute">
-<dt id="FLIR.conservator.types.Collection.underlying_type">
-<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.Collection.underlying_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Collection</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="FLIR.conservator.types.Dataset">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Dataset" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt id="FLIR.conservator.types.Dataset.clone">
-<code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Dataset.clone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clone this Dataset into a subdirectory of <cite>path</cite> based on
-the Dataset’s name.</p>
-<p>For instance, if you pass <code class="docutils literal notranslate"><span class="pre">path=&quot;~/Desktop&quot;</span></code>, and want to download a Dataset
-called <code class="docutils literal notranslate"><span class="pre">MyFirstDataset</span></code>, it will be cloned into <code class="docutils literal notranslate"><span class="pre">~/Desktop/MyFirstDataset</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.types.Dataset.from_path">
-<em class="property">classmethod </em><code class="sig-name descname">from_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Dataset.from_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new Dataset instance using the ID found in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>
-at the provided <cite>path</cite></p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.types.Dataset.get_dvc_url">
-<code class="sig-name descname">get_dvc_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Dataset.get_dvc_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the DVC URL used for downloading files.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.types.Dataset.get_git_url">
-<code class="sig-name descname">get_git_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Dataset.get_git_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the Git URL used for cloning this Dataset.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.types.Dataset.pull">
-<code class="sig-name descname">pull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Dataset.pull" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> at the provided <cite>path</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p></li>
-<li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="FLIR.conservator.types.Dataset.underlying_type">
-<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.Dataset.underlying_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Dataset</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt id="FLIR.conservator.types.MissingFieldException">
-<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.types.</code><code class="sig-name descname">MissingFieldException</code><a class="headerlink" href="#FLIR.conservator.types.MissingFieldException" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py class">
-<dt id="FLIR.conservator.types.Project">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.</code><code class="sig-name descname">Project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Project" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py attribute">
-<dt id="FLIR.conservator.types.Project.underlying_type">
-<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.Project.underlying_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Project</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="FLIR.conservator.types.Video">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.</code><code class="sig-name descname">Video</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.Video" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py attribute">
-<dt id="FLIR.conservator.types.Video.underlying_type">
-<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.Video.underlying_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Video</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="types-and-typeproxies">
+<h2>Types and TypeProxies<a class="headerlink" href="#types-and-typeproxies" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-FLIR.conservator.types.type_proxy">
 <span id="typeproxy"></span><h3>TypeProxy<a class="headerlink" href="#module-FLIR.conservator.types.type_proxy" title="Permalink to this headline">¶</a></h3>
+<dl class="py exception">
+<dt id="FLIR.conservator.types.type_proxy.MissingFieldException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.types.type_proxy.</code><code class="sig-name descname">MissingFieldException</code><a class="headerlink" href="#FLIR.conservator.types.type_proxy.MissingFieldException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a field can’t be populated, but is required for an
+operation.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="FLIR.conservator.types.type_proxy.TypeProxy">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.type_proxy.</code><code class="sig-name descname">TypeProxy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy" title="Permalink to this definition">¶</a></dt>
@@ -509,11 +374,11 @@ at the provided <cite>path</cite></p>
 <p>Fields of the underlying instance can be accessed on this instance,
 and additional fields can be requested using <a class="reference internal" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-func docutils literal notranslate"><span class="pre">populate()</span></code></a>, which
 uses the underlying <code class="docutils literal notranslate"><span class="pre">by_id_query</span></code>. For this reason, all instances must
-also have a reference to a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> instance.</p>
+also have a reference to a <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code> instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>conservator</strong> – The instance of <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
+<li><p><strong>conservator</strong> – The instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code>
 that created the underlying instance.</p></li>
 <li><p><strong>instance</strong> – The SGQLC object to wrap, usually returned by running
 some query.</p></li>
@@ -549,42 +414,107 @@ verify that a <cite>populate</cite> call worked.</p>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-FLIR.conservator.managers">
-<span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this headline">¶</a></h2>
-<p>A Manager is simply a bundle of utilities for querying a specific type.</p>
-<dl class="py class">
-<dt id="FLIR.conservator.managers.CollectionManager">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">CollectionManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dl class="py function">
+<dt id="FLIR.conservator.types.type_proxy.requires_fields">
+<code class="sig-prename descclassname">FLIR.conservator.types.type_proxy.</code><code class="sig-name descname">requires_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">fields</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.requires_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Require <cite>fields</cite> for an instance method. If missing, calls
+<cite>populate</cite>. If <cite>populate</cite> fails, raises <cite>MissingFieldException</cite>.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="collection">
+<h3>Collection<a class="headerlink" href="#collection" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="module-FLIR.conservator.types.dataset">
+<span id="dataset"></span><h3>Dataset<a class="headerlink" href="#module-FLIR.conservator.types.dataset" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
-<dt id="FLIR.conservator.managers.DatasetManager">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">DatasetManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dt id="FLIR.conservator.types.dataset.Dataset">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.dataset.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.clone">
+<code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone this Dataset into a subdirectory of <cite>path</cite> based on
+the Dataset’s name.</p>
+<p>For instance, if you pass <code class="docutils literal notranslate"><span class="pre">path=&quot;~/Desktop&quot;</span></code>, and want to download a Dataset
+called <code class="docutils literal notranslate"><span class="pre">MyFirstDataset</span></code>, it will be cloned into <code class="docutils literal notranslate"><span class="pre">~/Desktop/MyFirstDataset</span></code>.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt id="FLIR.conservator.managers.DatasetManager.from_path">
-<code class="sig-name descname">from_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager.from_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a <a class="reference internal" href="#FLIR.conservator.types.Dataset" title="FLIR.conservator.types.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> from a <cite>path</cite>
-containing an <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file.</p>
+<dt id="FLIR.conservator.types.dataset.Dataset.from_local_path">
+<em class="property">classmethod </em><code class="sig-name descname">from_local_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.from_local_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Dataset instance using the ID found in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>
+at the provided <cite>path</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.get_dvc_url">
+<code class="sig-name descname">get_dvc_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.get_dvc_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the DVC URL used for downloading files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.get_git_url">
+<code class="sig-name descname">get_git_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.get_git_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Git URL used for cloning this Dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.pull">
+<code class="sig-name descname">pull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> at the provided <cite>path</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p></li>
+<li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="FLIR.conservator.types.dataset.Dataset.underlying_type">
+<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.underlying_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Dataset</span></code></p>
 </dd></dl>
 
 </dd></dl>
 
+</div>
+<div class="section" id="module-FLIR.conservator.types.image">
+<span id="image"></span><h3>Image<a class="headerlink" href="#module-FLIR.conservator.types.image" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
-<dt id="FLIR.conservator.managers.ProjectManager">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">ProjectManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ProjectManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dt id="FLIR.conservator.types.image.Image">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.image.</code><code class="sig-name descname">Image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.image.Image" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="FLIR.conservator.types.image.Image.underlying_type">
+<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.image.Image.underlying_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Image</span></code></p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="project">
+<h3>Project<a class="headerlink" href="#project" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="module-FLIR.conservator.types.video">
+<span id="video"></span><h3>Video<a class="headerlink" href="#module-FLIR.conservator.types.video" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
-<dt id="FLIR.conservator.managers.VideoManager">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">VideoManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dt id="FLIR.conservator.types.video.Video">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.video.</code><code class="sig-name descname">Video</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="FLIR.conservator.types.video.Video.underlying_type">
+<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.video.Video.underlying_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Video</span></code></p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="managers">
+<h2>Managers<a class="headerlink" href="#managers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-FLIR.conservator.managers.type_manager">
 <span id="typemanager"></span><h3>TypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.type_manager" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
@@ -656,7 +586,7 @@ of its execution.</p>
 
 <dl class="py class">
 <dt id="FLIR.conservator.paginated_query.PaginatedQuery">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">PaginatedQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">underlying_type</span></em>, <em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">base_operation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">PaginatedQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">underlying_type</span></em>, <em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">base_operation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enables pagination of any query with <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> arguments.</p>
 <p>Assume you want to iterate through all the Projects in a project search
 query. You could do something like the following:</p>
@@ -735,12 +665,12 @@ query. You could do something like the following:</p>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conservator">Conservator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.types">Types and TypeProxies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#types-and-typeproxies">Types and TypeProxies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managers">Managers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a></li>
 </ul>
 </li>
