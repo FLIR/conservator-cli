@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 
 import requests
@@ -47,10 +48,14 @@ class FileDownloadException(Exception):
     pass
 
 
-def download_file(path, name, url):
+def download_file(path, name, url, silent=True):
+    path = os.path.abspath(path)
     r = requests.get(url, stream=True, allow_redirects=True)
     if r.status_code != 200:
-        raise FileDownloadException(url)
+        if not silent:
+            raise FileDownloadException(url)
+        else:
+            return False
     size = int(r.headers["content-length"])
     size_mb = int(size / 1024 / 1024)
     progress = tqdm.tqdm(total=size)
@@ -61,4 +66,11 @@ def download_file(path, name, url):
             progress.update(len(chunk))
             fd.write(chunk)
     progress.close()
+    return True
 
+
+def download_files(files, process_count=None):
+    # files = (path, name, url)
+    pool = multiprocessing.Pool(process_count)  # defaults to CPU count
+    results = pool.starmap(download_file, files)
+    return results

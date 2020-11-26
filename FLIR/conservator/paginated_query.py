@@ -14,7 +14,7 @@ class PaginatedQuery:
 
     """
     def __init__(self, conservator, underlying_type, query, base_operation=None,
-                 fields=None, page_size=100,
+                 fields=None, page_size=25,
                  **kwargs):
         self._conservator = conservator
         self._underlying_type = underlying_type
