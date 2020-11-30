@@ -18,6 +18,7 @@ objects, and can just use the default for connections.
 
 Conservator CLI makes getting connected with the default configuration
 pretty easy:
+
 >>> from FLIR.conservator.conservator import Conservator
 >>> conservator = Conservator.default()
 >>> print(conservator)
@@ -32,6 +33,7 @@ Basic Queries
 
 Let's start with something simple.  Listing the names of all the projects
 on conservator:
+
 >>> all_projects = conservator.projects.all()
 >>> all_projects.include_field("name")
 >>> for project in all_projects:
@@ -57,6 +59,7 @@ Querying for all Fields
 
 Let's say we were interested in all of the fields in :class:`~FLIR.conservator.types.Project`.
 We can repeat above, without including :meth:`~FLIR.conservator.paginated_query.PaginatedQuery.include_field`.
+
 >>> all_projects = conservator.projects.all()
 >>> for project in all_projects:
 ...     print(project)
@@ -102,6 +105,7 @@ perform searches using FLIR Conservator's Advanced Search feature.
 
 For example, if we wanted to print the names of all datasets that
 contains the word `ADAS`, we could do the following:
+
 >>> adas_datasets = conservator.projects.search("ADAS")
 >>> adas_datasets.include_field("name")
 >>> for ds in adas_datasets:
@@ -109,6 +113,7 @@ contains the word `ADAS`, we could do the following:
 
 Sometimes you'll only want (or expect) a single result. You
 can short-circuit the full query using :meth:`~FLIR.conservator.paginated_query.PaginatedQuery.first`:
+
 >>> adas_datasets = conservator.projects.search("ADAS")
 >>> adas_datasets.include_field("name")
 >>> dataset = adas_datasets.first()
@@ -118,6 +123,7 @@ Another frequent use is counting the number of results. This can be done
 with :meth:`~FLIR.conservator.managers.searchable.SearchableTypeManager.count_all`
 for all instances, or :meth:`~FLIR.conservator.managers.searchable.SearchableTypeManager.count`
 for a specific `search text`:
+
 >>> adas_projects_count = conservator.projects.count("ADAS")
 >>> print(adas_projects_count)
 
@@ -126,6 +132,7 @@ Populating Fields Later
 
 Sometimes you'll need to add fields to an object after your initial request.
 For instance, assume you queried for a Project's `id`:
+
 >>> adas_datasets = conservator.projects.search("ADAS")
 >>> adas_datasets.include_field("id")
 >>> dataset = adas_datasets.first()
@@ -133,6 +140,7 @@ For instance, assume you queried for a Project's `id`:
 
 But later want to print its name.  You can fetch the `name` field using
 :meth:`~FLIR.conservator.types.type_proxy.TypeProxy.populate`:
+
 >>> from FLIR.conservator.fields_request import FieldsRequest
 >>> fields = FieldsRequest()
 >>> fields.include_field("name")
@@ -143,6 +151,7 @@ If for some reason you have an ID, but don't have an instance of the correct
 type to use :meth:`~FLIR.conservator.types.type_proxy.TypeProxy.populate`, you
 can create one with :meth:`~FLIR.conservator.managers.type_manager.TypeManager.from_id`,
 and then populate the fields:
+
 >>> collection = conservator.collections.from_id("some_collection_id")
 >>> fields = FieldsRequest()
 >>> fields.include_field("path")
@@ -151,6 +160,7 @@ and then populate the fields:
 
 You can also call :meth:`~FLIR.conservator.types.type_proxy.TypeProxy.populate` with
 no argument to populate all fields:
+
 >>> collection = conservator.collections.from_id("some_collection_id")
 >>> collection.populate()
 >>> print(collection.path)
