@@ -40,7 +40,7 @@ the project::
 
 Then create a virtual environment, and install the library::
 
-    $ python -m virtualenv venv
+    $ python -m venv venv
     $ source venv/bin/activate
     $ pip install -e .
 
