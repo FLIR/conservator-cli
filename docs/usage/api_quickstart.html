@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API Reference" href="../api.html" />
+    <link rel="next" title="Advanced Python API Guide" href="api_advanced.html" />
     <link rel="prev" title="CLI Quickstart" href="cli_quickstart.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -47,27 +47,23 @@ view the <a class="reference internal" href="api_advanced.html"><span class="doc
 <p>Typically, you won’t have to manually worry about loading different <a class="reference internal" href="../api.html#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>
 objects, and can just use the default for connections.</p>
 <p>Conservator CLI makes getting connected with the default configuration
-pretty easy:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">FLIR.conservator.conservator</span> <span class="kn">import</span> <span class="n">Conservator</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">conservator</span> <span class="o">=</span> <span class="n">Conservator</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">conservator</span><span class="p">)</span>
-<span class="go">&lt;Conservator at https://flirconservator.com/&gt;</span>
-</pre></div>
-</div>
+pretty easy:
+&gt;&gt;&gt; from FLIR.conservator.conservator import Conservator
+&gt;&gt;&gt; conservator = Conservator.default()
+&gt;&gt;&gt; print(conservator)
+&lt;Conservator at <a class="reference external" href="https://flirconservator.com/">https://flirconservator.com/</a>&gt;</p>
 <p>If someone doesn’t have a config already, this will prompt them for their info,
-and save it in a file for the future. Now that you have an instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code>,
+and save it in a file for the future. Now that you have an instance of <a class="reference internal" href="../api.html#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>,
 you are free to start running queries.</p>
 </div>
 <div class="section" id="basic-queries">
 <h2>Basic Queries<a class="headerlink" href="#basic-queries" title="Permalink to this headline">¶</a></h2>
 <p>Let’s start with something simple.  Listing the names of all the projects
-on conservator:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_projects</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">all_projects</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">all_projects</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</pre></div>
-</div>
+on conservator:
+&gt;&gt;&gt; all_projects = conservator.projects.all()
+&gt;&gt;&gt; all_projects.include_field(“name”)
+&gt;&gt;&gt; for project in all_projects:
+…     print(project.name)</p>
 <p>Running this will demonstrate a few things. First off, using <a class="reference internal" href="../api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.all" title="FLIR.conservator.managers.searchable.SearchableTypeManager.all"><code class="xref py py-meth docutils literal notranslate"><span class="pre">all()</span></code></a>
 doesn’t immediately execute the query. It returns a <a class="reference internal" href="../api.html#FLIR.conservator.paginated_query.PaginatedQuery" title="FLIR.conservator.paginated_query.PaginatedQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">PaginatedQuery</span></code></a>,
 which lets you specify which fields you want to include in the results. By
@@ -83,12 +79,10 @@ will contain the fields we included.</p>
 <div class="section" id="querying-for-all-fields">
 <h3>Querying for all Fields<a class="headerlink" href="#querying-for-all-fields" title="Permalink to this headline">¶</a></h3>
 <p>Let’s say we were interested in all of the fields in <code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code>.
-We can repeat above, without including <code class="xref py py-meth docutils literal notranslate"><span class="pre">include_field()</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_projects</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">all_projects</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
-</pre></div>
-</div>
+We can repeat above, without including <code class="xref py py-meth docutils literal notranslate"><span class="pre">include_field()</span></code>.
+&gt;&gt;&gt; all_projects = conservator.projects.all()
+&gt;&gt;&gt; for project in all_projects:
+…     print(project)</p>
 <p>This will print a few errors, then the projects (which will be a lot of text).</p>
 <p>The errors are expected, because we’re requesting every possible field. A few fields
 may have been deprecated, or be undefined in the Conservator database. When we tried
@@ -121,67 +115,53 @@ Datasets and Videos.</p>
 <p>Each query endpoint can list all of its type (as used above), or
 perform searches using FLIR Conservator’s Advanced Search feature.</p>
 <p>For example, if we wanted to print the names of all datasets that
-contains the word <cite>ADAS</cite>, we could do the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adas_datasets</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">adas_datasets</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">adas_datasets</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</pre></div>
-</div>
+contains the word <cite>ADAS</cite>, we could do the following:
+&gt;&gt;&gt; adas_datasets = conservator.projects.search(“ADAS”)
+&gt;&gt;&gt; adas_datasets.include_field(“name”)
+&gt;&gt;&gt; for ds in adas_datasets:
+…     print(ds.name)</p>
 <p>Sometimes you’ll only want (or expect) a single result. You
-can short-circuit the full query using <a class="reference internal" href="../api.html#FLIR.conservator.paginated_query.PaginatedQuery.first" title="FLIR.conservator.paginated_query.PaginatedQuery.first"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first()</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adas_datasets</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">adas_datasets</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">adas_datasets</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</pre></div>
-</div>
+can short-circuit the full query using <a class="reference internal" href="../api.html#FLIR.conservator.paginated_query.PaginatedQuery.first" title="FLIR.conservator.paginated_query.PaginatedQuery.first"><code class="xref py py-meth docutils literal notranslate"><span class="pre">first()</span></code></a>:
+&gt;&gt;&gt; adas_datasets = conservator.projects.search(“ADAS”)
+&gt;&gt;&gt; adas_datasets.include_field(“name”)
+&gt;&gt;&gt; dataset = adas_datasets.first()
+&gt;&gt;&gt; print(dataset.name)</p>
 <p>Another frequent use is counting the number of results. This can be done
 with <a class="reference internal" href="../api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.count_all" title="FLIR.conservator.managers.searchable.SearchableTypeManager.count_all"><code class="xref py py-meth docutils literal notranslate"><span class="pre">count_all()</span></code></a>
 for all instances, or <a class="reference internal" href="../api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.count" title="FLIR.conservator.managers.searchable.SearchableTypeManager.count"><code class="xref py py-meth docutils literal notranslate"><span class="pre">count()</span></code></a>
-for a specific <cite>search text</cite>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adas_projects_count</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">adas_projects_count</span><span class="p">)</span>
-</pre></div>
-</div>
+for a specific <cite>search text</cite>:
+&gt;&gt;&gt; adas_projects_count = conservator.projects.count(“ADAS”)
+&gt;&gt;&gt; print(adas_projects_count)</p>
 </div>
 <div class="section" id="populating-fields-later">
 <h2>Populating Fields Later<a class="headerlink" href="#populating-fields-later" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes you’ll need to add fields to an object after your initial request.
-For instance, assume you queried for a Project’s <cite>id</cite>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adas_datasets</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">adas_datasets</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">adas_datasets</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-</pre></div>
-</div>
+For instance, assume you queried for a Project’s <cite>id</cite>:
+&gt;&gt;&gt; adas_datasets = conservator.projects.search(“ADAS”)
+&gt;&gt;&gt; adas_datasets.include_field(“id”)
+&gt;&gt;&gt; dataset = adas_datasets.first()
+&gt;&gt;&gt; print(dataset.id)</p>
 <p>But later want to print its name.  You can fetch the <cite>name</cite> field using
-<a class="reference internal" href="../api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">FLIR.conservator.fields_request</span> <span class="kn">import</span> <span class="n">FieldsRequest</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="n">FieldsRequest</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span><span class="o">.</span><span class="n">populate</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</pre></div>
-</div>
+<a class="reference internal" href="../api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a>:
+&gt;&gt;&gt; from FLIR.conservator.fields_request import FieldsRequest
+&gt;&gt;&gt; fields = FieldsRequest()
+&gt;&gt;&gt; fields.include_field(“name”)
+&gt;&gt;&gt; dataset.populate(fields)
+&gt;&gt;&gt; print(dataset.name)</p>
 <p>If for some reason you have an ID, but don’t have an instance of the correct
 type to use <a class="reference internal" href="../api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a>, you
 can create one with <a class="reference internal" href="../api.html#FLIR.conservator.managers.type_manager.TypeManager.from_id" title="FLIR.conservator.managers.type_manager.TypeManager.from_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_id()</span></code></a>,
-and then populate the fields:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="s2">&quot;some_collection_id&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="n">FieldsRequest</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="o">.</span><span class="n">populate</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-</pre></div>
-</div>
+and then populate the fields:
+&gt;&gt;&gt; collection = conservator.collections.from_id(“some_collection_id”)
+&gt;&gt;&gt; fields = FieldsRequest()
+&gt;&gt;&gt; fields.include_field(“path”)
+&gt;&gt;&gt; collection.populate(fields)
+&gt;&gt;&gt; print(collection.path)</p>
 <p>You can also call <a class="reference internal" href="../api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a> with
-no argument to populate all fields:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="s2">&quot;some_collection_id&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="o">.</span><span class="n">populate</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-</pre></div>
-</div>
+no argument to populate all fields:
+&gt;&gt;&gt; collection = conservator.collections.from_id(“some_collection_id”)
+&gt;&gt;&gt; collection.populate()
+&gt;&gt;&gt; print(collection.path)</p>
 </div>
 <div class="section" id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
@@ -222,6 +202,7 @@ info on the structure of Conservator CLI.</p>
 <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="api_advanced.html">Advanced Python API Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
@@ -230,7 +211,7 @@ info on the structure of Conservator CLI.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="cli_quickstart.html" title="previous chapter">CLI Quickstart</a></li>
-      <li>Next: <a href="../api.html" title="next chapter">API Reference</a></li>
+      <li>Next: <a href="api_advanced.html" title="next chapter">Advanced Python API Guide</a></li>
   </ul></li>
 </ul>
 </div>
