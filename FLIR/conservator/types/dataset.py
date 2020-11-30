@@ -1,11 +1,10 @@
 import json
-import multiprocessing
 import os
 import subprocess
 
 from FLIR.conservator.generated import schema
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
-from FLIR.conservator.util import download_file, FileDownloadException, download_files
+from FLIR.conservator.util import download_files
 
 
 class Dataset(TypeProxy):

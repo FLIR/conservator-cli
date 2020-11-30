@@ -1,11 +1,11 @@
 import json
 import os
 
+import FLIR.conservator.types as types
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.paginated_query import PaginatedQuery
-import FLIR.conservator.types as types
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
 from FLIR.conservator.util import download_files
 
