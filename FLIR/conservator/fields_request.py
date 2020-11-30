@@ -3,13 +3,14 @@ class FieldsRequest:
     A collection of fields to include (or exclude) in a query. Many different
     API calls will require specifying a list of fields using a :class:`FieldsRequest`.
 
-    It can be used with :class:`FLIR.conservator.connection.Connection.query`::
-        >>> conservator = Conservator.default()
-        >>> fields = FieldsRequest()
-        >>> fields.include_field("id", "name")
-        >>> datasets = conservator.query(Query.datasets, fields=fields, search_text="ADAS")
-        >>> for dataset in datasets:
-        ...     print(dataset.name)
+    It can be used with :meth:`ConservatorConnection.query() <FLIR.conservator.connection.ConservatorConnection.query>`:
+
+    >>> conservator = Conservator.default()
+    >>> fields = FieldsRequest()
+    >>> fields.include_field("id", "name")
+    >>> datasets = conservator.query(Query.datasets, fields=fields, search_text="ADAS")
+    >>> for dataset in datasets:
+    ...     print(dataset.name)
 
     As used in this module, a `field_path` can refer to either:
         - A single field, like `"name"` to select `Project.name`
@@ -17,16 +18,11 @@ class FieldsRequest:
         - A path to a field/subfield in a subfield, like `"repository.master"`
           to select the `Reposistory.master` field in `Dataset.reposistory`
 
-    These paths can be as long/specific as you want.
+    These paths can be as long and specific as you want.
 
     :param include_fields: List of field paths to include in the returned object(s).
-        Fields of subtypes can be specified as a path separated by ``.``.  For instance,
-        when querying for a Dataset, you could add ``repository.master`` to only
-        include the ``master`` field of ``Dataset.repository``.
         If empty or not specified, all fields will be included.
-    :param exclude_fields: A list of field paths to exclude. These take the same form as
-        included fields, and override them. In the above example, excluding ``repository``
-        will exclude all fields of ``repository``.
+    :param exclude_fields: A list of field paths to exclude. These override included fields.
     :param depth: Max depth for requested fields. Defaults to the maximum depth of any
         included field, plus 1.
     """
@@ -47,7 +43,7 @@ class FieldsRequest:
 
     def add_fields_to_request(self, obj, current_path="", current_depth=0):
         """
-        Adds fields to an SGQLC object (usually initially called with an operation).
+        Recursively adds fields to an SGQLC object (usually initially called with an operation).
 
         :param obj: The SGQLC object to add fields to.
         :param current_path: The current path, used to filter included and excluded path fields.

@@ -1,11 +1,8 @@
 """
-A :class:`Config` object is required connect to Conservator. There are a variety of
-ways to create an instance of config:
- - Config File
- - Environment variables
- - Standard input
- - Manually using constructor
-In general, use :func:`Config.default`, as this will try all of the above.
+A :class:`Config` object is required connect to Conservator. There are
+a variety of ways to create an instance of config.
+
+In general, use :func:`Config.default`.
 """
 
 import os
@@ -15,7 +12,7 @@ import json
 class Config:
     """
     Contains a user's Email and API Key (token), to be used
-    when authenticating operations on an instance of :class:`Conservator`
+    when authenticating operations on an instance of :class:`~FLIR.conservator.conservator.Conservator`
     at a certain URL.
 
     :param email: The user's email.
@@ -114,9 +111,11 @@ class Config:
         Gets the default config.
         This works by iterating through the various credential sources, and returning
         the first one that works. Sources are queried in this order:
+
          - Config file
          - Environment variables
          - User input
+
         :param save: If `True`, save the config for future use. This means a user
             won't need to type them again.
         """

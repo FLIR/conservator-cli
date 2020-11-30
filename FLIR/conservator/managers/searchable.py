@@ -6,7 +6,7 @@ class SearchableTypeManager(TypeManager):
     """
     Adds the ability to search using Conservator's Advanced Search.
 
-    The underlying instance must specify a ``search_query``.
+    The underlying type must specify a ``search_query``.
 
     Most queries return a :class:`FLIR.conservator.paginated_query.PaginatedQuery`.
     """

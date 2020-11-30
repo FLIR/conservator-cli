@@ -29,6 +29,7 @@ Contents
    usage/installation
    usage/cli_quickstart
    usage/api_quickstart
+   usage/api_advanced
    api
 
 

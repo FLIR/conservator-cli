@@ -40,7 +40,7 @@ class ConservatorConnection:
     """
     Acts as an intermediary between SGQLC and a remote Conservator instance.
 
-    :param config: :class:`FLIR.conservator.config.Config` providing Conservator URL and user
+    :param config: :class:`~FLIR.conservator.config.Config` providing Conservator URL and user
         authentication info.
     """
     def __init__(self, config):
@@ -103,7 +103,7 @@ class ConservatorConnection:
 
         return response
 
-    def handle_errors(self, errors, type_=None):
+    def _handle_errors(self, errors, type_=None):
         for error in errors:
             if type_ is not None and "Cannot return null for non-nullable field" in error["message"]:
                 graphql_fields = tuple(filter(lambda i: isinstance(i, str), error["path"]))
@@ -139,7 +139,7 @@ class ConservatorConnection:
             try:
                 return self._query(query, operation_base, fields, **kwargs)
             except ConservatorGraphQLServerError as e:
-                self.handle_errors(e.errors, query.type)
+                self._handle_errors(e.errors, query.type)
 
     def _query(self, query, operation_base, fields, **kwargs):
         type_ = query.type
