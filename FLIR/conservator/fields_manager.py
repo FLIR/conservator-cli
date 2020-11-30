@@ -2,6 +2,7 @@ import re
 import keyword
 from FLIR.conservator.generated import schema
 
+
 class FieldsManager:
     """
     Stores a map of problematic fields for each SGQLC type. These

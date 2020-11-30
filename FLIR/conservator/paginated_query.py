@@ -6,11 +6,12 @@ class PaginatedQuery:
     Enables pagination of any query with ``page`` and ``limit`` arguments.
 
     Assume you want to iterate through all the Projects in a project search
-    query. You could do something like the following::
-        >>> results = PaginatedQuery(conservator, Project, Query.projects, search_text="ADAS")
-        >>> results = results.including_fields("name")
-        >>> for project in results:
-        ...     print(project.name)
+    query. You could do something like the following:
+
+    >>> results = PaginatedQuery(conservator, Project, Query.projects, search_text="ADAS")
+    >>> results = results.including_fields("name")
+    >>> for project in results:
+    ...     print(project.name)
 
     """
     def __init__(self, conservator, underlying_type, query, base_operation=None,
