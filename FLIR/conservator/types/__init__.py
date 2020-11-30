@@ -13,7 +13,7 @@ For instance, a :class:`~FLIR.conservator.types.collection.Collection` has
 which runs the GraphQL query for a collection's datasets, and returns
 them as proxied :class:`~FLIR.conservator.types.dataset.Dataset` objects.
 """
-from FLIR.conservator.types.type_proxy import TypeProxy
+from .type_proxy import TypeProxy
 from .image import Image
 from .video import Video
 from .dataset import Dataset

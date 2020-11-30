@@ -1,13 +1,15 @@
 import json
 import os
 
-import FLIR.conservator.types as types
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.paginated_query import PaginatedQuery
-from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
 from FLIR.conservator.util import download_files
+from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
+from FLIR.conservator.types.video import Video
+from FLIR.conservator.types.image import Image
+from FLIR.conservator.types.dataset import Dataset
 
 
 class Collection(TypeProxy):
@@ -17,19 +19,19 @@ class Collection(TypeProxy):
 
     def get_images(self, fields=None):
         """Returns a query for all images in this collection."""
-        images = PaginatedQuery(self._conservator, types.Image, Query.datasets,
+        images = PaginatedQuery(self._conservator, Image, Query.datasets,
                                 fields=fields, collection_id=self.id)
         return images
 
     def get_videos(self, fields=None):
         """Returns a query for all videos in this collection."""
-        videos = PaginatedQuery(self._conservator, types.Video, Query.videos,
+        videos = PaginatedQuery(self._conservator, Video, Query.videos,
                                 fields=fields, collection_id=self.id)
         return videos
 
     def get_datasets(self, fields=None):
         """Returns a query for all datasets in this collection."""
-        datasets = PaginatedQuery(self._conservator, types.Dataset, Query.datasets,
+        datasets = PaginatedQuery(self._conservator, Dataset, Query.datasets,
                                   fields=fields, collection_id=self.id)
         return datasets
 
