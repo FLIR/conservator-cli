@@ -73,11 +73,7 @@ class Collection(TypeProxy):
         fields.include_field("metadata", "filename")
         videos = self.get_videos(fields=fields)
         for video in videos:
-            json_data = json.loads(video.metadata)
-            json_file = ".".join(video.filename.split(".")[:-1]) + ".json"
-            json_path = os.path.join(path, json_file)
-            with open(json_path, "w") as file:
-                json.dump(json_data, file, indent=4, separators=(',', ': '))
+            video.download_metadata(path)
 
     @requires_fields("file_locker_files")
     def download_associated_files(self, path):

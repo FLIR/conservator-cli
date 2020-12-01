@@ -3,7 +3,8 @@ import functools
 
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.managers import SearchableTypeManager, DatasetManager, CollectionManager
+from FLIR.conservator.managers import SearchableTypeManager, DatasetManager, CollectionManager, VideoManager, \
+    ImagesManager
 from FLIR.conservator.types.type_proxy import MissingFieldException
 
 
@@ -105,6 +106,27 @@ def get_manager_command(type_manager, sgqlc_type, name):
                                 associated_files,
                                 media,
                                 recursive)
+
+    if issubclass(type_manager, VideoManager):
+        @group.command(help="Download a video to the current directory, or the specified path.")
+        @click.argument('id')
+        @click.argument('path', default='.')
+        @click.option('-v', '--video-metadata', is_flag=True, help="Include video metadata")
+        @click.option('-vo', '--video-metadata-only', is_flag=True, help="Only download metadata")
+        def download(id, path, video_metadata, video_metadata_only):
+            video = get_instance().from_id(id)
+            if video_metadata_only or video_metadata:
+                video.download_metadata(path)
+            if not video_metadata_only:
+                video.download(path)
+
+    if issubclass(type_manager, ImagesManager):
+        @group.command(help="Download an image to the current directory, or the specified path.")
+        @click.argument('id')
+        @click.argument('path', default='.')
+        def download(id, path):
+            image = get_instance().from_id(id)
+            image.download(path)
 
     return group
 
