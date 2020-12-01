@@ -141,6 +141,23 @@ directory:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="downloading-videos">
+<h2>Downloading Videos<a class="headerlink" href="#downloading-videos" title="Permalink to this headline">¶</a></h2>
+<p>First, find the ID of a video you want to download using
+the website, search, etc.</p>
+<p>Downloads can be done using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos download ID
+</pre></div>
+</div>
+<p>To include video metadata, add the <code class="docutils literal notranslate"><span class="pre">-v</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos download ID -v
+</pre></div>
+</div>
+<p>An example for downloading a video and its metadata to the current path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos download hzYzQhpGMsTcEt6Xx -v
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -170,6 +187,7 @@ directory:</p>
 <li class="toctree-l2"><a class="reference internal" href="#basic-queries">Basic Queries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-datasets">Downloading Datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-collections">Downloading Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-videos">Downloading Videos</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>

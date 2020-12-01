@@ -115,3 +115,21 @@ directory::
 
     $ conservator collections download ID -r -d -v -f -m
 
+Downloading Videos
+------------------
+
+First, find the ID of a video you want to download using
+the website, search, etc.
+
+Downloads can be done using the following command::
+
+    $ conservator videos download ID
+
+To include video metadata, add the ``-v`` command::
+
+    $ conservator videos download ID -v
+
+An example for downloading a video and its metadata to the current path::
+
+    $ conservator videos download hzYzQhpGMsTcEt6Xx -v
+
