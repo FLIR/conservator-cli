@@ -29,10 +29,11 @@ class TypeProxy(object):
         self._initialized_fields = [field for field in instance]
 
     def __getattr__(self, item):
-        value = getattr(self._instance, item)
-
         if item in self._initialized_fields:
-            return value
+            field = self._instance._ContainerTypeMeta__fields[item]
+            value = getattr(self._instance, item)
+
+            return TypeProxy.wrap_instance(self._conservator, field.type, value)
 
         raise AttributeError
 
@@ -68,6 +69,7 @@ class TypeProxy(object):
             for field in fields.included:
                 if not self.has_field(field):
                     needs_new_fields = True
+                    break
             if not needs_new_fields:
                 return
 
@@ -86,6 +88,35 @@ class TypeProxy(object):
 
     def __str__(self):
         return f"{self.underlying_type}\n{to_clean_string(self)}"
+
+    @staticmethod
+    def has_base_type(base_type, type_):
+        b = type_
+        while hasattr(b, "__base__"):
+            if b == base_type:
+                return True
+            b = b.__base__
+        return False
+
+    @staticmethod
+    def get_wrapping_type(type_):
+        # rather hacky
+        cls = None
+        for subcls in TypeProxy.__subclasses__():
+            if TypeProxy.has_base_type(subcls.underlying_type, type_):
+                cls = subcls
+        return cls
+
+    @staticmethod
+    def wrap_instance(conservator, type_, instance):
+        # rather hacky
+        cls = TypeProxy.get_wrapping_type(type_)
+        if cls is None:
+            # no warping type exists
+            return instance
+        if isinstance(instance, list):
+            return [cls(conservator, i) for i in instance]
+        return cls(conservator, instance)
 
 
 class MissingFieldException(Exception):

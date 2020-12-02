@@ -49,10 +49,13 @@ class FieldsRequest:
         :param current_path: The current path, used to filter included and excluded path fields.
         :param current_depth: How many times this has been called recursively.
         """
-        if current_depth >= self.depth:
+        if current_depth > self.depth:
             return
 
-        field_names = [name for name in dir(obj) if not name.startswith("_")]
+        try:
+            field_names = [name for name in dir(obj) if not name.startswith("_")]
+        except ValueError:
+            field_names = []
         if len(field_names) == 0:
             # Fields are included in a query by calling them.
             # View the SGQLC docs for more info.
@@ -85,6 +88,9 @@ class FieldsRequest:
         # if excluded, definitely no
         if path in self.excluded:
             return False
+
+        if path == "id" or path.endswith(".id"):
+            return True
 
         # if it or a child path is included, yes
         for included in self.included:
