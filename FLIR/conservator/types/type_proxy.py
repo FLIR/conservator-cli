@@ -15,6 +15,12 @@ class TypeProxy(object):
     uses the underlying ``by_id_query``. For this reason, all instances must
     also have a reference to a :class:`~FLIR.conservator.conservator.Conservator` instance.
 
+    When you attempt to access a field, we first check that it exists on the
+    underlying instance. If it doesn't, an `AttributeError` will be raised. If
+    it does exists, we check to see if its type has a known :class:`TypeProxy`
+    subclass. If it does, a type-proxied instance is returned, otherwise the base
+    SGQLC type is returned. This lookup is compatible with optional and list types.
+
     :param conservator: The instance of :class:`~FLIR.conservator.conservator.Conservator`
         that created the underlying instance.
     :param instance: The SGQLC object to wrap, usually returned by running
@@ -91,6 +97,10 @@ class TypeProxy(object):
 
     @staticmethod
     def has_base_type(base_type, type_):
+        """Returns `True` if `type_` extends `base_type` in the
+        SGQLC type hierarchy.
+
+        For instance, a `[Collection]` has base type `Collection`."""
         b = type_
         while hasattr(b, "__base__"):
             if b == base_type:
@@ -100,6 +110,8 @@ class TypeProxy(object):
 
     @staticmethod
     def get_wrapping_type(type_):
+        """Gets the :class:`TypeProxy` with an `underlying_type`
+        related to `type_`. If one doesn't exist, returns `None`."""
         # rather hacky
         cls = None
         for subcls in TypeProxy.__subclasses__():
@@ -109,6 +121,8 @@ class TypeProxy(object):
 
     @staticmethod
     def wrap_instance(conservator, type_, instance):
+        """Creates a new TypeProxy instance of the appropriate
+        subclass, if one exists."""
         # rather hacky
         cls = TypeProxy.get_wrapping_type(type_)
         if cls is None:
