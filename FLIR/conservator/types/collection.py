@@ -1,4 +1,3 @@
-import json
 import os
 
 from FLIR.conservator.fields_request import FieldsRequest
@@ -16,6 +15,12 @@ class Collection(TypeProxy):
     underlying_type = schema.Collection
     by_id_query = schema.Query.collection
     search_query = schema.Query.collections
+
+    @classmethod
+    def from_remote_path(cls, conservator, path, fields=None):
+        collection = conservator.query(Query.collection_by_path, path=path, fields=fields)
+        if collection is not None:
+            return Collection(conservator, collection)
 
     def get_images(self, fields=None):
         """Returns a query for all images in this collection."""

@@ -9,6 +9,9 @@ class CollectionManager(SearchableTypeManager):
     def __init__(self, conservator):
         super().__init__(conservator, Collection)
 
+    def from_remote_path(self, path, fields=None):
+        return self._underlying_type.from_remote_path(self._conservator, path, fields)
+
 
 class DatasetManager(SearchableTypeManager):
     def __init__(self, conservator):

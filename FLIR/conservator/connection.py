@@ -151,4 +151,9 @@ class ConservatorConnection:
         fields.exclude_fields(self.fields_manager.get_problematic_paths(type_))
         fields.add_fields_to_request(query)
 
-        return getattr(self.run(op), query_name)
+        ret = getattr(self.run(op), query_name)
+        if len(ret) == 0:
+            # no fields were initialized, meaning the value was likely not found
+            return None
+
+        return ret
