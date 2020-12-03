@@ -49,11 +49,11 @@ class TypeProxy(object):
         This is frequently used to test if a call to `populate` is required, or to
         verify that a `populate` call worked."""
         obj = self
-        if isinstance(obj, list):
-            if len(obj) == 0:
-                return True
-            obj = obj[0]
         for field in path.split("."):
+            if isinstance(obj, list):
+                if len(obj) == 0:
+                    return True
+                obj = obj[0]
             if not hasattr(obj, field):
                 return False
             obj = getattr(obj, field)
@@ -68,16 +68,19 @@ class TypeProxy(object):
         if self.by_id_query is None:
             raise NotImplementedError
 
+        needs_new_fields = False
         if fields is None:
             fields = FieldsRequest()
+            needs_new_fields = True
         else:
-            needs_new_fields = False
+            if isinstance(fields, list):
+                fields = FieldsRequest(include_fields=tuple(fields))
             for field in fields.included:
                 if not self.has_field(field):
                     needs_new_fields = True
                     break
-            if not needs_new_fields:
-                return
+        if not needs_new_fields:
+            return
 
         result = self._conservator.query(self.by_id_query, id=self.id, fields=fields)
         for field in result:

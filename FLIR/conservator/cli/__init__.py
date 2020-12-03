@@ -1,6 +1,7 @@
 import click
 from FLIR.conservator.config import Config
 from FLIR.conservator.cli.managers import get_manager_command
+from FLIR.conservator.cli.interactive import interactive
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated import schema
 from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
@@ -37,6 +38,7 @@ main.add_command(get_manager_command(CollectionManager, schema.Collection, "coll
 main.add_command(get_manager_command(DatasetManager, schema.Dataset, "datasets"))
 main.add_command(get_manager_command(ProjectManager, schema.Project, "projects"))
 main.add_command(get_manager_command(VideoManager, schema.Video, "videos"))
+main.add_command(interactive)
 
 if __name__ == "__main__":
     main()
