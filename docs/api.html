@@ -410,6 +410,11 @@ operation.</p>
 and additional fields can be requested using <a class="reference internal" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-func docutils literal notranslate"><span class="pre">populate()</span></code></a>, which
 uses the underlying <code class="docutils literal notranslate"><span class="pre">by_id_query</span></code>. For this reason, all instances must
 also have a reference to a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> instance.</p>
+<p>When you attempt to access a field, we first check that it exists on the
+underlying instance. If it doesn’t, an <cite>AttributeError</cite> will be raised. If
+it does exists, we check to see if its type has a known <a class="reference internal" href="#FLIR.conservator.types.type_proxy.TypeProxy" title="FLIR.conservator.types.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>
+subclass. If it does, a type-proxied instance is returned, otherwise the base
+SGQLC type is returned. This lookup is compatible with optional and list types.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -425,6 +430,21 @@ some query.</p></li>
 <em class="property">classmethod </em><code class="sig-name descname">from_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.from_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a proxied instance from an ID. The underlying type
 of the class should match the type of the ID.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.type_proxy.TypeProxy.get_wrapping_type">
+<em class="property">static </em><code class="sig-name descname">get_wrapping_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.get_wrapping_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the <a class="reference internal" href="#FLIR.conservator.types.type_proxy.TypeProxy" title="FLIR.conservator.types.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> with an <cite>underlying_type</cite>
+related to <cite>type_</cite>. If one doesn’t exist, returns <cite>None</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.type_proxy.TypeProxy.has_base_type">
+<em class="property">static </em><code class="sig-name descname">has_base_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_type</span></em>, <em class="sig-param"><span class="n">type_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.has_base_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>True</cite> if <cite>type_</cite> extends <cite>base_type</cite> in the
+SGQLC type hierarchy.</p>
+<p>For instance, a <cite>[Collection]</cite> has base type <cite>Collection</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -445,6 +465,13 @@ verify that a <cite>populate</cite> call worked.</p>
 <dt id="FLIR.conservator.types.type_proxy.TypeProxy.populate_all">
 <code class="sig-name descname">populate_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Query conservator for all missing fields.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.type_proxy.TypeProxy.wrap_instance">
+<em class="property">static </em><code class="sig-name descname">wrap_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">type_</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.wrap_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new TypeProxy instance of the appropriate
+subclass, if one exists.</p>
 </dd></dl>
 
 </dd></dl>
