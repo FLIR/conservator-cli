@@ -1,3 +1,4 @@
+import functools
 import os
 
 from FLIR.conservator.fields_request import FieldsRequest

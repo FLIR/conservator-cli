@@ -84,6 +84,8 @@ class PaginatedQuery:
                                           page=page,
                                           limit=limit,
                                           **self.kwargs)
+        if results is None:
+            return []
         return [self._underlying_type(self._conservator, i) for i in results]
 
     def _next_page(self):
