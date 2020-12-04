@@ -36,6 +36,7 @@ readline.parse_and_bind("tab: complete")
 def get_root_collections():
     global root_collections
     if root_collections is None:
+        click.secho("Loading root collections...", fg='yellow')
         projects = conservator.projects.all().including_fields("root_collection.name")
         root_collections = [project.root_collection for project in projects]
     return root_collections
@@ -260,6 +261,7 @@ def interactive():
 
     click.secho(f"Loading identity from {domain}...", fg="yellow")
     username = conservator.get_user().name
+    get_root_collections()
 
     while True:
         user = click.style(f"{username}@{domain}:", fg='magenta', bold=True)
