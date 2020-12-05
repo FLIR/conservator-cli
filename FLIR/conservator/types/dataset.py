@@ -3,6 +3,7 @@ import os
 import subprocess
 
 from FLIR.conservator.generated import schema
+from FLIR.conservator.generated.schema import Mutation, Query, AddFramesToDatasetInput
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
 from FLIR.conservator.util import download_files
 
@@ -11,6 +12,36 @@ class Dataset(TypeProxy):
     underlying_type = schema.Dataset
     by_id_query = schema.Query.dataset
     search_query = schema.Query.datasets
+
+    def generate_metadata(self):
+        return self._conservator.query(Mutation.generate_dataset_metadata,
+                                       operation_base=Mutation, dataset_id=self.id)
+
+    def get_frame(self, fields=None):
+        return self._conservator.query(Query.dataset_frame, fields=fields,
+                                       id=self.id, search_text="")
+
+    def add_frames(self, frames, fields=None):
+        frame_ids = [frame.id for frame in frames]
+        _input = AddFramesToDatasetInput(dataset_id=self.id,
+                                         frame_ids=frame_ids)
+        return self._conservator.query(Mutation.add_frames_to_dataset, operation_base=Mutation,
+                                       fields=fields,
+                                       input=_input)
+
+    def generate_signed_metadata_upload_url(self, filename, content_type):
+        result = self._conservator.query(Mutation.generate_signed_dataset_metadata_upload_url,
+                                         operation_base=Mutation,
+                                         dataset_id=self.id, content_type=content_type,
+                                         filename=filename)
+        return result.signed_url
+
+    def generate_signed_locker_upload_url(self, filename, content_type):
+        result = self._conservator.query(Mutation.generate_signed_dataset_file_locker_upload_url,
+                                         operation_base=Mutation,
+                                         dataset_id=self.id, content_type=content_type,
+                                         filename=filename)
+        return result.signed_url
 
     def get_git_url(self):
         """Returns the Git URL used for cloning this Dataset."""

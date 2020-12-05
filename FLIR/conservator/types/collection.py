@@ -3,7 +3,7 @@ import os
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
-from FLIR.conservator.generated.schema import Query
+from FLIR.conservator.generated.schema import Query, Mutation, CreateCollectionInput
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
@@ -12,16 +12,70 @@ from FLIR.conservator.types.image import Image
 from FLIR.conservator.types.dataset import Dataset
 
 
+class InvalidRemotePathException(Exception):
+    pass
+
+
 class Collection(TypeProxy):
     underlying_type = schema.Collection
     by_id_query = schema.Query.collection
     search_query = schema.Query.collections
 
+    def create_video(self, filename, fields=None):
+        return Video.create(self._conservator, filename, self.id, fields)
+
+    def create_child(self, name, fields=None):
+        _input = CreateCollectionInput(name=name, parent_id=self.id)
+        return self._conservator.query(Mutation.create_collection, operation_base=Mutation,
+                                       input=_input, fields=fields)
+
+    @requires_fields("path")
+    def get_child(self, name, make_if_no_exists=False, fields=None):
+        path = os.path.join(self.path, name)
+        try:
+            child = Collection.from_remote_path(self._conservator, path, fields)
+        except InvalidRemotePathException:
+            if make_if_no_exists:
+                return self.create_child(name, fields)
+            raise
+        return child
+
+    def generate_signed_locker_upload_url(self, filename, content_type):
+        result = self._conservator.query(Mutation.generate_signed_collection_file_locker_upload_url,
+                                         operation_base=Mutation,
+                                         dataset_id=self.id, content_type=content_type,
+                                         filename=filename)
+        return result.signed_url
+
     @classmethod
-    def from_remote_path(cls, conservator, path, fields=None):
+    def create_root(cls, conservator, name, fields=None):
+        project = conservator.projects.create(name, fields="root_collection.id")
+        root_collection = project.root_collection
+        root_collection.populate(fields)
+        return root_collection
+
+    @classmethod
+    def create_from_remote_path(cls, conservator, path, fields=None):
+        split_path = os.path.split(path)
+        root_path = split_path[0].strip("\\/")
+        try:
+            root = Collection.from_remote_path(conservator, path, False, fields)
+        except InvalidRemotePathException:
+            root = Collection.create_root(conservator, root_path, fields)
+
+        current = root
+        for name in split_path[1:]:
+            current = current.get_child(name, make_if_no_exists=True, fields=fields)
+        return current
+
+    @classmethod
+    def from_remote_path(cls, conservator, path, make_if_no_exist=False, fields=None):
         collection = conservator.query(Query.collection_by_path, path=path, fields=fields)
-        if collection is not None:
-            return Collection(conservator, collection)
+        if collection is None:
+            if make_if_no_exist:
+                cls.create_from_remote_path(conservator, path, fields)
+            raise InvalidRemotePathException(path)
+        return Collection(conservator, collection)
 
     def get_images(self, fields=None):
         """Returns a query for all images in this collection."""

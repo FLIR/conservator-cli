@@ -13,3 +13,8 @@ class Image(TypeProxy):
         """Download image to ``path``."""
         download_file(path, self.filename, self.url)
 
+    def get_frames(self, index, start_index, custom_metadata, fields=None):
+        return self._conservator.query(schema.Image.frames, operation_base=schema.Image,
+                                       fields=fields, id=self.id,
+                                       frame_index=index, start_frame_index=start_index,
+                                       custom_metadata=custom_metadata)

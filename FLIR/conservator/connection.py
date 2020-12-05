@@ -141,6 +141,10 @@ class ConservatorConnection:
         if fields is None:
             # includes all fields by default
             fields = FieldsRequest()
+        if isinstance(fields, str):
+            fields = FieldsRequest(include_fields=(fields,))
+        if isinstance(fields, list) or isinstance(fields, tuple):
+            fields = FieldsRequest(include_fields=tuple(*fields))
 
         while True:
             try:
@@ -159,8 +163,13 @@ class ConservatorConnection:
         fields.add_fields_to_request(query)
 
         ret = getattr(self.run(op), query_name)
-        if len(ret) == 0:
-            # no fields were initialized, meaning the value was likely not found
-            return None
+        try:
+            if len(ret) == 0:
+                # no fields were initialized, meaning the value was likely not found
+                return None
+        except TypeError:
+            # this is thrown if the returned type was a primitive without __len__
+            # for instance, a bool or int
+            pass
 
         return ret

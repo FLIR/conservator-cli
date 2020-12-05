@@ -65,28 +65,29 @@ class TypeProxy(object):
 
     def populate(self, fields=None):
         """Query conservator for the specified fields."""
-        if self.by_id_query is None:
-            raise NotImplementedError
-
-        needs_new_fields = False
         if fields is None:
             fields = FieldsRequest()
-            needs_new_fields = True
         else:
+            needs_new_fields = False
             if isinstance(fields, list):
                 fields = FieldsRequest(include_fields=tuple(fields))
             for field in fields.included:
                 if not self.has_field(field):
                     needs_new_fields = True
                     break
-        if not needs_new_fields:
-            return
+            if not needs_new_fields:
+                return
 
-        result = self._conservator.query(self.by_id_query, id=self.id, fields=fields)
+        result = self._populate(fields)
         for field in result:
             v = getattr(result, field)
             setattr(self._instance, field, v)
             self._initialized_fields.append(field)
+
+    def _populate(self, fields):
+        if self.by_id_query is None:
+            raise NotImplementedError
+        return self._conservator.query(self.by_id_query, id=self.id, fields=fields)
 
     @classmethod
     def from_id(cls, conservator, id_):
