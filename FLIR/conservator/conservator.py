@@ -1,6 +1,5 @@
 from FLIR.conservator.config import Config
 from FLIR.conservator.connection import ConservatorConnection
-from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
 

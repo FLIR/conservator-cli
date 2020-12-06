@@ -133,3 +133,34 @@ An example for downloading a video and its metadata to the current path::
 
     $ conservator videos download hzYzQhpGMsTcEt6Xx -v
 
+
+Interactive Mode
+----------------
+
+Conservator CLI also has a powerful and useful interactive mode::
+
+    $ conservator interactive
+
+This spawns a fake "shell" that emulates the directory structure of
+Conservator. Type ``conservator help`` for a list of commands::
+
+    $ help
+    Usage: $ [OPTIONS] COMMAND [ARGS]...
+
+    Commands:
+      cd           Switch working directory
+      collections  List child collections
+      files        List file locker files
+      help         Print this message
+      images       List images
+      info         Get information on the current collection
+      ls           List collections, videos, images, and file locker files
+      open         Open in browser
+      pwd          Print the working directory
+      tree         List child collection paths recursively
+      videos       List videos
+
+Use these commands to easily navigate around conservator,
+download and upload files, edit metadata and tags, and
+move media around.  Use `--help` for more information
+about any specific command within the shell.

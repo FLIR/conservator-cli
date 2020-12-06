@@ -73,6 +73,10 @@ class FieldsRequest:
                 self.add_fields_to_request(field, field_path, current_depth + 1)
 
     def should_include_all_subpaths(self, path):
+        """
+        Returns `True` if all fields under `path` are included
+        in the request.
+        """
         if path in self.excluded:
             return False
         for excluded in self.excluded:

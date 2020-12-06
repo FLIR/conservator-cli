@@ -70,6 +70,12 @@ def download_file(path, name, url, silent=False):
     return True
 
 
+def upload_file(path, url):
+    path = os.path.abspath(path)
+    with open(path, 'rb') as f:
+        return requests.put(url, f)
+
+
 def download_files(files, process_count=None):
     # files = (path, name, url)
     pool = multiprocessing.Pool(process_count)  # defaults to CPU count
