@@ -158,6 +158,36 @@ the website, search, etc.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="interactive-mode">
+<h2>Interactive Mode<a class="headerlink" href="#interactive-mode" title="Permalink to this headline">¶</a></h2>
+<p>Conservator CLI also has a powerful and useful interactive mode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator interactive
+</pre></div>
+</div>
+<p>This spawns a fake “shell” that emulates the directory structure of
+Conservator. Type <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">help</span></code> for a list of commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ help
+Usage: $ [OPTIONS] COMMAND [ARGS]...
+
+Commands:
+  cd           Switch working directory
+  collections  List child collections
+  files        List file locker files
+  help         Print this message
+  images       List images
+  info         Get information on the current collection
+  ls           List collections, videos, images, and file locker files
+  open         Open in browser
+  pwd          Print the working directory
+  tree         List child collection paths recursively
+  videos       List videos
+</pre></div>
+</div>
+<p>Use these commands to easily navigate around conservator,
+download and upload files, edit metadata and tags, and
+move media around.  Use <cite>–help</cite> for more information
+about any specific command within the shell.</p>
+</div>
 </div>
 
 
@@ -188,6 +218,7 @@ the website, search, etc.</p>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-datasets">Downloading Datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-collections">Downloading Collections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-videos">Downloading Videos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactive-mode">Interactive Mode</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>

@@ -202,9 +202,21 @@ authentication info.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.get_collection_url">
+<code class="sig-name descname">get_collection_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collection</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_collection_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a URL for viewing <cite>collection</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.connection.ConservatorConnection.get_domain">
 <code class="sig-name descname">get_domain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the domain name of the Conservator instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.get_url">
+<code class="sig-name descname">get_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the base URL for Conservator.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -371,6 +383,13 @@ included field, plus 1.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.fields_request.FieldsRequest.should_include_all_subpaths">
+<code class="sig-name descname">should_include_all_subpaths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.should_include_all_subpaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>True</cite> if all fields under <cite>path</cite> are included
+in the request.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.fields_request.FieldsRequest.should_include_path">
 <code class="sig-name descname">should_include_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.should_include_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns <cite>True</cite> if this request should include something within <cite>path</cite>.</p>
@@ -490,6 +509,35 @@ subclass, if one exists.</p>
 <dt id="FLIR.conservator.types.collection.Collection">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.collection.</code><code class="sig-name descname">Collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.create_child">
+<code class="sig-name descname">create_child</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.create_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new child collection with the given <cite>name</cite>, returning it
+with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.create_from_remote_path">
+<em class="property">classmethod </em><code class="sig-name descname">create_from_remote_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.create_from_remote_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new collection at the specified <cite>path</cite>, with the given <cite>fields</cite>,
+creating new collections as necessary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.create_root">
+<em class="property">classmethod </em><code class="sig-name descname">create_root</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.create_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new root collection with the specified <cite>name</cite> and
+return it with the specified <cite>fields</cite>.</p>
+<p>This requires your account to have privilege to create new projects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.create_video">
+<code class="sig-name descname">create_video</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.create_video" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new <a class="reference internal" href="#FLIR.conservator.types.video.Video" title="FLIR.conservator.types.video.Video"><code class="xref py py-class docutils literal notranslate"><span class="pre">Video</span></code></a> within
+this collection, returning it with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.types.collection.Collection.download">
 <code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">include_datasets</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_video_metadata</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_associated_files</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_media</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">recursive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads this collection to the <cite>path</cite> specified,
@@ -534,6 +582,28 @@ with the specified assets included.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.from_remote_path">
+<em class="property">classmethod </em><code class="sig-name descname">from_remote_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">make_if_no_exist</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.from_remote_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a collection at the specified <cite>path</cite>, with the specified <cite>fields</cite>.
+If <cite>make_if_no_exist</cite> is <cite>True</cite>, then collection(s) will be created to
+reach that path if it doesn’t exist.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.generate_signed_locker_upload_url">
+<code class="sig-name descname">generate_signed_locker_upload_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">content_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.generate_signed_locker_upload_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a signed url for uploading a new file locker file with the given <cite>filename</cite> and
+<cite>content_type</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.get_child">
+<code class="sig-name descname">get_child</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">make_if_no_exists</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.get_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the child collection with the given <cite>name</cite> and specified <cite>fields</cite>.</p>
+<p>If it does not exist, and <cite>make_if_no_exists</cite> is <cite>True</cite>, it will be created.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.types.collection.Collection.get_datasets">
 <code class="sig-name descname">get_datasets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.get_datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a query for all datasets in this collection.</p>
@@ -559,6 +629,11 @@ with the specified assets included.</p>
 
 </dd></dl>
 
+<dl class="py exception">
+<dt id="FLIR.conservator.types.collection.InvalidRemotePathException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.types.collection.</code><code class="sig-name descname">InvalidRemotePathException</code><a class="headerlink" href="#FLIR.conservator.types.collection.InvalidRemotePathException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-FLIR.conservator.types.dataset">
 <span id="dataset"></span><h3>Dataset<a class="headerlink" href="#module-FLIR.conservator.types.dataset" title="Permalink to this headline">¶</a></h3>
@@ -566,6 +641,12 @@ with the specified assets included.</p>
 <dt id="FLIR.conservator.types.dataset.Dataset">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.dataset.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.add_frames">
+<code class="sig-name descname">add_frames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frames</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.add_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of <cite>frames</cite>, add them to the dataset.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.types.dataset.Dataset.clone">
 <code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clone this Dataset into a subdirectory of <cite>path</cite> based on
@@ -582,9 +663,36 @@ at the provided <cite>path</cite></p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.generate_metadata">
+<code class="sig-name descname">generate_metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.generate_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries Conservator to generate metadata for the dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.generate_signed_locker_upload_url">
+<code class="sig-name descname">generate_signed_locker_upload_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">content_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.generate_signed_locker_upload_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a signed url for uploading a new file locker file with the given <cite>filename</cite> and
+<cite>content_type</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.generate_signed_metadata_upload_url">
+<code class="sig-name descname">generate_signed_metadata_upload_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">content_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.generate_signed_metadata_upload_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a signed url for uploading metadata with the given <cite>filename</cite> and
+<cite>content_type</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.types.dataset.Dataset.get_dvc_url">
 <code class="sig-name descname">get_dvc_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.get_dvc_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the DVC URL used for downloading files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.get_frame">
+<code class="sig-name descname">get_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.get_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries and returns the dataset frames within this dataset, filtering
+with <cite>search_text</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -600,6 +708,7 @@ at the provided <cite>path</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – The local path to save files. Should contain an <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file.</p></li>
 <li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p></li>
 <li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
 </ul>
@@ -627,6 +736,12 @@ at the provided <cite>path</cite></p>
 <dd><p>Download image to <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="FLIR.conservator.types.image.Image.get_frames">
+<code class="sig-name descname">get_frames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">start_index</span></em>, <em class="sig-param"><span class="n">custom_metadata</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.image.Image.get_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the image’s frames, with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="FLIR.conservator.types.image.Image.underlying_type">
 <code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.image.Image.underlying_type" title="Permalink to this definition">¶</a></dt>
@@ -641,7 +756,15 @@ at the provided <cite>path</cite></p>
 <dl class="py class">
 <dt id="FLIR.conservator.types.project.Project">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.project.</code><code class="sig-name descname">Project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.project.Project" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py attribute">
+<dd><dl class="py method">
+<dt id="FLIR.conservator.types.project.Project.create">
+<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.project.Project.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new project with the given <cite>name</cite>, and returns it with the
+specified <cite>fields</cite>.</p>
+<p>Note that this requires the privilege to create projects.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt id="FLIR.conservator.types.project.Project.underlying_type">
 <code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.project.Project.underlying_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Project</span></code></p>
@@ -656,9 +779,102 @@ at the provided <cite>path</cite></p>
 <dt id="FLIR.conservator.types.video.Video">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.video.</code><code class="sig-name descname">Video</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.complete_upload">
+<code class="sig-name descname">complete_upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">upload_id</span></em>, <em class="sig-param"><span class="n">completion_tags</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.complete_upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete an upload to conservator, after having uploaded the video to
+the url given by <a class="reference internal" href="#FLIR.conservator.types.video.Video.generate_signed_upload_url" title="FLIR.conservator.types.video.Video.generate_signed_upload_url"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate_signed_upload_url()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – The name of the video.</p></li>
+<li><p><strong>upload_id</strong> – An upload id returned by <a class="reference internal" href="#FLIR.conservator.types.video.Video.initiate_upload" title="FLIR.conservator.types.video.Video.initiate_upload"><code class="xref py py-func docutils literal notranslate"><span class="pre">initiate_upload()</span></code></a>.</p></li>
+<li><p><strong>completion_tags</strong> – An optional list of completion tags, typically the <code class="docutils literal notranslate"><span class="pre">ETag</span></code>
+headers from any S3 uploads.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.create">
+<em class="property">static </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">collection_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new video with the given <cite>filename</cite>. The video is added to
+under the collection with the given <cite>collection_id</cite> if specified,
+otherwise it is added to no collection (orphan video).</p>
+<p>The video is returned with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.types.video.Video.download">
 <code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download video to <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.download_metadata">
+<code class="sig-name descname">download_metadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.download_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the <cite>metadata</cite> field to <cite>path/filename.json</cite>,
+where <cite>filename</cite> is the video’s filename.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.generate_signed_locker_upload_url">
+<code class="sig-name descname">generate_signed_locker_upload_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">content_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.generate_signed_locker_upload_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a signed url for uploading a new file locker file with the given <cite>filename</cite> and
+<cite>content_type</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.generate_signed_metadata_upload_url">
+<code class="sig-name descname">generate_signed_metadata_upload_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">content_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.generate_signed_metadata_upload_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a signed url for uploading metadata with the given <cite>filename</cite> and
+<cite>content_type</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.generate_signed_upload_url">
+<code class="sig-name descname">generate_signed_upload_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upload_id</span></em>, <em class="sig-param"><span class="n">part_number</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.generate_signed_upload_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a signed url for uploading a video (or part of video).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upload_id</strong> – An upload id returned by <a class="reference internal" href="#FLIR.conservator.types.video.Video.initiate_upload" title="FLIR.conservator.types.video.Video.initiate_upload"><code class="xref py py-func docutils literal notranslate"><span class="pre">initiate_upload()</span></code></a>.</p></li>
+<li><p><strong>part_number</strong> – The part number if uploading a multipart video.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.get_annotations">
+<code class="sig-name descname">get_annotations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.get_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the video’s annotations with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.get_frames">
+<code class="sig-name descname">get_frames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">start_index</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.get_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the video’s frames, with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.initiate_upload">
+<code class="sig-name descname">initiate_upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.initiate_upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initiate an upload to conservator with a remote <cite>filename</cite>,
+returning a new <cite>upload_id</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a video from conservator. Note that this is a permanent action that will
+remove it from <strong>all</strong> collections.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.video.Video.trigger_processing">
+<code class="sig-name descname">trigger_processing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metadata_url</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">should_notify</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">should_object_detect</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.video.Video.trigger_processing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trigger processing on a recently uploaded video.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -678,6 +894,36 @@ at the provided <cite>path</cite></p>
 <dt id="FLIR.conservator.managers.CollectionManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">CollectionManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.CollectionManager.create_from_parent_id">
+<code class="sig-name descname">create_from_parent_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">parent_id</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.create_from_parent_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new child collection named <cite>name</cite>, under the parent collection with the
+given <cite>parent_id</cite>, and return it with the given <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.CollectionManager.create_from_path">
+<code class="sig-name descname">create_from_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.create_from_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new collection at the specified <cite>path</cite>, with the given <cite>fields</cite>,
+creating new collections as necessary.  Uses <a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.from_remote_path" title="FLIR.conservator.managers.CollectionManager.from_remote_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_remote_path()</span></code></a> with
+<cite>make_if_no_exist=True</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.CollectionManager.create_root">
+<code class="sig-name descname">create_root</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.create_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new root collection with the specified <cite>name</cite> and
+return it with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.CollectionManager.from_remote_path">
+<code class="sig-name descname">from_remote_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">make_if_no_exist</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.from_remote_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a collection at the specified <cite>path</cite>, with the specified <cite>fields</cite>.
+If <cite>make_if_no_exist</cite> is <cite>True</cite>, then collection(s) will be created to
+reach that path.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -703,12 +949,35 @@ containing an <code class="docutils literal notranslate"><span class="pre">index
 <dt id="FLIR.conservator.managers.ProjectManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">ProjectManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ProjectManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.ProjectManager.create">
+<code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ProjectManager.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new project with the given <cite>name</cite>, and return
+it with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt id="FLIR.conservator.managers.VideoManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">VideoManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.VideoManager.upload">
+<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">collection</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">remote_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a new video from a local <cite>file_path</cite>, with the specified
+<cite>remote_name</cite>. The video is added to <cite>collection</cite> if given,
+otherwise it is added to no collection (orphan video).</p>
+<p>Returns the created <a class="reference internal" href="#FLIR.conservator.types.video.Video" title="FLIR.conservator.types.video.Video"><code class="xref py py-class docutils literal notranslate"><span class="pre">Video</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.managers.VideoUploadException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">VideoUploadException</code><a class="headerlink" href="#FLIR.conservator.managers.VideoUploadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised if an exception occurs during a video upload</p>
 </dd></dl>
 
 <div class="section" id="module-FLIR.conservator.managers.type_manager">
