@@ -1,3 +1,4 @@
+import functools
 import os
 import shlex
 
@@ -9,7 +10,8 @@ from typing import Optional
 from FLIR.conservator.cli.managers import fields_request
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.types import Collection
+from FLIR.conservator.types import Collection, Video, Image
+from FLIR.conservator.types.collection import InvalidRemotePathException
 
 pwd = "/"
 ctx = None
@@ -21,8 +23,8 @@ root_collections: [Collection] = None
 def complete(value, state):
     args = shlex.split(value)
     to_complete = args[-1]
-    names = [child.name + "/" for child in get_child_collections()]
-    filtered = list(filter(lambda name: name.startswith(to_complete), names))
+    paths = get_child_paths()
+    filtered = list(filter(lambda name: name.startswith(to_complete), paths))
     if state <= len(filtered):
         v = filtered[state].replace(" ", "\\ ")
         return f"{args[0]} {v}"
@@ -50,6 +52,56 @@ def get_child_collections():
         return []
 
     return current_collection.children
+
+
+def get_videos():
+    if not hasattr(current_collection, "videos"):
+        click.secho("Loading videos...\r", nl=False, fg="yellow")
+        vid_q = current_collection.get_videos(fields="name")
+        current_collection.videos = list(vid_q)
+    return current_collection.videos
+
+
+def get_images():
+    if not hasattr(current_collection, "images"):
+        click.secho("Loading images...\r", nl=False, fg="yellow")
+        img_q = current_collection.get_images(fields="name")
+        current_collection.images = list(img_q)
+    return current_collection.images
+
+
+def get_child_media():
+    if current_collection is None:
+        return []
+    return get_videos() + get_images()
+
+
+def get_child_paths():
+    collection_paths = [collection.name + "/" for collection in get_child_collections()]
+    media_paths = [media.name for media in get_child_media()]
+    return collection_paths + media_paths
+
+
+def get_from_path(path):
+    if path == ".":
+        return current_collection
+    for collection in get_child_collections():
+        if path == collection.name or path == collection.name + "/":
+            return collection
+    for media in get_child_media():
+        if path == media.name:
+            return media
+    return None
+
+    
+def requires_valid_collection(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if current_collection is None:
+            click.secho("Not in a valid Collection", fg="red")
+            return
+        func(*args, **kwargs)
+    return wrapper
 
 
 @click.group("$", add_help_option=False)
@@ -81,22 +133,63 @@ def cd(path):
 
     fields = FieldsRequest()
     fields.include_field("path", "id", "children.name", "children.path")
-    collection = conservator.collections.from_remote_path(new_path, fields)
-    if collection is None:
+    try:
+        collection = conservator.collections.from_remote_path(new_path, fields=fields)
+    except InvalidRemotePathException:
         click.secho(f"Invalid path '{new_path}'", fg="red")
         return
     pwd = collection.path
     current_collection = collection
 
 
-@shell.command(help="Get information on the current collection")
+@shell.command("fields", help="Get fields of the current collection")
+@requires_valid_collection
 @fields_request
-def info(fields):
-    collection = conservator.collections.from_remote_path(pwd, fields)
-    if collection is None:
-        click.secho("Not in a valid Collection", fg="red")
+def _fields(fields):
+    current_collection.populate(fields=fields)
+    click.echo(current_collection)
+
+
+@shell.command("details", help="Get details on a file or collection")
+@click.argument("filename", default=".")
+def details(filename):
+    item = get_from_path(filename)
+    if item is None:
+        click.secho(f"Couldn't find '{filename}' in current collection", fg='red')
         return
-    click.echo(collection)
+    detail_fields = FieldsRequest()
+    if isinstance(item, Collection):
+        detail_fields.include_field("name", "path", "owner", "created_by_name",
+                                    "recursive_video_count", "recursive_dataset_count",
+                                    "recursive_image_count", "recursive_child_count",
+                                    "description")
+        item.populate(detail_fields)
+        click.echo(f"Name: {item.name}")
+        click.echo(f"Collection ID: {item.id}")
+        click.echo(f"Path: {item.path}")
+        click.echo(f"Owner: {item.owner}")
+        click.echo(f"Creator: {item.created_by_name}")
+        click.echo(f"Total Videos: {item.recursive_video_count}")
+        click.echo(f"Total Images: {item.recursive_image_count}")
+        click.echo(f"Total Datasets: {item.recursive_dataset_count}")
+        click.echo(f"Total Child Collections: {item.recursive_child_count}")
+        click.echo(f"Description: {item.description}")
+    elif isinstance(item, Video) or isinstance(item, Image):
+        detail_fields.include_field("name", "owner", "uploaded_by_name",
+                                    "file_size", "location", "tags", "asset_type",
+                                    "description")
+        item.populate(detail_fields)
+        click.echo(f"Name: {item.name}")
+        click.echo(f"{item.__class__.__name__} ID: {item.id}")
+        click.echo(f"Owner: {item.owner}")
+        click.echo(f"Uploader: {item.uploaded_by_name}")
+        click.echo(f"File Size: {item.file_size / 1024 / 1024:.2f} MB")
+        click.echo(f"Location: {item.location}")
+        click.echo(f"Tags: {item.tags}")
+        click.echo(f"Spectrum: {item.asset_type}")
+        click.echo(f"Description: {item.description}")
+    else:
+        click.echo("Unknown type")
 
 
 @shell.command(help="List collections, videos, images, and file locker files")
@@ -112,10 +205,10 @@ def ls():
     if current_collection is None:
         return
 
-    for video in current_collection.get_videos().including_fields("name"):
+    for video in get_videos():
         click.secho(video.name, fg='green')
 
-    for image in current_collection.get_images().including_fields("name"):
+    for image in get_images():
         click.secho(image.name, fg='bright_green')
 
     file_fields = FieldsRequest()
@@ -127,11 +220,8 @@ def ls():
 
 @shell.command("files", help="List file locker files")
 @click.option("-u", "--url", is_flag=True, help="If specified, also print a download URL")
+@requires_valid_collection
 def _files(url):
-    if current_collection is None:
-        click.secho("Not in a valid Collection", fg="red")
-        return
-
     fields = FieldsRequest()
     fields.include_field("file_locker_files.name")
     if url:
@@ -171,11 +261,8 @@ def _collections():
 
 @shell.command("videos", help="List videos")
 @click.option("-s", "--size", is_flag=True, help="Print file size")
+@requires_valid_collection
 def _videos(size):
-    if current_collection is None:
-        click.secho("Not in a valid Collection", fg="red")
-        return
-    
     video_fields = FieldsRequest()
     video_fields.include_field("name")
     if size:
@@ -189,14 +276,9 @@ def _videos(size):
 
 
 @shell.command("images", help="List images")
+@requires_valid_collection
 def _images():
-    if current_collection is None:
-        click.secho("Not in a valid Collection", fg="red")
-        return
-
-    image_fields = FieldsRequest()
-    image_fields.include_field("name")
-    for image in current_collection.get_images(image_fields):
+    for image in get_images():
         click.echo(image.name)
 
 
