@@ -247,7 +247,7 @@ def run_shell_command(command):
         click.secho("Interrupted", fg="red")
 
 
-@click.command()
+@click.command(help="An interactive shell for exploring conservator")
 def interactive():
     global conservator
     conservator = Conservator.default()

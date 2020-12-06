@@ -14,14 +14,24 @@ class Dataset(TypeProxy):
     search_query = schema.Query.datasets
 
     def generate_metadata(self):
+        """
+        Queries Conservator to generate metadata for the dataset.
+        """
         return self._conservator.query(Mutation.generate_dataset_metadata,
                                        operation_base=Mutation, dataset_id=self.id)
 
-    def get_frame(self, fields=None):
+    def get_frame(self, search_text="", fields=None):
+        """
+        Queries and returns the dataset frames within this dataset, filtering
+        with `search_text`.
+        """
         return self._conservator.query(Query.dataset_frame, fields=fields,
-                                       id=self.id, search_text="")
+                                       id=self.id, search_text=search_text)
 
     def add_frames(self, frames, fields=None):
+        """
+        Given a list of `frames`, add them to the dataset.
+        """
         frame_ids = [frame.id for frame in frames]
         _input = AddFramesToDatasetInput(dataset_id=self.id,
                                          frame_ids=frame_ids)
@@ -30,6 +40,10 @@ class Dataset(TypeProxy):
                                        input=_input)
 
     def generate_signed_metadata_upload_url(self, filename, content_type):
+        """
+        Returns a signed url for uploading metadata with the given `filename` and
+        `content_type`.
+        """
         result = self._conservator.query(Mutation.generate_signed_dataset_metadata_upload_url,
                                          operation_base=Mutation,
                                          dataset_id=self.id, content_type=content_type,
@@ -37,6 +51,10 @@ class Dataset(TypeProxy):
         return result.signed_url
 
     def generate_signed_locker_upload_url(self, filename, content_type):
+        """
+        Returns a signed url for uploading a new file locker file with the given `filename` and
+        `content_type`.
+        """
         result = self._conservator.query(Mutation.generate_signed_dataset_file_locker_upload_url,
                                          operation_base=Mutation,
                                          dataset_id=self.id, content_type=content_type,
@@ -83,6 +101,7 @@ class Dataset(TypeProxy):
         """
         Downloads the files listed in ``index.json`` at the provided `path`.
 
+        :param path: The local path to save files. Should contain an ``index.json`` file.
         :param include_analytics: If `True`, download analytic data to ``analyticsData/``.
         :param include_eight_bit: If `True`, download eight-bit images to ``data/``.
         """

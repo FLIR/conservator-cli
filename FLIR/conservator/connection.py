@@ -62,10 +62,14 @@ class ConservatorConnection:
         return f"{email}:{key}"
 
     def get_url(self):
+        """Returns the base URL for Conservator."""
         r = urllib.parse.urlparse(self.config.url)
         return f"{r.scheme}://{r.netloc}"
 
     def get_collection_url(self, collection):
+        """
+        Returns a URL for viewing `collection`.
+        """
         return self.get_url() + f"/projects/{collection.id}"
 
     def get_domain(self):

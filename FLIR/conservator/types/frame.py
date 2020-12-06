@@ -20,16 +20,29 @@ class Frame(TypeProxy):
                                        ids=ids)[0]
 
     def get_annotations(self, fields=None):
+        """
+        Returns the frame's annotations with the specified `fields`.
+        """
         return self._conservator.query(schema.Frame.annotations, operation_base=schema.Frame,
                                        fields=fields, id=self.id)
 
     def add_annotation(self, annotation_create, fields=None):
+        """
+        Adds an annotation using the specified `annotation_create` object.
+
+        Returns the added annotation with the specified `fields`.
+        """
         assert isinstance(annotation_create, AnnotationCreate)
         return self._conservator.query(Mutation.create_annotation, operation_base=Mutation,
                                        fields=fields,
                                        frame_id=self.id, annotation=annotation_create)
 
     def add_prediction(self, prediction_create, fields=None):
+        """
+        Adds a prediction using the specified `annotation_create` object.
+
+        Returns the added prediction with the specified `fields`.
+        """
         assert isinstance(prediction_create, PredictionCreate)
         return self._conservator.query(Mutation.create_prediction, operation_base=Mutation,
                                        fields=fields,

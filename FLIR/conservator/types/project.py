@@ -10,6 +10,12 @@ class Project(TypeProxy):
 
     @classmethod
     def create(cls, conservator, name, fields=None):
+        """
+        Creates a new project with the given `name`, and returns it with the
+        specified `fields`.
+
+        Note that this requires the privilege to create projects.
+        """
         result = conservator.query(Mutation.create_project, operation_base=Mutation,
                                    name=name, fields=fields)
         return cls(conservator, result)

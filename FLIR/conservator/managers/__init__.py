@@ -9,6 +9,7 @@ from FLIR.conservator.util import upload_file
 
 
 class VideoUploadException(Exception):
+    """Raised if an exception occurs during a video upload"""
     pass
 
 
@@ -17,16 +18,34 @@ class CollectionManager(SearchableTypeManager):
         super().__init__(conservator, Collection)
 
     def from_remote_path(self, path, make_if_no_exist=False, fields=None):
+        """
+        Returns a collection at the specified `path`, with the specified `fields`.
+        If `make_if_no_exist` is `True`, then collection(s) will be created to
+        reach that path.
+        """
         return self._underlying_type.from_remote_path(self._conservator, path,  make_if_no_exist, fields)
 
     def create_root(self, name, fields=None):
+        """
+        Create a new root collection with the specified `name` and
+        return it with the specified `fields`.
+        """
         return self._underlying_type.create_root(self._conservator, name, fields)
 
     def create_from_parent_id(self, name, parent_id, fields=None):
+        """
+        Create a new child collection named `name`, under the parent collection with the
+        given `parent_id`, and return it with the given `fields`.
+        """
         parent = self.from_id(parent_id)
         return parent.create_child(name, fields)
 
     def create_from_path(self, path, fields=None):
+        """
+        Return a new collection at the specified `path`, with the given `fields`,
+        creating new collections as necessary.  Uses :func:`from_remote_path` with
+        `make_if_no_exist=True`.
+        """
         return self.from_remote_path(path, make_if_no_exist=True, fields=fields)
 
 
@@ -45,6 +64,10 @@ class ProjectManager(SearchableTypeManager):
         super().__init__(conservator, Project)
 
     def create(self, name, fields=None):
+        """
+        Create a new project with the given `name`, and return
+        it with the specified `fields`.
+        """
         self._underlying_type.create(self._conservator, name, fields=fields)
 
 
@@ -53,6 +76,13 @@ class VideoManager(SearchableTypeManager):
         super().__init__(conservator, Video)
 
     def upload(self, file_path, collection=None, remote_name=None):
+        """
+        Upload a new video from a local `file_path`, with the specified
+        `remote_name`. The video is added to `collection` if given,
+        otherwise it is added to no collection (orphan video).
+        
+        Returns the created :class:`~FLIR.conservator.types.video.Video`.
+        """
         file_path = os.path.expanduser(file_path)
         assert os.path.isfile(file_path)
         if remote_name is None:
@@ -70,13 +100,10 @@ class VideoManager(SearchableTypeManager):
         if not upload.ok:
             video.remove()
             raise VideoUploadException(f"Upload failed ({upload.status_code}: {upload.reason})")
-
         completion_tag = upload.headers['ETag']
 
         video.complete_upload(remote_name, upload_id, completion_tags=[completion_tag])
-
         video.trigger_processing()
-
         return video
 
 

@@ -22,15 +22,28 @@ class Collection(TypeProxy):
     search_query = schema.Query.collections
 
     def create_video(self, filename, fields=None):
+        """
+        Create a new :class:`~FLIR.conservator.types.video.Video` within
+        this collection, returning it with the specified `fields`.
+        """
         return Video.create(self._conservator, filename, self.id, fields)
 
     def create_child(self, name, fields=None):
+        """
+        Create a new child collection with the given `name`, returning it
+        with the specified `fields`.
+        """
         _input = CreateCollectionInput(name=name, parent_id=self.id)
         return self._conservator.query(Mutation.create_collection, operation_base=Mutation,
                                        input=_input, fields=fields)
 
     @requires_fields("path")
     def get_child(self, name, make_if_no_exists=False, fields=None):
+        """
+        Returns the child collection with the given `name` and specified `fields`.
+
+        If it does not exist, and `make_if_no_exists` is `True`, it will be created.
+        """
         path = os.path.join(self.path, name)
         try:
             child = Collection.from_remote_path(self._conservator, path, fields)
@@ -41,6 +54,10 @@ class Collection(TypeProxy):
         return child
 
     def generate_signed_locker_upload_url(self, filename, content_type):
+        """
+        Returns a signed url for uploading a new file locker file with the given `filename` and
+        `content_type`.
+        """
         result = self._conservator.query(Mutation.generate_signed_collection_file_locker_upload_url,
                                          operation_base=Mutation,
                                          dataset_id=self.id, content_type=content_type,
@@ -49,6 +66,12 @@ class Collection(TypeProxy):
 
     @classmethod
     def create_root(cls, conservator, name, fields=None):
+        """
+        Create a new root collection with the specified `name` and
+        return it with the specified `fields`.
+
+        This requires your account to have privilege to create new projects.
+        """
         project = conservator.projects.create(name, fields="root_collection.id")
         root_collection = project.root_collection
         root_collection.populate(fields)
@@ -56,6 +79,10 @@ class Collection(TypeProxy):
 
     @classmethod
     def create_from_remote_path(cls, conservator, path, fields=None):
+        """
+        Return a new collection at the specified `path`, with the given `fields`,
+        creating new collections as necessary.
+        """
         split_path = os.path.split(path)
         root_path = split_path[0].strip("\\/")
         try:
@@ -70,6 +97,11 @@ class Collection(TypeProxy):
 
     @classmethod
     def from_remote_path(cls, conservator, path, make_if_no_exist=False, fields=None):
+        """
+        Returns a collection at the specified `path`, with the specified `fields`.
+        If `make_if_no_exist` is `True`, then collection(s) will be created to
+        reach that path if it doesn't exist.
+        """
         collection = conservator.query(Query.collection_by_path, path=path, fields=fields)
         if collection is None:
             if make_if_no_exist:
