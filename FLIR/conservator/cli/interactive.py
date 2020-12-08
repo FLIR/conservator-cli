@@ -22,7 +22,10 @@ root_collections: [Collection] = None
 
 def complete(value, state):
     args = shlex.split(value)
-    to_complete = args[-1]
+    if len(args) > 1:
+        to_complete = args[-1]
+    else:
+        to_complete = ""
     paths = get_child_paths()
     filtered = list(filter(lambda name: name.startswith(to_complete), paths))
     if state <= len(filtered):
@@ -360,12 +363,12 @@ def run_shell_command(command):
         global ctx
         ctx = shell.make_context("$", args)
         shell.invoke(ctx)
-    except click.exceptions.ClickException as e:
-        click.secho(str(e), fg="red")
     except click.exceptions.Exit:
         pass
     except KeyboardInterrupt:
         click.secho("Interrupted", fg="red")
+    except Exception as e:
+        click.secho("Unexpected Exception: " + str(e), fg="red")
 
 
 @click.command(help="An interactive shell for exploring conservator")
