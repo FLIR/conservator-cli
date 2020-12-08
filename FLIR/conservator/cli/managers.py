@@ -120,6 +120,18 @@ def get_manager_command(type_manager, sgqlc_type, name):
             if not video_metadata_only:
                 video.download(path)
 
+        @group.command(help="Upload a local video to a collection")
+        @click.argument('localpath', default='.')
+        @click.argument('remotepath', default='.')
+        @click.option('-r', '--remote-name',
+                      help="If specified, the name of the remote video. Defaults to the local file name")
+        @click.option('-c', '--create-collections', is_flag=True,
+                      help="If given, collections will be created to reach the remote path")
+        def upload(localpath, remotepath, remote_name, create_collections):
+            i = get_instance()
+            collection = i._conservator.collections.from_remote_path(remotepath, make_if_no_exist=create_collections)
+            i.upload(localpath, collection=collection, remote_name=remote_name)
+
     if issubclass(type_manager, ImagesManager):
         @group.command(help="Download an image to the current directory, or the specified path.")
         @click.argument('id')

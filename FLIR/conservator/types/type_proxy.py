@@ -41,7 +41,7 @@ class TypeProxy(object):
 
             return TypeProxy.wrap_instance(self._conservator, field.type, value)
 
-        raise AttributeError
+        raise AttributeError(f"Unknown or uninitialized attribute: '{item}'")
 
     def has_field(self, path):
         """Returns `True` if the current instance has initialized the specified `path`.
@@ -79,6 +79,8 @@ class TypeProxy(object):
                 return
 
         result = self._populate(fields)
+        if result is None:
+            return
         for field in result:
             v = getattr(result, field)
             setattr(self._instance, field, v)

@@ -22,7 +22,10 @@ root_collections: [Collection] = None
 
 def complete(value, state):
     args = shlex.split(value)
-    to_complete = args[-1]
+    if len(args) > 1:
+        to_complete = args[-1]
+    else:
+        to_complete = ""
     paths = get_child_paths()
     filtered = list(filter(lambda name: name.startswith(to_complete), paths))
     if state <= len(filtered):
@@ -33,6 +36,15 @@ def complete(value, state):
 readline.set_completer_delims("")
 readline.set_completer(complete)
 readline.parse_and_bind("tab: complete")
+
+
+def print_status(message):
+    end = "\033[" + str(len(message)) + "D"
+    click.secho(message + end, fg='yellow', nl=False)
+
+
+def clear_status():
+    click.echo("\033[0K", nl=False)
 
 
 def get_root_collections():
@@ -56,17 +68,19 @@ def get_child_collections():
 
 def get_videos():
     if not hasattr(current_collection, "videos"):
-        click.secho("Loading videos...\r", nl=False, fg="yellow")
+        print_status("Loading videos...")
         vid_q = current_collection.get_videos(fields="name")
         current_collection.videos = list(vid_q)
+        clear_status()
     return current_collection.videos
 
 
 def get_images():
     if not hasattr(current_collection, "images"):
-        click.secho("Loading images...\r", nl=False, fg="yellow")
+        print_status("Loading images...")
         img_q = current_collection.get_images(fields="name")
         current_collection.images = list(img_q)
+        clear_status()
     return current_collection.images
 
 
@@ -313,6 +327,34 @@ def tree():
         collections.extend(collection.children)
 
 
+@shell.command(help="Upload a local file to the current collection")
+@click.argument('localpath', default='.')
+@click.argument('type', default='video')
+@click.option('-r', '--remote-name',
+              help="If specified, the name of the remote file. Defaults to the local file name")
+@requires_valid_collection
+def upload(local_path, type, remote_name):
+    if type == "video":
+        conservator.videos.upload(local_path, collection=current_collection, remote_name=remote_name)
+
+
+@shell.command(help="Download the current collection")
+@click.argument('localpath', default='.')
+@click.option('-d', '--datasets', is_flag=True, help="Pull datasets")
+@click.option('-v', '--video-metadata', is_flag=True, help="Include video metadata")
+@click.option('-f', '--associated-files', is_flag=True, help="Include associated files")
+@click.option('-m', '--media', is_flag=True, help="Include media (videos and images)")
+@click.option('-r', '--recursive', is_flag=True, help="Include child collections recursively")
+@requires_valid_collection
+def download(localpath, datasets, video_metadata, associated_files, media, recursive):
+    current_collection.download(localpath,
+                                datasets,
+                                video_metadata,
+                                associated_files,
+                                media,
+                                recursive)
+
+
 def run_shell_command(command):
     args = shlex.split(command)
     if len(args) == 0:
@@ -321,12 +363,12 @@ def run_shell_command(command):
         global ctx
         ctx = shell.make_context("$", args)
         shell.invoke(ctx)
-    except click.exceptions.ClickException as e:
-        click.secho(str(e), fg="red")
     except click.exceptions.Exit:
         pass
     except KeyboardInterrupt:
         click.secho("Interrupted", fg="red")
+    except Exception as e:
+        click.secho("Unexpected Exception: " + str(e), fg="red")
 
 
 @click.command(help="An interactive shell for exploring conservator")
