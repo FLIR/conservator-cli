@@ -12,7 +12,7 @@ import logging
 @click.group()
 @click.option("--log", "--log-level",
               type=click.Choice(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]),
-              default="INFO", help="A logging level, from")
+              default="INFO", help="Logging level, defaults to INFO")
 def main(log):
     levels = {
         "DEBUG": logging.DEBUG,
@@ -22,7 +22,6 @@ def main(log):
         "CRITICAL": logging.CRITICAL,
     }
     logging.basicConfig(level=levels[log])
-    pass
 
 
 @main.command(help="View or delete the current config")
