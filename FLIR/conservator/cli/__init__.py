@@ -6,12 +6,22 @@ from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated import schema
 from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
 from FLIR.conservator.util import to_clean_string
+import logging
 
 
 @click.group()
-def main():
-    # TODO: logging verbosity
-    pass
+@click.option("--log", "--log-level",
+              type=click.Choice(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]),
+              default="INFO", help="Logging level, defaults to INFO")
+def main(log):
+    levels = {
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARNING,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL,
+    }
+    logging.basicConfig(level=levels[log])
 
 
 @main.command(help="View or delete the current config")

@@ -1,5 +1,6 @@
 import re
 import urllib.parse
+import logging
 
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
@@ -13,6 +14,9 @@ __all__ = [
     "ConservatorGraphQLServerError",
     "ConservatorConnection",
 ]
+
+
+logger = logging.getLogger(__name__)
 
 
 class ConservatorMalformedQueryException(Exception):
@@ -106,6 +110,7 @@ class ConservatorConnection:
         gql = operation.__to_graphql__(auto_select_depth=1)
         gql = re.sub(r'\w* {\s*}\s*', '', gql)
         json_response = self.endpoint(gql, variables)
+        logger.debug("Response: " + str(json_response))
         errors = json_response.get("errors", None)
         if errors is not None:
             raise ConservatorGraphQLServerError(gql, errors)
@@ -120,9 +125,9 @@ class ConservatorConnection:
                 graphql_fields = tuple(filter(lambda i: isinstance(i, str), error["path"]))
                 problematic_path = ".".join(map(FieldsManager.graphql_to_python, graphql_fields[1:]))
                 self.fields_manager.add_problematic_path(type_, problematic_path)
-                print("Server encountered an error due to a null value for a non-nullable field.")
-                print("Attempting to resolve by excluding field in future queries.")
-                print("Excluded field:", problematic_path)
+                logger.error("Server encountered an error due to a null value for a non-nullable field.")
+                logger.error("Attempting to resolve by excluding field in future queries.")
+                logger.error("Excluded field:", problematic_path)
                 continue
 
             # we can't handle the errors. raise the exception.

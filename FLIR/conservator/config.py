@@ -7,6 +7,9 @@ In general, use :func:`Config.default`.
 
 import os
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Config:
@@ -76,7 +79,7 @@ class Config:
             return None
 
     @staticmethod
-    def from_config():
+    def from_default_config_file():
         """
         Creates a :class:`Config` object from the JSON config file
         at the :func:`Config.default_config_path`.
@@ -119,10 +122,11 @@ class Config:
         :param save: If `True`, save the config for future use. This means a user
             won't need to type them again.
         """
-        for source in [Config.from_config, Config.from_environ, Config.from_input]:
+        for source in [Config.from_default_config_file, Config.from_environ, Config.from_input]:
             creds = source()
             if creds is not None:
-                if save and source != Config.from_config:
+                logger.debug(f"Created config from source: {source}")
+                if save and source != Config.from_default_config_file:
                     creds.save_to_default_config()
                 return creds
         return None

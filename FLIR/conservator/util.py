@@ -1,8 +1,12 @@
 import multiprocessing
 import os
+import logging
 
 import requests
 import tqdm
+
+
+logger = logging.getLogger(__name__)
 
 
 def to_clean_string(o, first=True):
@@ -56,6 +60,7 @@ def download_file(path, name, url, silent=False):
         if not silent:
             raise FileDownloadException(url)
         else:
+            logger.debug(f"Skipped silent FileDownloadException for url: {url}")
             return False
     size = int(r.headers["content-length"])
     size_mb = int(size / 1024 / 1024)
