@@ -110,6 +110,7 @@ class ConservatorConnection:
         gql = operation.__to_graphql__(auto_select_depth=1)
         gql = re.sub(r'\w* {\s*}\s*', '', gql)
         json_response = self.endpoint(gql, variables)
+        logger.debug("Response: " + str(json_response))
         errors = json_response.get("errors", None)
         if errors is not None:
             raise ConservatorGraphQLServerError(gql, errors)
