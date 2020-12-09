@@ -4,7 +4,7 @@ import functools
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.managers import SearchableTypeManager, DatasetManager, CollectionManager, VideoManager, \
-    ImagesManager
+    ImageManager
 from FLIR.conservator.types.type_proxy import MissingFieldException
 
 
@@ -132,7 +132,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             collection = i._conservator.collections.from_remote_path(remotepath, make_if_no_exist=create_collections)
             i.upload(localpath, collection=collection, remote_name=remote_name)
 
-    if issubclass(type_manager, ImagesManager):
+    if issubclass(type_manager, ImageManager):
         @group.command(help="Download an image to the current directory, or the specified path.")
         @click.argument('id')
         @click.argument('path', default='.')

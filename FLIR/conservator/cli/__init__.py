@@ -4,7 +4,7 @@ from FLIR.conservator.cli.managers import get_manager_command
 from FLIR.conservator.cli.interactive import interactive
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated import schema
-from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager
+from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager, ImageManager
 from FLIR.conservator.util import to_clean_string
 import logging
 
@@ -48,6 +48,7 @@ main.add_command(get_manager_command(CollectionManager, schema.Collection, "coll
 main.add_command(get_manager_command(DatasetManager, schema.Dataset, "datasets"))
 main.add_command(get_manager_command(ProjectManager, schema.Project, "projects"))
 main.add_command(get_manager_command(VideoManager, schema.Video, "videos"))
+main.add_command(get_manager_command(ImageManager, schema.Image, "images"))
 main.add_command(interactive)
 
 if __name__ == "__main__":

@@ -114,7 +114,7 @@ class VideoManager(SearchableTypeManager):
         return video
 
 
-class ImagesManager(SearchableTypeManager):
+class ImageManager(SearchableTypeManager):
     def __init__(self, conservator):
         super().__init__(conservator, Image)
 
