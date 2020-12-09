@@ -58,6 +58,13 @@ class DatasetManager(SearchableTypeManager):
         containing an ``index.json`` file."""
         return self._underlying_type.from_local_path(self._conservator, path)
 
+    def create(self, name, collections=None, fields=None):
+        """
+        Create a dataset with the given `name`, including the given `collections`, if specified.
+        The dataset is returned with the requested `fields`.
+        """
+        return self._underlying_type.create(name, collections=collections, fields=fields)
+
 
 class ProjectManager(SearchableTypeManager):
     def __init__(self, conservator):
