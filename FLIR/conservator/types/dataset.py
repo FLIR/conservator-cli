@@ -3,7 +3,8 @@ import os
 import subprocess
 
 from FLIR.conservator.generated import schema
-from FLIR.conservator.generated.schema import Mutation, Query, AddFramesToDatasetInput
+from FLIR.conservator.generated.schema import Mutation, Query, AddFramesToDatasetInput, CreateDatasetInput, \
+    DeleteDatasetInput
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
 from FLIR.conservator.util import download_files
 
@@ -12,6 +13,28 @@ class Dataset(TypeProxy):
     underlying_type = schema.Dataset
     by_id_query = schema.Query.dataset
     search_query = schema.Query.datasets
+
+    @classmethod
+    def create(cls, conservator, name, collections=None, fields=None):
+        """
+        Create a dataset with the given `name`, including the given `collections`, if specified.
+        The dataset is returned with the requested `fields`.
+        """
+        if collections is None:
+            collections = []
+        collection_ids = [collection.id for collection in collections]
+        input_ = CreateDatasetInput(name=name, collection_ids=collection_ids)
+        dataset = conservator.query(Mutation.create_dataset, operation_base=Mutation,
+                                    input=input_, fields=fields)
+        return cls(conservator, dataset)
+
+    def delete(self):
+        """
+        Delete the dataset.
+        """
+        input_ = DeleteDatasetInput(id=self.id)
+        self._conservator.query(Mutation.delete_dataset, operation_base=Mutation,
+                                input=input_)
 
     def generate_metadata(self):
         """

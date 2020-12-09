@@ -3,7 +3,7 @@ import os
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
-from FLIR.conservator.generated.schema import Query, Mutation, CreateCollectionInput
+from FLIR.conservator.generated.schema import Query, Mutation, CreateCollectionInput, DeleteCollectionInput
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
@@ -126,6 +126,14 @@ class Collection(TypeProxy):
         datasets = PaginatedQuery(self._conservator, Dataset, Query.datasets,
                                   fields=fields, collection_id=self.id)
         return datasets
+
+    def delete(self):
+        """
+        Delete the collection.
+        """
+        input_ = DeleteCollectionInput(id=self.id)
+        self._conservator.query(Mutation.delete_collection, operation_base=Mutation,
+                                input=input_)
 
     @requires_fields("name", "file_locker_files", "child_ids")
     def download(self, path,

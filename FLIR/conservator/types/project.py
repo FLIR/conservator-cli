@@ -19,3 +19,10 @@ class Project(TypeProxy):
         result = conservator.query(Mutation.create_project, operation_base=Mutation,
                                    name=name, fields=fields)
         return cls(conservator, result)
+
+    def delete(self):
+        """
+        Delete the project.
+        """
+        self._conservator.query(Mutation.delete_project, operation_base=Mutation,
+                                id=self.id)
