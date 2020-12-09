@@ -538,6 +538,12 @@ this collection, returning it with the specified <cite>fields</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.types.collection.Collection.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the collection.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.types.collection.Collection.download">
 <code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">include_datasets</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_video_metadata</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_associated_files</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_media</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">recursive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.collection.Collection.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads this collection to the <cite>path</cite> specified,
@@ -656,6 +662,19 @@ called <code class="docutils literal notranslate"><span class="pre">MyFirstDatas
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.create">
+<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">collections</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dataset with the given <cite>name</cite>, including the given <cite>collections</cite>, if specified.
+The dataset is returned with the requested <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset.Dataset.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the dataset.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.types.dataset.Dataset.from_local_path">
 <em class="property">classmethod </em><code class="sig-name descname">from_local_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset.Dataset.from_local_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new Dataset instance using the ID found in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>
@@ -762,6 +781,12 @@ with <cite>search_text</cite>.</p>
 <dd><p>Creates a new project with the given <cite>name</cite>, and returns it with the
 specified <cite>fields</cite>.</p>
 <p>Note that this requires the privilege to create projects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.project.Project.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.project.Project.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the project.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -930,6 +955,13 @@ reach that path.</p>
 <dt id="FLIR.conservator.managers.DatasetManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">DatasetManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.DatasetManager.create">
+<code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">collections</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dataset with the given <cite>name</cite>, including the given <cite>collections</cite>, if specified.
+The dataset is returned with the requested <cite>fields</cite>.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt id="FLIR.conservator.managers.DatasetManager.from_local_path">
 <code class="sig-name descname">from_local_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager.from_local_path" title="Permalink to this definition">¶</a></dt>
