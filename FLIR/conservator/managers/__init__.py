@@ -114,8 +114,15 @@ class VideoManager(SearchableTypeManager):
         return video
 
 
-class ImageManager(SearchableTypeManager):
+class ImageManager(VideoManager):
+    """
+    Conservator Images have separate queries than Videos, but they do not get 
+    their own mutations, e.g. they are treated as "Videos" in the upload process.
+    In fact, an uploaded media file is treated by Conservator server as a video
+    until file processing has finished; if it turned out to be an image type
+    (e.g. jpeg) then it will disappear from Videos and appear under Images.
+    """
     def __init__(self, conservator):
-        super().__init__(conservator, Image)
+        super(VideoManager, self).__init__(conservator, Image)
 
 
