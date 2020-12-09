@@ -10,7 +10,11 @@ class FieldsManager:
     """
     def __init__(self):
         self.problematic_fields = {
-            schema.Video: {"shared_with"},
+            schema.Video: {
+                "shared_with",
+                "frames.cursor",  # TODO: fix schema to allow null cursor
+                "datasets.frames.cursor",
+            },
         }
 
     def get_problematic_paths(self, typ):

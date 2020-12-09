@@ -36,7 +36,7 @@ class FieldsRequest:
         if self._depth is not None:
             return self._depth
         max_depth = max(map(lambda f: f.count("."), self.included))
-        return max_depth + 1
+        return max(max_depth, 1)
 
     def set_depth(self, depth):
         self._depth = depth
