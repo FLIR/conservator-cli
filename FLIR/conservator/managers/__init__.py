@@ -63,7 +63,7 @@ class DatasetManager(SearchableTypeManager):
         Create a dataset with the given `name`, including the given `collections`, if specified.
         The dataset is returned with the requested `fields`.
         """
-        return self._underlying_type.create(name, collections=collections, fields=fields)
+        return self._underlying_type.create(self._conservator, name, collections=collections, fields=fields)
 
 
 class ProjectManager(SearchableTypeManager):
