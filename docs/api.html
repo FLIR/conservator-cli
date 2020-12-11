@@ -1083,16 +1083,33 @@ of its execution.</p>
 
 <dl class="py class">
 <dt id="FLIR.conservator.paginated_query.PaginatedQuery">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">PaginatedQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">underlying_type</span></em>, <em class="sig-param"><span class="n">query</span></em>, <em class="sig-param"><span class="n">base_operation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.paginated_query.</code><code class="sig-name descname">PaginatedQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">wrapping_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">query</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_operation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">unpack_field</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enables pagination of any query with <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> arguments.</p>
 <p>Assume you want to iterate through all the Projects in a project search
 query. You could do something like the following:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">PaginatedQuery</span><span class="p">(</span><span class="n">conservator</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Query</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span> <span class="n">search_text</span><span class="o">=</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">PaginatedQuery</span><span class="p">(</span><span class="n">conservator</span><span class="p">,</span> <span class="n">wrapping_type</span><span class="o">=</span><span class="n">Project</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span> <span class="n">search_text</span><span class="o">=</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">including_fields</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conservator</strong> – The conservator instance to query.</p></li>
+<li><p><strong>wrapping_type</strong> – If specified, a <a class="reference internal" href="#FLIR.conservator.types.type_proxy.TypeProxy" title="FLIR.conservator.types.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> class to
+wrap instances in before they are returned.</p></li>
+<li><p><strong>query</strong> – The GraphQL Query to use.</p></li>
+<li><p><strong>base_operation</strong> – If specified, the base type of the query. Defaults to <code class="docutils literal notranslate"><span class="pre">Query</span></code>.</p></li>
+<li><p><strong>fields</strong> – Fields to include in the returned objects.</p></li>
+<li><p><strong>page_size</strong> – The page size to use when submitting requests.</p></li>
+<li><p><strong>unpack_field</strong> – If specified, instead of directly returning the resulting object(s) from a query,
+returns the specified field. For instance, the query <code class="docutils literal notranslate"><span class="pre">Query.dataset_frames_only</span></code> is paginated, but
+returns a non-iteratable <code class="docutils literal notranslate"><span class="pre">DatasetFrames</span></code> object. The list of <code class="docutils literal notranslate"><span class="pre">DatasetFrame</span></code> is stored under the
+“dataset_frames” field. So if querying this, we’d want to set <cite>unpack_field</cite> to “dataset_frames”.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="FLIR.conservator.paginated_query.PaginatedQuery.excluding_fields">
 <code class="sig-name descname">excluding_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">fields</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.excluding_fields" title="Permalink to this definition">¶</a></dt>
