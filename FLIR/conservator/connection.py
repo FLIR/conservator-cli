@@ -161,6 +161,7 @@ class ConservatorConnection:
         tries = 0
 
         while True:
+            # TODO: This retry logic is pretty messy. We should refactor and add tests.
             try:
                 try:
                     return self._query(query, operation_base, fields, **kwargs)
