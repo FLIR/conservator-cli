@@ -8,17 +8,30 @@ class PaginatedQuery:
     Assume you want to iterate through all the Projects in a project search
     query. You could do something like the following:
 
-    >>> results = PaginatedQuery(conservator, Project, Query.projects, search_text="ADAS")
+    >>> results = PaginatedQuery(conservator, wrapping_type=Project, query=Query.projects, search_text="ADAS")
     >>> results = results.including_fields("name")
     >>> for project in results:
     ...     print(project.name)
 
+    :param conservator: The conservator instance to query.
+    :param wrapping_type: If specified, a :class:`~FLIR.conservator.types.type_proxy.TypeProxy` class to
+        wrap instances in before they are returned.
+    :param query: The GraphQL Query to use.
+    :param base_operation: If specified, the base type of the query. Defaults to ``Query``.
+    :param fields: Fields to include in the returned objects.
+    :param page_size: The page size to use when submitting requests.
+    :param unpack_field: If specified, instead of directly returning the resulting object(s) from a query,
+        returns the specified field. For instance, the query ``Query.dataset_frames_only`` is paginated, but
+        returns a non-iteratable ``DatasetFrames`` object. The list of ``DatasetFrame`` is stored under the
+        "dataset_frames" field. So if querying this, we'd want to set `unpack_field` to "dataset_frames".
     """
-    def __init__(self, conservator, underlying_type=None, query=None, base_operation=None,
+    def __init__(self, conservator, wrapping_type=None, query=None, base_operation=None,
                  fields=None, page_size=25, unpack_field=None,
                  **kwargs):
+        assert query is not None  # Unfortunately, this is a required arg, but
+        # for legacy reasons can't be moved before "wrapping_type" and made required.
         self._conservator = conservator
-        self._underlying_type = underlying_type
+        self._wrapping_type = wrapping_type
         self._query = query
         self._base_operation = base_operation
         if fields is None:
@@ -89,9 +102,9 @@ class PaginatedQuery:
             return []
         if self.unpack_field is not None:
             results = getattr(results, self.unpack_field)
-        if self._underlying_type is None:
+        if self._wrapping_type is None:
             return results
-        return [self._underlying_type(self._conservator, i) for i in results]
+        return [self._wrapping_type(self._conservator, i) for i in results]
 
     def _next_page(self):
         self.started = True
