@@ -14,8 +14,8 @@ class PaginatedQuery:
     ...     print(project.name)
 
     """
-    def __init__(self, conservator, underlying_type, query, base_operation=None,
-                 fields=None, page_size=25,
+    def __init__(self, conservator, underlying_type=None, query=None, base_operation=None,
+                 fields=None, page_size=25, unpack_field=None,
                  **kwargs):
         self._conservator = conservator
         self._underlying_type = underlying_type
@@ -26,6 +26,7 @@ class PaginatedQuery:
         self.fields = fields
         self._page = 0
         self._limit = page_size
+        self.unpack_field = unpack_field
         self.results = []
         self.kwargs = kwargs
         self.started = False
@@ -86,6 +87,10 @@ class PaginatedQuery:
                                           **self.kwargs)
         if results is None:
             return []
+        if self.unpack_field is not None:
+            results = getattr(results, self.unpack_field)
+        if self._underlying_type is None:
+            return results
         return [self._underlying_type(self._conservator, i) for i in results]
 
     def _next_page(self):
