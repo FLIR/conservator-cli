@@ -450,10 +450,7 @@ operation.</p>
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.type_proxy.</code><code class="sig-name descname">TypeProxy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wraps an SGQLC object of a specific type with a known <code class="docutils literal notranslate"><span class="pre">id</span></code>.</p>
 <p>Subclasses can add class and instance methods to add functionality.</p>
-<p>Fields of the underlying instance can be accessed on this instance,
-and additional fields can be requested using <a class="reference internal" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-func docutils literal notranslate"><span class="pre">populate()</span></code></a>, which
-uses the underlying <code class="docutils literal notranslate"><span class="pre">by_id_query</span></code>. For this reason, all instances must
-also have a reference to a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> instance.</p>
+<p>Fields of the underlying instance can be accessed on this instance.</p>
 <p>When you attempt to access a field, we first check that it exists on the
 underlying instance. If it doesn’t, an <cite>AttributeError</cite> will be raised. If
 it does exists, we check to see if its type has a known <a class="reference internal" href="#FLIR.conservator.types.type_proxy.TypeProxy" title="FLIR.conservator.types.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>
@@ -497,18 +494,6 @@ SGQLC type hierarchy.</p>
 <dd><p>Returns <cite>True</cite> if the current instance has initialized the specified <cite>path</cite>.</p>
 <p>This is frequently used to test if a call to <cite>populate</cite> is required, or to
 verify that a <cite>populate</cite> call worked.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.types.type_proxy.TypeProxy.populate">
-<code class="sig-name descname">populate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Query conservator for the specified fields.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.types.type_proxy.TypeProxy.populate_all">
-<code class="sig-name descname">populate_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.type_proxy.TypeProxy.populate_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Query conservator for all missing fields.</p>
 </dd></dl>
 
 <dl class="py method">

@@ -156,7 +156,7 @@ For instance, assume you queried for a Project’s <cite>id</cite>:</p>
 </pre></div>
 </div>
 <p>But later want to print its name.  You can fetch the <cite>name</cite> field using
-<a class="reference internal" href="../api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a>:</p>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code>:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">FLIR.conservator.fields_request</span> <span class="kn">import</span> <span class="n">FieldsRequest</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="n">FieldsRequest</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span><span class="o">.</span><span class="n">include_field</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
@@ -165,7 +165,7 @@ For instance, assume you queried for a Project’s <cite>id</cite>:</p>
 </pre></div>
 </div>
 <p>If for some reason you have an ID, but don’t have an instance of the correct
-type to use <a class="reference internal" href="../api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a>, you
+type to use <code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code>, you
 can create one with <a class="reference internal" href="../api.html#FLIR.conservator.managers.type_manager.TypeManager.from_id" title="FLIR.conservator.managers.type_manager.TypeManager.from_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_id()</span></code></a>,
 and then populate the fields:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="s2">&quot;some_collection_id&quot;</span><span class="p">)</span>
@@ -175,7 +175,7 @@ and then populate the fields:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can also call <a class="reference internal" href="../api.html#FLIR.conservator.types.type_proxy.TypeProxy.populate" title="FLIR.conservator.types.type_proxy.TypeProxy.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a> with
+<p>You can also call <code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code> with
 no argument to populate all fields:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="n">conservator</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">from_id</span><span class="p">(</span><span class="s2">&quot;some_collection_id&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="o">.</span><span class="n">populate</span><span class="p">()</span>
