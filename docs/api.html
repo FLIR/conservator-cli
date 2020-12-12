@@ -186,12 +186,15 @@ object:</p>
 <span id="conservator-connection"></span><h2>Conservator Connection<a class="headerlink" href="#module-FLIR.conservator.connection" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="FLIR.conservator.connection.ConservatorConnection">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.connection.</code><code class="sig-name descname">ConservatorConnection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.connection.</code><code class="sig-name descname">ConservatorConnection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">max_retries</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acts as an intermediary between SGQLC and a remote Conservator instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>config</strong> – <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> providing Conservator URL and user
-authentication info.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> providing Conservator URL and user
+authentication info.</p></li>
+<li><p><strong>max_retries</strong> – Maximum number of times to retry a query due to connection errors.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
