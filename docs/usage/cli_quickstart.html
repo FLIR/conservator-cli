@@ -121,12 +121,17 @@ it will be cloned into <code class="docutils literal notranslate"><span class="p
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets clone YOUR_DATASET_ID
 </pre></div>
 </div>
-<p>Next, <code class="docutils literal notranslate"><span class="pre">cd</span></code> into the directory, and run pull:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd MyFirstDataset/
-$ conservator datasets pull
+<p>Cloning a dataset creates a local github repo. <code class="docutils literal notranslate"><span class="pre">cd</span></code> inside, and you’ll find two things.
+<code class="docutils literal notranslate"><span class="pre">cvc.py</span></code> is a python script that is useful for modifying a dataset. You’ll also find
+<code class="docutils literal notranslate"><span class="pre">index.json</span></code>. This contains the video, image, and frame data that are a part of the
+dataset. It also includes annotations, a description, and more.</p>
+<p>Nowhere in this initial repo are any of the actual media objects. To download those, you’ll
+need to use the <code class="docutils literal notranslate"><span class="pre">pull</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets pull
 </pre></div>
 </div>
-<p>By default, this will pull the 8-bit images into the <code class="docutils literal notranslate"><span class="pre">data/</span></code> directory.</p>
+<p>By default, this will pull the 8-bit images into the <code class="docutils literal notranslate"><span class="pre">data/</span></code> directory. This parses the
+<code class="docutils literal notranslate"><span class="pre">index.json</span></code> file to find and download all of the required files.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">--help</span></code> with these commands to see more available options</p>
 </div>
 <div class="section" id="downloading-collections">
