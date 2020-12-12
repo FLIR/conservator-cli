@@ -5,6 +5,7 @@ TEST_DICT = {
     "CONSERVATOR_EMAIL": "test@example.com",
     "CONSERVATOR_API_KEY": "testAPIkey",
     "CONSERVATOR_URL": "https://myconservator.com",
+    "CONSERVATOR_MAX_RETRIES": "2",
 }
 
 
@@ -35,10 +36,12 @@ def test_from_environ():
 
 
 def test_default_url():
-    c = Config.from_dict({
-        "CONSERVATOR_EMAIL": "test@example.com",
-        "CONSERVATOR_API_KEY": "testAPIkey",
-    })
+    c = Config.from_dict(
+        {
+            "CONSERVATOR_EMAIL": "test@example.com",
+            "CONSERVATOR_API_KEY": "testAPIkey",
+        }
+    )
 
     assert c.email == "test@example.com"
     assert c.key == "testAPIkey"

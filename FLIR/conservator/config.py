@@ -17,10 +17,11 @@ class ConfigError(Exception):
 
 
 class ConfigAttribute:
-    def __init__(self, internal_name, friendly_name, default=None):
+    def __init__(self, internal_name, friendly_name, default=None, type_=str):
         self.internal_name = internal_name
         self.friendly_name = friendly_name
         self.default = default
+        self.type_ = type_
 
 
 class Config:
@@ -29,24 +30,38 @@ class Config:
     when authenticating operations on an instance of :class:`~FLIR.conservator.conservator.Conservator`
     at a certain URL.
 
-    :param email: The user's email.
-    :param key: The user's API key or token.
-    :param url: The URL of the conservator instance.
+    Attributes:
+        - CONSERVATOR_EMAIL
+        - CONSERVATOR_API_KEY
+        - CONSERVATOR_URL (default: https://flirconservator.com/)
+        - CONSERVATOR_MAX_RETRIES (default: 5)
+
+    :param kwargs: A dictionary of (str: str) providing values for all of the Config attributes.
+        Any attribute not in the dictionary, will use the default value. If no default value is defined,
+        an error is raised.
     """
 
     attributes = {
         "email": ConfigAttribute("CONSERVATOR_EMAIL", "Conservator Email"),
         "key": ConfigAttribute("CONSERVATOR_API_KEY", "Conservator API Key"),
-        "url": ConfigAttribute("CONSERVATOR_URL", "Conservator URL", default="https://flirconservator.com/"),
+        "url": ConfigAttribute(
+            "CONSERVATOR_URL", "Conservator URL", default="https://flirconservator.com/"
+        ),
+        "max_retries": ConfigAttribute(
+            "CONSERVATOR_MAX_RETRIES", "Conservator Max Retries", default=5, type_=int
+        ),
     }
 
     def __init__(self, **kwargs):
         for name, attr in Config.attributes.items():
             v = kwargs.get(attr.internal_name, None)
+            if v is not None:
+                v = attr.type_(v)
             if v is None:
                 v = attr.default
             if v is None:
                 raise ConfigError(f"Missing value for '{name}'")
+            assert type(v) == attr.type_
             setattr(self, name, v)
 
     def save_to_file(self, path):
@@ -62,7 +77,8 @@ class Config:
 
     def to_dict(self):
         return {
-            attr.internal_name: getattr(self, name) for name, attr in self.attributes.items()
+            attr.internal_name: getattr(self, name)
+            for name, attr in self.attributes.items()
         }
 
     def save_to_default_config(self):
@@ -169,7 +185,7 @@ class Config:
         return f"<Config for {self.email} at {self.url}>"
 
     def __eq__(self, other):
-        return (
-            isinstance(other, Config)
-            and all(getattr(other, name) == getattr(self, name) for name in Config.attributes.keys())
+        return isinstance(other, Config) and all(
+            getattr(other, name) == getattr(self, name)
+            for name in Config.attributes.keys()
         )
