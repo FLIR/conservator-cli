@@ -11,6 +11,7 @@ class DatasetFrame(QueryableType):
     """
     A frame within a dataset.
     """
+
     underlying_type = schema.DatasetFrame
     by_id_query = schema.Query.dataset_frame
 

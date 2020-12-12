@@ -13,6 +13,7 @@ class Frame(QueryableType):
     """
     A frame within a media object (image or video).
     """
+
     underlying_type = schema.Frame
     by_ids_query = schema.Query.frames_by_ids
 
