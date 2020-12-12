@@ -34,17 +34,17 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/FLIR/conservator-cli",
     packages=find_namespace_packages(include=["FLIR.*"], exclude=["*.test.*"]),
-    entry_points='''
+    entry_points="""
         [console_scripts]
         conservator=FLIR.conservator.cli:main
-    ''',
+    """,
     zip_safe=False,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.6",
     # NOTE: add new requirements to requirements.txt as well
     install_requires=[
         "sphinx",
@@ -52,6 +52,7 @@ setuptools.setup(
         "click",
         "tqdm",
         "pytest",
-        "requests"
+        "requests",
+        "black",
     ],
 )

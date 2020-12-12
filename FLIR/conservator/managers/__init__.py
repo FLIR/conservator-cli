@@ -16,7 +16,9 @@ class CollectionManager(SearchableTypeManager):
         If `make_if_no_exist` is `True`, then collection(s) will be created to
         reach that path.
         """
-        return self._underlying_type.from_remote_path(self._conservator, path,  make_if_no_exist, fields)
+        return self._underlying_type.from_remote_path(
+            self._conservator, path, make_if_no_exist, fields
+        )
 
     def create_root(self, name, fields=None):
         """
@@ -56,7 +58,9 @@ class DatasetManager(SearchableTypeManager):
         Create a dataset with the given `name`, including the given `collections`, if specified.
         The dataset is returned with the requested `fields`.
         """
-        return self._underlying_type.create(self._conservator, name, collections=collections, fields=fields)
+        return self._underlying_type.create(
+            self._conservator, name, collections=collections, fields=fields
+        )
 
 
 class ProjectManager(SearchableTypeManager):
@@ -81,4 +85,3 @@ class ImageManager(SearchableTypeManager, MediaTypeManager):
     def __init__(self, conservator):
         SearchableTypeManager.__init__(self, conservator, Image)
         MediaTypeManager.__init__(self, conservator)
-

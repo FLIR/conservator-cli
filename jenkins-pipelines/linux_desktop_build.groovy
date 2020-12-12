@@ -9,6 +9,12 @@ pipeline {
         sh "bash -c 'source venv/bin/activate; pip install --upgrade setuptools; pip install .'"
       }
     }
+    stage('Formatting Test') {
+      steps {
+        echo "Checking formatting..."
+        sh "bash -c 'export LC_ALL=C.UTF-8; export LANG=C.UTF-8; source venv/bin/activate; black --check .'"
+      }
+    }
     stage('Unit Tests') {
       steps {
         echo "Running unit tests..."

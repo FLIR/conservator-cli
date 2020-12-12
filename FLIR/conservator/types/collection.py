@@ -3,7 +3,12 @@ import os
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
-from FLIR.conservator.generated.schema import Query, Mutation, CreateCollectionInput, DeleteCollectionInput
+from FLIR.conservator.generated.schema import (
+    Query,
+    Mutation,
+    CreateCollectionInput,
+    DeleteCollectionInput,
+)
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
@@ -34,8 +39,12 @@ class Collection(TypeProxy):
         with the specified `fields`.
         """
         _input = CreateCollectionInput(name=name, parent_id=self.id)
-        return self._conservator.query(Mutation.create_collection, operation_base=Mutation,
-                                       input=_input, fields=fields)
+        return self._conservator.query(
+            Mutation.create_collection,
+            operation_base=Mutation,
+            input=_input,
+            fields=fields,
+        )
 
     @requires_fields("path")
     def get_child(self, name, make_if_no_exists=False, fields=None):
@@ -58,10 +67,13 @@ class Collection(TypeProxy):
         Returns a signed url for uploading a new file locker file with the given `filename` and
         `content_type`.
         """
-        result = self._conservator.query(Mutation.generate_signed_collection_file_locker_upload_url,
-                                         operation_base=Mutation,
-                                         dataset_id=self.id, content_type=content_type,
-                                         filename=filename)
+        result = self._conservator.query(
+            Mutation.generate_signed_collection_file_locker_upload_url,
+            operation_base=Mutation,
+            dataset_id=self.id,
+            content_type=content_type,
+            filename=filename,
+        )
         return result.signed_url
 
     @classmethod
@@ -102,7 +114,9 @@ class Collection(TypeProxy):
         If `make_if_no_exist` is `True`, then collection(s) will be created to
         reach that path if it doesn't exist.
         """
-        collection = conservator.query(Query.collection_by_path, path=path, fields=fields)
+        collection = conservator.query(
+            Query.collection_by_path, path=path, fields=fields
+        )
         if collection is None:
             if make_if_no_exist:
                 cls.create_from_remote_path(conservator, path, fields)
@@ -111,20 +125,27 @@ class Collection(TypeProxy):
 
     def get_images(self, fields=None):
         """Returns a query for all images in this collection."""
-        images = PaginatedQuery(self._conservator, Image, Query.images,
-                                fields=fields, collection_id=self.id)
+        images = PaginatedQuery(
+            self._conservator, Image, Query.images, fields=fields, collection_id=self.id
+        )
         return images
 
     def get_videos(self, fields=None):
         """Returns a query for all videos in this collection."""
-        videos = PaginatedQuery(self._conservator, Video, Query.videos,
-                                fields=fields, collection_id=self.id)
+        videos = PaginatedQuery(
+            self._conservator, Video, Query.videos, fields=fields, collection_id=self.id
+        )
         return videos
 
     def get_datasets(self, fields=None):
         """Returns a query for all datasets in this collection."""
-        datasets = PaginatedQuery(self._conservator, Dataset, Query.datasets,
-                                  fields=fields, collection_id=self.id)
+        datasets = PaginatedQuery(
+            self._conservator,
+            Dataset,
+            Query.datasets,
+            fields=fields,
+            collection_id=self.id,
+        )
         return datasets
 
     def delete(self):
@@ -132,16 +153,20 @@ class Collection(TypeProxy):
         Delete the collection.
         """
         input_ = DeleteCollectionInput(id=self.id)
-        self._conservator.query(Mutation.delete_collection, operation_base=Mutation,
-                                input=input_)
+        self._conservator.query(
+            Mutation.delete_collection, operation_base=Mutation, input=input_
+        )
 
     @requires_fields("name", "file_locker_files", "child_ids")
-    def download(self, path,
-                 include_datasets=False,
-                 include_video_metadata=False,
-                 include_associated_files=False,
-                 include_media=False,
-                 recursive=False):
+    def download(
+        self,
+        path,
+        include_datasets=False,
+        include_video_metadata=False,
+        include_associated_files=False,
+        include_media=False,
+        recursive=False,
+    ):
         """Downloads this collection to the `path` specified,
         with the specified assets included."""
         path = os.path.join(path, self.name)
@@ -158,12 +183,14 @@ class Collection(TypeProxy):
         if recursive:
             for id_ in self.child_ids:
                 child = Collection.from_id(self._conservator, id_)
-                child.download(path,
-                               include_datasets,
-                               include_video_metadata,
-                               include_associated_files,
-                               include_media,
-                               recursive)
+                child.download(
+                    path,
+                    include_datasets,
+                    include_video_metadata,
+                    include_associated_files,
+                    include_media,
+                    recursive,
+                )
 
     def download_video_metadata(self, path):
         """Downloads video metadata to ``video_metadata/``."""

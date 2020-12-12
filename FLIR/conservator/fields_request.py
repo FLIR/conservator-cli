@@ -26,6 +26,7 @@ class FieldsRequest:
     :param depth: Max depth for requested fields. Defaults to the maximum depth of any
         included field, plus 1.
     """
+
     def __init__(self, include_fields=("",), exclude_fields=(), depth=None):
         self.included = set(include_fields)
         self.excluded = set(exclude_fields)
@@ -62,7 +63,7 @@ class FieldsRequest:
             obj()
             return
 
-        path_prefix = ("" if current_path == "" else current_path + ".")
+        path_prefix = "" if current_path == "" else current_path + "."
 
         for field_name in field_names:
             field_path = path_prefix + field_name
@@ -119,4 +120,3 @@ class FieldsRequest:
     def exclude_fields(self, field_paths):
         """Excludes `field_paths` from the request."""
         self.excluded = self.excluded.union(field_paths)
-

@@ -10,39 +10,39 @@ logger = logging.getLogger(__name__)
 
 
 def to_clean_string(o, first=True):
-    s = ''
+    s = ""
     if isinstance(o, dict):
         s += "{"
         for key, value in o.items():
             s += f"\n{key}: {to_clean_string(value, False)}"
-        s = s.replace('\n', '\n    ')
+        s = s.replace("\n", "\n    ")
         s += "\n}"
-    elif hasattr(o.__class__, 'underlying_type'):
+    elif hasattr(o.__class__, "underlying_type"):
         for field in o.underlying_type.__field_names__:
             if not hasattr(o, field):
                 continue
             value = getattr(o, field)
             s += f"\n{field}: {to_clean_string(value, False)}"
-        s = s.replace('\n', '\n    ')
+        s = s.replace("\n", "\n    ")
 
-    elif hasattr(o, '__field_names__'):
+    elif hasattr(o, "__field_names__"):
         for field in o.__field_names__:
             if not hasattr(o, field):
                 continue
             value = getattr(o, field)
             s += f"\n{field}: {to_clean_string(value, False)}"
-        s = s.replace('\n', '\n    ')
+        s = s.replace("\n", "\n    ")
     elif isinstance(o, list) or isinstance(o, tuple):
         s += "["
         for v in o:
             s += f"\n{to_clean_string(v, False)}"
-        s = s.replace('\n', '\n    ')
+        s = s.replace("\n", "\n    ")
         s += "\n]"
     else:
         s += f"{o}"
-        s = s.replace('\n', '\n    ')
+        s = s.replace("\n", "\n    ")
 
-    if first and s.startswith('\n'):
+    if first and s.startswith("\n"):
         s = s[1:]
 
     return s
@@ -67,7 +67,7 @@ def download_file(path, name, url, silent=False):
     progress = tqdm.tqdm(total=size)
     progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")
     chunk_size = 1024 * 1024
-    with open(os.path.join(path, name), 'wb') as fd:
+    with open(os.path.join(path, name), "wb") as fd:
         for chunk in r.iter_content(chunk_size=chunk_size):
             progress.update(len(chunk))
             fd.write(chunk)
@@ -77,7 +77,7 @@ def download_file(path, name, url, silent=False):
 
 def upload_file(path, url):
     path = os.path.abspath(path)
-    with open(path, 'rb') as f:
+    with open(path, "rb") as f:
         return requests.put(url, f)
 
 

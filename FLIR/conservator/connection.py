@@ -24,6 +24,7 @@ class ConservatorMalformedQueryException(Exception):
     There was a problem with a GraphQL query, and it's the client's
     fault.
     """
+
     pass
 
 
@@ -35,6 +36,7 @@ class ConservatorGraphQLServerError(Exception):
     :param operation: The SGQLC operation that caused the error.
     :param errors: A list of errors returned by the server.
     """
+
     def __init__(self, operation, errors):
         self.operation = operation
         self.errors = errors
@@ -48,6 +50,7 @@ class ConservatorConnection:
         authentication info.
     :param max_retries: Maximum number of times to retry a query due to connection errors.
     """
+
     def __init__(self, config, max_retries=5):
         self.config = config
         self.graphql_url = ConservatorConnection.to_graphql_url(config.url)
@@ -64,7 +67,7 @@ class ConservatorConnection:
         Returns the encoded email-key combination used to authenticate
         URLs.
         """
-        email = urllib.parse.quote(self.config.email.lower(), safe='.')
+        email = urllib.parse.quote(self.config.email.lower(), safe=".")
         key = self.config.key
         return f"{email}:{key}"
 
@@ -111,25 +114,36 @@ class ConservatorConnection:
             variables = {}
 
         gql = operation.__to_graphql__(auto_select_depth=1)
-        gql = re.sub(r'\w* {\s*}\s*', '', gql)
+        gql = re.sub(r"\w* {\s*}\s*", "", gql)
         json_response = self.endpoint(gql, variables)
         logger.debug("Response: " + str(json_response))
         errors = json_response.get("errors", None)
         if errors is not None:
             raise ConservatorGraphQLServerError(gql, errors)
 
-        response = (operation + json_response)
+        response = operation + json_response
 
         return response
 
     def _handle_errors(self, errors, type_=None):
         for error in errors:
-            if type_ is not None and "Cannot return null for non-nullable field" in error["message"]:
-                graphql_fields = tuple(filter(lambda i: isinstance(i, str), error["path"]))
-                problematic_path = ".".join(map(FieldsManager.graphql_to_python, graphql_fields[1:]))
+            if (
+                type_ is not None
+                and "Cannot return null for non-nullable field" in error["message"]
+            ):
+                graphql_fields = tuple(
+                    filter(lambda i: isinstance(i, str), error["path"])
+                )
+                problematic_path = ".".join(
+                    map(FieldsManager.graphql_to_python, graphql_fields[1:])
+                )
                 self.fields_manager.add_problematic_path(type_, problematic_path)
-                logger.debug("Server encountered an error due to a null value for a non-nullable field.")
-                logger.debug("Attempting to resolve by excluding field in future queries.")
+                logger.debug(
+                    "Server encountered an error due to a null value for a non-nullable field."
+                )
+                logger.debug(
+                    "Attempting to resolve by excluding field in future queries."
+                )
                 logger.debug("Excluded field:", problematic_path)
                 continue
 

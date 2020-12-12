@@ -17,7 +17,12 @@ class Image(TypeProxy):
         """
         Returns the image's frames, with the specified `fields`.
         """
-        return self._conservator.query(schema.Image.frames, operation_base=schema.Image,
-                                       fields=fields, id=self.id,
-                                       frame_index=index, start_frame_index=start_index,
-                                       custom_metadata=custom_metadata)
+        return self._conservator.query(
+            schema.Image.frames,
+            operation_base=schema.Image,
+            fields=fields,
+            id=self.id,
+            frame_index=index,
+            start_frame_index=start_index,
+            custom_metadata=custom_metadata,
+        )

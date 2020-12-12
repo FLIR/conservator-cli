@@ -12,8 +12,8 @@ def test_add_fields_simple():
     fields.include_field("name")
     fields.add_fields_to_request(q)
     assert 'project(id: "123")' in str(op)
-    assert 'name' in str(op)
-    assert 'repository' not in str(op)
+    assert "name" in str(op)
+    assert "repository" not in str(op)
 
 
 def test_add_fields_simple_exclude():
@@ -24,9 +24,9 @@ def test_add_fields_simple_exclude():
     fields.exclude_field("file_locker_files", "acl", "root_collection")
     fields.add_fields_to_request(q)
     assert 'project(id: "123")' in str(op)
-    assert 'fileLockerFiles' not in str(op)
-    assert 'rootCollection' not in str(op)
-    assert 'createdBy' in str(op)
+    assert "fileLockerFiles" not in str(op)
+    assert "rootCollection" not in str(op)
+    assert "createdBy" in str(op)
 
 
 def test_should_include_path():
@@ -60,6 +60,6 @@ def test_max_depth():
     fields.set_depth(1)
     fields.add_fields_to_request(q)
     assert 'collection(id: "123")' in str(op)
-    assert 'fileLockerFiles' not in str(op)
-    assert 'rootCollection' not in str(op)
-    assert 'createdBy' in str(op)
+    assert "fileLockerFiles" not in str(op)
+    assert "rootCollection" not in str(op)
+    assert "createdBy" in str(op)

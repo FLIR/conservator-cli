@@ -10,14 +10,17 @@ class SearchableTypeManager(TypeManager):
 
     Most queries return a :class:`FLIR.conservator.paginated_query.PaginatedQuery`.
     """
+
     def search(self, search_text):
         """
         Performs a search with the specified `search_text`.
         """
-        return PaginatedQuery(self._conservator,
-                              self._underlying_type,
-                              self._underlying_type.search_query,
-                              search_text=search_text)
+        return PaginatedQuery(
+            self._conservator,
+            self._underlying_type,
+            self._underlying_type.search_query,
+            search_text=search_text,
+        )
 
     def all(self):
         """Searches for all instances"""

@@ -15,4 +15,3 @@ class TypeManager:
         Creates a new instance of `underlying_type` from an ID.
         """
         return self._underlying_type.from_id(self._conservator, id_)
-

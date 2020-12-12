@@ -26,6 +26,7 @@ class TypeProxy(object):
     :param instance: The SGQLC object to wrap, usually returned by running
         some query.
     """
+
     underlying_type = None
     by_id_query = None
 
@@ -45,7 +46,7 @@ class TypeProxy(object):
 
     def has_field(self, path):
         """Returns `True` if the current instance has initialized the specified `path`.
-        
+
         This is frequently used to test if a call to `populate` is required, or to
         verify that a `populate` call worked."""
         obj = self
@@ -145,12 +146,14 @@ class TypeProxy(object):
 class MissingFieldException(Exception):
     """Raised when a field can't be populated, but is required for an
     operation."""
+
     pass
 
 
 def requires_fields(*fields):
     """Require `fields` for an instance method. If missing, calls
     `populate`. If `populate` fails, raises `MissingFieldException`."""
+
     def decorator(f):
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
@@ -160,5 +163,7 @@ def requires_fields(*fields):
                 if not self.has_field(field):
                     raise MissingFieldException(f"Missing required field '{field}'")
             return f(self, *args, **kwargs)
+
         return wrapper
+
     return decorator

@@ -25,9 +25,18 @@ class PaginatedQuery:
         returns a non-iteratable ``DatasetFrames`` object. The list of ``DatasetFrame`` is stored under the
         "dataset_frames" field. So if querying this, we'd want to set `unpack_field` to "dataset_frames".
     """
-    def __init__(self, conservator, wrapping_type=None, query=None, base_operation=None,
-                 fields=None, page_size=25, unpack_field=None,
-                 **kwargs):
+
+    def __init__(
+        self,
+        conservator,
+        wrapping_type=None,
+        query=None,
+        base_operation=None,
+        fields=None,
+        page_size=25,
+        unpack_field=None,
+        **kwargs
+    ):
         assert query is not None  # Unfortunately, this is a required arg, but
         # for legacy reasons can't be moved before "wrapping_type" and made required.
         self._conservator = conservator
@@ -93,11 +102,14 @@ class PaginatedQuery:
         return first
 
     def _do_query(self, page, limit):
-        results = self._conservator.query(self._query, self._base_operation,
-                                          self.fields,
-                                          page=page,
-                                          limit=limit,
-                                          **self.kwargs)
+        results = self._conservator.query(
+            self._query,
+            self._base_operation,
+            self.fields,
+            page=page,
+            limit=limit,
+            **self.kwargs
+        )
         if results is None:
             return []
         if self.unpack_field is not None:
@@ -134,5 +146,6 @@ class ConcurrentQueryModificationException(Exception):
     Raised when a paginated query is modified in the middle
     of its execution.
     """
+
     # TODO: Allow modifying queries in progress.
     pass
