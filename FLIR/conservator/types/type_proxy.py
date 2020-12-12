@@ -65,12 +65,15 @@ class TypeProxy(object):
 
     def populate(self, fields=None):
         """Query conservator for the specified fields."""
+        if isinstance(fields, list):
+            fields = FieldsRequest(include_fields=tuple(fields))
+        elif isinstance(fields, str):
+            fields = FieldsRequest(include_fields=(fields,))
+
         if fields is None:
             fields = FieldsRequest()
         else:
             needs_new_fields = False
-            if isinstance(fields, list):
-                fields = FieldsRequest(include_fields=tuple(fields))
             for field in fields.included:
                 if not self.has_field(field):
                     needs_new_fields = True

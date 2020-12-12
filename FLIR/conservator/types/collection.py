@@ -84,9 +84,9 @@ class Collection(TypeProxy):
         creating new collections as necessary.
         """
         split_path = os.path.split(path)
-        root_path = split_path[0].strip("\\/")
+        root_path = split_path[0]
         try:
-            root = Collection.from_remote_path(conservator, path, False, fields)
+            root = Collection.from_remote_path(conservator, root_path, False, fields)
         except InvalidRemotePathException:
             root = Collection.create_root(conservator, root_path, fields)
 
