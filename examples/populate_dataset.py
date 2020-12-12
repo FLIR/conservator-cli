@@ -1,6 +1,5 @@
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.types import Dataset
 
 conservator = Conservator.default()
 

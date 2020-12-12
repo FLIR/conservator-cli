@@ -1,7 +1,5 @@
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.paginated_query import PaginatedQuery
-from FLIR.conservator.generated.schema import Query, DatasetFrame
 
 conservator = Conservator.default()
 fields = FieldsRequest()

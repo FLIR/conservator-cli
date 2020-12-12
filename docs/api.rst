@@ -74,6 +74,21 @@ Video
 .. automodule:: FLIR.conservator.types.video
     :members:
 
+Frame
+^^^^^
+
+.. automodule:: FLIR.conservator.types.frame
+    :members:
+
+
+DatasetFrame
+^^^^^^^^^^^^
+
+.. automodule:: FLIR.conservator.types.dataset_frame
+    :members:
+
+
+
 Managers
 --------
 
