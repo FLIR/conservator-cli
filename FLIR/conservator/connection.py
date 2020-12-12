@@ -48,7 +48,6 @@ class ConservatorConnection:
 
     :param config: :class:`~FLIR.conservator.config.Config` providing Conservator URL and user
         authentication info.
-    :param max_retries: Maximum number of times to retry a query due to connection errors.
     """
 
     def __init__(self, config, max_retries=5):
@@ -59,8 +58,6 @@ class ConservatorConnection:
         }
         self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
         self.fields_manager = FieldsManager()
-        # TODO: make it easier to include new fields in Config, and move this there
-        self.max_retries = max_retries
 
     def get_url_encoded_user(self):
         """
@@ -189,13 +186,13 @@ class ConservatorConnection:
                 # otherwise it's an error due to connection
                 # (see _log_http_error in sgqlc/endpoint/http.py)
                 tries += 1
-                if tries > self.max_retries:
+                if tries > self.config.max_retries:
                     raise
                 logger.debug("Retrying request after exception: " + str(exception))
                 logger.debug("Retry #" + str(tries))
             except Exception as e:
                 tries += 1
-                if tries > self.max_retries:
+                if tries > self.config.max_retries:
                     raise
                 logger.debug("Retrying request after exception: " + str(e))
                 logger.debug("Retry #" + str(tries))

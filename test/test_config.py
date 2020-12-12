@@ -2,9 +2,10 @@ import os
 from FLIR.conservator.config import Config
 
 TEST_DICT = {
-    Config.EMAIL: "test@example.com",
-    Config.API_KEY: "testAPIkey",
-    Config.URL: "https://myconservator.com",
+    "CONSERVATOR_EMAIL": "test@example.com",
+    "CONSERVATOR_API_KEY": "testAPIkey",
+    "CONSERVATOR_URL": "https://myconservator.com",
+    "CONSERVATOR_MAX_RETRIES": "2",
 }
 
 
@@ -32,3 +33,16 @@ def test_from_environ():
     assert c.email == "test@example.com"
     assert c.key == "testAPIkey"
     assert c.url == "https://myconservator.com"
+
+
+def test_default_url():
+    c = Config.from_dict(
+        {
+            "CONSERVATOR_EMAIL": "test@example.com",
+            "CONSERVATOR_API_KEY": "testAPIkey",
+        }
+    )
+
+    assert c.email == "test@example.com"
+    assert c.key == "testAPIkey"
+    assert c.url == Config.attributes["url"].default
