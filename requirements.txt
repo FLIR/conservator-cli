@@ -5,3 +5,4 @@ click
 tqdm
 pytest
 requests
+black
