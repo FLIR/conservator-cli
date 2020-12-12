@@ -1,9 +1,10 @@
 from FLIR.conservator.generated import schema
-from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
+from FLIR.conservator.types.type_proxy import requires_fields
+from FLIR.conservator.types.queryable import QueryableType
 from FLIR.conservator.util import download_file
 
 
-class Image(TypeProxy):
+class Image(QueryableType):
     underlying_type = schema.Image
     by_id_query = schema.Query.image
     search_query = schema.Query.images

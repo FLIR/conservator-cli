@@ -1,9 +1,9 @@
 from FLIR.conservator.generated.schema import Mutation
-from FLIR.conservator.types.type_proxy import TypeProxy
+from FLIR.conservator.types.queryable import QueryableType
 from FLIR.conservator.generated import schema
 
 
-class Project(TypeProxy):
+class Project(QueryableType):
     underlying_type = schema.Project
     by_id_query = schema.Query.project
     search_query = schema.Query.projects

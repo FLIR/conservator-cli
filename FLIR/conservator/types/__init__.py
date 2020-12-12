@@ -14,6 +14,7 @@ which runs the GraphQL query for a collection's datasets, and returns
 them as proxied :class:`~FLIR.conservator.types.dataset.Dataset` objects.
 """
 from .type_proxy import TypeProxy
+from .queryable import QueryableType
 from .image import Image
 from .video import Video
 from .dataset import Dataset

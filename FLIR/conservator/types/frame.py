@@ -4,11 +4,11 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     PredictionCreate,
 )
-from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
+from FLIR.conservator.types.type_proxy import requires_fields
 from FLIR.conservator.util import download_file
 
 
-class Frame(TypeProxy):
+class Frame(QueryableType):
     underlying_type = schema.Frame
     search_query = schema.Query.images
     by_ids_query = schema.Query.frames_by_ids

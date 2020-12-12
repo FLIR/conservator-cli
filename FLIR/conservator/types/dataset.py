@@ -10,11 +10,12 @@ from FLIR.conservator.generated.schema import (
     CreateDatasetInput,
     DeleteDatasetInput,
 )
-from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
+from FLIR.conservator.types.type_proxy import requires_fields
+from FLIR.conservator.types.queryable import QueryableType
 from FLIR.conservator.util import download_files
 
 
-class Dataset(TypeProxy):
+class Dataset(QueryableType):
     underlying_type = schema.Dataset
     by_id_query = schema.Query.dataset
     search_query = schema.Query.datasets
