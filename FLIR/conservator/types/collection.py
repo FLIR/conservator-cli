@@ -111,7 +111,7 @@ class Collection(TypeProxy):
 
     def get_images(self, fields=None):
         """Returns a query for all images in this collection."""
-        images = PaginatedQuery(self._conservator, Image, Query.datasets,
+        images = PaginatedQuery(self._conservator, Image, Query.images,
                                 fields=fields, collection_id=self.id)
         return images
 
