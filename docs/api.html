@@ -921,6 +921,104 @@ remove it from <strong>all</strong> collections.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-FLIR.conservator.types.frame">
+<span id="frame"></span><h3>Frame<a class="headerlink" href="#module-FLIR.conservator.types.frame" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.types.frame.Frame">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.frame.</code><code class="sig-name descname">Frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.frame.Frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>A frame within a media object (image or video).</p>
+<dl class="py method">
+<dt id="FLIR.conservator.types.frame.Frame.add_annotation">
+<code class="sig-name descname">add_annotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">annotation_create</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.frame.Frame.add_annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an annotation using the specified <cite>annotation_create</cite> object.</p>
+<p>Returns the added annotation with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.frame.Frame.add_prediction">
+<code class="sig-name descname">add_prediction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prediction_create</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.frame.Frame.add_prediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a prediction using the specified <cite>prediction_create</cite> object.</p>
+<p>Returns the added prediction with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.frame.Frame.download">
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.frame.Frame.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download image to <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.frame.Frame.get_annotations">
+<code class="sig-name descname">get_annotations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.frame.Frame.get_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the frame’s annotations with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="FLIR.conservator.types.frame.Frame.underlying_type">
+<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.frame.Frame.underlying_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Frame</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.types.dataset_frame">
+<span id="datasetframe"></span><h3>DatasetFrame<a class="headerlink" href="#module-FLIR.conservator.types.dataset_frame" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.types.dataset_frame.</code><code class="sig-name descname">DatasetFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>A frame within a dataset.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.approve">
+<code class="sig-name descname">approve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.approve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approve the dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.flag">
+<code class="sig-name descname">flag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag the dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.mark_empty">
+<code class="sig-name descname">mark_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.mark_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark the dataset frame as empty.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.request_changes">
+<code class="sig-name descname">request_changes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.request_changes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request changes to the dataset frame.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.underlying_type">
+<code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.underlying_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.DatasetFrame</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.unflag">
+<code class="sig-name descname">unflag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.unflag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unflag the dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.unmark_empty">
+<code class="sig-name descname">unmark_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.unmark_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unmake the dataset frame as empty.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.types.dataset_frame.DatasetFrame.unset_qa_status">
+<code class="sig-name descname">unset_qa_status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.types.dataset_frame.DatasetFrame.unset_qa_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unset the QA status of the dataset frame.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="module-FLIR.conservator.managers">
 <span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this headline">¶</a></h2>
