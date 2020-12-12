@@ -93,12 +93,18 @@ Then, run clone::
 
     $ conservator datasets clone YOUR_DATASET_ID
 
-Next, ``cd`` into the directory, and run pull::
+Cloning a dataset creates a local github repo. ``cd`` inside, and you'll find two things.
+``cvc.py`` is a python script that is useful for modifying a dataset. You'll also find
+``index.json``. This contains the video, image, and frame data that are a part of the
+dataset. It also includes annotations, a description, and more.
 
-    $ cd MyFirstDataset/
+Nowhere in this initial repo are any of the actual media objects. To download those, you'll
+need to use the ``pull`` command::
+
     $ conservator datasets pull
 
-By default, this will pull the 8-bit images into the ``data/`` directory.
+By default, this will pull the 8-bit images into the ``data/`` directory. This parses the
+``index.json`` file to find and download all of the required files.
 
 Use ``--help`` with these commands to see more available options
 
