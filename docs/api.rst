@@ -94,6 +94,13 @@ SearchableTypeManager
     :show-inheritance:
     :members:
 
+MediaTypeManager
+^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: FLIR.conservator.managers.media
+    :show-inheritance:
+    :members:
+
 PaginatedQuery
 --------------
 
