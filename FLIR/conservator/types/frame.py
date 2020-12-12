@@ -10,6 +10,10 @@ from FLIR.conservator.util import download_file
 
 
 class Frame(QueryableType):
+    """
+    A frame within a media object (image or video).
+    """
+
     underlying_type = schema.Frame
     by_ids_query = schema.Query.frames_by_ids
 
@@ -50,7 +54,7 @@ class Frame(QueryableType):
 
     def add_prediction(self, prediction_create, fields=None):
         """
-        Adds a prediction using the specified `annotation_create` object.
+        Adds a prediction using the specified `prediction_create` object.
 
         Returns the added prediction with the specified `fields`.
         """
