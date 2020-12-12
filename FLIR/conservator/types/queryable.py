@@ -10,6 +10,7 @@ class QueryableType(TypeProxy):
     return more fields of the type given an id. Alternatively, they may define
     a custom ``_populate`` if the method of querying varies.
     """
+
     by_id_query = None
 
     def populate_all(self):
