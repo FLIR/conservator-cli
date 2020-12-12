@@ -8,13 +8,10 @@ fields = FieldsRequest()
 fields.include_field("dataset_frames.frame_id")
 fields.include_field("dataset_frames.width")
 fields.include_field("dataset_frames.height")
-query_results = PaginatedQuery(
-    conservator,
-    query=Query.dataset_frames_only,
-    unpack_field="dataset_frames",
-    fields=fields,
-    id="RkAXSN4ychHgiNkMk",
-)
+fields.include_field("dataset_frames.annotations.bounding_box")
+fields.include_field("dataset_frames.annotations.labels")
 
-for frame in query_results:
+dataset = conservator.datasets.from_id("RkAXSN4ychHgiNkMk")
+
+for frame in dataset.get_frames(fields=fields):
     print(frame)
