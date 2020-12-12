@@ -16,6 +16,9 @@ local_path = "~/datasets/flir-data/unit-test-data/videos/adas_test.mp4"
 collection = conservator.collections.from_remote_path(remote_path, make_if_no_exist=True, fields="id")
 assert collection is not None
 
-video = conservator.videos.upload(local_path, collection, remote_name)
+media_id = conservator.videos.upload(local_path, collection, remote_name)
+
+# We happen to know that the media is a Video
+video = conservator.videos.from_id(media_id)
 video.populate_all()
 print(video)
