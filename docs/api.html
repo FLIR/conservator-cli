@@ -42,17 +42,39 @@ a variety of ways to create an instance of config.</p>
 <p>In general, use <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.config.Config">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">'https://flirconservator.com/'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contains a user’s Email and API Key (token), to be used
 when authenticating operations on an instance of <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
 at a certain URL.</p>
+<dl class="py attribute">
+<dt>
+<code class="sig-name descname">- CONSERVATOR_EMAIL</code></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt>
+<code class="sig-name descname">- CONSERVATOR_API_KEY</code></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt>
+<code class="sig-name descname">- CONSERVATOR_URL (default</code></dt>
+<dd><p><a class="reference external" href="https://flirconservator.com/">https://flirconservator.com/</a>)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt>
+<code class="sig-name descname">- CONSERVATOR_MAX_RETRIES (default</code></dt>
+<dd><ol class="arabic simple" start="5">
+<li></li>
+</ol>
+</dd></dl>
+
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>email</strong> – The user’s email.</p></li>
-<li><p><strong>key</strong> – The user’s API key or token.</p></li>
-<li><p><strong>url</strong> – The URL of the conservator instance.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>kwargs</strong> – A dictionary of (str: str) providing values for all of the Config attributes.
+Any attribute not in the dictionary, will use the default value. If no default value is defined,
+an error is raised.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -99,8 +121,6 @@ at the <a class="reference internal" href="#FLIR.conservator.config.Config.defau
 <dt id="FLIR.conservator.config.Config.from_environ">
 <em class="property">static </em><code class="sig-name descname">from_environ</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_environ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from environment variables.</p>
-<p>The environment variables are <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_EMAIL</span></code>, <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code>,
-and <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -140,6 +160,11 @@ this config will be loaded by <a class="reference internal" href="#FLIR.conserva
 </dd></dl>
 
 </dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.config.ConfigError">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.config.</code><code class="sig-name descname">ConfigError</code><a class="headerlink" href="#FLIR.conservator.config.ConfigError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-FLIR.conservator.conservator">
@@ -190,11 +215,8 @@ object:</p>
 <dd><p>Acts as an intermediary between SGQLC and a remote Conservator instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>config</strong> – <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> providing Conservator URL and user
-authentication info.</p></li>
-<li><p><strong>max_retries</strong> – Maximum number of times to retry a query due to connection errors.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>config</strong> – <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> providing Conservator URL and user
+authentication info.</p>
 </dd>
 </dl>
 <dl class="py method">
