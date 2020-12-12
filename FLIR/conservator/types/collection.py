@@ -11,7 +11,8 @@ from FLIR.conservator.generated.schema import (
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
-from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
+from FLIR.conservator.types.type_proxy import requires_fields
+from FLIR.conservator.types.queryable import QueryableType
 from FLIR.conservator.types.video import Video
 from FLIR.conservator.types.image import Image
 from FLIR.conservator.types.dataset import Dataset
@@ -21,7 +22,7 @@ class InvalidRemotePathException(Exception):
     pass
 
 
-class Collection(TypeProxy):
+class Collection(QueryableType):
     underlying_type = schema.Collection
     by_id_query = schema.Query.collection
     search_query = schema.Query.collections
