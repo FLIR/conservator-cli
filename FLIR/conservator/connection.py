@@ -46,8 +46,9 @@ class ConservatorConnection:
 
     :param config: :class:`~FLIR.conservator.config.Config` providing Conservator URL and user
         authentication info.
+    :param max_retries: Maximum number of times to retry a query due to connection errors.
     """
-    def __init__(self, config):
+    def __init__(self, config, max_retries=5):
         self.config = config
         self.graphql_url = ConservatorConnection.to_graphql_url(config.url)
         headers = {
@@ -55,6 +56,8 @@ class ConservatorConnection:
         }
         self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
         self.fields_manager = FieldsManager()
+        # TODO: make it easier to include new fields in Config, and move this there
+        self.max_retries = max_retries
 
     def get_url_encoded_user(self):
         """
@@ -125,9 +128,9 @@ class ConservatorConnection:
                 graphql_fields = tuple(filter(lambda i: isinstance(i, str), error["path"]))
                 problematic_path = ".".join(map(FieldsManager.graphql_to_python, graphql_fields[1:]))
                 self.fields_manager.add_problematic_path(type_, problematic_path)
-                logger.error("Server encountered an error due to a null value for a non-nullable field.")
-                logger.error("Attempting to resolve by excluding field in future queries.")
-                logger.error("Excluded field:", problematic_path)
+                logger.debug("Server encountered an error due to a null value for a non-nullable field.")
+                logger.debug("Attempting to resolve by excluding field in future queries.")
+                logger.debug("Excluded field:", problematic_path)
                 continue
 
             # we can't handle the errors. raise the exception.
@@ -155,11 +158,33 @@ class ConservatorConnection:
         if isinstance(fields, list) or isinstance(fields, tuple):
             fields = FieldsRequest(include_fields=tuple(*fields))
 
+        tries = 0
+
         while True:
+            # TODO: This retry logic is pretty messy. We should refactor and add tests.
             try:
-                return self._query(query, operation_base, fields, **kwargs)
+                try:
+                    return self._query(query, operation_base, fields, **kwargs)
+                except ConservatorGraphQLServerError as e:
+                    self._handle_errors(e.errors, query.type)
             except ConservatorGraphQLServerError as e:
-                self._handle_errors(e.errors, query.type)
+                exception = e.errors[0].get("exception", None)
+                if exception is None:
+                    # this is a graphql error that couldn't be handled
+                    raise
+                # otherwise it's an error due to connection
+                # (see _log_http_error in sgqlc/endpoint/http.py)
+                tries += 1
+                if tries > self.max_retries:
+                    raise
+                logger.debug("Retrying request after exception: " + str(exception))
+                logger.debug("Retry #" + str(tries))
+            except Exception as e:
+                tries += 1
+                if tries > self.max_retries:
+                    raise
+                logger.debug("Retrying request after exception: " + str(e))
+                logger.debug("Retry #" + str(tries))
 
     def _query(self, query, operation_base, fields, **kwargs):
         type_ = query.type
