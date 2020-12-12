@@ -3,8 +3,13 @@ import os
 import subprocess
 
 from FLIR.conservator.generated import schema
-from FLIR.conservator.generated.schema import Mutation, Query, AddFramesToDatasetInput, CreateDatasetInput, \
-    DeleteDatasetInput
+from FLIR.conservator.generated.schema import (
+    Mutation,
+    Query,
+    AddFramesToDatasetInput,
+    CreateDatasetInput,
+    DeleteDatasetInput,
+)
 from FLIR.conservator.types.type_proxy import TypeProxy, requires_fields
 from FLIR.conservator.util import download_files
 
@@ -24,8 +29,12 @@ class Dataset(TypeProxy):
             collections = []
         collection_ids = [collection.id for collection in collections]
         input_ = CreateDatasetInput(name=name, collection_ids=collection_ids)
-        dataset = conservator.query(Mutation.create_dataset, operation_base=Mutation,
-                                    input=input_, fields=fields)
+        dataset = conservator.query(
+            Mutation.create_dataset,
+            operation_base=Mutation,
+            input=input_,
+            fields=fields,
+        )
         return cls(conservator, dataset)
 
     def delete(self):
@@ -33,44 +42,54 @@ class Dataset(TypeProxy):
         Delete the dataset.
         """
         input_ = DeleteDatasetInput(id=self.id)
-        self._conservator.query(Mutation.delete_dataset, operation_base=Mutation,
-                                input=input_)
+        self._conservator.query(
+            Mutation.delete_dataset, operation_base=Mutation, input=input_
+        )
 
     def generate_metadata(self):
         """
         Queries Conservator to generate metadata for the dataset.
         """
-        return self._conservator.query(Mutation.generate_dataset_metadata,
-                                       operation_base=Mutation, dataset_id=self.id)
+        return self._conservator.query(
+            Mutation.generate_dataset_metadata,
+            operation_base=Mutation,
+            dataset_id=self.id,
+        )
 
     def get_frame(self, search_text="", fields=None):
         """
         Queries and returns the dataset frames within this dataset, filtering
         with `search_text`.
         """
-        return self._conservator.query(Query.dataset_frame, fields=fields,
-                                       id=self.id, search_text=search_text)
+        return self._conservator.query(
+            Query.dataset_frame, fields=fields, id=self.id, search_text=search_text
+        )
 
     def add_frames(self, frames, fields=None):
         """
         Given a list of `frames`, add them to the dataset.
         """
         frame_ids = [frame.id for frame in frames]
-        _input = AddFramesToDatasetInput(dataset_id=self.id,
-                                         frame_ids=frame_ids)
-        return self._conservator.query(Mutation.add_frames_to_dataset, operation_base=Mutation,
-                                       fields=fields,
-                                       input=_input)
+        _input = AddFramesToDatasetInput(dataset_id=self.id, frame_ids=frame_ids)
+        return self._conservator.query(
+            Mutation.add_frames_to_dataset,
+            operation_base=Mutation,
+            fields=fields,
+            input=_input,
+        )
 
     def generate_signed_metadata_upload_url(self, filename, content_type):
         """
         Returns a signed url for uploading metadata with the given `filename` and
         `content_type`.
         """
-        result = self._conservator.query(Mutation.generate_signed_dataset_metadata_upload_url,
-                                         operation_base=Mutation,
-                                         dataset_id=self.id, content_type=content_type,
-                                         filename=filename)
+        result = self._conservator.query(
+            Mutation.generate_signed_dataset_metadata_upload_url,
+            operation_base=Mutation,
+            dataset_id=self.id,
+            content_type=content_type,
+            filename=filename,
+        )
         return result.signed_url
 
     def generate_signed_locker_upload_url(self, filename, content_type):
@@ -78,10 +97,13 @@ class Dataset(TypeProxy):
         Returns a signed url for uploading a new file locker file with the given `filename` and
         `content_type`.
         """
-        result = self._conservator.query(Mutation.generate_signed_dataset_file_locker_upload_url,
-                                         operation_base=Mutation,
-                                         dataset_id=self.id, content_type=content_type,
-                                         filename=filename)
+        result = self._conservator.query(
+            Mutation.generate_signed_dataset_file_locker_upload_url,
+            operation_base=Mutation,
+            dataset_id=self.id,
+            content_type=content_type,
+            filename=filename,
+        )
         return result.signed_url
 
     def get_git_url(self):
@@ -118,9 +140,15 @@ class Dataset(TypeProxy):
 
         with open(index_file) as f:
             data = json.load(f)
-            return cls.from_id(conservator, data['datasetId'])
+            return cls.from_id(conservator, data["datasetId"])
 
-    def pull(self, path=".", include_analytics=False, include_eight_bit=True, process_count=None):
+    def pull(
+        self,
+        path=".",
+        include_analytics=False,
+        include_eight_bit=True,
+        process_count=None,
+    ):
         """
         Downloads the files listed in ``index.json`` at the provided `path`.
 
@@ -132,11 +160,11 @@ class Dataset(TypeProxy):
         if not os.path.exists(index_file):
             raise FileNotFoundError("Missing index.json, check the path")
 
-        data_dir = os.path.join(path, 'data')
+        data_dir = os.path.join(path, "data")
         if include_eight_bit:
             os.makedirs(data_dir, exist_ok=True)
 
-        analytics_dir = os.path.join(path, 'analyticsData')
+        analytics_dir = os.path.join(path, "analyticsData")
         if include_analytics:
             os.makedirs(analytics_dir, exist_ok=True)
 
@@ -144,19 +172,19 @@ class Dataset(TypeProxy):
         base_url = self.get_dvc_url()
         with open(index_file) as f:
             data = json.load(f)
-            for frame in data.get('frames', []):
-                video_metadata = frame.get('videoMetadata', {})
+            for frame in data.get("frames", []):
+                video_metadata = frame.get("videoMetadata", {})
                 video_id = video_metadata.get("videoId", "")
-                frame_index = video_metadata['frameIndex']
-                dataset_frame_id = frame['datasetFrameId']
+                frame_index = video_metadata["frameIndex"]
+                dataset_frame_id = frame["datasetFrameId"]
                 if include_eight_bit:
-                    md5 = frame['md5']
+                    md5 = frame["md5"]
                     url = f"{base_url}/{md5[:2]}/{md5[2:]}"
                     name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
                     assets.append((data_dir, name, url))
 
-                if include_analytics and ('analyticsMd5' in frame):
-                    md5 = frame['analyticsMd5']
+                if include_analytics and ("analyticsMd5" in frame):
+                    md5 = frame["analyticsMd5"]
                     url = f"{base_url}/{md5[:2]}/{md5[2:]}"
                     name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
                     assets.append((analytics_dir, name, url))

@@ -22,6 +22,7 @@ class Config:
     :param key: The user's API key or token.
     :param url: The URL of the conservator instance.
     """
+
     EMAIL = "CONSERVATOR_EMAIL"
     API_KEY = "CONSERVATOR_API_KEY"
     URL = "CONSERVATOR_URL"
@@ -72,7 +73,7 @@ class Config:
         :param path: The path to the JSON config file.
         """
         try:
-            with open(path, 'r') as config:
+            with open(path, "r") as config:
                 data = json.load(config)
             return Config.from_dict(data)
         except FileNotFoundError:
@@ -122,7 +123,11 @@ class Config:
         :param save: If `True`, save the config for future use. This means a user
             won't need to type them again.
         """
-        for source in [Config.from_default_config_file, Config.from_environ, Config.from_input]:
+        for source in [
+            Config.from_default_config_file,
+            Config.from_environ,
+            Config.from_input,
+        ]:
             creds = source()
             if creds is not None:
                 logger.debug(f"Created config from source: {source}")
@@ -151,7 +156,9 @@ class Config:
         return f"<config for {self.email} at {self.url}>"
 
     def __eq__(self, other):
-        return isinstance(other, Config) \
-               and other.email == self.email \
-               and other.key == self.key \
-               and other.url == self.url
+        return (
+            isinstance(other, Config)
+            and other.email == self.email
+            and other.key == self.key
+            and other.url == self.url
+        )

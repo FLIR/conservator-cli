@@ -39,11 +39,14 @@ from subprocess import Popen, PIPE
 
 def call_git_describe(abbrev):
     try:
-        p = Popen(['git', 'describe', '--match', '[0-9]*', '--abbrev=%d' % abbrev],
-                  stdout=PIPE, stderr=PIPE)
+        p = Popen(
+            ["git", "describe", "--match", "[0-9]*", "--abbrev=%d" % abbrev],
+            stdout=PIPE,
+            stderr=PIPE,
+        )
         p.stderr.close()
         line = p.stdout.readlines()[0]
-        version = line.strip().decode('utf-8')
+        version = line.strip().decode("utf-8")
         # Find the second -, replace it with + - otherwise pip just break
         # See PEP 440 for more details
         version = version.replace("-", "+", 2)
@@ -55,8 +58,9 @@ def call_git_describe(abbrev):
 
 def is_dirty():
     try:
-        p = Popen(["git", "diff-index", "--name-only", "HEAD"],
-                  stdout=PIPE, stderr=PIPE)
+        p = Popen(
+            ["git", "diff-index", "--name-only", "HEAD"], stdout=PIPE, stderr=PIPE
+        )
         p.stderr.close()
         lines = p.stdout.readlines()
         return len(lines) > 0

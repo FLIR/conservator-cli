@@ -14,4 +14,3 @@ for project in conservator.projects.all():
 # We should query for only them (this will take less than a second):
 for project in conservator.projects.all().including_fields("name", "id"):
     print(project.id, project.name)
-

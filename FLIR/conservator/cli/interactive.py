@@ -40,7 +40,7 @@ readline.parse_and_bind("tab: complete")
 
 def print_status(message):
     end = "\033[" + str(len(message)) + "D"
-    click.secho(message + end, fg='yellow', nl=False)
+    click.secho(message + end, fg="yellow", nl=False)
 
 
 def clear_status():
@@ -50,7 +50,7 @@ def clear_status():
 def get_root_collections():
     global root_collections
     if root_collections is None:
-        click.secho("Loading root collections...", fg='yellow')
+        click.secho("Loading root collections...", fg="yellow")
         projects = conservator.projects.all().including_fields("root_collection.name")
         root_collections = [project.root_collection for project in projects]
     return root_collections
@@ -107,7 +107,7 @@ def get_from_path(path):
             return media
     return None
 
-    
+
 def requires_valid_collection(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -115,6 +115,7 @@ def requires_valid_collection(func):
             click.secho("Not in a valid Collection", fg="red")
             return
         func(*args, **kwargs)
+
     return wrapper
 
 
@@ -169,14 +170,21 @@ def _fields(fields):
 def details(filename):
     item = get_from_path(filename)
     if item is None:
-        click.secho(f"Couldn't find '{filename}' in current collection", fg='red')
+        click.secho(f"Couldn't find '{filename}' in current collection", fg="red")
         return
     detail_fields = FieldsRequest()
     if isinstance(item, Collection):
-        detail_fields.include_field("name", "path", "owner", "created_by_name",
-                                    "recursive_video_count", "recursive_dataset_count",
-                                    "recursive_image_count", "recursive_child_count",
-                                    "description")
+        detail_fields.include_field(
+            "name",
+            "path",
+            "owner",
+            "created_by_name",
+            "recursive_video_count",
+            "recursive_dataset_count",
+            "recursive_image_count",
+            "recursive_child_count",
+            "description",
+        )
         item.populate(detail_fields)
         click.echo(f"Name: {item.name}")
         click.echo(f"Collection ID: {item.id}")
@@ -189,9 +197,16 @@ def details(filename):
         click.echo(f"Total Child Collections: {item.recursive_child_count}")
         click.echo(f"Description: {item.description}")
     elif isinstance(item, Video) or isinstance(item, Image):
-        detail_fields.include_field("name", "owner", "uploaded_by_name",
-                                    "file_size", "location", "tags", "asset_type",
-                                    "description")
+        detail_fields.include_field(
+            "name",
+            "owner",
+            "uploaded_by_name",
+            "file_size",
+            "location",
+            "tags",
+            "asset_type",
+            "description",
+        )
         item.populate(detail_fields)
         click.echo(f"Name: {item.name}")
         click.echo(f"{item.__class__.__name__} ID: {item.id}")
@@ -208,32 +223,34 @@ def details(filename):
 
 @shell.command(help="List collections, videos, images, and file locker files")
 def ls():
-    click.secho(".", fg='blue')
+    click.secho(".", fg="blue")
 
     if pwd != "/":
-        click.secho("..", fg='blue')
+        click.secho("..", fg="blue")
 
     for child in get_child_collections():
-        click.secho(child.name + "/", fg='blue')
+        click.secho(child.name + "/", fg="blue")
 
     if current_collection is None:
         return
 
     for video in get_videos():
-        click.secho(video.name, fg='green')
+        click.secho(video.name, fg="green")
 
     for image in get_images():
-        click.secho(image.name, fg='bright_green')
+        click.secho(image.name, fg="bright_green")
 
     file_fields = FieldsRequest()
     file_fields.include_field("file_locker_files.name")
     current_collection.populate(file_fields)
     for file in current_collection.file_locker_files:
-        click.secho(file.name, fg='yellow')
+        click.secho(file.name, fg="yellow")
 
 
 @shell.command("files", help="List file locker files")
-@click.option("-u", "--url", is_flag=True, help="If specified, also print a download URL")
+@click.option(
+    "-u", "--url", is_flag=True, help="If specified, also print a download URL"
+)
 @requires_valid_collection
 def _files(url):
     fields = FieldsRequest()
@@ -298,11 +315,11 @@ def _images():
 
 @shell.command("open", help="Open in browser")
 def _open():
-    if pwd == '/':
+    if pwd == "/":
         url = conservator.get_url()
     else:
         url = conservator.get_collection_url(current_collection)
-    click.secho(f"Opening {url}...", fg='yellow')
+    click.secho(f"Opening {url}...", fg="yellow")
     click.launch(url)
 
 
@@ -310,7 +327,9 @@ def _open():
 def tree():
     collections = []
     if pwd == "/":
-        for project in conservator.projects.all().including_fields("root_collection.path"):
+        for project in conservator.projects.all().including_fields(
+            "root_collection.path"
+        ):
             collections.append(project.root_collection)
     elif current_collection is None:
         click.secho("Not in a valid Collection", fg="red")
@@ -328,31 +347,35 @@ def tree():
 
 
 @shell.command(help="Upload a local file to the current collection")
-@click.argument('localpath', default='.')
-@click.argument('type', default='video')
-@click.option('-r', '--remote-name',
-              help="If specified, the name of the remote file. Defaults to the local file name")
+@click.argument("localpath", default=".")
+@click.argument("type", default="video")
+@click.option(
+    "-r",
+    "--remote-name",
+    help="If specified, the name of the remote file. Defaults to the local file name",
+)
 @requires_valid_collection
 def upload(local_path, type, remote_name):
     if type == "video":
-        conservator.videos.upload(local_path, collection=current_collection, remote_name=remote_name)
+        conservator.videos.upload(
+            local_path, collection=current_collection, remote_name=remote_name
+        )
 
 
 @shell.command(help="Download the current collection")
-@click.argument('localpath', default='.')
-@click.option('-d', '--datasets', is_flag=True, help="Pull datasets")
-@click.option('-v', '--video-metadata', is_flag=True, help="Include video metadata")
-@click.option('-f', '--associated-files', is_flag=True, help="Include associated files")
-@click.option('-m', '--media', is_flag=True, help="Include media (videos and images)")
-@click.option('-r', '--recursive', is_flag=True, help="Include child collections recursively")
+@click.argument("localpath", default=".")
+@click.option("-d", "--datasets", is_flag=True, help="Pull datasets")
+@click.option("-v", "--video-metadata", is_flag=True, help="Include video metadata")
+@click.option("-f", "--associated-files", is_flag=True, help="Include associated files")
+@click.option("-m", "--media", is_flag=True, help="Include media (videos and images)")
+@click.option(
+    "-r", "--recursive", is_flag=True, help="Include child collections recursively"
+)
 @requires_valid_collection
 def download(localpath, datasets, video_metadata, associated_files, media, recursive):
-    current_collection.download(localpath,
-                                datasets,
-                                video_metadata,
-                                associated_files,
-                                media,
-                                recursive)
+    current_collection.download(
+        localpath, datasets, video_metadata, associated_files, media, recursive
+    )
 
 
 def run_shell_command(command):
@@ -379,7 +402,8 @@ def interactive():
     click.secho(
         """This is an interactive conservator "shell" that simulates the directory\n"""
         """structure of Conservator's collections. Type "help" to see available commands.""",
-        fg="cyan")
+        fg="cyan",
+    )
 
     domain = conservator.get_domain()
 
@@ -388,8 +412,8 @@ def interactive():
     get_root_collections()
 
     while True:
-        user = click.style(f"{username}@{domain}:", fg='magenta', bold=True)
-        path = click.style(f"{pwd}", fg='blue', bold=True)
+        user = click.style(f"{username}@{domain}:", fg="magenta", bold=True)
+        path = click.style(f"{pwd}", fg="blue", bold=True)
         end = click.unstyle("$ ")
         command = input(user + path + end)
         run_shell_command(command)

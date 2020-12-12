@@ -8,6 +8,7 @@ class FieldsManager:
     Stores a map of problematic fields for each SGQLC type. These
     are used during queries to avoid errors.
     """
+
     def __init__(self):
         self.problematic_fields = {
             schema.Video: {
@@ -27,7 +28,7 @@ class FieldsManager:
             self.problematic_fields[typ] = set()
         self.problematic_fields[typ].add(path)
 
-    re_camel_case_words = re.compile('([^A-Z]+|[A-Z]+[^A-Z]*)')
+    re_camel_case_words = re.compile("([^A-Z]+|[A-Z]+[^A-Z]*)")
 
     @staticmethod
     def graphql_to_python(name):
@@ -38,7 +39,7 @@ class FieldsManager:
         s = []
         for w in FieldsManager.re_camel_case_words.findall(name):
             s.append(w.lower())
-        name = '_'.join(s)
+        name = "_".join(s)
         if keyword.iskeyword(name):
-            return name + '_'
+            return name + "_"
         return name

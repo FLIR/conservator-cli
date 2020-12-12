@@ -3,7 +3,13 @@ import logging
 from FLIR.conservator.config import Config
 from FLIR.conservator.connection import ConservatorConnection
 from FLIR.conservator.generated.schema import Query
-from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager, ImageManager
+from FLIR.conservator.managers import (
+    CollectionManager,
+    DatasetManager,
+    ProjectManager,
+    VideoManager,
+    ImageManager,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -28,6 +34,7 @@ class Conservator(ConservatorConnection):
 
     :param config: The :class:`~FLIR.conservator.config.Config` object to use for this connection.
     """
+
     def __init__(self, config):
         super().__init__(config)
         self.collections = CollectionManager(self)

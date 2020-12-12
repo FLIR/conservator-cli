@@ -8,7 +8,6 @@ from sgqlc.types import Scalar
 
 
 class Date(Scalar):
-
     @classmethod
     def converter(cls, s):
         return int(s)

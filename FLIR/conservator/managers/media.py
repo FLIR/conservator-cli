@@ -6,6 +6,7 @@ from FLIR.conservator.util import upload_file
 
 class MediaUploadException(Exception):
     """Raised if an exception occurs during a media upload"""
+
     pass
 
 
@@ -44,8 +45,10 @@ class MediaTypeManager:
         upload = upload_file(file_path, url)
         if not upload.ok:
             video.remove()
-            raise MediaUploadException(f"Upload failed ({upload.status_code}: {upload.reason})")
-        completion_tag = upload.headers['ETag']
+            raise MediaUploadException(
+                f"Upload failed ({upload.status_code}: {upload.reason})"
+            )
+        completion_tag = upload.headers["ETag"]
 
         video.complete_upload(remote_name, upload_id, completion_tags=[completion_tag])
         video.trigger_processing()

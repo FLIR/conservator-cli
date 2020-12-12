@@ -4,15 +4,25 @@ from FLIR.conservator.cli.managers import get_manager_command
 from FLIR.conservator.cli.interactive import interactive
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated import schema
-from FLIR.conservator.managers import CollectionManager, DatasetManager, ProjectManager, VideoManager, ImageManager
+from FLIR.conservator.managers import (
+    CollectionManager,
+    DatasetManager,
+    ProjectManager,
+    VideoManager,
+    ImageManager,
+)
 from FLIR.conservator.util import to_clean_string
 import logging
 
 
 @click.group()
-@click.option("--log", "--log-level",
-              type=click.Choice(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]),
-              default="INFO", help="Logging level, defaults to INFO")
+@click.option(
+    "--log",
+    "--log-level",
+    type=click.Choice(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]),
+    default="INFO",
+    help="Logging level, defaults to INFO",
+)
 def main(log):
     levels = {
         "DEBUG": logging.DEBUG,
@@ -25,7 +35,9 @@ def main(log):
 
 
 @main.command(help="View or delete the current config")
-@click.option('--delete', is_flag=True, help="If specified, delete the default credentials.")
+@click.option(
+    "--delete", is_flag=True, help="If specified, delete the default credentials."
+)
 def config(delete):
     if delete:
         Config.delete_saved_default_config()
@@ -44,7 +56,9 @@ def whoami():
     click.echo(to_clean_string(user))
 
 
-main.add_command(get_manager_command(CollectionManager, schema.Collection, "collections"))
+main.add_command(
+    get_manager_command(CollectionManager, schema.Collection, "collections")
+)
 main.add_command(get_manager_command(DatasetManager, schema.Dataset, "datasets"))
 main.add_command(get_manager_command(ProjectManager, schema.Project, "projects"))
 main.add_command(get_manager_command(VideoManager, schema.Video, "videos"))
