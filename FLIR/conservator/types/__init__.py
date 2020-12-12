@@ -20,3 +20,4 @@ from .video import Video
 from .dataset import Dataset
 from .collection import Collection
 from .project import Project
+from .frame import Frame

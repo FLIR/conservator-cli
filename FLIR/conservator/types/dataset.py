@@ -10,6 +10,8 @@ from FLIR.conservator.generated.schema import (
     CreateDatasetInput,
     DeleteDatasetInput,
 )
+from FLIR.conservator.paginated_query import PaginatedQuery
+from FLIR.conservator.types.dataset_frame import DatasetFrame
 from FLIR.conservator.types.type_proxy import requires_fields
 from FLIR.conservator.types.queryable import QueryableType
 from FLIR.conservator.util import download_files
@@ -57,13 +59,19 @@ class Dataset(QueryableType):
             dataset_id=self.id,
         )
 
-    def get_frame(self, search_text="", fields=None):
+    def get_frames(self, search_text="", fields=None):
         """
-        Queries and returns the dataset frames within this dataset, filtering
+        Returns a paginated query for dataset frames within this dataset, filtering
         with `search_text`.
         """
-        return self._conservator.query(
-            Query.dataset_frame, fields=fields, id=self.id, search_text=search_text
+        return PaginatedQuery(
+            self._conservator,
+            query=Query.dataset_frames_only,
+            wrapping_type=DatasetFrame,
+            unpack_field="dataset_frames",
+            fields=fields,
+            id="RkAXSN4ychHgiNkMk",
+            search_text=search_text,
         )
 
     def add_frames(self, frames, fields=None):
