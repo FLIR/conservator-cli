@@ -975,9 +975,9 @@ containing an <code class="docutils literal notranslate"><span class="pre">index
 </dd></dl>
 
 <dl class="py class">
-<dt id="FLIR.conservator.managers.ImagesManager">
-<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">ImagesManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImagesManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
+<dt id="FLIR.conservator.managers.ImageManager">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">ImageManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImageManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></p>
 </dd></dl>
 
 <dl class="py class">
@@ -996,23 +996,7 @@ it with the specified <cite>fields</cite>.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.managers.VideoManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">VideoManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
-<dl class="py method">
-<dt id="FLIR.conservator.managers.VideoManager.upload">
-<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">collection</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">remote_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager.upload" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upload a new video from a local <cite>file_path</cite>, with the specified
-<cite>remote_name</cite>. The video is added to <cite>collection</cite> if given,
-otherwise it is added to no collection (orphan video).</p>
-<p>Returns the created <a class="reference internal" href="#FLIR.conservator.types.video.Video" title="FLIR.conservator.types.video.Video"><code class="xref py py-class docutils literal notranslate"><span class="pre">Video</span></code></a>.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt id="FLIR.conservator.managers.VideoUploadException">
-<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">VideoUploadException</code><a class="headerlink" href="#FLIR.conservator.managers.VideoUploadException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Raised if an exception occurs during a video upload</p>
+<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></p>
 </dd></dl>
 
 <div class="section" id="module-FLIR.conservator.managers.type_manager">
@@ -1071,6 +1055,16 @@ otherwise it is added to no collection (orphan video).</p>
 <dd><p>Performs a search with the specified <cite>search_text</cite>.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.managers.media">
+<span id="mediatypemanager"></span><h3>MediaTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.media" title="Permalink to this headline">¶</a></h3>
+<dl class="py exception">
+<dt id="FLIR.conservator.managers.media.MediaUploadException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.media.</code><code class="sig-name descname">MediaUploadException</code><a class="headerlink" href="#FLIR.conservator.managers.media.MediaUploadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised if an exception occurs during a media upload</p>
 </dd></dl>
 
 </div>
