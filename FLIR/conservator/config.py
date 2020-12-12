@@ -12,6 +12,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+class ConfigError(Exception):
+    pass
+
+
+class ConfigAttribute:
+    def __init__(self, internal_name, friendly_name, default=None):
+        self.internal_name = internal_name
+        self.friendly_name = friendly_name
+        self.default = default
+
+
 class Config:
     """
     Contains a user's Email and API Key (token), to be used
@@ -23,15 +34,20 @@ class Config:
     :param url: The URL of the conservator instance.
     """
 
-    EMAIL = "CONSERVATOR_EMAIL"
-    API_KEY = "CONSERVATOR_API_KEY"
-    URL = "CONSERVATOR_URL"
-    DEFAULT_URL = "https://flirconservator.com/"
+    attributes = {
+        "email": ConfigAttribute("CONSERVATOR_EMAIL", "Conservator Email"),
+        "key": ConfigAttribute("CONSERVATOR_API_KEY", "Conservator API Key"),
+        "url": ConfigAttribute("CONSERVATOR_URL", "Conservator URL", default="https://flirconservator.com/"),
+    }
 
-    def __init__(self, email, key, url=DEFAULT_URL):
-        self.email = email
-        self.key = key
-        self.url = url
+    def __init__(self, **kwargs):
+        for name, attr in Config.attributes.items():
+            v = kwargs.get(attr.internal_name, None)
+            if v is None:
+                v = attr.default
+            if v is None:
+                raise ConfigError(f"Missing value for '{name}'")
+            setattr(self, name, v)
 
     def save_to_file(self, path):
         """
@@ -41,13 +57,13 @@ class Config:
 
         :param path: The file path to save to.
         """
-        data = {
-            Config.EMAIL: self.email,
-            Config.API_KEY: self.key,
-            Config.URL: self.url,
-        }
         with open(path, "w") as f:
-            json.dump(data, f)
+            json.dump(self.to_dict(), f)
+
+    def to_dict(self):
+        return {
+            attr.internal_name: getattr(self, name) for name, attr in self.attributes.items()
+        }
 
     def save_to_default_config(self):
         """
@@ -58,12 +74,7 @@ class Config:
 
     @staticmethod
     def from_dict(data):
-        email = data.get(Config.EMAIL, None)
-        key = data.get(Config.API_KEY, None)
-        url = data.get(Config.URL, None)
-        if email is None or key is None or url is None:
-            return None
-        return Config(email, key, url)
+        return Config(**data)
 
     @staticmethod
     def from_file(path):
@@ -91,9 +102,6 @@ class Config:
     def from_environ():
         """
         Creates a :class:`Config` object from environment variables.
-
-        The environment variables are ``CONSERVATOR_EMAIL``, ``CONSERVATOR_API_KEY``,
-        and ``CONSERVATOR_URL``.
         """
         return Config.from_dict(os.environ)
 
@@ -102,12 +110,17 @@ class Config:
         """
         Creates a :class:`Config` object from standard input.
         """
-        email = input("Conservator Email: ")
-        key = input("Conservator API key: ")
-        url = input(f"Conservator URL (leave empty for {Config.DEFAULT_URL}): ")
-        if len(url.strip()) == 0:
-            url = Config.DEFAULT_URL
-        return Config(email, key, url)
+        d = {}
+        for name, attr in Config.attributes.items():
+            if attr.default is None:
+                v = input(f"{attr.friendly_name}: ")
+            else:
+                v = input(f"{attr.friendly_name} (leave empty for {attr.default}): ")
+            v = v.strip()
+            if len(v) == 0:
+                v = None
+            d[attr.internal_name] = v
+        return Config.from_dict(d)
 
     @staticmethod
     def default(save=True):
@@ -153,12 +166,10 @@ class Config:
             os.remove(path)
 
     def __repr__(self):
-        return f"<config for {self.email} at {self.url}>"
+        return f"<Config for {self.email} at {self.url}>"
 
     def __eq__(self, other):
         return (
             isinstance(other, Config)
-            and other.email == self.email
-            and other.key == self.key
-            and other.url == self.url
+            and all(getattr(other, name) == getattr(self, name) for name in Config.attributes.keys())
         )
