@@ -47,6 +47,10 @@ Then create a virtual environment, and install the library::
 Now changes to the code will be immediately reflected in the CLI,
 examples, etc.
 
+Before committing a change, be sure to run the linter::
+
+    $ black .
+
 You can run tests manually::
 
     $ cd test
