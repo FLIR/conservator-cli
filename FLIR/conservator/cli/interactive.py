@@ -10,8 +10,8 @@ from typing import Optional
 from FLIR.conservator.cli.managers import fields_request
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.types import Collection, Video, Image
-from FLIR.conservator.types.collection import InvalidRemotePathException
+from FLIR.conservator.wrappers import Collection, Video, Image
+from FLIR.conservator.wrappers.collection import InvalidRemotePathException
 
 pwd = "/"
 ctx = None

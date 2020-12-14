@@ -11,7 +11,7 @@ from FLIR.conservator.managers import (
     ImageManager,
     MediaTypeManager,
 )
-from FLIR.conservator.types.type_proxy import MissingFieldException
+from FLIR.conservator.wrappers.type_proxy import MissingFieldException
 
 
 def fields_request(func):

@@ -4,7 +4,7 @@ from FLIR.conservator.generated.schema import (
     FlagDatasetFrameInput,
     UnflagDatasetFrameInput,
 )
-from FLIR.conservator.types import QueryableType
+from FLIR.conservator.wrappers import QueryableType
 
 
 class DatasetFrame(QueryableType):

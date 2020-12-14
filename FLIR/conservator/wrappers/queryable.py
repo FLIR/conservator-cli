@@ -1,5 +1,5 @@
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.types import TypeProxy
+from FLIR.conservator.wrappers import TypeProxy
 
 
 class QueryableType(TypeProxy):

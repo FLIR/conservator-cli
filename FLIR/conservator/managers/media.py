@@ -1,6 +1,6 @@
 import os
 
-from FLIR.conservator.types import Video
+from FLIR.conservator.wrappers import Video
 from FLIR.conservator.util import upload_file
 
 

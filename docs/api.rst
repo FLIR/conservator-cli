@@ -32,59 +32,59 @@ Fields Request
 .. automodule:: FLIR.conservator.fields_request
     :members:
 
-Types and TypeProxies
----------------------
+Wrappers and TypeProxies
+------------------------
 
-.. automodule:: FLIR.conservator.types
+.. automodule:: FLIR.conservator.wrappers
     :members:
 
 TypeProxy
 ^^^^^^^^^
 
-.. automodule:: FLIR.conservator.types.type_proxy
+.. automodule:: FLIR.conservator.wrappers.type_proxy
     :members:
 
 Collection
 ^^^^^^^^^^
 
-.. automodule:: FLIR.conservator.types.collection
+.. automodule:: FLIR.conservator.wrappers.collection
     :members:
 
 Dataset
 ^^^^^^^
 
-.. automodule:: FLIR.conservator.types.dataset
+.. automodule:: FLIR.conservator.wrappers.dataset
     :members:
 
 Image
 ^^^^^
 
-.. automodule:: FLIR.conservator.types.image
+.. automodule:: FLIR.conservator.wrappers.image
     :members:
 
 Project
 ^^^^^^^
 
-.. automodule:: FLIR.conservator.types.project
+.. automodule:: FLIR.conservator.wrappers.project
     :members:
 
 Video
 ^^^^^
 
-.. automodule:: FLIR.conservator.types.video
+.. automodule:: FLIR.conservator.wrappers.video
     :members:
 
 Frame
 ^^^^^
 
-.. automodule:: FLIR.conservator.types.frame
+.. automodule:: FLIR.conservator.wrappers.frame
     :members:
 
 
 DatasetFrame
 ^^^^^^^^^^^^
 
-.. automodule:: FLIR.conservator.types.dataset_frame
+.. automodule:: FLIR.conservator.wrappers.dataset_frame
     :members:
 
 

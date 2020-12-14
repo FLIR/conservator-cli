@@ -1,5 +1,5 @@
 from FLIR.conservator.generated.schema import Mutation
-from FLIR.conservator.types.queryable import QueryableType
+from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.generated import schema
 
 

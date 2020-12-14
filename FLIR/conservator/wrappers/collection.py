@@ -11,11 +11,11 @@ from FLIR.conservator.generated.schema import (
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
-from FLIR.conservator.types.type_proxy import requires_fields
-from FLIR.conservator.types.queryable import QueryableType
-from FLIR.conservator.types.video import Video
-from FLIR.conservator.types.image import Image
-from FLIR.conservator.types.dataset import Dataset
+from FLIR.conservator.wrappers.type_proxy import requires_fields
+from FLIR.conservator.wrappers.queryable import QueryableType
+from FLIR.conservator.wrappers.video import Video
+from FLIR.conservator.wrappers.image import Image
+from FLIR.conservator.wrappers.dataset import Dataset
 
 
 class InvalidRemotePathException(Exception):
@@ -29,7 +29,7 @@ class Collection(QueryableType):
 
     def create_video(self, filename, fields=None):
         """
-        Create a new :class:`~FLIR.conservator.types.video.Video` within
+        Create a new :class:`~FLIR.conservator.wrappers.video.Video` within
         this collection, returning it with the specified `fields`.
         """
         return Video.create(self._conservator, filename, self.id, fields)

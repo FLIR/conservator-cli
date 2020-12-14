@@ -157,7 +157,11 @@ class Config:
             Config.from_environ,
             Config.from_input,
         ]:
-            creds = source()
+            creds = None
+            try:
+                creds = source()
+            except Exception:
+                pass
             if creds is not None:
                 logger.debug(f"Created config from source: {source}")
                 if save and source != Config.from_default_config_file:

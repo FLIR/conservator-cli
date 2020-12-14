@@ -14,7 +14,7 @@ class PaginatedQuery:
     ...     print(project.name)
 
     :param conservator: The conservator instance to query.
-    :param wrapping_type: If specified, a :class:`~FLIR.conservator.types.type_proxy.TypeProxy` class to
+    :param wrapping_type: If specified, a :class:`~FLIR.conservator.wrappers.type_proxy.TypeProxy` class to
         wrap instances in before they are returned.
     :param query: The GraphQL Query to use.
     :param base_operation: If specified, the base type of the query. Defaults to ``Query``.
