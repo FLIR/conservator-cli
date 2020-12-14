@@ -4,8 +4,8 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     PredictionCreate,
 )
-from FLIR.conservator.types import QueryableType
-from FLIR.conservator.types.type_proxy import requires_fields
+from FLIR.conservator.wrappers import QueryableType
+from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.util import download_file
 
 

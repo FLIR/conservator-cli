@@ -3,8 +3,8 @@ import os
 
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Query, Mutation
-from FLIR.conservator.types.type_proxy import requires_fields
-from FLIR.conservator.types.queryable import QueryableType
+from FLIR.conservator.wrappers.type_proxy import requires_fields
+from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.util import download_file
 
 

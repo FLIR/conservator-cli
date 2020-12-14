@@ -42,7 +42,7 @@ on conservator:
 Running this will demonstrate a few things. First off, using :meth:`~FLIR.conservator.managers.searchable.SearchableTypeManager.all`
 doesn't immediately execute the query. It returns a :class:`~FLIR.conservator.paginated_query.PaginatedQuery`,
 which lets you specify which fields you want to include in the results. By
-default, it will request all fields of its type (in this case, :class:`~FLIR.conservator.types.Project`).
+default, it will request all fields of its type (in this case, :class:`~FLIR.conservator.wrappers.Project`).
 Since we only want to see the `name`, we call :meth:`~FLIR.conservator.paginated_query.PaginatedQuery.include_field`
 with it specified.
 
@@ -51,13 +51,13 @@ actually send it to Conservator and iterate through the results. This is
 done automatically when you attempt to iterate through a :class:`~FLIR.conservator.paginated_query.PaginatedQuery`
 using `for ... in` (or anything else that calls `__iter__`).
 
-The :class:`~FLIR.conservator.types.Project` instances returned from the iteration
+The :class:`~FLIR.conservator.wrappers.Project` instances returned from the iteration
 will contain the fields we included.
 
 Querying for all Fields
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Let's say we were interested in all of the fields in :class:`~FLIR.conservator.types.Project`.
+Let's say we were interested in all of the fields in :class:`~FLIR.conservator.wrappers.Project`.
 We can repeat above, without including :meth:`~FLIR.conservator.paginated_query.PaginatedQuery.include_field`.
 
 >>> all_projects = conservator.projects.all()
@@ -139,7 +139,7 @@ For instance, assume you queried for a Project's `id`:
 >>> print(dataset.id)
 
 But later want to print its name.  You can fetch the `name` field using
-:meth:`~FLIR.conservator.types.type_proxy.TypeProxy.populate`:
+:meth:`~FLIR.conservator.wrappers.type_proxy.TypeProxy.populate`:
 
 >>> from FLIR.conservator.fields_request import FieldsRequest
 >>> fields = FieldsRequest()
@@ -148,7 +148,7 @@ But later want to print its name.  You can fetch the `name` field using
 >>> print(dataset.name)
 
 If for some reason you have an ID, but don't have an instance of the correct
-type to use :meth:`~FLIR.conservator.types.type_proxy.TypeProxy.populate`, you
+type to use :meth:`~FLIR.conservator.wrappers.type_proxy.TypeProxy.populate`, you
 can create one with :meth:`~FLIR.conservator.managers.type_manager.TypeManager.from_id`,
 and then populate the fields:
 
@@ -158,7 +158,7 @@ and then populate the fields:
 >>> collection.populate(fields)
 >>> print(collection.path)
 
-You can also call :meth:`~FLIR.conservator.types.type_proxy.TypeProxy.populate` with
+You can also call :meth:`~FLIR.conservator.wrappers.type_proxy.TypeProxy.populate` with
 no argument to populate all fields:
 
 >>> collection = conservator.collections.from_id("some_collection_id")
