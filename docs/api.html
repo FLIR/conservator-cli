@@ -664,11 +664,19 @@ reach that path if it doesn’t exist.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.clone">
-<code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.clone" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clone this Dataset into a subdirectory of <cite>path</cite> based on
 the Dataset’s name.</p>
 <p>For instance, if you pass <code class="docutils literal notranslate"><span class="pre">path=&quot;~/Desktop&quot;</span></code>, and want to download a Dataset
 called <code class="docutils literal notranslate"><span class="pre">MyFirstDataset</span></code>, it will be cloned into <code class="docutils literal notranslate"><span class="pre">~/Desktop/MyFirstDataset</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – If specified, the path to the parent directory to clone into.</p></li>
+<li><p><strong>commit</strong> – If specified, a specific commit hash to checkout after cloning.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

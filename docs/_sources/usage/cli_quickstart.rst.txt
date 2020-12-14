@@ -98,6 +98,10 @@ Cloning a dataset creates a local github repo. ``cd`` inside, and you'll find tw
 ``index.json``. This contains the video, image, and frame data that are a part of the
 dataset. It also includes annotations, a description, and more.
 
+It's also possible to clone a dataset from a specific commit using the ``--checkout`` option::
+
+    $ conservator datasets clone YOUR_DATASET_ID --checkout A_COMMIT_HASH
+
 Nowhere in this initial repo are any of the actual media objects. To download those, you'll
 need to use the ``pull`` command::
 

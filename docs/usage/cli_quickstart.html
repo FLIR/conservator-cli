@@ -125,6 +125,10 @@ it will be cloned into <code class="docutils literal notranslate"><span class="p
 <code class="docutils literal notranslate"><span class="pre">cvc.py</span></code> is a python script that is useful for modifying a dataset. You’ll also find
 <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. This contains the video, image, and frame data that are a part of the
 dataset. It also includes annotations, a description, and more.</p>
+<p>It’s also possible to clone a dataset from a specific commit using the <code class="docutils literal notranslate"><span class="pre">--checkout</span></code> option:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets clone YOUR_DATASET_ID --checkout A_COMMIT_HASH
+</pre></div>
+</div>
 <p>Nowhere in this initial repo are any of the actual media objects. To download those, you’ll
 need to use the <code class="docutils literal notranslate"><span class="pre">pull</span></code> command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets pull
