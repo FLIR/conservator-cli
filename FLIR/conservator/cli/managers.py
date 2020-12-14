@@ -97,10 +97,11 @@ def get_manager_command(type_manager, sgqlc_type, name):
         )
         @click.argument("id")
         @click.argument("path", default=".")
-        def clone(id, path):
+        @click.option("--checkout", help="Commit hash to checkout after clone")
+        def clone(id, path, checkout):
             dataset = get_instance().from_id(id)
             try:
-                dataset.clone(path)
+                dataset.clone(path, commit=checkout)
             except MissingFieldException:
                 click.secho(
                     "Dataset is missing a required field. It may not have an associated repository.",

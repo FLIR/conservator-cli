@@ -124,12 +124,15 @@ class Dataset(QueryableType):
         return f"{self._conservator.get_authenticated_url()}/dvc"
 
     @requires_fields("name", "repository.master")
-    def clone(self, path="."):
+    def clone(self, path=".", commit=None):
         """Clone this Dataset into a subdirectory of `path` based on
         the Dataset's name.
 
         For instance, if you pass ``path="~/Desktop"``, and want to download a Dataset
         called ``MyFirstDataset``, it will be cloned into ``~/Desktop/MyFirstDataset``.
+
+        :param path: If specified, the path to the parent directory to clone into.
+        :param commit: If specified, a specific commit hash to checkout after cloning.
         """
         path = os.path.join(path, self.name)
         if os.path.exists(path):
@@ -137,6 +140,10 @@ class Dataset(QueryableType):
 
         url = self.get_git_url()
         subprocess.call(["git", "clone", url, path])
+        if commit is not None:
+            os.chdir(path)
+            subprocess.call(["git", "reset", "--hard", commit])
+            os.chdir("..")
 
     @classmethod
     def from_local_path(cls, conservator, path="."):
