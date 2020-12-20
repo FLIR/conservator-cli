@@ -90,6 +90,7 @@ def add(local_dataset, paths):
 @click.argument("message")
 @pass_valid_local_dataset
 def commit_(local_dataset, message):
+    local_dataset.add_index()
     local_dataset.commit(message)
 
 

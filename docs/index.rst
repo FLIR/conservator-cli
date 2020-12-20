@@ -30,6 +30,7 @@ Contents
    usage/cli_quickstart
    usage/api_quickstart
    usage/api_advanced
+   usage/cvc_guide
    api
 
 
