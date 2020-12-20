@@ -5,13 +5,11 @@ from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.managers import (
     SearchableTypeManager,
-    DatasetManager,
     CollectionManager,
     VideoManager,
     ImageManager,
     MediaTypeManager,
 )
-from FLIR.conservator.wrappers.type_proxy import MissingFieldException
 
 
 def fields_request(func):
@@ -89,35 +87,6 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @click.argument("search_text", default="")
         def count(search_text):
             click.echo(get_instance().count(search_text))
-
-    if issubclass(type_manager, DatasetManager):
-
-        @group.command(
-            help="Clone a Dataset to the current directory, or the specified path."
-        )
-        @click.argument("id")
-        @click.argument("path", default=".")
-        @click.option("--checkout", help="Commit hash to checkout after clone")
-        def clone(id, path, checkout):
-            dataset = get_instance().from_id(id)
-            try:
-                dataset.clone(path, commit=checkout)
-            except MissingFieldException:
-                click.secho(
-                    "Dataset is missing a required field. It may not have an associated repository.",
-                    fg="red",
-                )
-
-        @group.command(
-            help="Pull a Dataset in the current directory, or the specified path."
-        )
-        @click.argument("path", default=".")
-        @click.option("--analytics", "-a", is_flag=True, help="Include analytics")
-        def pull(path, analytics):
-            dataset = get_instance().from_local_path(path)
-            dataset.pull_files(
-                path, include_analytics=analytics, include_eight_bit=True
-            )
 
     if issubclass(type_manager, CollectionManager):
 

@@ -12,6 +12,7 @@ from FLIR.conservator.managers import (
     ImageManager,
 )
 from FLIR.conservator.util import to_clean_string
+from FLIR.conservator.cli.cvc import main as cvc
 import logging
 
 
@@ -64,6 +65,7 @@ main.add_command(get_manager_command(ProjectManager, schema.Project, "projects")
 main.add_command(get_manager_command(VideoManager, schema.Video, "videos"))
 main.add_command(get_manager_command(ImageManager, schema.Image, "images"))
 main.add_command(interactive)
+main.add_command(cvc, name="cvc")
 
 if __name__ == "__main__":
     main()

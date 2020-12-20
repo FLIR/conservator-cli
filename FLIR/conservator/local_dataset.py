@@ -34,11 +34,12 @@ class LocalDatasetOperations:
         self.staging_path = os.path.join(self.path, ".staging.json")
         self.data_path = os.path.join(self.path, "data")
         self.analytics_path = os.path.join(self.path, "analyticsData")
-        assert os.path.exists(self.index_path)
+        if not os.path.exists(self.index_path):
+            return
         if not os.path.exists(self.staging_path):
             with open(self.staging_path, "w+") as f:
                 json.dump([], f)
-        logger.debug(f"New dataset at {self.path}")
+        logger.debug(f"Opened local dataset at {self.path}")
 
     def pull(self):
         """
@@ -128,7 +129,7 @@ class LocalDatasetOperations:
             next_index += 1
 
         with open(self.index_path, "w") as f:
-            json.dump(index, f)
+            json.dump(index, f, indent=4, sort_keys=True, separators=(",", ": "))
         with open(self.staging_path, "w") as f:
             json.dump([], f)
 
@@ -171,12 +172,15 @@ class LocalDatasetOperations:
             if os.path.isdir(image_path):
                 logger.error(f"Path '{image_path}' is a directory.")
                 return
+            if LocalDatasetOperations.get_image_info(image_path) is None:
+                return
 
         # Then add absolute paths to staging file
         staged_images = self.get_staged_images()
         for image_path in image_paths:
             abspath = os.path.abspath(image_path)
             if abspath not in staged_images:
+                logger.debug(f"Adding '{abspath}' to staging file.")
                 staged_images.append(abspath)
         with open(self.staging_path, "w") as f:
             json.dump(staged_images, f)
@@ -223,7 +227,7 @@ class LocalDatasetOperations:
                 max_index = max(max_index, frame_index)
         return max_index
 
-    def pull_files(
+    def download(
         self, include_analytics=False, include_eight_bit=True, process_count=None
     ):
         """
@@ -277,8 +281,8 @@ class LocalDatasetOperations:
             the dataset is cloned into a subdirectory of the current path, using
             the Dataset's name.
         """
-        dataset.populate("name", "repository.master")
-        if dataset.has_field("repository.master"):
+        dataset.populate(["name", "repository.master"])
+        if not dataset.has_field("repository.master"):
             logging.error("Dataset has no repository. Unable to clone.")
             return
 

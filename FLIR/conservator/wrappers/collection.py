@@ -244,4 +244,4 @@ class Collection(QueryableType):
         datasets = self.get_datasets(fields=fields)
         for dataset in datasets:
             dataset.clone(path)
-            dataset.pull_files(os.path.join(path, dataset.name))
+            dataset.download(os.path.join(path, dataset.name))
