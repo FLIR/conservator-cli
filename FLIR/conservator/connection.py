@@ -2,6 +2,7 @@ import re
 import urllib.parse
 import logging
 
+import requests
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 
@@ -69,7 +70,9 @@ class ConservatorConnection:
         return f"{email}:{key}"
 
     def get_url(self):
-        """Returns the base URL for Conservator."""
+        """
+        Returns the base URL for Conservator.
+        """
         r = urllib.parse.urlparse(self.config.url)
         return f"{r.scheme}://{r.netloc}"
 
@@ -80,15 +83,41 @@ class ConservatorConnection:
         return self.get_url() + f"/projects/{collection.id}"
 
     def get_domain(self):
-        """Returns the domain name of the Conservator instance."""
+        """
+        Returns the domain name of the Conservator instance.
+        """
         return urllib.parse.urlparse(self.config.url).netloc
 
     def get_authenticated_url(self):
-        """Returns an authenticated URL that contains an encoded username and token.
+        """
+        Returns an authenticated URL that contains an encoded username and token.
 
-        This URL is used when downloading files and repositories."""
+        This URL is used when downloading files and repositories.
+        """
         r = urllib.parse.urlparse(self.config.url)
         return f"{r.scheme}://{self.get_url_encoded_user()}@{r.netloc}"
+
+    def get_dvc_url(self):
+        """
+        Returns the DVC URL used for downloading files.
+        """
+        return f"{self.get_authenticated_url()}/dvc"
+
+    def get_dvc_hash_url(self, md5):
+        """
+        Returns the DVC URL for downloading content with the given `md5` hash.
+        """
+        return f"{self.get_dvc_url()}/{md5[:2]}/{md5[2:]}"
+
+    def dvc_hash_exists(self, md5):
+        """
+        Returns `True` if DVC contains the given `md5` hash, and `False` otherwise.
+        """
+        hash_url = self.get_dvc_hash_url(md5)
+        # We only care about the status code, so we use .head
+        r = requests.head(hash_url)
+        # 302 means the file was found, and we are being redirected to the download.
+        return r.status_code == 302
 
     @staticmethod
     def to_graphql_url(url):

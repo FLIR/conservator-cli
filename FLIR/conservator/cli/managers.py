@@ -115,7 +115,9 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @click.option("--analytics", "-a", is_flag=True, help="Include analytics")
         def pull(path, analytics):
             dataset = get_instance().from_local_path(path)
-            dataset.pull(path, include_analytics=analytics, include_eight_bit=True)
+            dataset.pull_files(
+                path, include_analytics=analytics, include_eight_bit=True
+            )
 
     if issubclass(type_manager, CollectionManager):
 

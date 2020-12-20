@@ -54,5 +54,6 @@ setuptools.setup(
         "pytest",
         "requests",
         "black",
+        "Pillow",
     ],
 )

@@ -87,3 +87,12 @@ def download_files(files, process_count=None):
     args = [(*file, True) for i, file in enumerate(files)]
     results = pool.starmap(download_file, args)
     return results
+
+
+def base_convert(b, n):
+    output = []
+    while n:
+        r = int(n % b)
+        output.append(r)
+        n = int(n / b)
+    return output
