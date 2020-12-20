@@ -85,7 +85,7 @@ By default, CVC operates in the current working directory. However, you can add 
 
 A local dataset directory must contain an ``index.json`` file to be considered valid.
 
-Datasets are downloaded as `git` repositories. Many ``cvc`` commands simply wrap ``git``
+Datasets are downloaded as ``git`` repositories. Many ``cvc`` commands simply wrap ``git``
 commands. Unfortunately, not many features of ``git`` are supported by Conservator (such
 as branching). For that reason, please avoid using raw ``git`` commands, and prefer using
 ``cvc`` for everything. There are also plans to transition away from ``git``, so getting
@@ -93,65 +93,167 @@ used to using ``cvc`` now will make that transition easier later.
 
 Cloning
 ^^^^^^^
-Clone a dataset by id
-``cvc clone``
+
+Clone a Dataset from a known ID::
+
+    $ cvc clone DATASET_ID
+
+By default, this will clone the dataset into subdirectory of the current directory,
+with the name of the dataset. To clone somewhere else, use the ``--path`` option::
+
+    $ cvc clone DATASET_ID --path where/to/clone/
+
+This directory should be empty.
+
+If you want to checkout a specific commit after cloning, you can include
+the ``--checkout`` option::
+
+    $ cvc clone DATASET_ID --checkout COMMIT_HASH
+
+You can then use ``cvc checkout HEAD`` to return to the most recent commit.
+
 
 Downloading Frames
 ^^^^^^^^^^^^^^^^^^
-Download media files from index.json
-``cvc download``
+
+Download all frames from ``index.json``::
+
+    $ cvc download
+
+Frames will be downloaded to the ``data/`` directory within
+the dataset.
+
+You can also include analytic data::
+
+    $ cvc download -a
+
+This will be downloaded to ``analyticsData/``.
+
 
 Commit History
 ^^^^^^^^^^^^^^
-Show log of commits
-``cvc log``
+
+Show log of commits::
+
+    $ cvc log
+
+You can use ``cvc checkout`` to view files at a specific commit, or
+``cvc show`` to see more info about a specific commit.
+
 
 Checking out a Commit
 ^^^^^^^^^^^^^^^^^^^^^
-Checkout a commit hash
-``cvc checkout``
+
+Checkout a commit hash::
+
+    $ cvc checkout COMMIT_HASH
+
+You can also use relative commit references. For instance, to
+reset to the most recent commit (such as when you want to return after
+checking out some other commit)::
+
+    $ cvc checkout "HEAD"
+
+.. warning::
+   Checking out a commit is a destructive action. Any local changes will be
+   overwritten.
+
 
 Commit Info
 ^^^^^^^^^^^
-Shows information on a specific commit or object
-``cvc show``
+
+Shows information on the most recent commit::
+
+    $ cvc show
+
+You can also view a specific commit by passing its hash::
+
+    $ cvc show COMMIT_HASH
+
 
 Status
 ^^^^^^
-Print staged images and files
-``cvc status``
+
+Print staged images and changed files::
+
+    $ cvc status
+
+Use ``cvc publish`` to send these changes to Conservator.
 
 Current Changes
 ^^^^^^^^^^^^^^^
-Show changes in index.json since last commit
-``cvc diff``
+
+Show changes in ``index.json`` since last commit::
+
+    $ cvc diff
+
+This does not currently show changes in associated files.
 
 Staging New Images
 ^^^^^^^^^^^^^^^^^^
-Stage images for uploading and adding to index.json
-``cvc add``
+
+Stage images for uploading and adding to ``index.json``::
+
+    $ cvc add some/path/to/a.jpg
+
+All files must be valid JPEG images. You can specify as many paths
+as you want, including path wildcards. These images can be uploaded
+using the ``cvc upload`` or ``cvc publish`` commands.
+
 
 Uploading and Adding Staged Images
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Upload staged images and add them to index.json
-``cvc upload``
+
+Upload any staged images, and add them to ``index.json``::
+
+    $ cvc upload
+
+If it's detected that you've downloaded frames before (by the presence of a ``data/``
+directory), then the images will also be copied there. This way you
+don't need to re-download the frames.
+
 
 Making a Commit
 ^^^^^^^^^^^^^^^
-Commit changes to index.json with the given message
-``cvc commit``
+
+Commit changes to ``index.json`` with the given commit message::
+
+    $ cvc commit "Your commit message here"
+
+This only commits changes to ``index.json``. Changes to associated files
+are ignored.
+
 
 Push Local Commits
 ^^^^^^^^^^^^^^^^^^
-``cvc push``
+
+Push your local commits to Conservator::
+
+    $ cvc push
+
 
 Publish: Upload, Commit, Push
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Upload staged images (if any), then commit with message and push
-``cvc publish``
+
+A frequent usage pattern is to upload frames, commit changes to ``index.json``,
+and push. All three steps can be done with a single command::
+
+    $ cvc publish "Your commit message"
+
+If you don't have any images staged, the upload process will be skipped.
+So this is also a suitable replacement for commit, push.
+
+At this time, associated files will not be included in this commit.
+
 
 Pull Local Commits
 ^^^^^^^^^^^^^^^^^^
-Pull the latest commits
-``cvc pull``
 
+Pull the latest commits, assuming there are no local changes::
+
+    $ cvc pull
+
+This will update ``index.json`` and the ``associated_files`` directory.
+
+This won't download new frames that were added to ``index.json``. You
+must run ``cvc download`` again to get these new frames.
