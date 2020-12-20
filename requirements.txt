@@ -6,3 +6,4 @@ tqdm
 pytest
 requests
 black
+Pillow

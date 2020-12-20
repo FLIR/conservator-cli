@@ -80,37 +80,22 @@ take a long time.
 Downloading Datasets
 --------------------
 
-The process for downloading a Dataset mirrors CVC. First, identify the ID of
-the dataset you want to download. You can find this using the website, or using
-a search query like ``conservator datasets search "deer" -i id``.
+The process for downloading a Dataset mirrors CVC.  To see the available commands::
 
-Now, navigate to the directory where you want to download the dataset. Note that
-the dataset will be cloned in as a subdirectory, with the name of the dataset.
-So if you're in ``~/Desktop``, and want to download a Dataset called ``MyFirstDataset``,
-it will be cloned into ``~/Desktop/MyFirstDataset`` by default.
+    $ conservator cvc --help
 
-Then, run clone::
+A shortcut to this command also exists::
 
-    $ conservator datasets clone YOUR_DATASET_ID
+    $ cvc --help
 
-Cloning a dataset creates a local github repo. ``cd`` inside, and you'll find two things.
-``cvc.py`` is a python script that is useful for modifying a dataset. You'll also find
-``index.json``. This contains the video, image, and frame data that are a part of the
-dataset. It also includes annotations, a description, and more.
+You can clone a dataset into the current directory using its ID::
 
-It's also possible to clone a dataset from a specific commit using the ``--checkout`` option::
+    $ cvc clone DATASET_ID
 
-    $ conservator datasets clone YOUR_DATASET_ID --checkout A_COMMIT_HASH
+Once cloned, you can download media with ``cvc download`` from within the dataset
+directory.
 
-Nowhere in this initial repo are any of the actual media objects. To download those, you'll
-need to use the ``pull`` command::
-
-    $ conservator datasets pull
-
-By default, this will pull the 8-bit images into the ``data/`` directory. This parses the
-``index.json`` file to find and download all of the required files.
-
-Use ``--help`` with these commands to see more available options
+Please see the :doc:`cvc_guide` for more details.
 
 Downloading Collections
 -----------------------
