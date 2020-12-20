@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CVC Guide &#8212; Conservator CLI  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api.html" />
+    <link rel="prev" title="Advanced Python API Guide" href="api_advanced.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cvc-guide">
+<h1>CVC Guide<a class="headerlink" href="#cvc-guide" title="Permalink to this headline">¶</a></h1>
+<p>Conservator Version Control is a way of downloading and manipulating
+datasets from Conservator. A CLI used to be distributed as a separate
+<code class="docutils literal notranslate"><span class="pre">cvc.py</span></code> file within every dataset. It is now included in Conservator CLI.</p>
+<p>For a list of commands, open a terminal and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator cvc --help
+</pre></div>
+</div>
+<p>Don’t worry if that command looks too long. Conservator CLI adds a shortcut
+command for all things CVC:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc --help
+</pre></div>
+</div>
+<p>If you don’t have the <code class="docutils literal notranslate"><span class="pre">conservator</span></code> or <code class="docutils literal notranslate"><span class="pre">cvc</span></code> command, please install
+the Conservator CLI library by following the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> guide.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following operations are supported via CVC:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Add frames (JPEG files only)</p></li>
+<li><p>Delete frames</p></li>
+<li><p>Add annotations</p></li>
+<li><p>Add/edit custom dataset/frame metadata</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Adding associated files is technically a feature, but you’ll have to
+manually use <code class="docutils literal notranslate"><span class="pre">git</span></code> to add/commit files within the <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> directory.</p>
+<p>TODO: Add support for this through <code class="docutils literal notranslate"><span class="pre">cvc</span></code></p>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The basic workflow to clone and download a dataset:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc clone DATASET_ID   # clone&#39;s the dataset repo into a subdirectory
+$ cd &quot;DATASET NAME/&quot;     # the default directory is the name of the dataset
+$ cvc download           # download media
+</pre></div>
+</div>
+<p>Now, you can make modifications to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. Then, publish your changes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc publish &quot;Your commit message here&quot;
+</pre></div>
+</div>
+<p>If you need to pull remote changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc pull
+</pre></div>
+</div>
+<p>Note that this may reference new frames that will have to be downloaded (using <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code>).</p>
+<div class="section" id="adding-frames">
+<h3>Adding Frames<a class="headerlink" href="#adding-frames" title="Permalink to this headline">¶</a></h3>
+<p>You can stage new frames to be uploaded to a dataset using the <code class="docutils literal notranslate"><span class="pre">add</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc add path/to/some/file.jpg ../some/other/path.jpg etc.jpg
+$ cvc add ./someimages/*.jpg
+</pre></div>
+</div>
+<p>Then, upload and publish your new frames:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc publish &quot;Uploaded new frames or whatever&quot;
+</pre></div>
+</div>
+<p>This will upload the frames to conservator, and also add them to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. Then, it
+will commit and push the changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Uploading will also copy staged images alongside other downloaded dataset frames,
+if it is detected that media has been downloaded (by the presence of a <code class="docutils literal notranslate"><span class="pre">data/</span></code>
+directory).</p>
+</div>
+</div>
+</div>
+<div class="section" id="additional-reference">
+<h2>Additional Reference<a class="headerlink" href="#additional-reference" title="Permalink to this headline">¶</a></h2>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">--log</span></code> option before any command to set the log-level. For instance,
+to see debug prints while uploading some frames:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc --log DEBUG upload
+</pre></div>
+</div>
+<p>By default, CVC operates in the current working directory. However, you can add <code class="docutils literal notranslate"><span class="pre">-p</span></code> or
+<code class="docutils literal notranslate"><span class="pre">--path</span></code> to work in a different directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc --path &quot;/home/datasets/some other dataset&quot; pull
+</pre></div>
+</div>
+<p>A local dataset directory must contain an <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file to be considered valid.</p>
+<p>Datasets are downloaded as <code class="docutils literal notranslate"><span class="pre">git</span></code> repositories. Many <code class="docutils literal notranslate"><span class="pre">cvc</span></code> commands simply wrap <code class="docutils literal notranslate"><span class="pre">git</span></code>
+commands. Unfortunately, not many features of <code class="docutils literal notranslate"><span class="pre">git</span></code> are supported by Conservator (such
+as branching). For that reason, please avoid using raw <code class="docutils literal notranslate"><span class="pre">git</span></code> commands, and prefer using
+<code class="docutils literal notranslate"><span class="pre">cvc</span></code> for everything. There are also plans to transition away from <code class="docutils literal notranslate"><span class="pre">git</span></code>, so getting
+used to using <code class="docutils literal notranslate"><span class="pre">cvc</span></code> now will make that transition easier later.</p>
+<div class="section" id="cloning">
+<h3>Cloning<a class="headerlink" href="#cloning" title="Permalink to this headline">¶</a></h3>
+<p>Clone a Dataset from a known ID:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc clone DATASET_ID
+</pre></div>
+</div>
+<p>By default, this will clone the dataset into subdirectory of the current directory,
+with the name of the dataset. To clone somewhere else, use the <code class="docutils literal notranslate"><span class="pre">--path</span></code> option:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc clone DATASET_ID --path where/to/clone/
+</pre></div>
+</div>
+<p>This directory should be empty.</p>
+<p>If you want to checkout a specific commit after cloning, you can include
+the <code class="docutils literal notranslate"><span class="pre">--checkout</span></code> option:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc clone DATASET_ID --checkout COMMIT_HASH
+</pre></div>
+</div>
+<p>You can then use <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">checkout</span> <span class="pre">HEAD</span></code> to return to the most recent commit.</p>
+</div>
+<div class="section" id="downloading-frames">
+<h3>Downloading Frames<a class="headerlink" href="#downloading-frames" title="Permalink to this headline">¶</a></h3>
+<p>Download all frames from <code class="docutils literal notranslate"><span class="pre">index.json</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc download
+</pre></div>
+</div>
+<p>Frames will be downloaded to the <code class="docutils literal notranslate"><span class="pre">data/</span></code> directory within
+the dataset.</p>
+<p>You can also include analytic data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc download -a
+</pre></div>
+</div>
+<p>This will be downloaded to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p>
+</div>
+<div class="section" id="commit-history">
+<h3>Commit History<a class="headerlink" href="#commit-history" title="Permalink to this headline">¶</a></h3>
+<p>Show log of commits:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc log
+</pre></div>
+</div>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">checkout</span></code> to view files at a specific commit, or
+<code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">show</span></code> to see more info about a specific commit.</p>
+</div>
+<div class="section" id="checking-out-a-commit">
+<h3>Checking out a Commit<a class="headerlink" href="#checking-out-a-commit" title="Permalink to this headline">¶</a></h3>
+<p>Checkout a commit hash:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc checkout COMMIT_HASH
+</pre></div>
+</div>
+<p>You can also use relative commit references. For instance, to
+reset to the most recent commit (such as when you want to return after
+checking out some other commit):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc checkout &quot;HEAD&quot;
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Checking out a commit is a destructive action. Any local changes will be
+overwritten.</p>
+</div>
+</div>
+<div class="section" id="commit-info">
+<h3>Commit Info<a class="headerlink" href="#commit-info" title="Permalink to this headline">¶</a></h3>
+<p>Shows information on the most recent commit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc show
+</pre></div>
+</div>
+<p>You can also view a specific commit by passing its hash:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc show COMMIT_HASH
+</pre></div>
+</div>
+</div>
+<div class="section" id="status">
+<h3>Status<a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h3>
+<p>Print staged images and changed files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc status
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">publish</span></code> to send these changes to Conservator.</p>
+</div>
+<div class="section" id="current-changes">
+<h3>Current Changes<a class="headerlink" href="#current-changes" title="Permalink to this headline">¶</a></h3>
+<p>Show changes in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> since last commit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc diff
+</pre></div>
+</div>
+<p>This does not currently show changes in associated files.</p>
+</div>
+<div class="section" id="staging-new-images">
+<h3>Staging New Images<a class="headerlink" href="#staging-new-images" title="Permalink to this headline">¶</a></h3>
+<p>Stage images for uploading and adding to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc add some/path/to/a.jpg
+</pre></div>
+</div>
+<p>All files must be valid JPEG images. You can specify as many paths
+as you want, including path wildcards. These images can be uploaded
+using the <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">upload</span></code> or <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">publish</span></code> commands.</p>
+</div>
+<div class="section" id="uploading-and-adding-staged-images">
+<h3>Uploading and Adding Staged Images<a class="headerlink" href="#uploading-and-adding-staged-images" title="Permalink to this headline">¶</a></h3>
+<p>Upload any staged images, and add them to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc upload
+</pre></div>
+</div>
+<p>If it’s detected that you’ve downloaded frames before (by the presence of a <code class="docutils literal notranslate"><span class="pre">data/</span></code>
+directory), then the images will also be copied there. This way you
+don’t need to re-download the frames.</p>
+</div>
+<div class="section" id="making-a-commit">
+<h3>Making a Commit<a class="headerlink" href="#making-a-commit" title="Permalink to this headline">¶</a></h3>
+<p>Commit changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> with the given commit message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc commit &quot;Your commit message here&quot;
+</pre></div>
+</div>
+<p>This only commits changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. Changes to associated files
+are ignored.</p>
+</div>
+<div class="section" id="push-local-commits">
+<h3>Push Local Commits<a class="headerlink" href="#push-local-commits" title="Permalink to this headline">¶</a></h3>
+<p>Push your local commits to Conservator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc push
+</pre></div>
+</div>
+</div>
+<div class="section" id="publish-upload-commit-push">
+<h3>Publish: Upload, Commit, Push<a class="headerlink" href="#publish-upload-commit-push" title="Permalink to this headline">¶</a></h3>
+<p>A frequent usage pattern is to upload frames, commit changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>,
+and push. All three steps can be done with a single command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc publish &quot;Your commit message&quot;
+</pre></div>
+</div>
+<p>If you don’t have any images staged, the upload process will be skipped.
+So this is also a suitable replacement for commit, push.</p>
+<p>At this time, associated files will not be included in this commit.</p>
+</div>
+<div class="section" id="pull-local-commits">
+<h3>Pull Local Commits<a class="headerlink" href="#pull-local-commits" title="Permalink to this headline">¶</a></h3>
+<p>Pull the latest commits, assuming there are no local changes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc pull
+</pre></div>
+</div>
+<p>This will update <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and the <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> directory.</p>
+<p>This won’t download new frames that were added to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. You
+must run <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code> again to get these new frames.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.webp" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">Conservator CLI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_quickstart.html">CLI Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_advanced.html">Advanced Python API Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CVC Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-reference">Additional Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="api_advanced.html" title="previous chapter">Advanced Python API Guide</a></li>
+      <li>Next: <a href="../api.html" title="next chapter">API Reference</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, FLIR Systems.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/usage/cvc_guide.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

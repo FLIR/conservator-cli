@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Advanced Python API Guide" href="usage/api_advanced.html" />
+    <link rel="prev" title="CVC Guide" href="usage/cvc_guide.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -199,6 +199,15 @@ object:</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.generate_id">
+<em class="property">static </em><code class="sig-name descname">generate_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.generate_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a new ID.</p>
+<p>The ID consists of <code class="docutils literal notranslate"><span class="pre">ID_LENGTH</span></code> characters from the <code class="docutils literal notranslate"><span class="pre">ID_CHARSET</span></code>.
+The beginning of the ID is based on the current time, and the remaining
+characters are random.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.conservator.Conservator.get_user">
 <code class="sig-name descname">get_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.get_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the User that the provided API token authorizes</p>
@@ -220,6 +229,12 @@ authentication info.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.dvc_hash_exists">
+<code class="sig-name descname">dvc_hash_exists</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">md5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.dvc_hash_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>True</cite> if DVC contains the given <cite>md5</cite> hash, and <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.connection.ConservatorConnection.get_authenticated_url">
 <code class="sig-name descname">get_authenticated_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_authenticated_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an authenticated URL that contains an encoded username and token.</p>
@@ -236,6 +251,18 @@ authentication info.</p>
 <dt id="FLIR.conservator.connection.ConservatorConnection.get_domain">
 <code class="sig-name descname">get_domain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the domain name of the Conservator instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.get_dvc_hash_url">
+<code class="sig-name descname">get_dvc_hash_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">md5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_dvc_hash_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the DVC URL for downloading content with the given <cite>md5</cite> hash.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.connection.ConservatorConnection.get_dvc_url">
+<code class="sig-name descname">get_dvc_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection.get_dvc_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the DVC URL used for downloading files.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -663,23 +690,6 @@ reach that path if it doesn’t exist.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="FLIR.conservator.wrappers.dataset.Dataset.clone">
-<code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">commit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.clone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clone this Dataset into a subdirectory of <cite>path</cite> based on
-the Dataset’s name.</p>
-<p>For instance, if you pass <code class="docutils literal notranslate"><span class="pre">path=&quot;~/Desktop&quot;</span></code>, and want to download a Dataset
-called <code class="docutils literal notranslate"><span class="pre">MyFirstDataset</span></code>, it will be cloned into <code class="docutils literal notranslate"><span class="pre">~/Desktop/MyFirstDataset</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> – If specified, the path to the parent directory to clone into.</p></li>
-<li><p><strong>commit</strong> – If specified, a specific commit hash to checkout after cloning.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.create">
 <em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">collections</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a dataset with the given <cite>name</cite>, including the given <cite>collections</cite>, if specified.
@@ -720,12 +730,6 @@ at the provided <cite>path</cite></p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="FLIR.conservator.wrappers.dataset.Dataset.get_dvc_url">
-<code class="sig-name descname">get_dvc_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_dvc_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the DVC URL used for downloading files.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.get_frames">
 <code class="sig-name descname">get_frames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_frames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a paginated query for dataset frames within this dataset, filtering
@@ -736,21 +740,6 @@ with <cite>search_text</cite>.</p>
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.get_git_url">
 <code class="sig-name descname">get_git_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_git_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the Git URL used for cloning this Dataset.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.wrappers.dataset.Dataset.pull">
-<code class="sig-name descname">pull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.pull" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> at the provided <cite>path</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> – The local path to save files. Should contain an <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file.</p></li>
-<li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p></li>
-<li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1288,6 +1277,7 @@ returns a non-iteratable <code class="docutils literal notranslate"><span class=
 <li class="toctree-l1"><a class="reference internal" href="usage/cli_quickstart.html">CLI Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_advanced.html">Advanced Python API Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
@@ -1305,7 +1295,7 @@ returns a non-iteratable <code class="docutils literal notranslate"><span class=
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="usage/api_advanced.html" title="previous chapter">Advanced Python API Guide</a></li>
+      <li>Previous: <a href="usage/cvc_guide.html" title="previous chapter">CVC Guide</a></li>
   </ul></li>
 </ul>
 </div>

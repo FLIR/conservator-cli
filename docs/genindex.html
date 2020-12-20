@@ -80,8 +80,6 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.clone">clone() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
-</li>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection">Collection (class in FLIR.conservator.wrappers.collection)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.managers.CollectionManager">CollectionManager (class in FLIR.conservator.managers)</a>
@@ -104,10 +102,10 @@
 </li>
       <li><a href="api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.count">count() (FLIR.conservator.managers.searchable.SearchableTypeManager method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.count_all">count_all() (FLIR.conservator.managers.searchable.SearchableTypeManager method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.managers.DatasetManager.create">create() (FLIR.conservator.managers.DatasetManager method)</a>
 
       <ul>
@@ -166,8 +164,6 @@
       </ul></li>
       <li><a href="api.html#FLIR.conservator.config.Config.delete_saved_default_config">delete_saved_default_config() (FLIR.conservator.config.Config static method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.download">download() (FLIR.conservator.wrappers.collection.Collection method)</a>
 
       <ul>
@@ -178,6 +174,8 @@
         <li><a href="api.html#FLIR.conservator.wrappers.video.Video.download">(FLIR.conservator.wrappers.video.Video method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.download_associated_files">download_associated_files() (FLIR.conservator.wrappers.collection.Collection method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.download_datasets">download_datasets() (FLIR.conservator.wrappers.collection.Collection method)</a>
@@ -191,6 +189,8 @@
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.download_video_metadata">download_video_metadata() (FLIR.conservator.wrappers.collection.Collection method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.download_videos">download_videos() (FLIR.conservator.wrappers.collection.Collection method)</a>
+</li>
+      <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.dvc_hash_exists">dvc_hash_exists() (FLIR.conservator.connection.ConservatorConnection method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -389,6 +389,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.conservator.Conservator.generate_id">generate_id() (FLIR.conservator.conservator.Conservator static method)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.generate_metadata">generate_metadata() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.generate_signed_locker_upload_url">generate_signed_locker_upload_url() (FLIR.conservator.wrappers.collection.Collection method)</a>
@@ -425,7 +427,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_domain">get_domain() (FLIR.conservator.connection.ConservatorConnection method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.get_dvc_url">get_dvc_url() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
+      <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_dvc_hash_url">get_dvc_hash_url() (FLIR.conservator.connection.ConservatorConnection method)</a>
+</li>
+      <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_dvc_url">get_dvc_url() (FLIR.conservator.connection.ConservatorConnection method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.get_frames">get_frames() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
 
@@ -552,13 +556,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.paginated_query.PaginatedQuery">PaginatedQuery (class in FLIR.conservator.paginated_query)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.wrappers.project.Project">Project (class in FLIR.conservator.wrappers.project)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#FLIR.conservator.managers.ProjectManager">ProjectManager (class in FLIR.conservator.managers)</a>
+      <li><a href="api.html#FLIR.conservator.wrappers.project.Project">Project (class in FLIR.conservator.wrappers.project)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.pull">pull() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
+      <li><a href="api.html#FLIR.conservator.managers.ProjectManager">ProjectManager (class in FLIR.conservator.managers)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -701,6 +703,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage/cli_quickstart.html">CLI Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_advanced.html">Advanced Python API Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
 

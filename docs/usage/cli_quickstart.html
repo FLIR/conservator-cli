@@ -110,33 +110,21 @@ take a long time.</p>
 </div>
 <div class="section" id="downloading-datasets">
 <h2>Downloading Datasets<a class="headerlink" href="#downloading-datasets" title="Permalink to this headline">¶</a></h2>
-<p>The process for downloading a Dataset mirrors CVC. First, identify the ID of
-the dataset you want to download. You can find this using the website, or using
-a search query like <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">datasets</span> <span class="pre">search</span> <span class="pre">&quot;deer&quot;</span> <span class="pre">-i</span> <span class="pre">id</span></code>.</p>
-<p>Now, navigate to the directory where you want to download the dataset. Note that
-the dataset will be cloned in as a subdirectory, with the name of the dataset.
-So if you’re in <code class="docutils literal notranslate"><span class="pre">~/Desktop</span></code>, and want to download a Dataset called <code class="docutils literal notranslate"><span class="pre">MyFirstDataset</span></code>,
-it will be cloned into <code class="docutils literal notranslate"><span class="pre">~/Desktop/MyFirstDataset</span></code> by default.</p>
-<p>Then, run clone:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets clone YOUR_DATASET_ID
+<p>The process for downloading a Dataset mirrors CVC.  To see the available commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator cvc --help
 </pre></div>
 </div>
-<p>Cloning a dataset creates a local github repo. <code class="docutils literal notranslate"><span class="pre">cd</span></code> inside, and you’ll find two things.
-<code class="docutils literal notranslate"><span class="pre">cvc.py</span></code> is a python script that is useful for modifying a dataset. You’ll also find
-<code class="docutils literal notranslate"><span class="pre">index.json</span></code>. This contains the video, image, and frame data that are a part of the
-dataset. It also includes annotations, a description, and more.</p>
-<p>It’s also possible to clone a dataset from a specific commit using the <code class="docutils literal notranslate"><span class="pre">--checkout</span></code> option:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets clone YOUR_DATASET_ID --checkout A_COMMIT_HASH
+<p>A shortcut to this command also exists:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc --help
 </pre></div>
 </div>
-<p>Nowhere in this initial repo are any of the actual media objects. To download those, you’ll
-need to use the <code class="docutils literal notranslate"><span class="pre">pull</span></code> command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets pull
+<p>You can clone a dataset into the current directory using its ID:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc clone DATASET_ID
 </pre></div>
 </div>
-<p>By default, this will pull the 8-bit images into the <code class="docutils literal notranslate"><span class="pre">data/</span></code> directory. This parses the
-<code class="docutils literal notranslate"><span class="pre">index.json</span></code> file to find and download all of the required files.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">--help</span></code> with these commands to see more available options</p>
+<p>Once cloned, you can download media with <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code> from within the dataset
+directory.</p>
+<p>Please see the <a class="reference internal" href="cvc_guide.html"><span class="doc">CVC Guide</span></a> for more details.</p>
 </div>
 <div class="section" id="downloading-collections">
 <h2>Downloading Collections<a class="headerlink" href="#downloading-collections" title="Permalink to this headline">¶</a></h2>
@@ -232,6 +220,7 @@ about any specific command within the shell.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_advanced.html">Advanced Python API Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cvc_guide.html">CVC Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
