@@ -14,7 +14,7 @@ from FLIR.conservator.util import download_files
 logger = logging.getLogger(__name__)
 
 
-class LocalDatasetOperations:
+class LocalDataset:
     """
     Provides utilities for managing local datasets.
 
@@ -84,10 +84,10 @@ class LocalDatasetOperations:
             return
 
         index = self.get_index()
-        next_index = LocalDatasetOperations.get_max_frame_index(index) + 1
+        next_index = LocalDataset.get_max_frame_index(index) + 1
         for image in images:
             path = image["abspath"]
-            image_info = LocalDatasetOperations.get_image_info(path)
+            image_info = LocalDataset.get_image_info(path)
             if image_info is None:
                 logger.error(f"Skipping '{path}'")
                 continue
@@ -172,7 +172,7 @@ class LocalDatasetOperations:
             if os.path.isdir(image_path):
                 logger.error(f"Path '{image_path}' is a directory.")
                 return
-            if LocalDatasetOperations.get_image_info(image_path) is None:
+            if LocalDataset.get_image_info(image_path) is None:
                 return
 
         # Then add absolute paths to staging file
@@ -295,4 +295,4 @@ class LocalDatasetOperations:
             logging.error(f"Error {r} when cloning.")
             return
 
-        return LocalDatasetOperations(dataset._conservator, clone_path)
+        return LocalDataset(dataset._conservator, clone_path)

@@ -8,7 +8,7 @@ import logging
 from click import get_current_context
 
 from FLIR.conservator.conservator import Conservator
-from FLIR.conservator.local_dataset import LocalDatasetOperations
+from FLIR.conservator.local_dataset import LocalDataset
 
 
 class InvalidLocalDataset(Exception):
@@ -49,7 +49,7 @@ def main(ctx, log, path):
     }
     logging.basicConfig(level=levels[log])
     conservator = Conservator.default()
-    ctx.obj = LocalDatasetOperations(conservator, path)
+    ctx.obj = LocalDataset(conservator, path)
 
 
 @main.command(help="Clone a dataset by id")
@@ -67,7 +67,7 @@ def main(ctx, log, path):
 def clone(id, path, checkout):
     conservator = Conservator.default()
     dataset = conservator.datasets.from_id(id)
-    cloned = LocalDatasetOperations.clone(dataset, path)
+    cloned = LocalDataset.clone(dataset, path)
     if checkout is not None:
         cloned.checkout(checkout)
 
