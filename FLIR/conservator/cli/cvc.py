@@ -162,6 +162,7 @@ def upload(local_dataset):
 @pass_valid_local_dataset
 def publish(local_dataset, message):
     local_dataset.push_staged_images()
+    local_dataset.add_index()
     local_dataset.commit(message)
     local_dataset.push_commits()
 

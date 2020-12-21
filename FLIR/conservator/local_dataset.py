@@ -45,7 +45,10 @@ class LocalDataset:
         """
         Pulls the latest index.json.
         """
-        return subprocess.call(["git", "pull"], cwd=self.path)
+        subprocess.call(["git", "fetch"], cwd=self.path)
+        return subprocess.call(
+            ["git", "checkout", "origin/master", "-B", "master"], cwd=self.path
+        )
 
     def checkout(self, commit_hash):
         """
@@ -69,7 +72,14 @@ class LocalDataset:
         """
         Push the git repo.
         """
-        return subprocess.call(["git", "push"], cwd=self.path)
+        subprocess.call(
+            ["git", "push"],
+            cwd=self.path,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        # changes wont appear to be pushed, but they were. so we pull
+        self.pull()
 
     def push_staged_images(self):
         """
@@ -78,15 +88,14 @@ class LocalDataset:
         This reads the staged image paths, uploads them, adds metadata
         to index.json, and deletes the staged image paths.
         """
-        images = self.get_staged_images()
-        if len(images) == 0:
+        image_paths = self.get_staged_images()
+        if len(image_paths) == 0:
             logger.info("No files to push.")
             return
 
         index = self.get_index()
         next_index = LocalDataset.get_max_frame_index(index) + 1
-        for image in images:
-            path = image["abspath"]
+        for path in image_paths:
             image_info = LocalDataset.get_image_info(path)
             if image_info is None:
                 logger.error(f"Skipping '{path}'")
@@ -101,6 +110,8 @@ class LocalDataset:
             # as the video ID.
             video_id = index["datasetId"]
             frame_id = self.conservator.generate_id()
+
+            del image_info["filename"]
 
             new_frame = {
                 **image_info,
@@ -136,10 +147,12 @@ class LocalDataset:
     def upload_image(self, path, md5):
         url = self.conservator.get_dvc_hash_url(md5)
         filename = os.path.split(path)[1]
+        print(filename)
         headers = {
             "Content-type": "image/jpeg",
             "x-amz-meta-originalfilename": filename,
         }
+        print(headers)
         logger.info(f"Uploading '{path}'.")
         with open(path, "rb") as data:
             r = requests.put(url, data, headers=headers)
@@ -294,5 +307,9 @@ class LocalDataset:
         if r != 0:
             logging.error(f"Error {r} when cloning.")
             return
+
+        # TODO: remove email from config, use User query with cache
+        email = dataset._conservator.config.email
+        subprocess.call(["git", "config", "user.email", email.lower()], cwd=clone_path)
 
         return LocalDataset(dataset._conservator, clone_path)
