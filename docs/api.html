@@ -1272,6 +1272,132 @@ returns a non-iteratable <code class="docutils literal notranslate"><span class=
 </dd></dl>
 
 </div>
+<div class="section" id="module-FLIR.conservator.local_dataset">
+<span id="localdataset"></span><h2>LocalDataset<a class="headerlink" href="#module-FLIR.conservator.local_dataset" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="FLIR.conservator.local_dataset.LocalDataset">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.local_dataset.</code><code class="sig-name descname">LocalDataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides utilities for managing local datasets.</p>
+<p>This replicates the functionality of CVC, and should now be the
+preferred method of working with local datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conservator</strong> – A <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
+instance to use for uploading new images.</p></li>
+<li><p><strong>path</strong> – The path to the local dataset. This should point to the root
+directory (containing <code class="docutils literal notranslate"><span class="pre">index.json</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.add_index">
+<code class="sig-name descname">add_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.add_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stages changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> for the next commit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.checkout">
+<code class="sig-name descname">checkout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit_hash</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.checkout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks out a specific commit. This will delete any local changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.clone">
+<em class="property">static </em><code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">clone_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone a <cite>dataset</cite> to a local path, returning a <code class="xref py py-class docutils literal notranslate"><span class="pre">LocalDatasetOperations</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> – The dataset to clone. It must have a repository registered
+in Conservator.</p></li>
+<li><p><strong>clone_path</strong> – The path where the git repo should be created. If <cite>None</cite>,
+the dataset is cloned into a subdirectory of the current path, using
+the Dataset’s name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.commit">
+<code class="sig-name descname">commit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commit added changes to the local git repo, with the given commit <cite>message</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.download">
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> of the local dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p></li>
+<li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
+<li><p><strong>process_count</strong> – Number of concurrent download processes. Defaults to the number of
+processors on the machine.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.get_image_info">
+<em class="property">static </em><code class="sig-name descname">get_image_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_image_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns image info to be added to a Dataset’s <code class="docutils literal notranslate"><span class="pre">index.json</span></code>, or <cite>None</cite>
+if there was an error.</p>
+<p>This opens the <cite>path</cite> using PIL to verify it is a JPEG image,
+and get the dimensions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.get_index">
+<code class="sig-name descname">get_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the object in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index">
+<em class="property">static </em><code class="sig-name descname">get_max_frame_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the maximum frame index in a dataset’s <cite>index</cite>.</p>
+<p>This only checks “loose” frames, that aren’t a part of a specific video.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.get_staged_images">
+<code class="sig-name descname">get_staged_images</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_staged_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the staged image paths from the staging file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.pull">
+<code class="sig-name descname">pull</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pulls the latest <code class="docutils literal notranslate"><span class="pre">index.json</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.push_commits">
+<code class="sig-name descname">push_commits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_commits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push the git repo.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.push_staged_images">
+<code class="sig-name descname">push_staged_images</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push the staged images.</p>
+<p>This reads the staged image paths, uploads them, adds metadata
+to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>, and deletes the staged image paths.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.local_dataset.LocalDataset.stage_local_images">
+<code class="sig-name descname">stage_local_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image_paths</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.stage_local_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds image paths to the staging file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -1309,6 +1435,7 @@ returns a non-iteratable <code class="docutils literal notranslate"><span class=
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.local_dataset">LocalDataset</a></li>
 </ul>
 </li>
 </ul>
