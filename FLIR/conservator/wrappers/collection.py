@@ -9,6 +9,7 @@ from FLIR.conservator.generated.schema import (
     CreateCollectionInput,
     DeleteCollectionInput,
 )
+from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
 from FLIR.conservator.wrappers.type_proxy import requires_fields
@@ -163,7 +164,7 @@ class Collection(QueryableType):
         self,
         path,
         include_datasets=False,
-        include_video_metadata=False,
+        include_metadata=False,
         include_associated_files=False,
         include_media=False,
         recursive=False,
@@ -173,8 +174,8 @@ class Collection(QueryableType):
         path = os.path.join(path, self.name)
         os.makedirs(path, exist_ok=True)
 
-        if include_video_metadata:
-            self.download_video_metadata(path)
+        if include_metadata:
+            self.download_metadata(path)
         if include_associated_files:
             self.download_associated_files(path)
         if include_media:
@@ -187,21 +188,25 @@ class Collection(QueryableType):
                 child.download(
                     path,
                     include_datasets,
-                    include_video_metadata,
+                    include_metadata,
                     include_associated_files,
                     include_media,
                     recursive,
                 )
 
-    def download_video_metadata(self, path):
-        """Downloads video metadata to ``video_metadata/``."""
-        path = os.path.join(path, "video_metadata")
+    def download_metadata(self, path):
+        """Downloads image and video metadata to ``media_metadata/``."""
+        path = os.path.join(path, "media_metadata")
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
         fields.include_field("metadata", "filename")
+
         videos = self.get_videos(fields=fields)
         for video in videos:
             video.download_metadata(path)
+        images = self.get_images(fields=fields)
+        for image in images:
+            image.download_metadata(path)
 
     @requires_fields("file_locker_files")
     def download_associated_files(self, path):
@@ -243,5 +248,6 @@ class Collection(QueryableType):
         fields.include_field("name", "repository.master")
         datasets = self.get_datasets(fields=fields)
         for dataset in datasets:
-            dataset.clone(path)
-            dataset.download(os.path.join(path, dataset.name))
+            path = os.path.join(path, dataset.name)
+            lds = LocalDataset.clone(dataset, clone_path=path)
+            lds.download()

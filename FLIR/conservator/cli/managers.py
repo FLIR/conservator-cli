@@ -97,7 +97,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @click.argument("path", default=".")
         @click.option("-d", "--datasets", is_flag=True, help="Pull datasets")
         @click.option(
-            "-v", "--video-metadata", is_flag=True, help="Include video metadata"
+            "-m", "--metadata", is_flag=True, help="Include image and video metadata"
         )
         @click.option(
             "-f", "--associated-files", is_flag=True, help="Include associated files"
@@ -111,12 +111,10 @@ def get_manager_command(type_manager, sgqlc_type, name):
             is_flag=True,
             help="Include child collections recursively",
         )
-        def download(
-            id, path, datasets, video_metadata, associated_files, media, recursive
-        ):
+        def download(id, path, datasets, metadata, associated_files, media, recursive):
             collection = get_instance().from_id(id)
             collection.download(
-                path, datasets, video_metadata, associated_files, media, recursive
+                path, datasets, metadata, associated_files, media, recursive
             )
 
     if issubclass(type_manager, MediaTypeManager):
