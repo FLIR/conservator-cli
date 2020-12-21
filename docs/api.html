@@ -597,7 +597,7 @@ this collection, returning it with the specified <cite>fields</cite>.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.download">
-<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">include_datasets</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_video_metadata</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_associated_files</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_media</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">recursive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">include_datasets</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_metadata</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_associated_files</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_media</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">recursive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads this collection to the <cite>path</cite> specified,
 with the specified assets included.</p>
 </dd></dl>
@@ -628,9 +628,9 @@ with the specified assets included.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="FLIR.conservator.wrappers.collection.Collection.download_video_metadata">
-<code class="sig-name descname">download_video_metadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_video_metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads video metadata to <code class="docutils literal notranslate"><span class="pre">video_metadata/</span></code>.</p>
+<dt id="FLIR.conservator.wrappers.collection.Collection.download_metadata">
+<code class="sig-name descname">download_metadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads image and video metadata to <code class="docutils literal notranslate"><span class="pre">media_metadata/</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -775,6 +775,13 @@ with <cite>search_text</cite>.</p>
 <dt id="FLIR.conservator.wrappers.image.Image.download">
 <code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download image to <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.image.Image.download_metadata">
+<code class="sig-name descname">download_metadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.download_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the <cite>metadata</cite> field to <cite>path/filename.json</cite>,
+where <cite>filename</cite> is the video’s filename.</p>
 </dd></dl>
 
 <dl class="py method">
