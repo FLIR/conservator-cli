@@ -52,15 +52,18 @@ class LocalDataset:
 
     def checkout(self, commit_hash):
         """
-        Checks out a specific commit. This will delete any local changes.
+        Checks out a specific commit. This will delete any local changes in ``index.json``
+        or ``associated_files``.
         """
         return subprocess.call(["git", "reset", "--hard", commit_hash], cwd=self.path)
 
-    def add_index(self):
+    def add_local_changes(self):
         """
-        Stages changes to ``index.json`` for the next commit.
+        Stages changes to ``index.json`` and ``associated_files`` for the next commit.
         """
-        return subprocess.call(["git", "add", "index.json"], cwd=self.path)
+        return subprocess.call(
+            ["git", "add", "index.json", "associated_files"], cwd=self.path
+        )
 
     def commit(self, message):
         """

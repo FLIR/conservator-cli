@@ -86,11 +86,14 @@ def add(local_dataset, paths):
     local_dataset.stage_local_images(paths)
 
 
-@main.command("commit", help="Commit changes to index.json with the given message")
+@main.command(
+    "commit",
+    help="Commit changes to index.json and associated_files with the given message",
+)
 @click.argument("message")
 @pass_valid_local_dataset
 def commit_(local_dataset, message):
-    local_dataset.add_index()
+    local_dataset.add_local_changes()
     local_dataset.commit(message)
 
 
@@ -106,10 +109,12 @@ def pull(local_dataset):
     local_dataset.pull()
 
 
-@main.command(help="Show changes in index.json since last commit")
+@main.command(help="Show changes in index.json and associated_files since last commit")
 @pass_valid_local_dataset
 def diff(local_dataset):
-    subprocess.call(["git", "diff", "index.json"], cwd=local_dataset.path)
+    subprocess.call(
+        ["git", "diff", "index.json", "associated_files"], cwd=local_dataset.path
+    )
 
 
 @main.command("log", help="Show log of commits")
@@ -131,7 +136,9 @@ def show(local_dataset, hash):
 @main.command(help="Print staged images and files")
 @pass_valid_local_dataset
 def status(local_dataset):
-    subprocess.call(["git", "status", "index.json"], cwd=local_dataset.path)
+    subprocess.call(
+        ["git", "status", "index.json", "associated_files"], cwd=local_dataset.path
+    )
     images = local_dataset.get_staged_images()
     if len(images) == 0:
         print("No images staged.")
@@ -157,12 +164,15 @@ def upload(local_dataset):
     local_dataset.push_staged_images()
 
 
-@main.command(help="Upload staged images (if any), then commit with message and push")
+@main.command(
+    help="Upload staged images (if any), then commit all changes to index.json "
+    "and associated_files with message and push"
+)
 @click.argument("message")
 @pass_valid_local_dataset
 def publish(local_dataset, message):
     local_dataset.push_staged_images()
-    local_dataset.add_index()
+    local_dataset.add_local_changes()
     local_dataset.commit(message)
     local_dataset.push_commits()
 
