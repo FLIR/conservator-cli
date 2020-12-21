@@ -195,8 +195,8 @@ class Collection(QueryableType):
                 )
 
     def download_metadata(self, path):
-        """Downloads image and video metadata to ``metadata/``."""
-        path = os.path.join(path, "metadata")
+        """Downloads image and video metadata to ``media_metadata/``."""
+        path = os.path.join(path, "media_metadata")
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
         fields.include_field("metadata", "filename")
