@@ -1,3 +1,5 @@
+import operator
+
 from FLIR.conservator.fields_request import FieldsRequest
 
 
@@ -53,6 +55,32 @@ class PaginatedQuery:
         self.kwargs = kwargs
         self.started = False
         self.done = False
+        self.filters = []
+
+    def filtered_by(self, func=operator.eq, **kwargs):
+        """
+        Filter results by field value.
+
+        For example, to verify that
+
+        :param func: A function to use to compare an instance's `field`
+            with the provided `value`. If it returns `False` for any
+            field, the instance will be skipped when returning results.
+        :param kwargs: A list of field name-value pairs to pass through
+            the filter function for each instance.
+        """
+
+        def filter_(instance):
+            for field_name, filter_value in kwargs.items():
+                if not hasattr(instance, field_name):
+                    return False
+                field_value = getattr(instance, field_name)
+                if not func(field_value, filter_value):
+                    return False
+            return True
+
+        self.filters.append(filter_)
+        return self
 
     def with_fields(self, fields):
         """Sets the query's :class:`~FLIR.conservator.fields_request.FieldsRequest` to `fields`."""
@@ -94,12 +122,22 @@ class PaginatedQuery:
 
     def first(self):
         """
-        Returns the first result.
+        Returns the first result, or `None` if it doesn't exist.
         """
-        if len(self.results) > 0:
-            return self.results[0]
-        first = self._do_query(page=0, limit=1)[0]
-        return first
+        if self.started:
+            # don't mess with limits or pages
+            for item in self:
+                return item
+            return None
+        # otherwise set limit to 1
+        original_limit = self._limit
+        self._limit = 1
+        try:
+            for item in self:
+                return item
+            return None
+        finally:
+            self._limit = original_limit
 
     def _do_query(self, page, limit):
         results = self._conservator.query(
@@ -124,6 +162,9 @@ class PaginatedQuery:
         self._page += 1
         return results
 
+    def _passes_filters(self, instance):
+        return all(filter_(instance) for filter_ in self.filters)
+
     def __iter__(self):
         for item in self.results:
             yield item
@@ -131,8 +172,9 @@ class PaginatedQuery:
         while not self.done:
             next_page = self._next_page()
             for item in next_page:
-                self.results.append(item)
-                yield item
+                if self._passes_filters(item):
+                    self.results.append(item)
+                    yield item
             if len(next_page) < self._limit:
                 self.done = True
                 return
