@@ -58,10 +58,26 @@ class TypeProxy(object):
 
     @classmethod
     def from_id(cls, conservator, id_):
-        """Create a proxied instance from an ID. The underlying type
+        """Return a wrapped instance from an ID. The underlying type
         of the class should match the type of the ID."""
-        base_item = cls.underlying_type({"id": id_})
+        return cls.from_json(conservator, {"id": id_})
+
+    @classmethod
+    def from_json(cls, conservator, json):
+        """
+        Return a wrapped instance from a dictionary (usually produced by calling
+        :meth:`~TypeProxy.to_json`). The ID should be included for the returned
+        instance to be useful.
+        """
+        base_item = cls.underlying_type(json)
         return cls(conservator, base_item)
+
+    def to_json(self):
+        """
+        Returns the underlying instance as a dictionary, suitable for turning
+        into JSON.
+        """
+        return self._instance.__to_json_value()
 
     def __str__(self):
         return f"{self.underlying_type}\n{to_clean_string(self)}"
