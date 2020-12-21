@@ -18,9 +18,9 @@ Then run::
 
     $ conservator config
 
-Conservator CLI will ask you for your email and API key. These will be
-saved in a config file for future use. Running again will print your
-credentials. To verify that they're correct, run::
+Conservator CLI will ask you for your API key, and some other settings.
+The defaults should work for most users. These settings will be
+saved in a config file for future use. To verify that they're correct, run::
 
     $ conservator whoami
 

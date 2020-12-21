@@ -308,8 +308,7 @@ class LocalDataset:
             logging.error(f"Error {r} when cloning.")
             return
 
-        # TODO: remove email from config, use User query with cache
-        email = dataset._conservator.config.email
-        subprocess.call(["git", "config", "user.email", email.lower()], cwd=clone_path)
+        email = dataset._conservator.get_email()
+        subprocess.call(["git", "config", "user.email", email], cwd=clone_path)
 
         return LocalDataset(dataset._conservator, clone_path)

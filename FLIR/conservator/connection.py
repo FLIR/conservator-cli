@@ -8,7 +8,7 @@ from sgqlc.operation import Operation
 
 from FLIR.conservator.fields_manager import FieldsManager
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.generated.schema import schema
+from FLIR.conservator.generated.schema import schema, Query
 
 __all__ = [
     "ConservatorMalformedQueryException",
@@ -53,6 +53,7 @@ class ConservatorConnection:
 
     def __init__(self, config, max_retries=5):
         self.config = config
+        self.email = None
         self.graphql_url = ConservatorConnection.to_graphql_url(config.url)
         headers = {
             "authorization": config.key,
@@ -60,12 +61,20 @@ class ConservatorConnection:
         self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
         self.fields_manager = FieldsManager()
 
+    def get_email(self):
+        """Returns the current User's email"""
+        if self.email is None:
+            fields = FieldsRequest(include_fields=("email",))
+            user = self.query(Query.user, fields=fields)
+            self.email = user.email
+        return self.email
+
     def get_url_encoded_user(self):
         """
         Returns the encoded email-key combination used to authenticate
         URLs.
         """
-        email = urllib.parse.quote(self.config.email.lower(), safe=".")
+        email = urllib.parse.quote(self.get_email(), safe=".")
         key = self.config.key
         return f"{email}:{key}"
 

@@ -37,7 +37,7 @@ def main(log):
 
 @main.command(help="View or delete the current config")
 @click.option(
-    "--delete", is_flag=True, help="If specified, delete the default credentials."
+    "--delete", is_flag=True, help="If passed, delete the default credentials."
 )
 def config(delete):
     if delete:
@@ -45,9 +45,10 @@ def config(delete):
         return
     default_config = Config.default()
     click.echo("Default config:")
-    click.echo(f"  Email: {default_config.email}")
-    click.echo(f"  Key: {default_config.key}")
     click.echo(f"  URL: {default_config.url}")
+    click.echo(f"  Key: {default_config.key}")
+    click.echo(f"  Max Retries: {default_config.max_retries}")
+    click.echo(f"Corresponds to email: {Conservator.default().get_email()}")
 
 
 @main.command(help="Print information on the current user")
