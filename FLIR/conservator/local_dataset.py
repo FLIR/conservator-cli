@@ -21,10 +21,10 @@ class LocalDataset:
     This replicates the functionality of CVC, and should now be the
     preferred method of working with local datasets.
 
-    :param conservator: A :class:``~FLIR.conservator.conservator.Conservator``
+    :param conservator: A :class:`~FLIR.conservator.conservator.Conservator`
         instance to use for uploading new images.
     :param path: The path to the local dataset. This should point to the root
-        directory (containing `index.json`).
+        directory (containing ``index.json``).
     """
 
     def __init__(self, conservator, path):
@@ -43,7 +43,7 @@ class LocalDataset:
 
     def pull(self):
         """
-        Pulls the latest index.json.
+        Pulls the latest ``index.json``.
         """
         subprocess.call(["git", "fetch"], cwd=self.path)
         return subprocess.call(
@@ -58,13 +58,13 @@ class LocalDataset:
 
     def add_index(self):
         """
-        Stages changes to index.json for the next commit.
+        Stages changes to ``index.json`` for the next commit.
         """
         return subprocess.call(["git", "add", "index.json"], cwd=self.path)
 
     def commit(self, message):
         """
-        Commit added changes to the git repo, with the given commit `message`.
+        Commit added changes to the local git repo, with the given commit `message`.
         """
         return subprocess.call(["git", "commit", "-m", message], cwd=self.path)
 
@@ -86,7 +86,7 @@ class LocalDataset:
         Push the staged images.
 
         This reads the staged image paths, uploads them, adds metadata
-        to index.json, and deletes the staged image paths.
+        to ``index.json``, and deletes the staged image paths.
         """
         image_paths = self.get_staged_images()
         if len(image_paths) == 0:
@@ -161,7 +161,7 @@ class LocalDataset:
 
     def get_index(self):
         """
-        Returns the object in index.json.
+        Returns the object in ``index.json``.
         """
         with open(self.index_path, "r") as f:
             return json.load(f)
@@ -201,7 +201,7 @@ class LocalDataset:
     @staticmethod
     def get_image_info(path):
         """
-        Returns image info to be added to a Dataset's index.json, or `None`
+        Returns image info to be added to a Dataset's ``index.json``, or `None`
         if there was an error.
 
         This opens the `path` using PIL to verify it is a JPEG image,
