@@ -66,7 +66,7 @@ class TypeProxy(object):
     def from_json(cls, conservator, json):
         """
         Return a wrapped instance from a dictionary (usually produced by calling
-        :meth:``~TypeProxy.to_json``). The ID should be included for the returned
+        :meth:`~TypeProxy.to_json`). The ID should be included for the returned
         instance to be useful.
         """
         base_item = cls.underlying_type(json)

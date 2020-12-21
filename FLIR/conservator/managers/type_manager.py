@@ -19,7 +19,7 @@ class TypeManager:
     def from_json(self, json):
         """
         Return a wrapped instance from a dictionary (usually produced by calling
-        :meth:``~TypeProxy.to_json``). The ID should be included for the returned
+        :meth:`~TypeProxy.to_json`). The ID should be included for the returned
         instance to be useful.
         """
         return self._underlying_type.from_json(self._conservator, json)
