@@ -23,6 +23,10 @@ class SearchableTypeManager(TypeManager):
             **kwargs,
         )
 
+    def by_exact_name(self, name):
+        """Returns a search for a specific `name`."""
+        return self.search(f'name:"{name}"').filtered_by(name=name)
+
     def all(self):
         """Searches for all instances"""
         return self.search("")

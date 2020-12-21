@@ -23,9 +23,9 @@ print()
 print("Search by name field only:")
 # We could also slightly speed up the query using Conservator's Advanced
 # Search syntax. We can specify which field to search in the search text:
-results = conservator.projects.search(f'name:"{project_name}"', fields="name").filtered_by(
-    name=project_name
-)
+results = conservator.projects.search(
+    f'name:"{project_name}"', fields="name"
+).filtered_by(name=project_name)
 for project in results:
     assert project.name == project_name
     print(project)
