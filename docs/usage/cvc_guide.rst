@@ -24,12 +24,7 @@ the Conservator CLI library by following the :doc:`installation` guide.
     - Delete frames
     - Add annotations
     - Add/edit custom dataset/frame metadata
-
-.. note::
-   Adding associated files is technically a feature, but you'll have to
-   manually use ``git`` to add/commit files within the ``associated_files`` directory.
-
-   TODO: Add support for this through ``cvc``
+    - Adding, removing, or changing associated files
 
 Overview
 --------
@@ -40,15 +35,17 @@ The basic workflow to clone and download a dataset::
     $ cd "DATASET NAME/"     # the default directory is the name of the dataset
     $ cvc download           # download media
 
-Now, you can make modifications to ``index.json``. Then, publish your changes::
+Now, you can make modifications to ``index.json`` or ``associated_files``. Then,
+publish your changes::
 
     $ cvc publish "Your commit message here"
 
-If you need to pull remote changes to ``index.json``::
+If you need to pull remote changes::
 
     $ cvc pull
 
-Note that this may reference new frames that will have to be downloaded (using ``cvc download``).
+Note that an updated ``index.json`` file may reference new frames that will have
+to be downloaded (using ``cvc download``).
 
 Adding Frames
 ^^^^^^^^^^^^^
@@ -183,11 +180,9 @@ Use ``cvc publish`` to send these changes to Conservator.
 Current Changes
 ^^^^^^^^^^^^^^^
 
-Show changes in ``index.json`` since last commit::
+Show changes in ``index.json`` and ``associated_files`` since last commit::
 
     $ cvc diff
-
-This does not currently show changes in associated files.
 
 Staging New Images
 ^^^^^^^^^^^^^^^^^^
@@ -216,12 +211,9 @@ don't need to re-download the frames.
 Making a Commit
 ^^^^^^^^^^^^^^^
 
-Commit changes to ``index.json`` with the given commit message::
+Commit changes to ``index.json`` and ``associated_files`` with the given commit message::
 
     $ cvc commit "Your commit message here"
-
-This only commits changes to ``index.json``. Changes to associated files
-are ignored.
 
 
 Push Local Commits
