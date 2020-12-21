@@ -46,7 +46,9 @@ class LocalDataset:
         Pulls the latest index.json.
         """
         subprocess.call(["git", "fetch"], cwd=self.path)
-        return subprocess.call(["git", "checkout", "origin/master", "-B", "master"], cwd=self.path)
+        return subprocess.call(
+            ["git", "checkout", "origin/master", "-B", "master"], cwd=self.path
+        )
 
     def checkout(self, commit_hash):
         """
@@ -70,7 +72,12 @@ class LocalDataset:
         """
         Push the git repo.
         """
-        subprocess.call(["git", "push"], cwd=self.path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.call(
+            ["git", "push"],
+            cwd=self.path,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
         # changes wont appear to be pushed, but they were. so we pull
         self.pull()
 
