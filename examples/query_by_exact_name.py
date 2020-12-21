@@ -19,13 +19,24 @@ for project in results:
     assert project.name == project_name
     print(project)
 
-print()
-print("Search by name field only:")
+
 # We could also slightly speed up the query using Conservator's Advanced
 # Search syntax. We can specify which field to search in the search text:
+print()
+print("Search by name field only:")
 results = conservator.projects.search(
     f'name:"{project_name}"', fields="name"
 ).filtered_by(name=project_name)
+for project in results:
+    assert project.name == project_name
+    print(project)
+
+# The above is a common pattern, so it's been added as a function on
+# SearchableTypeManager. Notice: the "name" field must be included in
+# the requested fields.
+print()
+print("Using built-in by_exact_name")
+results = conservator.projects.by_exact_name(project_name, fields="name")
 for project in results:
     assert project.name == project_name
     print(project)
