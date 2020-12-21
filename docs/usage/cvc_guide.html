@@ -58,14 +58,9 @@ the Conservator CLI library by following the <a class="reference internal" href=
 <li><p>Delete frames</p></li>
 <li><p>Add annotations</p></li>
 <li><p>Add/edit custom dataset/frame metadata</p></li>
+<li><p>Adding, removing, or changing associated files</p></li>
 </ul>
 </div></blockquote>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Adding associated files is technically a feature, but you’ll have to
-manually use <code class="docutils literal notranslate"><span class="pre">git</span></code> to add/commit files within the <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> directory.</p>
-<p>TODO: Add support for this through <code class="docutils literal notranslate"><span class="pre">cvc</span></code></p>
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
@@ -75,15 +70,17 @@ $ cd &quot;DATASET NAME/&quot;     # the default directory is the name of the da
 $ cvc download           # download media
 </pre></div>
 </div>
-<p>Now, you can make modifications to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. Then, publish your changes:</p>
+<p>Now, you can make modifications to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> or <code class="docutils literal notranslate"><span class="pre">associated_files</span></code>. Then,
+publish your changes:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc publish &quot;Your commit message here&quot;
 </pre></div>
 </div>
-<p>If you need to pull remote changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>:</p>
+<p>If you need to pull remote changes:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc pull
 </pre></div>
 </div>
-<p>Note that this may reference new frames that will have to be downloaded (using <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code>).</p>
+<p>Note that an updated <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file may reference new frames that will have
+to be downloaded (using <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code>).</p>
 <div class="section" id="adding-frames">
 <h3>Adding Frames<a class="headerlink" href="#adding-frames" title="Permalink to this headline">¶</a></h3>
 <p>You can stage new frames to be uploaded to a dataset using the <code class="docutils literal notranslate"><span class="pre">add</span></code> command:</p>
@@ -204,11 +201,10 @@ overwritten.</p>
 </div>
 <div class="section" id="current-changes">
 <h3>Current Changes<a class="headerlink" href="#current-changes" title="Permalink to this headline">¶</a></h3>
-<p>Show changes in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> since last commit:</p>
+<p>Show changes in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> since last commit:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc diff
 </pre></div>
 </div>
-<p>This does not currently show changes in associated files.</p>
 </div>
 <div class="section" id="staging-new-images">
 <h3>Staging New Images<a class="headerlink" href="#staging-new-images" title="Permalink to this headline">¶</a></h3>
@@ -232,12 +228,10 @@ don’t need to re-download the frames.</p>
 </div>
 <div class="section" id="making-a-commit">
 <h3>Making a Commit<a class="headerlink" href="#making-a-commit" title="Permalink to this headline">¶</a></h3>
-<p>Commit changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> with the given commit message:</p>
+<p>Commit changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> with the given commit message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc commit &quot;Your commit message here&quot;
 </pre></div>
 </div>
-<p>This only commits changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. Changes to associated files
-are ignored.</p>
 </div>
 <div class="section" id="push-local-commits">
 <h3>Push Local Commits<a class="headerlink" href="#push-local-commits" title="Permalink to this headline">¶</a></h3>
