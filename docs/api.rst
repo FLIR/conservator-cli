@@ -122,3 +122,8 @@ PaginatedQuery
 .. automodule:: FLIR.conservator.paginated_query
     :members:
 
+LocalDataset
+------------
+
+.. automodule:: FLIR.conservator.local_dataset
+    :members:
