@@ -31,7 +31,6 @@ class Config:
     at a certain URL.
 
     Attributes:
-        - CONSERVATOR_EMAIL
         - CONSERVATOR_API_KEY
         - CONSERVATOR_URL (default: https://flirconservator.com/)
         - CONSERVATOR_MAX_RETRIES (default: 5)
@@ -42,7 +41,6 @@ class Config:
     """
 
     attributes = {
-        "email": ConfigAttribute("CONSERVATOR_EMAIL", "Conservator Email"),
         "key": ConfigAttribute("CONSERVATOR_API_KEY", "Conservator API Key"),
         "url": ConfigAttribute(
             "CONSERVATOR_URL", "Conservator URL", default="https://flirconservator.com/"
@@ -186,7 +184,7 @@ class Config:
             os.remove(path)
 
     def __repr__(self):
-        return f"<Config for {self.email} at {self.url}>"
+        return f"<Config for {self.url}>"
 
     def __eq__(self, other):
         return isinstance(other, Config) and all(
