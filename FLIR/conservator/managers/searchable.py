@@ -23,6 +23,14 @@ class SearchableTypeManager(TypeManager):
             **kwargs,
         )
 
+    def by_exact_name(self, name, fields=None):
+        """
+        Returns a search for a specific `name`.
+
+        The "name" field MUST be included in the requested `fields`.
+        """
+        return self.search(f'name:"{name}"', fields=fields).filtered_by(name=name)
+
     def all(self):
         """Searches for all instances"""
         return self.search("")
