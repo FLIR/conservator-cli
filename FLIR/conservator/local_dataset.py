@@ -314,7 +314,7 @@ class LocalDataset:
             assets.append(asset)
 
         results = download_files(assets, process_count)
-        
+
         for link in links:
             dest, src = link
             logger.debug(f"Linking '{src}' to '{dest}'")
