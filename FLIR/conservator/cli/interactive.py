@@ -338,7 +338,7 @@ def tree():
         collections.append(current_collection)
 
     child_paths = FieldsRequest()
-    child_paths.include_field("children.path")
+    child_paths.include_field("children.path", "children.id")
     while len(collections) > 0:
         collection = collections.pop()
         click.echo(collection.path)
