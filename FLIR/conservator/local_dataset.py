@@ -39,6 +39,8 @@ class LocalDataset:
 
         if not os.path.exists(self.index_path):
             return
+        if not os.path.exists(self.cvc_path):
+            os.makedirs(self.cvc_path)
         if not os.path.exists(self.staging_path):
             with open(self.staging_path, "w+") as f:
                 json.dump([], f)
@@ -136,12 +138,18 @@ class LocalDataset:
 
             if os.path.exists(self.data_path):
                 # Since data path exists, chances are media files are downloaded.
-                # We should copy this image to the data path so it doesn't have to
-                # be repulled.
+                # We should move this to data as if it was also downloaded.
+
+                # First copy it to the cache:
+                cache_path = self.get_cache_path(md5)
+                logger.debug(f"Copying file from '{path}' to '{cache_path}'")
+                shutil.copyfile(path, cache_path)
+
+                # Then link to data path:
                 filename = f"video-{video_id}-frame-{next_index:06d}-{frame_id}.jpg"
                 data_path = os.path.join(self.data_path, filename)
-                logger.debug(f"Copying file from '{path}' to '{data_path}'")
-                shutil.copyfile(path, data_path)
+                logger.debug(f"Linking '{data_path}' to '{cache_path}'")
+                os.link(cache_path, data_path)
 
             next_index += 1
 
@@ -266,6 +274,7 @@ class LocalDataset:
         if include_analytics:
             os.makedirs(self.analytics_path, exist_ok=True)
 
+        links = []  # dest, src
         hashes_required = set()
         with open(self.index_path) as f:
             data = json.load(f)
@@ -281,7 +290,7 @@ class LocalDataset:
                     name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
                     path = os.path.join(self.data_path, name)
                     cache_path = self.get_cache_path(md5)
-                    os.link(path, cache_path)
+                    links.append((cache_path, path))
 
                 if include_analytics and ("analyticsMd5" in frame):
                     md5 = frame["analyticsMd5"]
@@ -290,25 +299,33 @@ class LocalDataset:
                     name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
                     path = os.path.join(self.analytics_path, name)
                     cache_path = self.get_cache_path(md5)
-                    os.link(path, cache_path)
+                    links.append((cache_path, path))
 
         assets = []  # (path, name, url)
         for md5 in hashes_required:
             cache_path = self.get_cache_path(md5)
             if os.path.exists(cache_path):
-                # file already in cache. skip
+                logger.debug(f"Skipping {md5}: already downloaded.")
                 continue
             path, name = os.path.split(cache_path)
             url = self.conservator.get_dvc_hash_url(md5)
             asset = (path, name, url)
+            logger.debug(f"Going to download {md5}")
             assets.append(asset)
 
         results = download_files(assets, process_count)
+        
+        for link in links:
+            dest, src = link
+            logger.debug(f"Linking '{src}' to '{dest}'")
+            if os.path.exists(src):
+                os.remove(src)
+            os.link(dest, src)
 
         # See if we have any errors
         total = len(results)
         success = sum(results)
-        print(f"Number of Files: {success}, Errors: {total - success}")
+        logger.info(f"Number of Files: {success}, Errors: {total - success}")
 
     @staticmethod
     def clone(dataset, clone_path=None):
