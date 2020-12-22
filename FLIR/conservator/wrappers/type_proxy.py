@@ -101,7 +101,7 @@ class TypeProxy(object):
         related to `type_`. If one doesn't exist, returns `None`."""
         # rather hacky
         cls = None
-        for subcls in TypeProxy.__subclasses__():
+        for subcls in all_subclasses(TypeProxy):
             if TypeProxy.has_base_type(subcls.underlying_type, type_):
                 cls = subcls
         return cls
@@ -145,3 +145,9 @@ def requires_fields(*fields):
         return wrapper
 
     return decorator
+
+
+def all_subclasses(cls):
+    return set(cls.__subclasses__()).union(
+        [s for c in cls.__subclasses__() for s in all_subclasses(c)]
+    )
