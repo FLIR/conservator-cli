@@ -261,7 +261,7 @@ class LocalDataset:
         self,
         include_analytics=False,
         include_eight_bit=True,
-        process_count=None,
+        process_count=10,
         use_symlink=False,
     ):
         """
@@ -269,8 +269,8 @@ class LocalDataset:
 
         :param include_analytics: If `True`, download analytic data to ``analyticsData/``.
         :param include_eight_bit: If `True`, download eight-bit images to ``data/``.
-        :param process_count: Number of concurrent download processes. Defaults to the number of
-            processors on the machine.
+        :param process_count: Number of concurrent download processes. Passing `None`
+            will use `os.cpu_count()`.
         :param use_symlink: If `True`, use symbolic links instead of hardlinks when linking the
             cache and data.
         """
