@@ -258,7 +258,11 @@ class LocalDataset:
         return os.path.join(self.cache_path, md5[:2], md5[2:])
 
     def download(
-        self, include_analytics=False, include_eight_bit=True, process_count=None
+        self,
+        include_analytics=False,
+        include_eight_bit=True,
+        process_count=None,
+        use_symlink=False,
     ):
         """
         Downloads the files listed in ``index.json`` of the local dataset.
@@ -267,6 +271,8 @@ class LocalDataset:
         :param include_eight_bit: If `True`, download eight-bit images to ``data/``.
         :param process_count: Number of concurrent download processes. Defaults to the number of
             processors on the machine.
+        :param use_symlink: If `True`, use symbolic links instead of hardlinks when linking the
+            cache and data.
         """
         if include_eight_bit:
             os.makedirs(self.data_path, exist_ok=True)
@@ -320,7 +326,10 @@ class LocalDataset:
             logger.debug(f"Linking '{src}' to '{dest}'")
             if os.path.exists(src):
                 os.remove(src)
-            os.link(dest, src)
+            if use_symlink:
+                os.symlink(dest, src)
+            else:
+                os.link(dest, src)
 
         # See if we have any errors
         total = len(results)

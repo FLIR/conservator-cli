@@ -151,10 +151,20 @@ def status(local_dataset):
 
 @main.command(help="Download media files from index.json")
 @click.option("-a", "--include-analytics", is_flag=True)
+@click.option("-p", "--pool-size", type=int, default=None)
+@click.option(
+    "-s",
+    "--symlink",
+    is_flag=True,
+    help="If passed, use symlinks instead of hardlinks when linking cache and data",
+)
 @pass_valid_local_dataset
-def download(local_dataset, include_analytics):
+def download(local_dataset, include_analytics, pool_size, symlink):
     local_dataset.download(
-        include_analytics=include_analytics, include_eight_bit=True, process_count=None
+        include_analytics=include_analytics,
+        include_eight_bit=True,
+        process_count=pool_size,
+        use_symlink=symlink,
     )
 
 
