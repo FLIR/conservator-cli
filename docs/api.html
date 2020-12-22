@@ -1170,6 +1170,13 @@ instance to be useful.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.managers.searchable.SearchableTypeManager.by_exact_name">
+<code class="sig-name descname">by_exact_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager.by_exact_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a search for a specific <cite>name</cite>.</p>
+<p>The “name” field MUST be included in the requested <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.managers.searchable.SearchableTypeManager.count">
 <code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager.count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the number of instances that are returned by <cite>search_text</cite></p>
@@ -1250,9 +1257,27 @@ returns a non-iteratable <code class="docutils literal notranslate"><span class=
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.paginated_query.PaginatedQuery.filtered_by">
+<code class="sig-name descname">filtered_by</code><span class="sig-paren">(</span><em class="sig-param">func=&lt;built-in function eq&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.filtered_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter results by field value.</p>
+<p>For example, to verify that</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – A function to use to compare an instance’s <cite>field</cite>
+with the provided <cite>value</cite>. If it returns <cite>False</cite> for any
+field, the instance will be skipped when returning results.</p></li>
+<li><p><strong>kwargs</strong> – A list of field name-value pairs to pass through
+the filter function for each instance.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.paginated_query.PaginatedQuery.first">
 <code class="sig-name descname">first</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.first" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the first result.</p>
+<dd><p>Returns the first result, or <cite>None</cite> if it doesn’t exist.</p>
 </dd></dl>
 
 <dl class="py method">
