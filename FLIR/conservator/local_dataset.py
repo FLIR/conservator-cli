@@ -311,7 +311,7 @@ class LocalDataset:
         for md5 in hashes_required:
             cache_path = self.get_cache_path(md5)
             if os.path.exists(cache_path):
-                logger.debug(f"Skipping {md5}: already downloaded.")
+                logger.info(f"Skipping {md5}: already downloaded.")
                 continue
             path, name = os.path.split(cache_path)
             url = self.conservator.get_dvc_hash_url(md5)
