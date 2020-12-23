@@ -1361,15 +1361,17 @@ the Dataset’s name.</p></li>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.download">
-<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">use_symlink</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> of the local dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p></li>
 <li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
-<li><p><strong>process_count</strong> – Number of concurrent download processes. Defaults to the number of
-processors on the machine.</p></li>
+<li><p><strong>process_count</strong> – Number of concurrent download processes. Passing <cite>None</cite>
+will use <cite>os.cpu_count()</cite>.</p></li>
+<li><p><strong>use_symlink</strong> – If <cite>True</cite>, use symbolic links instead of hardlinks when linking the
+cache and data.</p></li>
 </ul>
 </dd>
 </dl>
