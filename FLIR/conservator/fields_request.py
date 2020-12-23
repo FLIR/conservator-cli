@@ -81,10 +81,11 @@ class FieldsRequest:
         if path in self.excluded:
             return False
         for excluded in self.excluded:
-            if excluded.startswith(path):
+            # an excluded field is under path--so not everything is included
+            if is_included_under(path, excluded):
                 return False
         for included in self.included:
-            if path.startswith(included):
+            if is_included_under(included, path):
                 return True
         return False
 
@@ -99,8 +100,16 @@ class FieldsRequest:
 
         # if it or a child path is included, yes
         for included in self.included:
-            if included.startswith(path) or path.startswith(included):
+            if is_included_under(included, path):
                 return True
+            # we might need to dig deep to get to an included path
+            if is_included_under(path, included):
+                return True
+
+        # depth = path.count(".") + 1
+        # if depth <= self.depth:
+        #     return True
+
         return False
 
     def include_field(self, *field_path):
@@ -120,3 +129,16 @@ class FieldsRequest:
     def exclude_fields(self, field_paths):
         """Excludes `field_paths` from the request."""
         self.excluded = self.excluded.union(field_paths)
+
+
+def is_included_under(parent, subpath):
+    # TODO: Refactor field requests and management
+    #
+    # parent : videos.frames.annotations
+    # subpath: videos.frames.annotations.bbox.w
+    # returns: True
+    if subpath == parent:
+        return True
+    if subpath.startswith(parent):
+        return subpath[len(parent)] == "."
+    return False

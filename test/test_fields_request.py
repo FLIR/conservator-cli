@@ -1,7 +1,53 @@
-from FLIR.conservator.connection import ConservatorConnection
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.generated.schema import Query, Project
+from FLIR.conservator.generated.schema import Query
 from sgqlc.operation import Operation
+
+
+def test_should_include_all_subpaths():
+    fields = FieldsRequest()
+    fields.include_field("name")
+    fields.include_field("repository.master")
+    fields.include_field("parent")
+    fields.include_field("video.owner.name")
+    assert fields.should_include_all_subpaths("name")
+    assert not fields.should_include_all_subpaths("repository")
+    assert fields.should_include_all_subpaths("repository.master")
+    assert fields.should_include_all_subpaths("parent")
+    assert not fields.should_include_all_subpaths("video")
+    assert not fields.should_include_all_subpaths("video.owner")
+    assert fields.should_include_all_subpaths("video.owner.name")
+    assert not fields.should_include_all_subpaths("random")
+
+    fields = FieldsRequest()
+    fields.include_field("name")
+    fields.include_field("repository")
+    fields.exclude_field("repository.master")
+    assert fields.should_include_all_subpaths("name")
+    assert not fields.should_include_all_subpaths("repository")
+    assert not fields.should_include_all_subpaths("repository.master")
+    assert fields.should_include_all_subpaths("repository.name")
+
+
+def test_should_include_path():
+    a = FieldsRequest()
+    a.include_field("repository", "id")
+    assert a.should_include_path("repository")
+    assert a.should_include_path("repository.master")
+    assert a.should_include_path("id")
+    assert not a.should_include_path("name")
+
+    b = FieldsRequest()
+    b.include_field("repository", "id")
+    b.exclude_field("repository.master")
+    assert b.should_include_path("repository")
+    assert not b.should_include_path("repository.master")
+    assert b.should_include_path("id")
+    assert not b.should_include_path("name")
+
+    c = FieldsRequest()
+    c.include_field("name")
+    c.exclude_field("name")
+    assert not b.should_include_path("name")
 
 
 def test_add_fields_simple():
@@ -26,29 +72,6 @@ def test_add_fields_simple_exclude():
     assert 'project(id: "123")' in str(op)
     assert "fileLockerFiles" not in str(op)
     assert "rootCollection" not in str(op)
-    assert "createdBy" in str(op)
-
-
-def test_should_include_path():
-    a = FieldsRequest()
-    a.include_field("repository", "id")
-    assert a.should_include_path("repository")
-    assert a.should_include_path("repository.master")
-    assert a.should_include_path("id")
-    assert not a.should_include_path("name")
-
-    b = FieldsRequest()
-    b.include_field("repository", "id")
-    b.exclude_field("repository.master")
-    assert b.should_include_path("repository")
-    assert not b.should_include_path("repository.master")
-    assert b.should_include_path("id")
-    assert not b.should_include_path("name")
-
-    c = FieldsRequest()
-    c.include_field("name")
-    c.exclude_field("name")
-    assert not b.should_include_path("name")
 
 
 def test_max_depth():
