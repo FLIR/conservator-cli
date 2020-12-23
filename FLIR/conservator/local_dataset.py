@@ -364,3 +364,55 @@ class LocalDataset:
         subprocess.call(["git", "config", "user.email", email], cwd=clone_path)
 
         return LocalDataset(dataset._conservator, clone_path)
+
+    def validate_index(self):
+        """Validates that ``index.json`` matches the expected
+        JSON Schema."""
+        # !/usr/bin/env python3
+        import os
+        import json
+        import jsonschema
+
+        schema_file = ""
+        input_file = self.index_path
+
+        def validate_file(schema_file, input_file, filetype):
+
+            # both video and dataset schemas are stored in the same file
+            # because they have so much in common; can specify the subschema
+            # explicitly, or use default subschema which tries video first and
+            # then dataset (falls back to dataset if video didn't pass)
+            #
+            # Note: custom resolver is needed to reference a subschema,
+            #       but breaks internal references if passing in an already-loaded
+            #       schema to use the whole schema
+            #       https://github.com/Julian/jsonschema/issues/343
+            schema = None
+            resolver = None
+            if filetype:
+                # set up the json schema resolver to be able to resolve
+                # the $ref field below
+                schema_name = os.path.basename(schema_file)
+                schema_parent = os.path.dirname(schema_file)
+                schema_path = 'file://' + os.path.abspath(schema_parent) + '/'
+                resolver = jsonschema.RefResolver(schema_path, None)
+
+                # pick out specific subschema to validate against
+                selected_subschema = schema_name + "#/components/" + filetype
+                schema = {"$ref": selected_subschema}
+                print("validate {} against {} schema ".format(input_file, selected_subschema))
+            else:
+                with open(schema_file) as fp:
+                    schema = json.load(fp)
+                print("validate {} against default schema ".format(input_file))
+
+            try:
+                input_data = None
+                with open(input_file) as fp:
+                    input_data = json.load(fp)
+                jsonschema.validate(input_data, schema, resolver=resolver)
+                return True
+            except jsonschema.exceptions.ValidationError as e:
+                logger.error(e)
+            return False
+
