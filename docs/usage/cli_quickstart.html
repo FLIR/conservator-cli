@@ -154,6 +154,26 @@ the website, search, etc.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="uploading-media">
+<h2>Uploading Media<a class="headerlink" href="#uploading-media" title="Permalink to this headline">¶</a></h2>
+<p>Images and videos can be uploaded with the <cite>upload</cite> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos upload path/to/local/media.mp4 /path/on/conservator/
+</pre></div>
+</div>
+<p>By default, the media will be uploaded with the same name as the local file.
+If you want to use a different name, you can specific it using <code class="docutils literal notranslate"><span class="pre">--remote-name</span></code>
+(<code class="docutils literal notranslate"><span class="pre">-r</span></code> for short):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos upload path/to/local/media.mp4 /path/on/conservator/ -r my_name.mp4
+</pre></div>
+</div>
+<p>By default, the path on conservator must exist, but it can also be useful to
+upload to a path that doesn’t exist. You can create any required collections
+using <code class="docutils literal notranslate"><span class="pre">--create-collections</span></code> (<code class="docutils literal notranslate"><span class="pre">-c</span></code> for short):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos upload path/to/local/media.mp4 /path/to/create -c
+</pre></div>
+</div>
+<p>Again, you can use these commands for uploading both videos or images.</p>
+</div>
 <div class="section" id="interactive-mode">
 <h2>Interactive Mode<a class="headerlink" href="#interactive-mode" title="Permalink to this headline">¶</a></h2>
 <p>Conservator CLI also has a powerful and useful interactive mode:</p>
@@ -214,6 +234,7 @@ about any specific command within the shell.</p>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-datasets">Downloading Datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-collections">Downloading Collections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-videos">Downloading Videos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uploading-media">Uploading Media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactive-mode">Interactive Mode</a></li>
 </ul>
 </li>
