@@ -12,6 +12,7 @@ class MediaType(QueryableType):
     :meth:``FLIR.conservator.managers.media.MediaTypeManager.upload``)
     or downloaded.
     """
+
     @requires_fields("metadata", "filename")
     def download_metadata(self, path):
         """
@@ -28,4 +29,3 @@ class MediaType(QueryableType):
     def download(self, path):
         """Download video to ``path``."""
         download_file(path, self.filename, self.url)
-

@@ -145,9 +145,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         )
         @click.argument("id")
         @click.argument("path", default=".")
-        @click.option(
-            "-m", "--metadata", is_flag=True, help="Include metadata"
-        )
+        @click.option("-m", "--metadata", is_flag=True, help="Include metadata")
         @click.option(
             "-mo", "--metadata-only", is_flag=True, help="Only download metadata"
         )
