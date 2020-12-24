@@ -16,19 +16,6 @@ class Video(MediaType):
             Query.annotations_by_video_id, fields=fields, id=self.id
         )
 
-    def get_frames(self, index, start_index, fields=None):
-        """
-        Returns the video's frames, with the specified `fields`.
-        """
-        return self._conservator.query(
-            schema.Video.frames,
-            operation_base=schema.Video,
-            fields=fields,
-            id=self.id,
-            frame_index=index,
-            start_frame_index=start_index,
-        )
-
     def trigger_processing(
         self,
         metadata_url=None,

@@ -133,6 +133,27 @@ An example for downloading a video and its metadata to the current path::
 The same commands also work for images (just replace ``videos`` with
 ``images``).
 
+Uploading Media
+----------------
+
+Images and videos can be uploaded with the `upload` command::
+
+    $ conservator videos upload path/to/local/media.mp4 /path/on/conservator/
+
+By default, the media will be uploaded with the same name as the local file.
+If you want to use a different name, you can specific it using ``--remote-name``
+(``-r`` for short)::
+
+    $ conservator videos upload path/to/local/media.mp4 /path/on/conservator/ -r my_name.mp4
+
+By default, the path on conservator must exist, but it can also be useful to
+upload to a path that doesn't exist. You can create any required collections
+using ``--create-collections`` (``-c`` for short)::
+
+    $ conservator videos upload path/to/local/media.mp4 /path/to/create -c
+
+Again, you can use these commands for uploading both videos or images.
+
 Interactive Mode
 ----------------
 
