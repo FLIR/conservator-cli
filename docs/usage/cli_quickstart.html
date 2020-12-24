@@ -137,22 +137,25 @@ directory:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="downloading-videos">
-<h2>Downloading Videos<a class="headerlink" href="#downloading-videos" title="Permalink to this headline">¶</a></h2>
-<p>First, find the ID of a video you want to download using
+<div class="section" id="downloading-media">
+<h2>Downloading Media<a class="headerlink" href="#downloading-media" title="Permalink to this headline">¶</a></h2>
+<p>First, find the ID of a video or image you want to download using
 the website, search, etc.</p>
 <p>Downloads can be done using the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos download ID
 </pre></div>
 </div>
-<p>To include video metadata, add the <code class="docutils literal notranslate"><span class="pre">-v</span></code> command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos download ID -v
+<p>To include metadata, add the <code class="docutils literal notranslate"><span class="pre">-m</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos download ID -m
 </pre></div>
 </div>
+<p>If you only want metadata, use <code class="docutils literal notranslate"><span class="pre">-mo</span></code>.</p>
 <p>An example for downloading a video and its metadata to the current path:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos download hzYzQhpGMsTcEt6Xx -v
 </pre></div>
 </div>
+<p>The same commands also work for images (just replace <code class="docutils literal notranslate"><span class="pre">videos</span></code> with
+<code class="docutils literal notranslate"><span class="pre">images</span></code>).</p>
 </div>
 <div class="section" id="uploading-media">
 <h2>Uploading Media<a class="headerlink" href="#uploading-media" title="Permalink to this headline">¶</a></h2>
@@ -233,7 +236,7 @@ about any specific command within the shell.</p>
 <li class="toctree-l2"><a class="reference internal" href="#basic-queries">Basic Queries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-datasets">Downloading Datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-collections">Downloading Collections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#downloading-videos">Downloading Videos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-media">Downloading Media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#uploading-media">Uploading Media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactive-mode">Interactive Mode</a></li>
 </ul>
@@ -279,7 +282,7 @@ about any specific command within the shell.</p>
       &copy;2020, FLIR Systems.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
