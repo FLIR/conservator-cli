@@ -140,35 +140,20 @@ def get_manager_command(type_manager, sgqlc_type, name):
             )
             i.upload(localpath, collection=collection, remote_name=remote_name)
 
-    if issubclass(type_manager, VideoManager):
-
         @group.command(
-            help="Download a video to the current directory, or the specified path."
+            help="Download media to the current directory, or the specified path."
         )
         @click.argument("id")
         @click.argument("path", default=".")
+        @click.option("-m", "--metadata", is_flag=True, help="Include metadata")
         @click.option(
-            "-v", "--video-metadata", is_flag=True, help="Include video metadata"
+            "-mo", "--metadata-only", is_flag=True, help="Only download metadata"
         )
-        @click.option(
-            "-vo", "--video-metadata-only", is_flag=True, help="Only download metadata"
-        )
-        def download(id, path, video_metadata, video_metadata_only):
-            video = get_instance().from_id(id)
-            if video_metadata_only or video_metadata:
-                video.download_metadata(path)
-            if not video_metadata_only:
-                video.download(path)
-
-    if issubclass(type_manager, ImageManager):
-
-        @group.command(
-            help="Download an image to the current directory, or the specified path."
-        )
-        @click.argument("id")
-        @click.argument("path", default=".")
-        def download(id, path):
-            image = get_instance().from_id(id)
-            image.download(path)
+        def download(id, path, metadata, metadata_only):
+            media = get_instance().from_id(id)
+            if metadata_only or metadata:
+                media.download_metadata(path)
+            if not metadata_only:
+                media.download(path)
 
     return group
