@@ -77,7 +77,7 @@ class TypeProxy(object):
         Returns the underlying instance as a dictionary, suitable for turning
         into JSON.
         """
-        return self._instance.__to_json_value()
+        return self._instance.__to_json_value__()
 
     def __str__(self):
         return f"{self.underlying_type}\n{to_clean_string(self)}"
