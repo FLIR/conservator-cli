@@ -125,6 +125,28 @@ class Collection(QueryableType):
             raise InvalidRemotePathException(path)
         return Collection(conservator, collection)
 
+    def recursively_get_children(self, include_self=False, fields=None):
+        """
+        Yields all child collections recursively.
+
+        :param include_self: If `True`, yield this collection too.
+        :param fields: The `fields` to populate on children.
+        """
+        fields = FieldsRequest.create(fields)
+        fields.include("children.id")
+        self.populate(fields)
+
+        if include_self:
+            yield self
+
+        collections = [*self.children]
+
+        while len(collections) > 0:
+            collection = collections.pop()
+            collection.populate(fields)
+            yield collection
+            collections.extend(collection.children)
+
     def get_images(self, fields=None):
         """Returns a query for all images in this collection."""
         images = PaginatedQuery(
@@ -132,12 +154,37 @@ class Collection(QueryableType):
         )
         return images
 
+    def recursively_get_images(self, fields=None):
+        """Yields all images in this and child collections recursively"""
+        for collection in self.recursively_get_children(include_self=True, fields="id"):
+            yield from collection.get_images(fields)
+
     def get_videos(self, fields=None):
         """Returns a query for all videos in this collection."""
         videos = PaginatedQuery(
             self._conservator, Video, Query.videos, fields=fields, collection_id=self.id
         )
         return videos
+
+    def recursively_get_videos(self, fields=None):
+        """Yields all videos in this and child collections recursively"""
+        for collection in self.recursively_get_children(include_self=True, fields="id"):
+            yield from collection.get_videos(fields)
+
+    def get_media(self, fields=None):
+        """
+        Yields all videos, then images in this collection.
+
+        :param fields: The `fields` to include in the media. All
+            fields must exist on both Image and Video types.
+        """
+        yield from self.get_videos(fields=fields)
+        yield from self.get_images(fields=fields)
+
+    def recursively_get_media(self, fields=None):
+        """Yields all videos and images in this and child collections recursively"""
+        for collection in self.recursively_get_children(include_self=True, fields="id"):
+            yield from collection.get_media(fields)
 
     def get_datasets(self, fields=None):
         """Returns a query for all datasets in this collection."""
