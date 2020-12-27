@@ -45,9 +45,7 @@ class PaginatedQuery:
         self._wrapping_type = wrapping_type
         self._query = query
         self._base_operation = base_operation
-        if fields is None:
-            fields = FieldsRequest()
-        self.fields = fields
+        self.fields = FieldsRequest.create(fields)
         self._page = 0
         self._limit = page_size
         self.unpack_field = unpack_field
@@ -86,8 +84,14 @@ class PaginatedQuery:
         """Sets the query's :class:`~FLIR.conservator.fields_request.FieldsRequest` to `fields`."""
         if self.started:
             raise ConcurrentQueryModificationException()
-        self.fields = fields
+        self.fields = FieldsRequest.create(fields)
         return self
+
+    def including(self, *fields):
+        """
+        :param fields: Fields to include in the results.
+        """
+        return self.including_fields(*fields)
 
     def including_fields(self, *fields):
         """
@@ -99,6 +103,12 @@ class PaginatedQuery:
             return self.including_all_fields()
         self.fields.include_fields(fields)
         return self
+
+    def excluding(self, *fields):
+        """
+        :param fields: Fields to exclude in the results.
+        """
+        return self.excluding_fields(*fields)
 
     def excluding_fields(self, *fields):
         """
@@ -115,9 +125,7 @@ class PaginatedQuery:
         """
         if self.started:
             raise ConcurrentQueryModificationException()
-        if self.started:
-            raise
-        self.fields.include_field("")
+        self.fields = FieldsRequest.create(None)
         return self
 
     def first(self):
@@ -141,9 +149,9 @@ class PaginatedQuery:
 
     def _do_query(self, page, limit):
         results = self._conservator.query(
-            self._query,
-            self._base_operation,
-            self.fields,
+            query=self._query,
+            operation_base=self._base_operation,
+            fields=self.fields,
             page=page,
             limit=limit,
             **self.kwargs

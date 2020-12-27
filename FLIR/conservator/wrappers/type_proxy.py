@@ -80,7 +80,7 @@ class TypeProxy(object):
         return self._instance.__to_json_value__()
 
     def __str__(self):
-        return f"{self.underlying_type}\n{to_clean_string(self)}"
+        return to_clean_string(self)
 
     @staticmethod
     def has_base_type(base_type, type_):

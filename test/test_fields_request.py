@@ -1,65 +1,28 @@
-from FLIR.conservator.connection import ConservatorConnection
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.generated.schema import Query, Project
+from FLIR.conservator.generated.schema import Query
 from sgqlc.operation import Operation
 
 
-def test_add_fields_simple():
+def test_prepare_query_simple():
     op = Operation(Query)
     q = op.project
     q(id="123")
     fields = FieldsRequest()
     fields.include_field("name")
-    fields.add_fields_to_request(q)
+    fields.prepare_query(q)
     assert 'project(id: "123")' in str(op)
     assert "name" in str(op)
     assert "repository" not in str(op)
 
 
-def test_add_fields_simple_exclude():
+def test_prepare_query_simple_exclude():
     op = Operation(Query)
     q = op.project
     q(id="123")
     fields = FieldsRequest()
-    fields.exclude_field("file_locker_files", "acl", "root_collection")
-    fields.add_fields_to_request(q)
+    fields.include_field("file_locker_files", "acl")
+    fields.exclude_field("file_locker_files")
+    fields.prepare_query(q)
     assert 'project(id: "123")' in str(op)
     assert "fileLockerFiles" not in str(op)
-    assert "rootCollection" not in str(op)
-    assert "createdBy" in str(op)
-
-
-def test_should_include_path():
-    a = FieldsRequest()
-    a.include_field("repository", "id")
-    assert a.should_include_path("repository")
-    assert a.should_include_path("repository.master")
-    assert a.should_include_path("id")
-    assert not a.should_include_path("name")
-
-    b = FieldsRequest()
-    b.include_field("repository", "id")
-    b.exclude_field("repository.master")
-    assert b.should_include_path("repository")
-    assert not b.should_include_path("repository.master")
-    assert b.should_include_path("id")
-    assert not b.should_include_path("name")
-
-    c = FieldsRequest()
-    c.include_field("name")
-    c.exclude_field("name")
-    assert not b.should_include_path("name")
-
-
-def test_max_depth():
-    op = Operation(Query)
-    q = op.collection
-    q(id="123")
-    fields = FieldsRequest()
-    fields.exclude_field("children", "file_locker_files", "acl", "root_collection")
-    fields.set_depth(1)
-    fields.add_fields_to_request(q)
-    assert 'collection(id: "123")' in str(op)
-    assert "fileLockerFiles" not in str(op)
-    assert "rootCollection" not in str(op)
-    assert "createdBy" in str(op)
+    assert "acl" in str(op)

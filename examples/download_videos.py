@@ -13,8 +13,7 @@ download_path = os.path.join(os.getcwd(), "videos")
 search_text = "location:Goleta AND has:car"
 
 # we will need filename and url to do a download
-fields = FieldsRequest()
-fields.include_field("filename", "url")
+fields = ["filename", "url"]
 
 # we create a query for videos with our search text and fields:
 videos = conservator.videos.search(search_text).with_fields(fields)

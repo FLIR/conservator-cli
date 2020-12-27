@@ -1,107 +1,106 @@
+from FLIR.conservator.fields_manager import FieldsManager
+
+
 class FieldsRequest:
     """
-    A collection of fields to include (or exclude) in a query. Many different
+    A collection of fields to include in a query. Many different
     API calls will require specifying a list of fields using a :class:`FieldsRequest`.
-
-    It can be used with :meth:`ConservatorConnection.query() <FLIR.conservator.connection.ConservatorConnection.query>`:
-
-    >>> conservator = Conservator.default()
-    >>> fields = FieldsRequest()
-    >>> fields.include_field("id", "name")
-    >>> datasets = conservator.query(Query.datasets, fields=fields, search_text="ADAS")
-    >>> for dataset in datasets:
-    ...     print(dataset.name)
-
-    As used in this module, a `field_path` can refer to either:
-        - A single field, like `"name"` to select `Project.name`
-        - An entire subfield, like `"repository"` select all fields in `Dataset.reposistory`
-        - A path to a field/subfield in a subfield, like `"repository.master"`
-          to select the `Reposistory.master` field in `Dataset.reposistory`
-
-    These paths can be as long and specific as you want.
-
-    :param include_fields: List of field paths to include in the returned object(s).
-        If empty or not specified, all fields will be included.
-    :param exclude_fields: A list of field paths to exclude. These override included fields.
-    :param depth: Max depth for requested fields. Defaults to the maximum depth of any
-        included field, plus 1.
     """
 
-    def __init__(self, include_fields=("",), exclude_fields=(), depth=None):
-        self.included = set(include_fields)
-        self.excluded = set(exclude_fields)
-        self._depth = depth
+    def __init__(self, paths: {str: object} = None):
+        if paths is None:
+            paths = {}
+        self.paths = paths
+        self.excluded = set()
 
-    @property
-    def depth(self):
-        if self._depth is not None:
-            return self._depth
-        max_depth = max(map(lambda f: f.count("."), self.included))
-        return max(max_depth, 1)
-
-    def set_depth(self, depth):
-        self._depth = depth
-
-    def add_fields_to_request(self, obj, current_path="", current_depth=0):
+    @classmethod
+    def create(cls, fields):
         """
-        Recursively adds fields to an SGQLC object (usually initially called with an operation).
+        Create a `FieldsRequest`. Any function that accepts `fields` will
+        eventually use this method to convert `fields` to a valid `FieldsRequest`.
 
-        :param obj: The SGQLC object to add fields to.
-        :param current_path: The current path, used to filter included and excluded path fields.
-        :param current_depth: How many times this has been called recursively.
+        This accepts a variety of types:
+
+        Pass through:
+
+            >>> assert isinstance(fields_request, FieldsRequest)
+            >>> FieldsRequest.create(fields_request)
+
+        A single field::
+
+            >>> FieldsRequest.create("name")
+
+        A list of fields::
+
+            >>> FieldsRequest.create(["name", "owner", "url"])
+
+        A dictionary of fields, to include and exclude fields::
+
+            >>> FieldsRequest.create({"name": True, "owner": True, "url": False})
+
+        If a key's value is a dictionary, it is used as arguments to query that fields::
+
+            >>> FieldsRequest.create({"frames": {"page": 0, "limit": 100}})
+
+        This is the only way to add arguments to a field.
+
+        These examples only demonstrate immediate child fields on an object. You may
+        also specify subfields using a period (`.`) as a separator::
+
+            >>> FieldsRequest.create("children.name")
+
+        If one of the fields in a subpath needs arguments, it must be explicitly listed::
+
+            >>> FieldsRequest.create({"frames.url" : True, "frames": {"page": 0, "limit": 100}})
+
+        If no fields are included in a request, the field listed in
+        :class:`~FLIR.conservator.fields_manager.FieldsManager` will be requested.
+        This applies to subfields--so in the following example, the default fields of Video
+        will be requested::
+
+            >>> FieldsRequest.create(["name", "videos"])
+
+        But, if at least one subfield is requested, only that field will be requested and the
+        defaults will be ingored::
+
+            >>> FieldsRequest.create(["name", "videos.name"])
+
+        The same logic applies to the root object. If no specific fields are included,
+        the default fields defined in :class:`~FLIR.conservator.fields_manager.FieldsManager` are included.
+        Care must be taken when defining default fields that no circular type dependencies are created.
+
+        Excluded fields (falsey dict values) override included fields, but do not affect defualt fields
+        at this time. Please submit an issue if you need to exclude default fields. Including specific fields
+        should always be preferred to relying on defaults.
+
+        Note: This design mirrors `SGQLC's field selection syntax`_
+         (specifically see ``__fields__``).
+
+        .. _SGQLC's field selection syntax: https://sgqlc.readthedocs.io/en/latest/sgqlc.operation.html#selecting-to-generate-queries
         """
-        if current_depth > self.depth:
-            return
+        if isinstance(fields, FieldsRequest):
+            return fields
+        if fields is None or fields == "":
+            fields = {}
+        if isinstance(fields, str):
+            fields = [fields]
+        if (
+            isinstance(fields, list)
+            or isinstance(fields, tuple)
+            or isinstance(fields, set)
+        ):
+            fields = {name: True for name in fields}
 
-        try:
-            field_names = [name for name in dir(obj) if not name.startswith("_")]
-        except ValueError:
-            field_names = []
-        if len(field_names) == 0:
-            # Fields are included in a query by calling them.
-            # View the SGQLC docs for more info.
-            obj()
-            return
+        assert isinstance(fields, dict)
+        return FieldsRequest(fields)
 
-        path_prefix = "" if current_path == "" else current_path + "."
+    def include(self, *field_path):
+        """Includes `field_path` in the request."""
+        self.include_fields(field_path)
 
-        for field_name in field_names:
-            field_path = path_prefix + field_name
-            if self.should_include_all_subpaths(field_path):
-                obj[field_name]()
-            elif self.should_include_path(field_path):
-                field = getattr(obj, field_name)
-                self.add_fields_to_request(field, field_path, current_depth + 1)
-
-    def should_include_all_subpaths(self, path):
-        """
-        Returns `True` if all fields under `path` are included
-        in the request.
-        """
-        if path in self.excluded:
-            return False
-        for excluded in self.excluded:
-            if excluded.startswith(path):
-                return False
-        for included in self.included:
-            if path.startswith(included):
-                return True
-        return False
-
-    def should_include_path(self, path):
-        """Returns `True` if this request should include something within `path`."""
-        # if excluded, definitely no
-        if path in self.excluded:
-            return False
-
-        if path == "id" or path.endswith(".id"):
-            return True
-
-        # if it or a child path is included, yes
-        for included in self.included:
-            if included.startswith(path) or path.startswith(included):
-                return True
-        return False
+    def exclude(self, *field_path):
+        """Excludes `field_path` from the request."""
+        self.exclude_fields(field_path)
 
     def include_field(self, *field_path):
         """Includes `field_path` in the request."""
@@ -113,10 +112,64 @@ class FieldsRequest:
 
     def include_fields(self, field_paths):
         """Includes `field_paths` in the request."""
-        if "" in self.included:
-            self.included.remove("")
-        self.included = self.included.union(field_paths)
+        for path in field_paths:
+            self.paths[path] = True
 
     def exclude_fields(self, field_paths):
         """Excludes `field_paths` from the request."""
         self.excluded = self.excluded.union(field_paths)
+
+    def prepare_query(self, query_selector):
+        # TODO: account for exclusions in default fields
+        for excluded in self.excluded:
+            self.paths[excluded] = False
+
+        # start by adding all requested fields
+        all_selectors = []
+        for path, value in self.paths.items():
+            field = get_attr_by_path(path, query_selector)
+            if value is False or value is None:
+                # excluded field
+                continue
+            all_selectors.append((path, field))
+            if value is True:
+                field()
+            if isinstance(value, dict):
+                field(**value)
+
+        # selectors that dont have any child nodes call them
+        # this is not a smart way of doing this
+        leaf_selectors = []
+        for path, selector in all_selectors:
+            # a selector is a leaf if no other selectors are
+            # included below it
+            for other_path, _ in all_selectors:
+                if is_subfield_of(path, other_path):
+                    # has a subfield selector--not a leaf
+                    break
+            else:
+                # no leaf found
+                leaf_selectors.append(selector)
+
+        # if no fields are selected, select defaults on query
+        if len(self.paths) == 0:
+            leaf_selectors.append(query_selector)
+
+        # add default fields to all leafs:
+        for leaf in leaf_selectors:
+            FieldsManager.select_default_fields(leaf)
+
+
+def get_attr_by_path(path, obj):
+    for subpath in path.split("."):
+        obj = getattr(obj, subpath)
+    return obj
+
+
+def is_subfield_of(parent, subpath):
+    # parent : videos.frames.annotations
+    # subpath: videos.frames.annotations.bbox.w
+    # returns: True
+    if subpath.startswith(parent):
+        return len(subpath) > len(parent) and subpath[len(parent)] == "."
+    return False

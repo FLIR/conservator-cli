@@ -51,7 +51,7 @@ class ConservatorConnection:
         authentication info.
     """
 
-    def __init__(self, config, max_retries=5):
+    def __init__(self, config):
         self.config = config
         self.email = None
         self.graphql_url = ConservatorConnection.to_graphql_url(config.url)
@@ -64,8 +64,7 @@ class ConservatorConnection:
     def get_email(self):
         """Returns the current User's email"""
         if self.email is None:
-            fields = FieldsRequest(include_fields=("email",))
-            user = self.query(Query.user, fields=fields)
+            user = self.query(Query.user, fields="email")
             self.email = user.email
         return self.email
 
@@ -148,7 +147,8 @@ class ConservatorConnection:
         if variables is None:
             variables = {}
 
-        gql = operation.__to_graphql__(auto_select_depth=1)
+        # The depth is completely arbitrary atm...
+        gql = operation.__to_graphql__(auto_select_depth=5)
         gql = re.sub(r"\w* {\s*}\s*", "", gql)
         json_response = self.endpoint(gql, variables)
         logger.debug("Response: " + str(json_response))
@@ -199,14 +199,6 @@ class ConservatorConnection:
         if operation_base is None:
             operation_base = schema.query_type
 
-        if fields is None:
-            # includes all fields by default
-            fields = FieldsRequest()
-        if isinstance(fields, str):
-            fields = FieldsRequest(include_fields=(fields,))
-        if isinstance(fields, list) or isinstance(fields, tuple):
-            fields = FieldsRequest(include_fields=tuple(*fields))
-
         tries = 0
 
         while True:
@@ -242,8 +234,9 @@ class ConservatorConnection:
         query = getattr(op, query_name)
         query(**kwargs)
 
-        fields.exclude_fields(self.fields_manager.get_problematic_paths(type_))
-        fields.add_fields_to_request(query)
+        fr = FieldsRequest.create(fields)
+        fr.exclude_fields(self.fields_manager.get_problematic_paths(type_))
+        fr.prepare_query(query)
 
         ret = getattr(self.run(op), query_name)
         try:

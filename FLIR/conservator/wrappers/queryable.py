@@ -18,22 +18,14 @@ class QueryableType(TypeProxy):
         self.populate(fields=FieldsRequest())
 
     def populate(self, fields=None):
-        """Query conservator for the specified fields."""
-        if isinstance(fields, list):
-            fields = FieldsRequest(include_fields=tuple(fields))
-        elif isinstance(fields, str):
-            fields = FieldsRequest(include_fields=(fields,))
+        """
+        Query conservator for the specified fields, even if they
+        already exist on the object.
 
-        if fields is None:
-            fields = FieldsRequest()
-        else:
-            needs_new_fields = False
-            for field in fields.included:
-                if not self.has_field(field):
-                    needs_new_fields = True
-                    break
-            if not needs_new_fields:
-                return
+        To filter existing fields, use `requires_fields`
+        """
+
+        fields = FieldsRequest.create(fields)
 
         result = self._populate(fields)
         if result is None:
