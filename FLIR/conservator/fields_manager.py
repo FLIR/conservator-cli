@@ -49,13 +49,12 @@ class FieldsManager:
         elif issubclass(type_, sgqlc.types.Enum):
             return
         elif issubclass(type_, schema.Acl):
-            FieldsManager.select_default_fields(selector.read.users)
-            FieldsManager.select_default_fields(selector.read.groups)
-            FieldsManager.select_default_fields(selector.write.users)
-            FieldsManager.select_default_fields(selector.write.groups)
-            FieldsManager.select_default_fields(selector.admin.users)
-            FieldsManager.select_default_fields(selector.admin.groups)
-            FieldsManager.select_default_fields(selector.meta)
+            FieldsManager.select_default_fields(selector.read.user_ids)
+            FieldsManager.select_default_fields(selector.read.group_ids)
+            FieldsManager.select_default_fields(selector.write.user_ids)
+            FieldsManager.select_default_fields(selector.write.group_ids)
+            FieldsManager.select_default_fields(selector.admin.user_ids)
+            FieldsManager.select_default_fields(selector.admin.group_ids)
         elif issubclass(type_, schema.Collection):
             selector.id()
             selector.parent_id()
