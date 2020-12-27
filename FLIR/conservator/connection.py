@@ -147,7 +147,8 @@ class ConservatorConnection:
         if variables is None:
             variables = {}
 
-        gql = operation.__to_graphql__(auto_select_depth=1)
+        # The depth is completely arbitrary atm...
+        gql = operation.__to_graphql__(auto_select_depth=5)
         gql = re.sub(r"\w* {\s*}\s*", "", gql)
         json_response = self.endpoint(gql, variables)
         logger.debug("Response: " + str(json_response))
