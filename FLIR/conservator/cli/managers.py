@@ -6,8 +6,6 @@ from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.managers import (
     SearchableTypeManager,
     CollectionManager,
-    VideoManager,
-    ImageManager,
     MediaTypeManager,
 )
 
@@ -31,11 +29,10 @@ def fields_request(func):
     @functools.wraps(func)
     def wrapper(properties="", exclude="", **kwargs):
         include = list(filter(lambda p: p != "", properties.split(",")))
-        if len(include) == 0:
-            include = ("",)
         exclude = list(filter(lambda p: p != "", exclude.split(",")))
-        f = FieldsRequest(include, exclude)
-        kwargs["fields"] = f
+        fields = {name: True for name in include}
+        fields.update(**{name: False for name in exclude})
+        kwargs["fields"] = FieldsRequest.create(fields)
         return func(**kwargs)
 
     return wrapper

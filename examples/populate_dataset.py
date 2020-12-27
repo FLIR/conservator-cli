@@ -4,15 +4,13 @@ from FLIR.conservator.fields_request import FieldsRequest
 conservator = Conservator.default()
 
 # Let's get the first dataset related to ADAS:
-adas_dataset = conservator.datasets.search("ADAS").including_fields("id").first()
+adas_dataset = conservator.datasets.search("ADAS").including("id").first()
 print(adas_dataset)
 
 # Say we now want to query for the name:
-fields = FieldsRequest()
-fields.include_field("name")
-adas_dataset.populate(fields)
+adas_dataset.populate("name")
 print(adas_dataset)
 
-# Now we want everything:
+# Now we want all default fields:
 adas_dataset.populate_all()
 print(adas_dataset)

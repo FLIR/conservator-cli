@@ -1,5 +1,7 @@
 import re
 import keyword
+
+import sgqlc.types
 from FLIR.conservator.generated import schema
 
 
@@ -10,13 +12,7 @@ class FieldsManager:
     """
 
     def __init__(self):
-        self.problematic_fields = {
-            schema.Video: {
-                "shared_with",
-                "frames.cursor",  # TODO: fix schema to allow null cursor
-                "datasets.frames.cursor",
-            },
-        }
+        self.problematic_fields = {}
 
     def get_problematic_paths(self, typ):
         """Get problematic field paths for a given SGQLC `type`"""
@@ -27,6 +23,196 @@ class FieldsManager:
         if self.problematic_fields.get(typ) is None:
             self.problematic_fields[typ] = set()
         self.problematic_fields[typ].add(path)
+
+    @classmethod
+    def select_default_fields(cls, selector):
+        """
+        Adds the default fields to the selector based on its type.
+
+        For basic types with only scalars, all fields are included.
+        For more complicated types, "useful" scalars are retained,
+        with a few exceptions. In general, you should request only the
+        specific fields you need. The fields included here may change
+        at any time.
+
+        See source for which fields are included.
+        """
+        # TODO: This behemoth of a method might be wise to split up...
+
+        type_ = selector.__field__.type
+        # by default, include everything.
+        # later calls to specific fields will reduce the scope
+        selector()
+
+        if issubclass(type_, sgqlc.types.Scalar):
+            return
+        elif issubclass(type_, sgqlc.types.Enum):
+            return
+        elif issubclass(type_, schema.Acl):
+            FieldsManager.select_default_fields(selector.read.users)
+            FieldsManager.select_default_fields(selector.read.groups)
+            FieldsManager.select_default_fields(selector.write.users)
+            FieldsManager.select_default_fields(selector.write.groups)
+            FieldsManager.select_default_fields(selector.admin.users)
+            FieldsManager.select_default_fields(selector.admin.groups)
+            FieldsManager.select_default_fields(selector.meta)
+        elif issubclass(type_, schema.Collection):
+            selector.id()
+            selector.parent_id()
+            selector.project_id()
+            selector.name()
+            selector.video_count()
+            selector.recursive_video_count()
+            selector.dataset_count()
+            selector.recursive_dataset_count()
+            selector.image_count()
+            selector.recursive_image_count()
+            selector.child_count()
+            selector.recursive_child_count()
+            selector.path()
+            selector.description()
+        elif issubclass(type_, schema.Dataset):
+            selector.id()
+            selector.name()
+            selector.frame_count()
+            selector.video_count()
+            selector.notes()
+            selector.tags()
+            selector.annotations_human_count()
+            selector.annotations_machine_count()
+            selector.readme()
+            selector.annotated_frames()
+            selector.empty_frames()
+            selector.un_annotated_frames()
+            selector.qa_change_requested_frames()
+            selector.qa_approved_frames()
+            selector.qa_pending_frames()
+            selector.flagged_frames()
+            selector.prediction_label_data()
+            selector.annotation_label_data()
+        elif issubclass(type_, schema.DatasetFrame) or issubclass(
+            type_, schema.DatasetFrameOnly
+        ):
+            selector.id()
+            selector.frame_id()
+            selector.video_id()
+            selector.frame_index()
+            selector.url()
+            selector.height()
+            selector.width()
+            selector.is_flagged()
+            selector.is_empty()
+            selector.annotation_count()
+            selector.human_annotation_count()
+            selector.machine_annotation_count()
+            selector.qa_status()
+            selector.md5()
+            selector.decription()
+            selector.dataset_frame_name()
+            if issubclass(type_, schema.DatasetFrame):
+                selector.custom_metadata()
+                selector.location()
+                selector.spectrum()
+        elif issubclass(type_, schema.DatasetFrames) or issubclass(
+            type_, schema.DatasetFramesOnly
+        ):
+            FieldsManager.select_default_fields(selector.dataset_frames)
+            selector.total_count()
+        elif issubclass(type_, schema.Frame):
+            selector.id()
+            selector.video_id()
+            selector.video_name()
+            selector.url()
+            selector.height()
+            selector.width()
+            selector.frame_index()
+            selector.annotation_count()
+            selector.machine_annotation_count()
+            selector.qa_status()
+            selector.custom_metadata()
+            selector.description()
+            selector.tags()
+            selector.spectrum()
+            selector.location()
+            selector.prediction_label_data()
+            selector.annotation_label_data()
+            selector.md5()
+            selector.is_flagged()
+        elif issubclass(type_, schema.Frames):
+            FieldsManager.select_default_fields(selector.frames)
+            selector.total_count()
+        elif issubclass(type_, schema.Group):
+            selector.id()
+            selector.name()
+        elif issubclass(type_, schema.Image):
+            selector.id()
+            selector.filename()
+            selector.url()
+            selector.state()
+            selector.metadata()
+            selector.frames_count()
+            selector.annotations_count()
+            selector.human_annotations_count()
+            selector.name()
+            selector.description()
+            selector.location()
+            selector.width()
+            selector.height()
+            selector.tags()
+            selector.custom_metadata()
+            selector.file_size()
+            selector.asset_type()
+            selector.image_md5()
+        elif issubclass(type_, schema.LabelSet):
+            selector.id()
+            selector.name()
+            selector.labels()
+        elif issubclass(type_, schema.PaginatedFrames):
+            FieldsManager.select_default_fields(selector.frames)
+            selector.count()
+        elif issubclass(type_, schema.Project):
+            selector.id()
+            selector.name()
+            FieldsManager.select_default_fields(selector.root_collection)
+            selector.description()
+        elif issubclass(type_, schema.User):
+            selector.id()
+            selector.email()
+            selector.name()
+            selector.role()
+            FieldsManager.select_default_fields(selector.groups)
+            selector.is_removed()
+        elif issubclass(type_, schema.Video):
+            selector.id()
+            selector.filename()
+            selector.url()
+            selector.md5()
+            selector.state()
+            selector.metadata()
+            selector.frames_count()
+            selector.annotations_count()
+            selector.human_annotations_count()
+            selector.name()
+            selector.description()
+            selector.location()
+            selector.width()
+            selector.height()
+            selector.tags()
+            selector.frame_rate()
+            selector.duration()
+            selector.prediction_label_data()
+            selector.annotation_label_data()
+            selector.file_size()
+            selector.asset_type()
+            selector.annotated_frames()
+            selector.empty_frames()
+            selector.un_annotated_frames()
+            selector.qa_change_requested_frames()
+            selector.qa_approved_frames()
+            selector.qa_pending_frames()
+            selector.flagged_frames()
+            selector.full_res_mp4_url()
+            selector.full_res_mp4_status()
 
     re_camel_case_words = re.compile("([^A-Z]+|[A-Z]+[^A-Z]*)")
 

@@ -4,15 +4,17 @@ conservator = Conservator.default()
 
 path = "/AndresTest"
 
-starting_collection = conservator.collections.from_remote_path(path, fields="path")
+starting_collection = conservator.collections.from_remote_path(
+    path, fields=["path", "id"]
+)
 collections = [starting_collection]
 
 while len(collections) > 0:
     collection = collections.pop()
     path = collection.path
-    for video in collection.get_videos(fields="name"):
+    for video in collection.get_videos(fields=["name", "id"]):
         print(path + "/" + video.name)
-    for image in collection.get_videos(fields="name"):
+    for image in collection.get_videos(fields=["name", "id"]):
         print(path + "/" + image.name)
     collection.populate(["children.path", "children.id"])
     collections.extend(collection.children)
