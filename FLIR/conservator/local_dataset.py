@@ -70,7 +70,7 @@ class LocalDataset:
         """
         if not self.validate_index():
             logger.error("Not adding changes. Invalid index.json.")
-            return
+            exit(-1)
         return subprocess.call(
             ["git", "add", "index.json", "associated_files"], cwd=self.path
         )
