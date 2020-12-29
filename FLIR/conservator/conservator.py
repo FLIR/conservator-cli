@@ -74,8 +74,8 @@ class Conservator(ConservatorConnection):
         return "".join(id_)
 
     @staticmethod
-    def default():
+    def default(save=True):
         """
         Returns a :class:`Conservator` using :meth:`Config.default() <FLIR.conservator.config.Config.default>`.
         """
-        return Conservator(Config.default())
+        return Conservator(Config.default(save=save))

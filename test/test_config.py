@@ -47,5 +47,14 @@ def test_defaults():
 
 
 def test_delete_default():
+    default_path = Config.default_config_path()
+    c = Config.from_dict(
+        {
+            "CONSERVATOR_API_KEY": "testAPIkey",
+        }
+    )
+    c.save_to_default_config()
+    assert os.path.exists(default_path)
+
     Config.delete_saved_default_config()
-    assert not os.path.exists(Config.default_config_path())
+    assert not os.path.exists(default_path)
