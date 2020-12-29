@@ -35,4 +35,3 @@ def test_defaults():
     assert c.key == "testAPIkey"
     assert c.url == "https://flirconservator.com/"
     assert c.max_retries == 5
-
