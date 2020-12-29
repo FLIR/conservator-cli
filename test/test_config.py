@@ -44,3 +44,8 @@ def test_defaults():
     assert c.key == "testAPIkey"
     assert c.url == "https://flirconservator.com/"
     assert c.max_retries == 5
+
+
+def test_delete_default():
+    Config.delete_saved_default_config()
+    assert not os.path.exists(Config.default_config_path())
