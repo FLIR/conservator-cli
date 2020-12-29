@@ -16,6 +16,10 @@ pipeline {
       }
     }
     stage('Unit Tests') {
+      environment {
+        CONSERVATOR_API_KEY = credentials('conservator-api-key')
+        CONSERVATOR_URL = 'https://staging.flirconservator.com/'
+      }
       steps {
         echo "Running unit tests..."
         sh "bash -c 'export LC_ALL=C.UTF-8; export LANG=C.UTF-8; source venv/bin/activate; cd test; pytest'"
