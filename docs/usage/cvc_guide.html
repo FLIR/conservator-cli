@@ -226,12 +226,24 @@ using the <code class="docutils literal notranslate"><span class="pre">cvc</span
 directory), then the images will also be copied there. This way you
 don’t need to re-download the frames.</p>
 </div>
+<div class="section" id="validating-changes">
+<h3>Validating Changes<a class="headerlink" href="#validating-changes" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file in any dataset should match the format expected by
+conservator. This format is defined by a JSON schema, and you can validate
+locally:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc validate
+</pre></div>
+</div>
+<p>This command is also run (and required to pass) before adding or committing
+new changes.</p>
+</div>
 <div class="section" id="making-a-commit">
 <h3>Making a Commit<a class="headerlink" href="#making-a-commit" title="Permalink to this headline">¶</a></h3>
 <p>Commit changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> with the given commit message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc commit &quot;Your commit message here&quot;
 </pre></div>
 </div>
+<p>This runs <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">validate</span></code> and only commits if the current <code class="docutils literal notranslate"><span class="pre">index.json</span></code> is valid.</p>
 </div>
 <div class="section" id="push-local-commits">
 <h3>Push Local Commits<a class="headerlink" href="#push-local-commits" title="Permalink to this headline">¶</a></h3>
