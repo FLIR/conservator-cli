@@ -373,7 +373,9 @@ class LocalDataset:
     def validate_index(self):
         """Validates that ``index.json`` matches the expected
         JSON Schema."""
-        schema_path = pkg_resources.resource_filename('FLIR.conservator', 'index_schema.json')
+        schema_path = pkg_resources.resource_filename(
+            "FLIR.conservator", "index_schema.json"
+        )
         with open(schema_path) as o:
             schema = json.load(o)
 
