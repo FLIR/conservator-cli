@@ -202,5 +202,23 @@ def publish(local_dataset, message):
     local_dataset.push_commits()
 
 
+@click.group(help="Commands for manipulating local datasets")
+@click.option(
+    "-p", "--path", default=".", help="Path to dataset, defaults to current directory"
+)
+@click.pass_context
+def cvc(ctx, path):
+    # This command is added to conservator CLI.
+    # It is the same as main sans the log level stuff.
+    # The conservator command handles logging, and would
+    # result in confusing behavior if included twice.
+    conservator = Conservator.default()
+    ctx.obj = LocalDataset(conservator, path)
+
+
+# Hacky way to "add" commands to both groups
+cvc.commands = main.commands
+
+
 if __name__ == "__main__":
     main()
