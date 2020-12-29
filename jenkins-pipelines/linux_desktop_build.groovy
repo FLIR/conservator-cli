@@ -5,6 +5,7 @@ pipeline {
       steps {
         echo "Setting up..."
         sh "rm -rf venv"
+        sh "rm -f ~/.conservator_config.json"
         sh "python3 -m venv venv"
         sh "bash -c 'source venv/bin/activate; pip install --upgrade setuptools; pip install .'"
       }
