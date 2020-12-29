@@ -42,6 +42,9 @@ class ConservatorGraphQLServerError(Exception):
         self.operation = operation
         self.errors = errors
 
+    def __str__(self):
+        return f"errors='{self.errors}' operation='{self.operation}'"
+
 
 class ConservatorConnection:
     """

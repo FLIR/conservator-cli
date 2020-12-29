@@ -165,7 +165,7 @@ class Config:
                 if save and source == Config.from_input:
                     creds.save_to_default_config()
                 return creds
-        return None
+        raise ConfigError("Couldn't find or create a config")
 
     @staticmethod
     def default_config_path():
