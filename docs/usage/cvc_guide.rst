@@ -208,6 +208,19 @@ directory), then the images will also be copied there. This way you
 don't need to re-download the frames.
 
 
+Validating Changes
+^^^^^^^^^^^^^^^^^^
+
+The ``index.json`` file in any dataset should match the format expected by
+conservator. This format is defined by a JSON schema, and you can validate
+locally::
+
+    $ cvc validate
+
+This command is also run (and required to pass) before adding or committing
+new changes.
+
+
 Making a Commit
 ^^^^^^^^^^^^^^^
 
@@ -215,6 +228,7 @@ Commit changes to ``index.json`` and ``associated_files`` with the given commit 
 
     $ cvc commit "Your commit message here"
 
+This runs ``cvc validate`` and only commits if the current ``index.json`` is valid.
 
 Push Local Commits
 ^^^^^^^^^^^^^^^^^^

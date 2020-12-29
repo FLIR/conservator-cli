@@ -6,7 +6,9 @@ import hashlib
 import shutil
 import requests
 import logging
+import pkg_resources
 
+import jsonschema
 from PIL import Image
 from FLIR.conservator.util import download_files
 
@@ -66,6 +68,9 @@ class LocalDataset:
         """
         Stages changes to ``index.json`` and ``associated_files`` for the next commit.
         """
+        if not self.validate_index():
+            logger.error("Not adding changes. Invalid index.json.")
+            exit(-1)
         return subprocess.call(
             ["git", "add", "index.json", "associated_files"], cwd=self.path
         )
@@ -364,3 +369,22 @@ class LocalDataset:
         subprocess.call(["git", "config", "user.email", email], cwd=clone_path)
 
         return LocalDataset(dataset._conservator, clone_path)
+
+    def validate_index(self):
+        """Validates that ``index.json`` matches the expected
+        JSON Schema."""
+        schema_path = pkg_resources.resource_filename(
+            "FLIR.conservator", "index_schema.json"
+        )
+        with open(schema_path) as o:
+            schema = json.load(o)
+
+        try:
+            with open(self.index_path) as index:
+                index_data = json.load(index)
+            jsonschema.validate(index_data, schema)
+            return True
+        except jsonschema.exceptions.ValidationError as e:
+            logger.error(e.message)
+            logger.debug(e)
+        return False

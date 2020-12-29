@@ -7,3 +7,4 @@ pytest
 requests
 black
 Pillow
+jsonschema
