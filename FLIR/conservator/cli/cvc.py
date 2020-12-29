@@ -174,6 +174,15 @@ def download(local_dataset, include_analytics, pool_size, symlink):
     )
 
 
+@main.command(help="Validate index.json format")
+@pass_valid_local_dataset
+def validate(local_dataset):
+    if local_dataset.validate_index():
+        click.secho("Valid", fg="green")
+    else:
+        click.secho("Invalid", fg="red")
+
+
 @main.command(help="Upload staged images and add them to index.json")
 @pass_valid_local_dataset
 def upload(local_dataset):

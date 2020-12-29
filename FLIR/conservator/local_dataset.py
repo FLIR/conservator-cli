@@ -6,7 +6,9 @@ import hashlib
 import shutil
 import requests
 import logging
+import pkg_resources
 
+import jsonschema
 from PIL import Image
 from FLIR.conservator.util import download_files
 
@@ -66,6 +68,9 @@ class LocalDataset:
         """
         Stages changes to ``index.json`` and ``associated_files`` for the next commit.
         """
+        if not self.validate_index():
+            logger.error("Not adding changes. Invalid index.json.")
+            return
         return subprocess.call(
             ["git", "add", "index.json", "associated_files"], cwd=self.path
         )
@@ -368,51 +373,16 @@ class LocalDataset:
     def validate_index(self):
         """Validates that ``index.json`` matches the expected
         JSON Schema."""
-        # !/usr/bin/env python3
-        import os
-        import json
-        import jsonschema
+        schema_path = pkg_resources.resource_filename('FLIR.conservator', 'index_schema.json')
+        with open(schema_path) as o:
+            schema = json.load(o)
 
-        schema_file = ""
-        input_file = self.index_path
-
-        def validate_file(schema_file, input_file, filetype):
-
-            # both video and dataset schemas are stored in the same file
-            # because they have so much in common; can specify the subschema
-            # explicitly, or use default subschema which tries video first and
-            # then dataset (falls back to dataset if video didn't pass)
-            #
-            # Note: custom resolver is needed to reference a subschema,
-            #       but breaks internal references if passing in an already-loaded
-            #       schema to use the whole schema
-            #       https://github.com/Julian/jsonschema/issues/343
-            schema = None
-            resolver = None
-            if filetype:
-                # set up the json schema resolver to be able to resolve
-                # the $ref field below
-                schema_name = os.path.basename(schema_file)
-                schema_parent = os.path.dirname(schema_file)
-                schema_path = 'file://' + os.path.abspath(schema_parent) + '/'
-                resolver = jsonschema.RefResolver(schema_path, None)
-
-                # pick out specific subschema to validate against
-                selected_subschema = schema_name + "#/components/" + filetype
-                schema = {"$ref": selected_subschema}
-                print("validate {} against {} schema ".format(input_file, selected_subschema))
-            else:
-                with open(schema_file) as fp:
-                    schema = json.load(fp)
-                print("validate {} against default schema ".format(input_file))
-
-            try:
-                input_data = None
-                with open(input_file) as fp:
-                    input_data = json.load(fp)
-                jsonschema.validate(input_data, schema, resolver=resolver)
-                return True
-            except jsonschema.exceptions.ValidationError as e:
-                logger.error(e)
-            return False
-
+        try:
+            with open(self.index_path) as index:
+                index_data = json.load(index)
+            jsonschema.validate(index_data, schema)
+            return True
+        except jsonschema.exceptions.ValidationError as e:
+            logger.error(e.message)
+            logger.debug(e)
+        return False
