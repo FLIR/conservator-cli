@@ -182,7 +182,7 @@ class ConservatorConnection:
                 logger.debug(
                     "Attempting to resolve by excluding field in future queries."
                 )
-                logger.debug("Excluded field:", problematic_path)
+                logger.debug(f"Excluded field: {type_.__name__}.{problematic_path}")
                 continue
 
             # we can't handle the errors. raise the exception.

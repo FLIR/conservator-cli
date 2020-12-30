@@ -143,16 +143,16 @@ class Config:
         This works by iterating through the various credential sources, and returning
         the first one that works. Sources are queried in this order:
 
-         - Config file
          - Environment variables
+         - Config file
          - User input
 
         :param save: If `True` and the source is stdin, save the config for future use.
             This means a user won't need to type them again.
         """
         for source in [
-            Config.from_default_config_file,
             Config.from_environ,
+            Config.from_default_config_file,
             Config.from_input,
         ]:
             creds = None
