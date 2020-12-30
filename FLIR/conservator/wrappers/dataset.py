@@ -70,16 +70,20 @@ class Dataset(QueryableType):
             wrapping_type=DatasetFrame,
             unpack_field="dataset_frames",
             fields=fields,
-            id="RkAXSN4ychHgiNkMk",
+            id=self.id,
             search_text=search_text,
         )
 
-    def add_frames(self, frames, fields=None):
+    def add_frames(self, frames, fields=None, overwrite=False):
         """
-        Given a list of `frames`, add them to the dataset.
+        Given a list of `frames`, add them to the dataset.  If overwrite
+        is True and the frame was already in the dataset, the dataset frame
+        attributes will be replaced with the source frame attributes.
         """
         frame_ids = [frame.id for frame in frames]
-        _input = AddFramesToDatasetInput(dataset_id=self.id, frame_ids=frame_ids)
+        _input = AddFramesToDatasetInput(
+            dataset_id=self.id, frame_ids=frame_ids, overwrite=overwrite
+        )
         return self._conservator.query(
             Mutation.add_frames_to_dataset,
             operation_base=Mutation,
