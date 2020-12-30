@@ -245,8 +245,7 @@ class Collection(QueryableType):
         """Downloads image and video metadata to ``media_metadata/``."""
         path = os.path.join(path, "media_metadata")
         os.makedirs(path, exist_ok=True)
-        fields = FieldsRequest()
-        fields.include_field("metadata", "filename")
+        fields = FieldsRequest.create(["metadata", "filename"])
 
         videos = self.get_videos(fields=fields)
         for video in videos:

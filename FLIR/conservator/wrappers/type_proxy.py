@@ -134,7 +134,7 @@ def requires_fields(*fields):
     def decorator(f):
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
-            fr = FieldsRequest(include_fields=fields)
+            fr = FieldsRequest.create(fields)
             if hasattr(self, "populate"):
                 self.populate(fr)
             for field in fields:
