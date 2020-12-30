@@ -92,6 +92,12 @@ class FieldsRequest:
             fields = {name: True for name in fields}
 
         assert isinstance(fields, dict)
+
+        # special-case "id" field, because it will be needed if a sglqc wrapper object
+        # needs a new query to populate additional fields after initial creation
+        # ('id' can still be excluded explicitly, if that's what you really want)
+        if not "id" in fields:
+            fields["id"] = True
         return FieldsRequest(fields)
 
     def include(self, *field_path):

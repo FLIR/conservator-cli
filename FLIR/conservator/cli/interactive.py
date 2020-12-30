@@ -365,7 +365,9 @@ def upload(local_path, type, remote_name):
 @shell.command(help="Download the current collection")
 @click.argument("localpath", default=".")
 @click.option("-d", "--datasets", is_flag=True, help="Pull datasets")
-@click.option("-v", "--video-metadata", is_flag=True, help="Include video metadata")
+@click.option(
+    "-v", "--video-metadata", is_flag=True, help="Include image and video metadata"
+)
 @click.option("-f", "--associated-files", is_flag=True, help="Include associated files")
 @click.option("-m", "--media", is_flag=True, help="Include media (videos and images)")
 @click.option(
