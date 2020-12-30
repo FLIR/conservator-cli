@@ -7,7 +7,7 @@ pipeline {
         sh "rm -rf venv"
         sh "rm -f ~/.conservator_config.json"
         sh "python3 -m venv venv"
-        sh "bash -c 'source venv/bin/activate; pip install --upgrade setuptools; pip install .'"
+        sh "bash -c 'source venv/bin/activate; pip install --upgrade setuptools; pip install --upgrade wheel; pip install .'"
       }
     }
     stage('Formatting Test') {
