@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo Validating formatting
+black --check .
+if [ $? -ne 0 ]
+then
+  echo -e 'Formatting check failed. Run \033[1m\033[0;36m"black ."\033[0m'
+  exit 1
+fi
+exit 0
