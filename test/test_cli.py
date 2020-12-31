@@ -9,4 +9,3 @@ def test_cli():
     with pytest.raises(SystemExit) as exits:
         cli.main()
     assert exits.type == SystemExit
-    assert exits.value.code == 0
