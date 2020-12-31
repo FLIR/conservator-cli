@@ -42,6 +42,9 @@ class ConservatorGraphQLServerError(Exception):
         self.operation = operation
         self.errors = errors
 
+    def __str__(self):
+        return f"errors='{self.errors}' operation='{self.operation}'"
+
 
 class ConservatorConnection:
     """
@@ -179,7 +182,7 @@ class ConservatorConnection:
                 logger.debug(
                     "Attempting to resolve by excluding field in future queries."
                 )
-                logger.debug("Excluded field:", problematic_path)
+                logger.debug(f"Excluded field: {type_.__name__}.{problematic_path}")
                 continue
 
             # we can't handle the errors. raise the exception.

@@ -1,4 +1,3 @@
-import os
 from FLIR.conservator.config import Config
 
 TEST_DICT = {
@@ -24,14 +23,6 @@ def test_save_and_load_file():
     assert c2.key == "testAPIkey"
     assert c2.url == "https://myconservator.com"
     assert c2.max_retries == 2
-
-
-def test_from_environ():
-    os.environ.update(TEST_DICT)
-    c = Config.from_environ()
-    assert c.key == "testAPIkey"
-    assert c.url == "https://myconservator.com"
-    assert c.max_retries == 2
 
 
 def test_defaults():

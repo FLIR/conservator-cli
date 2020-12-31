@@ -143,16 +143,16 @@ class Config:
         This works by iterating through the various credential sources, and returning
         the first one that works. Sources are queried in this order:
 
-         - Config file
          - Environment variables
+         - Config file
          - User input
 
-        :param save: If `True`, save the config for future use. This means a user
-            won't need to type them again.
+        :param save: If `True` and the source is stdin, save the config for future use.
+            This means a user won't need to type them again.
         """
         for source in [
-            Config.from_default_config_file,
             Config.from_environ,
+            Config.from_default_config_file,
             Config.from_input,
         ]:
             creds = None
@@ -162,10 +162,10 @@ class Config:
                 pass
             if creds is not None:
                 logger.debug(f"Created config from source: {source}")
-                if save and source != Config.from_default_config_file:
+                if save and source == Config.from_input:
                     creds.save_to_default_config()
                 return creds
-        return None
+        raise ConfigError("Couldn't find or create a config")
 
     @staticmethod
     def default_config_path():

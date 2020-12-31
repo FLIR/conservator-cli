@@ -5,8 +5,9 @@ pipeline {
       steps {
         echo "Setting up..."
         sh "rm -rf venv"
+        sh "rm -f ~/.conservator_config.json"
         sh "python3 -m venv venv"
-        sh "bash -c 'source venv/bin/activate; pip install --upgrade setuptools; pip install .'"
+        sh "bash -c 'source venv/bin/activate; pip install --upgrade setuptools; pip install --upgrade wheel; pip install .'"
       }
     }
     stage('Formatting Test') {
@@ -16,6 +17,10 @@ pipeline {
       }
     }
     stage('Unit Tests') {
+      environment {
+        CONSERVATOR_API_KEY = credentials('conservator-api-key')
+        CONSERVATOR_URL = 'https://staging.flirconservator.com/'
+      }
       steps {
         echo "Running unit tests..."
         sh "bash -c 'export LC_ALL=C.UTF-8; export LANG=C.UTF-8; source venv/bin/activate; cd test; pytest'"
