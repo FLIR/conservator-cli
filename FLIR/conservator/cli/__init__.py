@@ -12,7 +12,7 @@ from FLIR.conservator.managers import (
     ImageManager,
 )
 from FLIR.conservator.util import to_clean_string
-from FLIR.conservator.cli.cvc import main as cvc
+from FLIR.conservator.cli.cvc import cvc
 import logging
 
 
