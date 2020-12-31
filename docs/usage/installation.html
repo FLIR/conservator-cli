@@ -80,6 +80,13 @@ examples, etc.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ black .
 </pre></div>
 </div>
+<p>To automatically run the linter before pushing changes, you
+can add the provided git hook:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git config --local core.hooksPath .githooks
+</pre></div>
+</div>
+<p>This will check that your changes will pass the Jenkins
+linting and formatting tests.</p>
 <p>You can run tests manually:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd test
 $ pytest
