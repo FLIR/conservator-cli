@@ -179,9 +179,7 @@ class FieldsManager:
             selector.email()
             selector.name()
             selector.role()
-            # Only admins can query groups..?
-            # FieldsManager.select_default_fields(selector.groups)
-            # TODO: Add problematic field support for this type of error
+            FieldsManager.select_default_fields(selector.groups)
             selector.is_removed()
         elif issubclass(type_, schema.Video):
             selector.id()
