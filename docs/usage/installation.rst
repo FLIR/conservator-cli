@@ -51,6 +51,14 @@ Before committing a change, be sure to run the linter::
 
     $ black .
 
+To automatically run the linter before pushing changes, you
+can add the provided git hook::
+
+    $ git config --local core.hooksPath .githooks
+
+This will check that your changes will pass the Jenkins
+linting and formatting tests.
+
 You can run tests manually::
 
     $ cd test
