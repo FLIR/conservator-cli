@@ -23,7 +23,7 @@ pipeline {
       }
       steps {
         echo "Running unit tests..."
-        sh "bash -c 'export LC_ALL=C.UTF-8; export LANG=C.UTF-8; source venv/bin/activate; cd test; pytest"
+        sh "bash -c 'export LC_ALL=C.UTF-8; export LANG=C.UTF-8; source venv/bin/activate; cd test; pytest'"
       }
     }
     stage('Documentation Tests') {
