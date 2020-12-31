@@ -163,7 +163,7 @@ class FieldsRequest:
 
 def get_attr_by_path(path, obj):
     for subpath in path.split("."):
-        if "id" in obj:
+        if hasattr(obj, "id"):
             obj.id()
         obj = getattr(obj, subpath)
     return obj
