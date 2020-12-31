@@ -79,15 +79,15 @@ This works by iterating through the various credential sources, and returning
 the first one that works. Sources are queried in this order:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Config file</p></li>
 <li><p>Environment variables</p></li>
+<li><p>Config file</p></li>
 <li><p>User input</p></li>
 </ul>
 </div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>save</strong> – If <cite>True</cite>, save the config for future use. This means a user
-won’t need to type them again.</p>
+<dd class="field-odd"><p><strong>save</strong> – If <cite>True</cite> and the source is stdin, save the config for future use.
+This means a user won’t need to type them again.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -188,7 +188,7 @@ object:</p>
 </dl>
 <dl class="py method">
 <dt id="FLIR.conservator.conservator.Conservator.default">
-<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
 </dd></dl>
 
