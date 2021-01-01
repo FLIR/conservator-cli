@@ -145,18 +145,27 @@ class Video(MediaType):
         )
         assert result is True
 
-    def get_frames(self, start_frame_index, frame_index, fields=None):
+    def get_frame_by_index(self, index, fields=None):
         """
-        Returns a subset of the video's frames. This is only
-        useful if you're dealing with very long videos and want to
-        paginate frames yourself. If the video is short, you could
-        just use ``populate("frames")`` to get all frames.
+        Returns a single frame at a specific `index` in the video.
         """
+        return self._query_frames(frame_index=index, fields=fields)[0]
+
+    def get_paginated_frames(self, start_index=0, fields=None):
+        """
+        Returns 15 frames, starting with `start_index`.
+
+        This is only useful if you're dealing with very long videos
+        and want to paginate frames yourself. If the video is short,
+        you could just use ``populate("frames")`` to get all frames.
+        """
+        return self._query_frames(start_frame_index=start_index, fields=fields)
+
+    def _query_frames(self, start_frame_index=None, frame_index=None, fields=None):
         fields = FieldsRequest.create(fields)
 
         video_fields = {
             "frames": {
-                "id": self.id,
                 "start_frame_index": start_frame_index,
                 "frame_index": frame_index,
             }
