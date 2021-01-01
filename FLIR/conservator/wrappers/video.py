@@ -171,4 +171,3 @@ class Video(MediaType):
             id=self.id,
         )
         return video.frames
-
