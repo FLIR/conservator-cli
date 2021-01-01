@@ -1,5 +1,8 @@
+from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Query, Mutation
+from FLIR.conservator.paginated_query import PaginatedQuery
+from FLIR.conservator.wrappers.frame import Frame
 from FLIR.conservator.wrappers.media import MediaType
 
 
@@ -141,3 +144,31 @@ class Video(MediaType):
             completion_tags=completion_tags,
         )
         assert result is True
+
+    def get_frames(self, start_frame_index, frame_index, fields=None):
+        """
+        Returns a subset of the video's frames. This is only
+        useful if you're dealing with very long videos and want to
+        paginate frames yourself. If the video is short, you could
+        just use ``populate("frames")`` to get all frames.
+        """
+        fields = FieldsRequest.create(fields)
+
+        video_fields = {
+            "frames": {
+                "id": self.id,
+                "start_frame_index": start_frame_index,
+                "frame_index": frame_index,
+            }
+        }
+        for path, value in fields.paths.items():
+            new_path = "frames." + path
+            video_fields[new_path] = value
+
+        video = self._conservator.query(
+            query=self.by_id_query,
+            fields=video_fields,
+            id=self.id,
+        )
+        return video.frames
+

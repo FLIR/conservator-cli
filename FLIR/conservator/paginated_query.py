@@ -156,6 +156,13 @@ class PaginatedQuery:
             limit=limit,
             **self.kwargs
         )
+        return results
+
+    def _next_page(self):
+        self.started = True
+        results = self._do_query(self._page, self._limit)
+        self._page += 1
+
         if results is None:
             return []
         if self.unpack_field is not None:
@@ -163,12 +170,6 @@ class PaginatedQuery:
         if self._wrapping_type is None:
             return results
         return [self._wrapping_type(self._conservator, i) for i in results]
-
-    def _next_page(self):
-        self.started = True
-        results = self._do_query(self._page, self._limit)
-        self._page += 1
-        return results
 
     def _passes_filters(self, instance):
         return all(filter_(instance) for filter_ in self.filters)

@@ -1,6 +1,5 @@
 import json
 import os
-import subprocess
 
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import (
@@ -12,9 +11,7 @@ from FLIR.conservator.generated.schema import (
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.wrappers.dataset_frame import DatasetFrame
-from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.wrappers.queryable import QueryableType
-from FLIR.conservator.util import download_files
 
 
 class Dataset(QueryableType):
