@@ -151,13 +151,27 @@ class Video(MediaType):
         """
         return self._query_frames(frame_index=index, fields=fields)[0]
 
-    def get_paginated_frames(self, start_index=0, fields=None):
+    def get_all_frames_paginated(self, fields=None):
         """
-        Returns 15 frames, starting with `start_index`.
+        Yields all frames in the video, 15 at a time, using
+        :meth:`get_paginated_frames`.
 
         This is only useful if you're dealing with very long videos
         and want to paginate frames yourself. If the video is short,
         you could just use ``populate("frames")`` to get all frames.
+        """
+        start = 0
+        while True:
+            frames = self._paginated_frames(start, fields=fields)
+            yield from frames
+            # frame pagination size is hard-coded to 15 in conservator
+            if len(frames) < 15:
+                break
+            start += 15
+
+    def _paginated_frames(self, start_index=0, fields=None):
+        """
+        Returns 15 frames, starting with `start_index`.
         """
         return self._query_frames(start_frame_index=start_index, fields=fields)
 
