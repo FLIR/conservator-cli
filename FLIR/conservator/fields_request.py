@@ -93,11 +93,6 @@ class FieldsRequest:
 
         assert isinstance(fields, dict)
 
-        # special-case "id" field, because it will be needed if a sglqc wrapper object
-        # needs a new query to populate additional fields after initial creation
-        # ('id' can still be excluded explicitly, if that's what you really want)
-        if not "id" in fields:
-            fields["id"] = True
         return FieldsRequest(fields)
 
     def include(self, *field_path):
@@ -168,6 +163,8 @@ class FieldsRequest:
 
 def get_attr_by_path(path, obj):
     for subpath in path.split("."):
+        if hasattr(obj, "id"):
+            obj.id()
         obj = getattr(obj, subpath)
     return obj
 
