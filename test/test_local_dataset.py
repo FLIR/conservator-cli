@@ -20,4 +20,3 @@ def test_from_path():
     assert os.path.exists("lbtest123")
     local_dataset = LocalDataset(Conservator.default(), DATASET_PATH)
     assert local_dataset is not None
-
