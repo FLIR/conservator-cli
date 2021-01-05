@@ -128,7 +128,7 @@ class FieldsRequest:
         # start by adding all requested fields
         all_selectors = []
         for path, value in self.paths.items():
-            field = get_attr_by_path(path, query_selector)
+            field = self.get_attr_by_path(path, query_selector)
             if value is False or value is None:
                 # excluded field
                 continue
@@ -160,13 +160,15 @@ class FieldsRequest:
         for leaf in leaf_selectors:
             FieldsManager.select_default_fields(leaf)
 
-
-def get_attr_by_path(path, obj):
-    for subpath in path.split("."):
-        if hasattr(obj, "id"):
-            obj.id()
-        obj = getattr(obj, subpath)
-    return obj
+    def get_attr_by_path(self, path, obj):
+        cur_path = ""
+        for subpath in path.split("."):
+            id_field = cur_path + "id"
+            if hasattr(obj, "id") and self.paths.get(id_field, True):
+                obj.id()
+            obj = getattr(obj, subpath)
+            cur_path += subpath + "."
+        return obj
 
 
 def is_subfield_of(parent, subpath):
