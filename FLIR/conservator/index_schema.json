@@ -163,6 +163,7 @@
           "type": "string",
           "enum": ["approved", "changesRequested"]
         },
+        "qaStatusNote": {"$ref": "#/definitions/noNull"},
         "md5": {"$ref": "#/definitions/md5hash"},
         "previewMd5": {"$ref": "#/definitions/md5hash"},
         "analyticsMd5": {"$ref": "#/definitions/md5hash"},
@@ -216,6 +217,7 @@
           "type": "string",
           "enum": ["approved", "changesRequested"]
         },
+        "qaStatusNote": {"$ref": "#/definitions/noNull"},
         "md5": {"$ref": "#/definitions/md5hash"},
         "previewMd5": {"$ref": "#/definitions/md5hash"},
         "analyticsMd5": {"$ref": "#/definitions/md5hash"},

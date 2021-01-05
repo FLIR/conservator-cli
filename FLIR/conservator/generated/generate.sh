@@ -23,4 +23,7 @@ sed -i 's/import sgqlc.types.datetime/import FLIR.conservator.generated.date/g' 
 
 rm schema.json
 
+# reformat generated python
+black schema.py
+
 echo "Done."
