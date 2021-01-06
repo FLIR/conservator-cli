@@ -359,6 +359,10 @@ class LocalDataset:
         if clone_path is None:
             clone_path = f"./{dataset.name}"
 
+        if os.path.exists(clone_path):
+            logging.error(f"Path {clone_path} already exists, can't clone.")
+            return
+
         url = dataset.get_git_url()
         r = subprocess.call(["git", "clone", url, clone_path])
         if r != 0:

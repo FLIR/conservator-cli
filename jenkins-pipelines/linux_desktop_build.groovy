@@ -22,8 +22,17 @@ pipeline {
         CONSERVATOR_URL = 'https://staging.flirconservator.com/'
       }
       steps {
+        echo "Creating tmp directory..."
+        sh "rm -rf /tmp/${BUILD_TAG}-tests"
+        sh "mkdir /tmp/${BUILD_TAG}-tests"
+
         echo "Running unit tests..."
-        sh "bash -c 'export LC_ALL=C.UTF-8; export LANG=C.UTF-8; source venv/bin/activate; cd test; pytest'"
+        dir("/tmp/${BUILD_TAG}-tests/") {
+          sh "bash -c 'export LC_ALL=C.UTF-8; export LANG=C.UTF-8; source ${WORKSPACE}/venv/bin/activate; pytest ${WORKSPACE}'"
+        }
+
+        echo "Cleaning up tmp directory..."
+        sh "rm -rf /tmp/${BUILD_TAG}-tests"
       }
     }
     stage('Documentation Tests') {
