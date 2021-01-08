@@ -11,13 +11,21 @@ from FLIR.conservator.generated.schema import (
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.wrappers.dataset_frame import DatasetFrame
+from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.queryable import QueryableType
 
 
-class Dataset(QueryableType):
+class Dataset(QueryableType, FileLockerType):
     underlying_type = schema.Dataset
     by_id_query = schema.Query.dataset
     search_query = schema.Query.datasets
+
+    # name of id field in mutations when not simply 'id'
+    id_type = "dataset_id"
+
+    # file-locker operations
+    file_locker_gen_url = Mutation.generate_signed_dataset_file_locker_upload_url
+    file_locker_remove = Mutation.remove_dataset_file_locker_file
 
     @classmethod
     def create(cls, conservator, name, collections=None, fields=None):

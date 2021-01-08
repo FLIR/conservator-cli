@@ -1,4 +1,5 @@
 import functools
+import logging
 import os
 
 from FLIR.conservator.fields_request import FieldsRequest
@@ -13,20 +14,31 @@ from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
 from FLIR.conservator.wrappers.type_proxy import requires_fields
+from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.wrappers.video import Video
 from FLIR.conservator.wrappers.image import Image
 from FLIR.conservator.wrappers.dataset import Dataset
 
 
+logger = logging.getLogger(__name__)
+
+
 class InvalidRemotePathException(Exception):
     pass
 
 
-class Collection(QueryableType):
+class Collection(QueryableType, FileLockerType):
     underlying_type = schema.Collection
     by_id_query = schema.Query.collection
     search_query = schema.Query.collections
+
+    # name of id field in mutations when not simply 'id'
+    id_type = "collection_id"
+
+    # file-locker operations
+    file_locker_gen_url = Mutation.generate_signed_collection_file_locker_upload_url
+    file_locker_remove = Mutation.remove_collection_file_locker_file
 
     def create_video(self, filename, fields=None):
         """
@@ -69,20 +81,6 @@ class Collection(QueryableType):
                 return self.create_child(name, fields)
             raise
         return child
-
-    def generate_signed_locker_upload_url(self, filename, content_type):
-        """
-        Returns a signed url for uploading a new file locker file with the given `filename` and
-        `content_type`.
-        """
-        result = self._conservator.query(
-            Mutation.generate_signed_collection_file_locker_upload_url,
-            operation_base=Mutation,
-            dataset_id=self.id,
-            content_type=content_type,
-            filename=filename,
-        )
-        return result.signed_url
 
     @classmethod
     def create_root(cls, conservator, name, fields=None):
