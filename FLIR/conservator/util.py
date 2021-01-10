@@ -57,6 +57,7 @@ class FileDownloadException(Exception):
 def download_file(path, name, url, silent=False):
     path = os.path.abspath(path)
     os.makedirs(path, exist_ok=True)
+    logger.debug(f"Downloading {name} from {url}")
     r = requests.get(url, stream=True, allow_redirects=True)
     if r.status_code != 200:
         if not silent:
@@ -64,7 +65,7 @@ def download_file(path, name, url, silent=False):
         else:
             logger.debug(f"Skipped silent FileDownloadException for url: {url}")
             return False
-    size = int(r.headers["content-length"])
+    size = int(r.headers.get("content-length", 0))
     size_mb = int(size / 1024 / 1024)
     progress = tqdm.tqdm(total=size)
     progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")

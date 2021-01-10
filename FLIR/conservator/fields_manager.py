@@ -181,6 +181,9 @@ class FieldsManager:
             selector.role()
             FieldsManager.select_default_fields(selector.groups)
             selector.is_removed()
+        elif issubclass(type_, schema.Repository):
+            selector.master()
+            selector.repo_state()
         elif issubclass(type_, schema.Video):
             selector.id()
             selector.filename()
