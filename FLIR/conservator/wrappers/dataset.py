@@ -129,29 +129,30 @@ class Dataset(QueryableType):
         that some older datasets may not have a repository, causing this
         method to fail.
         """
-        return self._conservator.query(query=Query.commit_history_by_id,
-                                       fields=fields,
-                                       id=self.repository.master)
+        return self._conservator.query(
+            query=Query.commit_history_by_id, fields=fields, id=self.repository.master
+        )
 
     def get_commit_by_id(self, commit_id="HEAD", fields=None):
         """
         Returns a specific commit from a `commit_id`. The ID can be a hash, or an
         identifier like ``HEAD``.
         """
-        return self._conservator.query(query=Query.git_commit,
-                                       fields=fields,
-                                       dataset_id=self.id,
-                                       commit_id=commit_id)
+        return self._conservator.query(
+            query=Query.git_commit,
+            fields=fields,
+            dataset_id=self.id,
+            commit_id=commit_id,
+        )
 
     def get_tree_by_id(self, tree_id="HEAD", fields=None):
         """
         Returns a tree from a `tree_id`. The ID can be a hash, or an
         identifier like ``HEAD``.
         """
-        return self._conservator.query(query=Query.git_tree,
-                                       fields=fields,
-                                       dataset_id=self.id,
-                                       tree_id=tree_id)
+        return self._conservator.query(
+            query=Query.git_tree, fields=fields, dataset_id=self.id, tree_id=tree_id
+        )
 
     def get_blob_url_by_id(self, blob_id):
         """
