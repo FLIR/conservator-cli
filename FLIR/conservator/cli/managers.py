@@ -161,7 +161,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
 
         @group.command(
             name="tree",
-            help="List contents of a Dataset's tree. You can pass a tree hash, or a reference like HEAD.",
+            help="List contents of a Dataset's version control tree. You can pass a tree hash, or a reference like HEAD.",
         )
         @click.argument("dataset_id")
         @click.argument("tree_id", default="HEAD")
