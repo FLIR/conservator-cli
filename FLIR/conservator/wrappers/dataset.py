@@ -187,10 +187,16 @@ class Dataset(QueryableType):
             if item.name == "associated_files" and item.type == "tree":
                 associated_files_tree_id = item._id
 
-        associated_files_tree = self.get_tree_by_id(tree_id=associated_files_tree_id, fields=fields)
+        associated_files_tree = self.get_tree_by_id(
+            tree_id=associated_files_tree_id, fields=fields
+        )
         for item in associated_files_tree.tree_list:
             if item.name == filename and item.type == "blob":
                 return item._id
+
+        raise FileNotFoundError(
+            f"File '{filename}' not found in the dataset repository at commit '{commit_id}'"
+        )
 
     def download_blob_by_name(self, filename, path, commit_id="HEAD"):
         """

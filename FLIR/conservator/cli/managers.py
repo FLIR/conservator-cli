@@ -202,13 +202,27 @@ def get_manager_command(type_manager, sgqlc_type, name):
             dataset.download_blob(blob_id, path)
 
         @group.command(
-            name="download-index", help="Download a Dataset's latest index.json."
+            name="download-file",
+            help="Download a Dataset's index.json or associated file. Defaults to latest commit.",
         )
         @click.argument("dataset_id")
-        @click.argument("path", default="./index.json")
-        def download_index(dataset_id, path):
+        @click.argument("filename")
+        @click.argument("path", default=".")
+        @click.option("-c", "--commit-hash", default="HEAD")
+        def download_file(dataset_id, filename, path, commit_hash):
             dataset = get_instance().from_id(dataset_id)
-            dataset.download_latest_index(path)
+            dataset.download_blob_by_name(filename, path, commit_id=commit_hash)
+
+        @group.command(
+            name="download-index",
+            help="Download a Dataset's index.json. Defaults to latest commit.",
+        )
+        @click.argument("dataset_id")
+        @click.argument("path", default=".")
+        @click.option("-c", "--commit-hash", default="HEAD")
+        def download_index(dataset_id, path, commit_hash):
+            dataset = get_instance().from_id(dataset_id)
+            dataset.download_blob_by_name("index.json", path, commit_id=commit_hash)
 
     if issubclass(type_manager, MediaTypeManager):
 
