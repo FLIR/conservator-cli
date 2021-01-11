@@ -138,7 +138,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 "tree",
             ]
             for commit in dataset.get_commit_history(fields=commit_fields):
-                print(to_clean_string(commit))
+                click.echo(to_clean_string(commit))
 
         @group.command(
             name="commit",
@@ -157,7 +157,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 "tree",
             ]
             commit = dataset.get_commit_by_id(commit_id, fields=commit_fields)
-            print(to_clean_string(commit))
+            click.echo(to_clean_string(commit))
 
         @group.command(
             name="tree",
@@ -176,10 +176,10 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 "tree_list.size",
             ]
             tree = dataset.get_tree_by_id(tree_id, fields=tree_fields)
-            print(f"Tree {tree_id} (size: {tree.size})")
-            print(f"  Type\tName\tHash")
+            click.echo(f"Tree {tree_id} (size: {tree.size})")
+            click.echo(f"  Type\tName\tHash")
             for item in tree.tree_list:
-                print(f"  {item.type}\t{item.name}\t{item._id}")
+                click.echo(f"  {item.type}\t{item.name}\t{item._id}")
 
         @group.command(
             name="blob", help="Download a blob from a Dataset's version control tree."
