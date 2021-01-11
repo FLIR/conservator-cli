@@ -12,7 +12,10 @@ class FieldsManager:
     """
 
     def __init__(self):
-        self.problematic_fields = {}
+        self.problematic_fields = {
+            schema.Repository: {"id"},
+            schema.Dataset: {"repository.id"},
+        }
 
     def get_problematic_paths(self, typ):
         """Get problematic field paths for a given SGQLC `type`"""
