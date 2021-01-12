@@ -117,6 +117,8 @@ class LocalDataset:
             md5 = image_info["md5"]
             if not self.conservator.dvc_hash_exists(md5):
                 self.upload_image(path, md5)
+            else:
+                logger.debug(f"File '{path}' already exists on conservator, skipping")
 
             # Dataset frames uploaded in this manner do not have a video.
             # They are considered "loose" frames and use the dataset's ID
@@ -147,6 +149,8 @@ class LocalDataset:
 
                 # First copy it to the cache:
                 cache_path = self.get_cache_path(md5)
+                cache_dir = os.path.split(cache_path)[0]
+                os.makedirs(cache_dir, exist_ok=True)
                 logger.debug(f"Copying file from '{path}' to '{cache_path}'")
                 shutil.copyfile(path, cache_path)
 
@@ -166,12 +170,10 @@ class LocalDataset:
     def upload_image(self, path, md5):
         url = self.conservator.get_dvc_hash_url(md5)
         filename = os.path.split(path)[1]
-        print(filename)
         headers = {
             "Content-type": "image/jpeg",
             "x-amz-meta-originalfilename": filename,
         }
-        print(headers)
         logger.info(f"Uploading '{path}'.")
         with open(path, "rb") as data:
             r = requests.put(url, data, headers=headers)
@@ -212,7 +214,7 @@ class LocalDataset:
         for image_path in image_paths:
             abspath = os.path.abspath(image_path)
             if abspath not in staged_images:
-                logger.debug(f"Adding '{abspath}' to staging file.")
+                logger.info(f"Adding '{abspath}' to staging file.")
                 staged_images.append(abspath)
         with open(self.staging_path, "w") as f:
             json.dump(staged_images, f)

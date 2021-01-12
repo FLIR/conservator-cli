@@ -127,7 +127,7 @@ class ConservatorConnection:
         hash_url = self.get_dvc_hash_url(md5)
         # We only care about the status code, so we use .head
         r = requests.head(hash_url)
-        # 302 means the file was found, and we are being redirected to the download.
+        # 302 means the file was found.
         return r.status_code == 302
 
     @staticmethod
