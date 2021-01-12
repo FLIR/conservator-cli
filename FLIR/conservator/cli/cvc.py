@@ -143,12 +143,12 @@ def status(local_dataset):
     )
     images = local_dataset.get_staged_images()
     if len(images) == 0:
-        print("No images staged.")
+        click.echo("No images staged.")
         return
 
     for image_path in images:
-        print("Staged:", image_path)
-    print("Use 'cvc upload' to upload these images and add them to index.json")
+        click.echo("Staged:", image_path)
+    click.echo("Use 'cvc upload' to upload these images and add them to index.json")
 
 
 @main.command(help="Download media files from index.json")
