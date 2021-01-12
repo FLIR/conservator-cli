@@ -106,7 +106,9 @@ def push(local_dataset):
 @main.command(help="Pull the latest commits")
 @pass_valid_local_dataset
 def pull(local_dataset):
+    click.echo("Updating index.json and associated files.")
     local_dataset.pull()
+    click.echo("To download media, use cvc download.")
 
 
 @main.command(help="Show changes in index.json and associated_files since last commit")
