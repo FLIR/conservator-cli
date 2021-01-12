@@ -78,20 +78,6 @@ class Video(MediaType):
         )
         return result
 
-    def generate_signed_locker_upload_url(self, filename, content_type):
-        """
-        Returns a signed url for uploading a new file locker file with the given `filename` and
-        `content_type`.
-        """
-        result = self._conservator.query(
-            Mutation.generate_signed_file_locker_upload_url,
-            operation_base=Mutation,
-            video_id=self.id,
-            content_type=content_type,
-            filename=filename,
-        )
-        return result.signed_url
-
     @staticmethod
     def create(conservator, filename, collection_id=None, fields=None):
         """

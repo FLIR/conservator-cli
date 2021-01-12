@@ -3,6 +3,8 @@ import os
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Mutation
 from FLIR.conservator.wrappers import TypeProxy
+from FLIR.conservator.wrappers.type_proxy import requires_fields
+from FLIR.conservator.util import download_files
 from FLIR.conservator.util import upload_file
 
 
@@ -14,7 +16,7 @@ class FileLockerUploadException(Exception):
 
 class FileLockerType(TypeProxy):
     """
-    Adds :func:``upload_associated_file`` and ``remove_associated_file``
+    Adds :func:``download_associated_files``, :func:``upload_associated_file``, :func:``remove_associated_file``
 
     Every FileLocker file is associated with a Conservator object, and the
     relevant mutations to create or remove such a file depend on object type.
@@ -54,6 +56,15 @@ class FileLockerType(TypeProxy):
             self.file_locker_gen_url, operation_base=Mutation, **mutation_args
         )
         return result.signed_url
+
+    @requires_fields("file_locker_files")
+    def download_associated_files(self, path, no_meter=False):
+        """Downloads associated files (from file locker) to
+        ``associated_files/``."""
+        path = os.path.join(path, "associated_files")
+        os.makedirs(path, exist_ok=True)
+        assets = [(path, file.name, file.url) for file in self.file_locker_files]
+        download_files(assets, no_meter=no_meter)
 
     def upload_associated_file(self, file_path, content_type=None):
         """

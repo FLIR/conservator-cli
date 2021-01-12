@@ -271,15 +271,6 @@ class Collection(QueryableType, FileLockerType):
         for image in images:
             image.download_metadata(path)
 
-    @requires_fields("file_locker_files")
-    def download_associated_files(self, path, no_meter=False):
-        """Downloads associated files (from file locker) to
-        ``associated_files/``."""
-        path = os.path.join(path, "associated_files")
-        os.makedirs(path, exist_ok=True)
-        assets = [(path, file.name, file.url) for file in self.file_locker_files]
-        download_files(assets, no_meter=no_meter)
-
     def download_media(self, path, no_meter=False):
         """Downloads videos and images."""
         self.download_videos(path, no_meter=no_meter)
