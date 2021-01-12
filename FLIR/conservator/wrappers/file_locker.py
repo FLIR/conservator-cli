@@ -39,7 +39,7 @@ class FileLockerType(TypeProxy):
     # Conservator doesn't seem to like "application/octet-stream" for Content-Type
     default_file_type = ""
 
-    def _generate_signed_upload_url(self, file_path, content_type):
+    def _generate_file_locker_url(self, file_path, content_type):
         """
         Generate URL for uploading a file to Conservator as associated file of
         this FileLocker's parent object
@@ -62,7 +62,7 @@ class FileLockerType(TypeProxy):
         """
         if not content_type:
             content_type = self.default_file_type
-        url = self._generate_signed_upload_url(file_path, content_type)
+        url = self._generate_file_locker_url(file_path, content_type)
         upload = upload_file(file_path, url)
         if not upload.ok:
             raise FileLockerUploadException(

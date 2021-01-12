@@ -5,10 +5,11 @@ from FLIR.conservator.generated.schema import Mutation
 from FLIR.conservator.util import download_file
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.file_locker import FileLockerType
+from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 
 
-class MediaType(QueryableType, FileLockerType):
+class MediaType(QueryableType, FileLockerType, MetadataType):
     """
     A media type is an image or a video. It can be uploaded (using
     :meth:``FLIR.conservator.managers.media.MediaTypeManager.upload``)
@@ -21,6 +22,10 @@ class MediaType(QueryableType, FileLockerType):
     # file-locker operations
     file_locker_gen_url = Mutation.generate_signed_file_locker_upload_url
     file_locker_remove = Mutation.remove_file_locker_file
+
+    # metadata operations
+    metadata_gen_url = Mutation.generate_signed_metadata_upload_url
+    metadata_confirm_url = Mutation.mark_annotation_as_uploaded
 
     @requires_fields("metadata", "filename")
     def download_metadata(self, path):
