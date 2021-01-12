@@ -48,20 +48,6 @@ class Video(MediaType):
             Mutation.remove_video, operation_base=Mutation, id=self.id
         )
 
-    def generate_signed_metadata_upload_url(self, filename, content_type):
-        """
-        Returns a signed url for uploading metadata with the given `filename` and
-        `content_type`.
-        """
-        result = self._conservator.query(
-            Mutation.generate_signed_metadata_upload_url,
-            operation_base=Mutation,
-            video_id=self.id,
-            content_type=content_type,
-            filename=filename,
-        )
-        return result.signed_url
-
     def generate_signed_upload_url(self, upload_id, part_number=1):
         """
         Returns a signed url for uploading a video (or part of video).

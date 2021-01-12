@@ -1,8 +1,10 @@
+import json
 import os
 
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Mutation
 from FLIR.conservator.wrappers import TypeProxy
+from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.util import upload_file
 
 
@@ -14,7 +16,7 @@ class MetadataUploadException(Exception):
 
 class MetadataType(TypeProxy):
     """
-    Adds :func:``upload_metadata``
+    Adds :func:``download_metadata`` and :func:``upload_metadata``
 
     Every Metadata file belongs to a parent, and the relevant mutations to
     create such a file depend on parent type. The parent object's
@@ -66,6 +68,18 @@ class MetadataType(TypeProxy):
             self.metadata_confirm_url, operation_base=Mutation, **mutation_args
         )
         return result
+
+    @requires_fields("metadata", "filename")
+    def download_metadata(self, path):
+        """
+        Downloads the `metadata` field to `path/filename.json`,
+        where `filename` is the media's filename.
+        """
+        json_data = json.loads(self.metadata)
+        json_file = ".".join(self.filename.split(".")[:-1]) + ".json"
+        json_path = os.path.join(path, json_file)
+        with open(json_path, "w") as file:
+            json.dump(json_data, file, indent=4, separators=(",", ": "))
 
     def upload_metadata(self, file_path, content_type=None):
         """

@@ -1,4 +1,3 @@
-import json
 import os
 
 from FLIR.conservator.generated.schema import Mutation
@@ -26,18 +25,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
     # metadata operations
     metadata_gen_url = Mutation.generate_signed_metadata_upload_url
     metadata_confirm_url = Mutation.mark_annotation_as_uploaded
-
-    @requires_fields("metadata", "filename")
-    def download_metadata(self, path):
-        """
-        Downloads the `metadata` field to `path/filename.json`,
-        where `filename` is the media's filename.
-        """
-        json_data = json.loads(self.metadata)
-        json_file = ".".join(self.filename.split(".")[:-1]) + ".json"
-        json_path = os.path.join(path, json_file)
-        with open(json_path, "w") as file:
-            json.dump(json_data, file, indent=4, separators=(",", ": "))
 
     @requires_fields("url", "filename")
     def download(self, path, no_meter=False):
