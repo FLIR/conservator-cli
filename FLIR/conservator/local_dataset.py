@@ -270,6 +270,7 @@ class LocalDataset:
         include_eight_bit=True,
         process_count=10,
         use_symlink=False,
+        no_meter=False,
     ):
         """
         Downloads the files listed in ``index.json`` of the local dataset.
@@ -280,6 +281,7 @@ class LocalDataset:
             will use `os.cpu_count()`.
         :param use_symlink: If `True`, use symbolic links instead of hardlinks when linking the
             cache and data.
+        :param no_meter: If 'True', don't display file download progress meters
         """
         if include_eight_bit:
             os.makedirs(self.data_path, exist_ok=True)
@@ -326,7 +328,7 @@ class LocalDataset:
             logger.debug(f"Going to download {md5}")
             assets.append(asset)
 
-        results = download_files(assets, process_count)
+        results = download_files(assets, process_count, no_meter=no_meter)
 
         for link in links:
             dest, src = link

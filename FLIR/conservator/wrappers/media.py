@@ -26,6 +26,6 @@ class MediaType(QueryableType):
             json.dump(json_data, file, indent=4, separators=(",", ": "))
 
     @requires_fields("url", "filename")
-    def download(self, path):
+    def download(self, path, no_meter=False):
         """Download video to ``path``."""
-        download_file(path, self.filename, self.url)
+        download_file(path, self.filename, self.url, no_meter=no_meter)

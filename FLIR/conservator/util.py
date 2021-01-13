@@ -54,7 +54,7 @@ class FileDownloadException(Exception):
     pass
 
 
-def download_file(path, name, url, silent=False):
+def download_file(path, name, url, silent=False, no_meter=False):
     path = os.path.abspath(path)
     os.makedirs(path, exist_ok=True)
     r = requests.get(url, stream=True, allow_redirects=True)
@@ -66,7 +66,7 @@ def download_file(path, name, url, silent=False):
             return False
     size = int(r.headers["content-length"])
     size_mb = int(size / 1024 / 1024)
-    progress = tqdm.tqdm(total=size)
+    progress = tqdm.tqdm(total=size, disable=no_meter)
     progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")
     chunk_size = 1024 * 1024
     with open(os.path.join(path, name), "wb") as fd:
@@ -83,10 +83,10 @@ def upload_file(path, url):
         return requests.put(url, f)
 
 
-def download_files(files, process_count=None):
+def download_files(files, process_count=None, no_meter=False):
     # files = (path, name, url)
     pool = multiprocessing.Pool(process_count)  # defaults to CPU count
-    args = [(*file, True) for i, file in enumerate(files)]
+    args = [(*file, True, no_meter) for i, file in enumerate(files)]
     results = pool.starmap(download_file, args)
     return results
 
