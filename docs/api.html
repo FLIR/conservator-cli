@@ -631,26 +631,26 @@ with the specified assets included.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.download_associated_files">
-<code class="sig-name descname">download_associated_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_associated_files" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download_associated_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">no_meter</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_associated_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads associated files (from file locker) to
 <code class="docutils literal notranslate"><span class="pre">associated_files/</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.download_datasets">
-<code class="sig-name descname">download_datasets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_datasets" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download_datasets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">no_meter</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clones and pulls all datasets in the collection.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.download_images">
-<code class="sig-name descname">download_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_images" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">no_meter</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads images to <code class="docutils literal notranslate"><span class="pre">images/</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.download_media">
-<code class="sig-name descname">download_media</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_media" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download_media</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">no_meter</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_media" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads videos and images.</p>
 </dd></dl>
 
@@ -662,7 +662,7 @@ with the specified assets included.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.download_videos">
-<code class="sig-name descname">download_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_videos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">no_meter</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.download_videos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads videos to <code class="docutils literal notranslate"><span class="pre">videos/</span></code>.</p>
 </dd></dl>
 
@@ -1432,7 +1432,7 @@ the Dataset’s name.</p></li>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.download">
-<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">use_symlink</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">include_analytics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">include_eight_bit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">use_symlink</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">no_meter</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> of the local dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1443,6 +1443,7 @@ the Dataset’s name.</p></li>
 will use <cite>os.cpu_count()</cite>.</p></li>
 <li><p><strong>use_symlink</strong> – If <cite>True</cite>, use symbolic links instead of hardlinks when linking the
 cache and data.</p></li>
+<li><p><strong>no_meter</strong> – If ‘True’, don’t display file download progress meters</p></li>
 </ul>
 </dd>
 </dl>
