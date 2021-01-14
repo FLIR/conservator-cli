@@ -58,7 +58,12 @@ class Collection(QueryableType):
         """
         path = os.path.join(self.path, name)
         try:
-            child = Collection.from_remote_path(conservator=self._conservator, path=path, make_if_no_exist=False, fields=fields)
+            child = Collection.from_remote_path(
+                conservator=self._conservator,
+                path=path,
+                make_if_no_exist=False,
+                fields=fields,
+            )
         except InvalidRemotePathException:
             if make_if_no_exists:
                 return self.create_child(name, fields)
@@ -105,13 +110,19 @@ class Collection(QueryableType):
         root_path = "/" + split_path[0]
         temp_fields = ["id", "path"]
         try:
-            root = Collection.from_remote_path(conservator, path=root_path, make_if_no_exist=False, fields=temp_fields)
+            root = Collection.from_remote_path(
+                conservator, path=root_path, make_if_no_exist=False, fields=temp_fields
+            )
         except InvalidRemotePathException:
-            root = Collection.create_root(conservator, name=root_path, fields=temp_fields)
+            root = Collection.create_root(
+                conservator, name=root_path, fields=temp_fields
+            )
 
         current = root
         for name in split_path[1:]:
-            current = current.get_child(name, make_if_no_exists=True, fields=temp_fields)
+            current = current.get_child(
+                name, make_if_no_exists=True, fields=temp_fields
+            )
 
         current.populate(fields)
         return current

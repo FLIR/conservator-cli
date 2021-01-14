@@ -25,12 +25,12 @@ assert collection is not None
 # The first option will use the local file name for the remote name, and
 # is probably perfect for most use cases. However in this example we want
 # our remote names to be unique:
-upload_tuples = [
-    (local_path, f"upload_many_test_{i}") for i in range(number_of_copies)
-]
+upload_tuples = [(local_path, f"upload_many_test_{i}") for i in range(number_of_copies)]
 
 print("Starting upload")
-media_ids = conservator.upload_many_to_collection(upload_tuples, collection=collection, process_count=10)
+media_ids = conservator.upload_many_to_collection(
+    upload_tuples, collection=collection, process_count=10
+)
 print("Created these ids:", media_ids)
 
 print("Waiting for processing")

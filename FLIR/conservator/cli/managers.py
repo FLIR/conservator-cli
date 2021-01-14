@@ -140,7 +140,9 @@ def get_manager_command(type_manager, sgqlc_type, name):
             collection = conservator.collections.from_remote_path(
                 remotepath, make_if_no_exist=create_collections
             )
-            conservator.upload(localpath, collection=collection, remote_name=remote_name)
+            conservator.upload(
+                localpath, collection=collection, remote_name=remote_name
+            )
 
         @group.command(
             help="Download media to the current directory, or the specified path."

@@ -170,7 +170,9 @@ class Conservator(ConservatorConnection):
         logger.info(f"Media with id='{media_id}' is processed!")
         return True
 
-    def wait_for_processing(self, media_ids, timeout_seconds=600, check_frequency_seconds=5):
+    def wait_for_processing(
+        self, media_ids, timeout_seconds=600, check_frequency_seconds=5
+    ):
         """
         Wait for an id, or list of ids, to complete processing.
 
@@ -222,12 +224,15 @@ class Conservator(ConservatorConnection):
         if isinstance(file_paths[0], str):
             file_paths = [(file_path, None) for file_path in file_paths]
 
-        upload_tuples = [(file_path[0], collection.id, file_path[1]) for file_path in file_paths]
+        upload_tuples = [
+            (file_path[0], collection.id, file_path[1]) for file_path in file_paths
+        ]
         return self.upload_many(upload_tuples, process_count=process_count)
 
 
 class MediaUploadException(Exception):
     """Raised if an exception occurs during a media upload"""
+
     pass
 
 
@@ -236,6 +241,7 @@ class ProcessingTimeoutError(TimeoutError):
     Raised when the amount of time spent waiting for media to process exceeds
     the requested timeout.
     """
+
     pass
 
 
@@ -243,4 +249,5 @@ class UnknownMediaIdException(Exception):
     """
     Raised when a media ID cannot be resolved to a Video or Image.
     """
+
     pass
