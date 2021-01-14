@@ -106,7 +106,9 @@ def push(local_dataset):
 @main.command(help="Pull the latest commits")
 @pass_valid_local_dataset
 def pull(local_dataset):
+    click.echo("Updating index.json and associated files.")
     local_dataset.pull()
+    click.echo("To download media, use cvc download.")
 
 
 @main.command(help="Show changes in index.json and associated_files since last commit")
@@ -141,12 +143,12 @@ def status(local_dataset):
     )
     images = local_dataset.get_staged_images()
     if len(images) == 0:
-        print("No images staged.")
+        click.echo("No images staged.")
         return
 
     for image_path in images:
-        print("Staged:", image_path)
-    print("Use 'cvc upload' to upload these images and add them to index.json")
+        click.echo("Staged:", image_path)
+    click.echo("Use 'cvc upload' to upload these images and add them to index.json")
 
 
 @main.command(help="Download media files from index.json")

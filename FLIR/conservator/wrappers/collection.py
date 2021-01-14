@@ -255,20 +255,20 @@ class Collection(QueryableType):
             image.download_metadata(path)
 
     @requires_fields("file_locker_files")
-    def download_associated_files(self, path):
+    def download_associated_files(self, path, no_meter=False):
         """Downloads associated files (from file locker) to
         ``associated_files/``."""
         path = os.path.join(path, "associated_files")
         os.makedirs(path, exist_ok=True)
         assets = [(path, file.name, file.url) for file in self.file_locker_files]
-        download_files(assets)
+        download_files(assets, no_meter=no_meter)
 
-    def download_media(self, path):
+    def download_media(self, path, no_meter=False):
         """Downloads videos and images."""
-        self.download_videos(path)
-        self.download_images(path)
+        self.download_videos(path, no_meter=no_meter)
+        self.download_images(path, no_meter=no_meter)
 
-    def download_videos(self, path):
+    def download_videos(self, path, no_meter=False):
         """Downloads videos to ``videos/``."""
         path = os.path.join(path, "videos")
         os.makedirs(path, exist_ok=True)
@@ -276,9 +276,9 @@ class Collection(QueryableType):
         fields.include_field("filename", "url")
         videos = self.get_videos(fields=fields)
         assets = [(path, video.filename, video.url) for video in videos]
-        download_files(assets)
+        download_files(assets, no_meter=no_meter)
 
-    def download_images(self, path):
+    def download_images(self, path, no_meter=False):
         """Downloads images to ``images/``."""
         path = os.path.join(path, "images")
         os.makedirs(path, exist_ok=True)
@@ -286,9 +286,9 @@ class Collection(QueryableType):
         fields.include_field("filename", "url")
         images = self.get_images(fields=fields)
         assets = [(path, image.filename, image.url) for image in images]
-        download_files(assets)
+        download_files(assets, no_meter=no_meter)
 
-    def download_datasets(self, path):
+    def download_datasets(self, path, no_meter=False):
         """Clones and pulls all datasets in the collection."""
         fields = FieldsRequest()
         fields.include_field("name", "repository.master")
@@ -296,4 +296,4 @@ class Collection(QueryableType):
         for dataset in datasets:
             clone_path = os.path.join(path, dataset.name)
             lds = LocalDataset.clone(dataset, clone_path=clone_path)
-            lds.download()
+            lds.download(no_meter=no_meter)
