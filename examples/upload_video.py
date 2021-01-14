@@ -22,7 +22,7 @@ collection = conservator.collections.from_remote_path(
 assert collection is not None
 
 print("Starting upload")
-media_id = conservator.upload(local_path, collection, remote_name)
+media_id = conservator.upload(local_path, collection=collection, remote_name=remote_name)
 
 print("Waiting for processing")
 conservator.wait_for_processing(media_id)
