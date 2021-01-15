@@ -1,12 +1,30 @@
 """
 A Manager is simply a bundle of utilities for querying a specific type.
 """
+import glob
+import json
+import logging
+import os
+
 from FLIR.conservator.managers.media import MediaTypeManager
 from FLIR.conservator.managers.searchable import SearchableTypeManager
-from FLIR.conservator.wrappers import Collection, Dataset, Project, Video, Image
+from FLIR.conservator.wrappers import (
+    Collection,
+    Dataset,
+    Project,
+    Video,
+    Image,
+    MediaType,
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 class CollectionManager(SearchableTypeManager):
+    metadata_subdir = "media_metadata"
+    associated_files_subdir = "associated_files"
+
     def __init__(self, conservator):
         super().__init__(conservator, Collection)
 
@@ -42,6 +60,84 @@ class CollectionManager(SearchableTypeManager):
         `make_if_no_exist=True`.
         """
         return self.from_remote_path(path, make_if_no_exist=True, fields=fields)
+
+    def upload(
+        self, collection_id, path, video_metadata, associated_files, media, recursive
+    ):
+        """
+        Upload files under the specified `path` to given collection.
+        """
+
+        collection = self.from_id(collection_id)
+        collection.populate(["name", "path"])
+
+        # a couple of subdirs are special cases if present,
+        # and anything starting with dot should be ignored
+        child_names = os.listdir(path)
+        if self.metadata_subdir in child_names:
+            child_names.remove(self.metadata_subdir)
+        if self.associated_files_subdir in child_names:
+            child_names.remove(self.associated_files_subdir)
+        child_names = [name for name in child_names if not name.startswith(".")]
+
+        # split remaining into media files and child dirs
+        child_paths = [os.path.join(path, name) for name in child_names]
+        media_paths = list(filter(os.path.isfile, child_paths))
+        subdir_paths = list(filter(os.path.isdir, child_paths))
+
+        if media:
+            logger.info("Uploading media to collection %s", collection.path)
+            self._conservator.upload_many_to_collection(media_paths, collection)
+
+        if video_metadata:
+            logger.info("Uploading metadata to collection %s", collection.path)
+            metadata_glob = os.path.join(path, self.metadata_subdir, "*.json")
+            metadata_paths = glob.glob(metadata_glob)
+            for file_path in metadata_paths:
+                logger.info("Upload metadata file %s", file_path)
+
+                # find the media this file belongs to
+                metadata = {}
+                with open(file_path) as fp:
+                    metadata = json.load(fp)
+                media_id = metadata["videos"][0]["id"]
+
+                # not always clear from metadata whether media is video or image
+                video = self._conservator.videos.from_id(media_id)
+                image = self._conservator.images.from_id(media_id)
+                if video:
+                    video.upload_metadata(file_path)
+                elif image:
+                    image.upload_metadata(file_path)
+                else:
+                    logger.error(
+                        "Skip metadata %s (media id=%s not found)", file_path, media_id
+                    )
+
+        if associated_files:
+            logger.info("Uploading associated files to collection %s", collection.path)
+            associated_files_glob = os.path.join(
+                path, self.associated_files_subdir, "*"
+            )
+            associated_files_paths = glob.glob(associated_files_glob)
+            for file_path in associated_files_paths:
+                logger.info("Upload associated file %s", file_path)
+                collection.upload_associated_file(file_path)
+
+        if recursive:
+            for subdir_path in subdir_paths:
+                logger.info("Descending into subdir %s", subdir_path)
+                name = os.path.basename(subdir_path)
+                child_path = os.path.join(collection.path, name)
+                child = self.create_from_path(child_path)
+                self.upload(
+                    child.id,
+                    subdir_path,
+                    video_metadata,
+                    associated_files,
+                    media,
+                    recursive,
+                )
 
 
 class DatasetManager(SearchableTypeManager):
