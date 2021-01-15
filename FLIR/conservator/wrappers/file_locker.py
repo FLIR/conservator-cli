@@ -88,6 +88,9 @@ class FileLockerType(TypeProxy):
         """
         mutation_args = {self.id_type: self.id, "filename": filename}
         result = self._conservator.query(
-            self.file_locker_remove, operation_base=Mutation, **mutation_args
+            self.file_locker_remove,
+            operation_base=Mutation,
+            fields="id",
+            **mutation_args,
         )
         return True
