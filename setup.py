@@ -28,7 +28,6 @@ setuptools.setup(
     name="conservator-cli",
     version=git_version,
     author="FLIR",
-    author_email="someone@somewhere",
     description="A library for using the FLIR Conservator API, with a nice command line interface.",
     long_description=long_description,
     long_description_content_type="text/markdown",
