@@ -90,4 +90,4 @@ class FileLockerType(TypeProxy):
         result = self._conservator.query(
             self.file_locker_remove, operation_base=Mutation, **mutation_args
         )
-        return result
+        return True

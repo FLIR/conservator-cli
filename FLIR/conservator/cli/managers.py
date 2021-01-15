@@ -97,10 +97,13 @@ def get_manager_command(type_manager, sgqlc_type, name):
             "-v",
             "--video-metadata",
             is_flag=True,
-            help="Include image and video metadata",
+            help="Include image and video metadata under subdir 'media_metadata/'",
         )
         @click.option(
-            "-f", "--associated-files", is_flag=True, help="Include associated files"
+            "-f",
+            "--associated-files",
+            is_flag=True,
+            help="Include associated files under subdir 'associated_files/'",
         )
         @click.option(
             "-m", "--media", is_flag=True, help="Include media (videos and images)"
@@ -126,10 +129,13 @@ def get_manager_command(type_manager, sgqlc_type, name):
             "-v",
             "--video-metadata",
             is_flag=True,
-            help="Include image and video metadata",
+            help="Include image and video metadata under subdir 'media_metadata/'",
         )
         @click.option(
-            "-f", "--associated-files", is_flag=True, help="Include associated files"
+            "-f",
+            "--associated-files",
+            is_flag=True,
+            help="Include associated filesi under subdir 'associated_files/'",
         )
         @click.option(
             "-m", "--media", is_flag=True, help="Include media (videos and images)"

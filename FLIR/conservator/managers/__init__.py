@@ -102,24 +102,19 @@ class CollectionManager(SearchableTypeManager):
                     metadata = json.load(fp)
                 media_id = metadata["videos"][0]["id"]
 
-                # not always clear from metadata whether media is video or image
-                video = self._conservator.videos.from_id(media_id)
-                image = self._conservator.images.from_id(media_id)
-                if video:
-                    video.upload_metadata(file_path)
-                elif image:
-                    image.upload_metadata(file_path)
-                else:
+                try:
+                    media = self._conservator.get_media_instance_from_id(media_id)
+                # oops importing real exception UnknownMediaIdException causes import loop
+                except:
                     logger.error(
                         "Skip metadata %s (media id=%s not found)", file_path, media_id
                     )
+                media.upload_metadata(file_path)
 
         if associated_files:
             logger.info("Uploading associated files to collection %s", collection.path)
-            associated_files_glob = os.path.join(
-                path, self.associated_files_subdir, "*"
-            )
-            associated_files_paths = glob.glob(associated_files_glob)
+            associated_files_dir = os.path.join(path, self.associated_files_subdir)
+            associated_files_paths = os.listdir(associated_files_dir)
             for file_path in associated_files_paths:
                 logger.info("Upload associated file %s", file_path)
                 collection.upload_associated_file(file_path)
