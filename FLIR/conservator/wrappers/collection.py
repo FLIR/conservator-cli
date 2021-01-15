@@ -294,6 +294,6 @@ class Collection(QueryableType):
         fields.include_field("name", "repository.master")
         datasets = self.get_datasets(fields=fields)
         for dataset in datasets:
-            path = os.path.join(path, dataset.name)
-            lds = LocalDataset.clone(dataset, clone_path=path)
+            clone_path = os.path.join(path, dataset.name)
+            lds = LocalDataset.clone(dataset, clone_path=clone_path)
             lds.download(no_meter=no_meter)
