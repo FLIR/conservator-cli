@@ -2,6 +2,10 @@ from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.wrappers import TypeProxy
 
 
+class InvalidIdException(Exception):
+    pass
+
+
 class QueryableType(TypeProxy):
     """
     Adds :func:``populate`` for querying and populating additional fields.
@@ -29,7 +33,7 @@ class QueryableType(TypeProxy):
 
         result = self._populate(fields)
         if result is None:
-            return
+            raise InvalidIdException(f"Query with id='{self.id}' returned None")
         for field in result:
             v = getattr(result, field)
             setattr(self._instance, field, v)

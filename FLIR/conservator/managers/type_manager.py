@@ -1,3 +1,6 @@
+from FLIR.conservator.wrappers.queryable import InvalidIdException
+
+
 class TypeManager:
     """
     Base Manger class.
@@ -9,6 +12,17 @@ class TypeManager:
     def __init__(self, conservator, underlying_type):
         self._conservator = conservator
         self._underlying_type = underlying_type
+
+    def id_exists(self, id_):
+        """
+        Returns `True` if the id is valid for the `underlying_type`.
+        """
+        instance = self.from_id(id_)
+        try:
+            instance.populate("id")
+        except InvalidIdException:
+            return False
+        return True
 
     def from_id(self, id_):
         """

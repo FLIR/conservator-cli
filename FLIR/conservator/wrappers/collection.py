@@ -41,12 +41,13 @@ class Collection(QueryableType):
         with the specified `fields`.
         """
         _input = CreateCollectionInput(name=name, parent_id=self.id)
-        return self._conservator.query(
+        result = self._conservator.query(
             Mutation.create_collection,
             operation_base=Mutation,
             input=_input,
             fields=fields,
         )
+        return Collection(self._conservator, result)
 
     @requires_fields("path")
     def get_child(self, name, make_if_no_exists=False, fields=None):
@@ -57,7 +58,12 @@ class Collection(QueryableType):
         """
         path = os.path.join(self.path, name)
         try:
-            child = Collection.from_remote_path(self._conservator, path, fields)
+            child = Collection.from_remote_path(
+                conservator=self._conservator,
+                path=path,
+                make_if_no_exist=False,
+                fields=fields,
+            )
         except InvalidRemotePathException:
             if make_if_no_exists:
                 return self.create_child(name, fields)
@@ -97,16 +103,28 @@ class Collection(QueryableType):
         Return a new collection at the specified `path`, with the given `fields`,
         creating new collections as necessary.
         """
-        split_path = os.path.split(path)
-        root_path = split_path[0]
+        if not path.startswith("/"):
+            path = "/" + path
+
+        split_path = path.split("/")[1:]
+        root_path = "/" + split_path[0]
+        temp_fields = ["id", "path"]
         try:
-            root = Collection.from_remote_path(conservator, root_path, False, fields)
+            root = Collection.from_remote_path(
+                conservator, path=root_path, make_if_no_exist=False, fields=temp_fields
+            )
         except InvalidRemotePathException:
-            root = Collection.create_root(conservator, root_path, fields)
+            root = Collection.create_root(
+                conservator, name=root_path, fields=temp_fields
+            )
 
         current = root
         for name in split_path[1:]:
-            current = current.get_child(name, make_if_no_exists=True, fields=fields)
+            current = current.get_child(
+                name, make_if_no_exists=True, fields=temp_fields
+            )
+
+        current.populate(fields)
         return current
 
     @classmethod
@@ -121,8 +139,9 @@ class Collection(QueryableType):
         )
         if collection is None:
             if make_if_no_exist:
-                cls.create_from_remote_path(conservator, path, fields)
-            raise InvalidRemotePathException(path)
+                return cls.create_from_remote_path(conservator, path, fields)
+            else:
+                raise InvalidRemotePathException(path)
         return Collection(conservator, collection)
 
     def recursively_get_children(self, include_self=False, fields=None):
