@@ -202,11 +202,127 @@ characters are random.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.get_media_instance_from_id">
+<code class="sig-name descname">get_media_instance_from_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">media_id</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.get_media_instance_from_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Video or Image object from an ID. These types are checked in
+this order, until <code class="xref py py-meth docutils literal notranslate"><span class="pre">id_exists()</span></code>
+returns <cite>True</cite>. If neither matches, an <a class="reference internal" href="#FLIR.conservator.conservator.UnknownMediaIdException" title="FLIR.conservator.conservator.UnknownMediaIdException"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnknownMediaIdException</span></code></a> is raised.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.conservator.Conservator.get_user">
 <code class="sig-name descname">get_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.get_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the User that the provided API token authorizes</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.is_uploaded_media_id_processed">
+<code class="sig-name descname">is_uploaded_media_id_processed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">media_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.is_uploaded_media_id_processed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <cite>True</cite> if an ID returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">upload()</span></code> has
+been processed, and <cite>False</cite> otherwise.</p>
+<p>When media is uploaded, it begins processing as a video. It may turn into
+an image, requiring different queries. This method can be used to verify
+that an ID is done processing, and its type won’t change in the future.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.upload">
+<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">collection</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">remote_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a new media object from a local <cite>file_path</cite>, with the specified
+<cite>remote_name</cite>. It is added to <cite>collection</cite> if given, otherwise it is
+added to no collection (orphan).</p>
+<p>Conservator Images have separate queries than Videos, but they do not get
+their own mutations, e.g. they are treated as “Videos” in the upload process.
+In fact, an uploaded media file is treated by Conservator server as a video
+until file processing has finished; if it turned out to be an image type
+(e.g. jpeg) then it will disappear from Videos and appear under Images.</p>
+<p>Returns the ID of the created media object. Note, that it may be a Video ID
+or an Image ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – The local file path to upload.</p></li>
+<li><p><strong>collection</strong> – If specified, the Collection object, or <cite>str</cite> Collection ID to
+upload the media to. If not specified, the media is not uploaded to any
+specific collection (orphan).</p></li>
+<li><p><strong>remote_name</strong> – If given, the remote name of the media. Otherwise, the local file
+name is used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.upload_many">
+<code class="sig-name descname">upload_many</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upload_tuples</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload many files in parallel. Returns a list of the uploaded media IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upload_tuples</strong> – A list of <cite>file_path</cite>, <cite>collection_id</cite>, <cite>remote_name</cite> tuples
+that will be passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">upload()</span></code>.</p></li>
+<li><p><strong>process_count</strong> – Number of concurrent upload processes. Passing <cite>None</cite>
+will use <cite>os.cpu_count()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.upload_many_to_collection">
+<code class="sig-name descname">upload_many_to_collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_paths</span></em>, <em class="sig-param"><span class="n">collection</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload_many_to_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload many files in parallel. Returns a list of the uploaded media IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_paths</strong> – A list of <cite>str</cite> file paths to upload to <cite>collection</cite>. Alternatively,
+a list of <cite>(str, str)</cite> tuples holding pairs of <cite>local_path</cite>, <cite>remote_name</cite>. If <cite>remote_name</cite>
+is <cite>None</cite>, the local filename will be used.</p></li>
+<li><p><strong>collection</strong> – The collection to upload media files to.</p></li>
+<li><p><strong>process_count</strong> – Number of concurrent upload processes. Passing <cite>None</cite>
+will use <cite>os.cpu_count()</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.conservator.Conservator.wait_for_processing">
+<code class="sig-name descname">wait_for_processing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">media_ids</span></em>, <em class="sig-param"><span class="n">timeout_seconds</span><span class="o">=</span><span class="default_value">600</span></em>, <em class="sig-param"><span class="n">check_frequency_seconds</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.wait_for_processing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for an id, or list of ids, to complete processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_ids</strong> – A single <cite>str</cite> media ID, or a list of media ID to test.</p></li>
+<li><p><strong>timeout_seconds</strong> – A maximum amount of time to wait.</p></li>
+<li><p><strong>check_frequency_seconds</strong> – How long to wait between checks.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.conservator.MediaUploadException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">MediaUploadException</code><a class="headerlink" href="#FLIR.conservator.conservator.MediaUploadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised if an exception occurs during a media upload</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.conservator.ProcessingTimeoutError">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">ProcessingTimeoutError</code><a class="headerlink" href="#FLIR.conservator.conservator.ProcessingTimeoutError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></p>
+<p>Raised when the amount of time spent waiting for media to process exceeds
+the requested timeout.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.conservator.UnknownMediaIdException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">UnknownMediaIdException</code><a class="headerlink" href="#FLIR.conservator.conservator.UnknownMediaIdException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when a media ID cannot be resolved to a Video or Image.</p>
 </dd></dl>
 
 </div>
@@ -1202,6 +1318,12 @@ it with the specified <cite>fields</cite>.</p>
 instance to be useful.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="FLIR.conservator.managers.type_manager.TypeManager.id_exists">
+<code class="sig-name descname">id_exists</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager.id_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>True</cite> if the id is valid for the <cite>underlying_type</cite>.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1250,13 +1372,6 @@ instance to be useful.</p>
 </div>
 <div class="section" id="module-FLIR.conservator.managers.media">
 <span id="mediatypemanager"></span><h3>MediaTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.media" title="Permalink to this headline">¶</a></h3>
-<dl class="py exception">
-<dt id="FLIR.conservator.managers.media.MediaUploadException">
-<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.media.</code><code class="sig-name descname">MediaUploadException</code><a class="headerlink" href="#FLIR.conservator.managers.media.MediaUploadException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Raised if an exception occurs during a media upload</p>
-</dd></dl>
-
 </div>
 </div>
 <div class="section" id="module-FLIR.conservator.paginated_query">
