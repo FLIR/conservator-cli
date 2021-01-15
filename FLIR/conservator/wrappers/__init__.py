@@ -15,6 +15,7 @@ them as proxied :class:`~FLIR.conservator.wrappers.dataset.Dataset` objects.
 """
 from .type_proxy import TypeProxy
 from .queryable import QueryableType
+from .media import MediaType
 from .image import Image
 from .video import Video
 from .dataset import Dataset

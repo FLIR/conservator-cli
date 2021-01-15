@@ -15,7 +15,7 @@ from FLIR.conservator.managers import (
     ImageManager,
 )
 from FLIR.conservator.util import base_convert, upload_file
-from FLIR.conservator.wrappers import Video
+from FLIR.conservator.wrappers import MediaType
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 logger = logging.getLogger(__name__)
@@ -113,25 +113,11 @@ class Conservator(ConservatorConnection):
 
         if isinstance(collection, str):
             collection = self.collections.from_id(collection)
-        if collection is not None:
-            video = collection.create_video(remote_name, fields="id")
-        else:
-            video = Video.create(self, remote_name, fields="id")
 
-        upload_id = video.initiate_upload(remote_name)
-
-        url = video.generate_signed_upload_url(upload_id)
-        upload = upload_file(file_path, url)
-        if not upload.ok:
-            video.remove()
-            raise MediaUploadException(
-                f"Upload failed ({upload.status_code}: {upload.reason})"
-            )
-        completion_tag = upload.headers["ETag"]
-
-        video.complete_upload(remote_name, upload_id, completion_tags=[completion_tag])
-        video.trigger_processing()
-        return video.id
+        media_id = MediaType.upload(
+            self, file_path, collection=collection, remote_name=remote_name
+        )
+        return media_id
 
     def get_media_instance_from_id(self, media_id, fields=None):
         """
