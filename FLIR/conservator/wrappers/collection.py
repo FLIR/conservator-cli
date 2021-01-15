@@ -40,13 +40,6 @@ class Collection(QueryableType, FileLockerType):
     file_locker_gen_url = Mutation.generate_signed_collection_file_locker_upload_url
     file_locker_remove = Mutation.remove_collection_file_locker_file
 
-    def create_video(self, filename, fields=None):
-        """
-        Create a new :class:`~FLIR.conservator.wrappers.video.Video` within
-        this collection, returning it with the specified `fields`.
-        """
-        return Video.create(self._conservator, filename, self.id, fields)
-
     def create_child(self, name, fields=None):
         """
         Create a new child collection with the given `name`, returning it
