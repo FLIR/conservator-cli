@@ -80,8 +80,12 @@ def download_file(path, name, url, silent=False, no_meter=False):
 
 def upload_file(path, url):
     path = os.path.abspath(path)
+    logger.info(f"Uploading '{path}'")
     with open(path, "rb") as f:
-        return requests.put(url, f)
+        response = requests.put(url, f)
+    assert response.ok
+    logger.info(f"Completed upload of '{path}'")
+    return response
 
 
 def download_files(files, process_count=None, no_meter=False):

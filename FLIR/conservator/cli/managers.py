@@ -101,10 +101,13 @@ def get_manager_command(type_manager, sgqlc_type, name):
             "-v",
             "--video-metadata",
             is_flag=True,
-            help="Include image and video metadata",
+            help="Include image and video metadata under subdir 'media_metadata/'",
         )
         @click.option(
-            "-f", "--associated-files", is_flag=True, help="Include associated files"
+            "-f",
+            "--associated-files",
+            is_flag=True,
+            help="Include associated files under subdir 'associated_files/'",
         )
         @click.option(
             "-m", "--media", is_flag=True, help="Include media (videos and images)"
@@ -122,6 +125,34 @@ def get_manager_command(type_manager, sgqlc_type, name):
             collection.download(
                 path, datasets, video_metadata, associated_files, media, recursive
             )
+
+        @group.command(help="Upload a local directory to a Collection")
+        @click.argument("id")
+        @click.argument("path")
+        @click.option(
+            "-v",
+            "--video-metadata",
+            is_flag=True,
+            help="Include image and video metadata under subdir 'media_metadata/'",
+        )
+        @click.option(
+            "-f",
+            "--associated-files",
+            is_flag=True,
+            help="Include associated filesi under subdir 'associated_files/'",
+        )
+        @click.option(
+            "-m", "--media", is_flag=True, help="Include media (videos and images)"
+        )
+        @click.option(
+            "-r",
+            "--recursive",
+            is_flag=True,
+            help="Include child directories recursively, creating collections as needed",
+        )
+        def upload(id, path, video_metadata, associated_files, media, recursive):
+            i = get_instance()
+            i.upload(id, path, video_metadata, associated_files, media, recursive)
 
     if issubclass(type_manager, DatasetManager):
 
@@ -241,11 +272,13 @@ def get_manager_command(type_manager, sgqlc_type, name):
             help="If given, collections will be created to reach the remote path",
         )
         def upload(localpath, remotepath, remote_name, create_collections):
-            i = get_instance()
-            collection = i._conservator.collections.from_remote_path(
+            conservator = Conservator.default()
+            collection = conservator.collections.from_remote_path(
                 remotepath, make_if_no_exist=create_collections
             )
-            i.upload(localpath, collection=collection, remote_name=remote_name)
+            conservator.upload(
+                localpath, collection=collection, remote_name=remote_name
+            )
 
         @group.command(
             help="Download media to the current directory, or the specified path."

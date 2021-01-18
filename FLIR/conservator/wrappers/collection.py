@@ -1,4 +1,5 @@
 import functools
+import logging
 import os
 
 from FLIR.conservator.fields_request import FieldsRequest
@@ -13,27 +14,31 @@ from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_files
 from FLIR.conservator.wrappers.type_proxy import requires_fields
+from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.wrappers.video import Video
 from FLIR.conservator.wrappers.image import Image
 from FLIR.conservator.wrappers.dataset import Dataset
 
 
+logger = logging.getLogger(__name__)
+
+
 class InvalidRemotePathException(Exception):
     pass
 
 
-class Collection(QueryableType):
+class Collection(QueryableType, FileLockerType):
     underlying_type = schema.Collection
     by_id_query = schema.Query.collection
     search_query = schema.Query.collections
 
-    def create_video(self, filename, fields=None):
-        """
-        Create a new :class:`~FLIR.conservator.wrappers.video.Video` within
-        this collection, returning it with the specified `fields`.
-        """
-        return Video.create(self._conservator, filename, self.id, fields)
+    # name of id field in mutations when not simply 'id'
+    id_type = "collection_id"
+
+    # file-locker operations
+    file_locker_gen_url = Mutation.generate_signed_collection_file_locker_upload_url
+    file_locker_remove = Mutation.remove_collection_file_locker_file
 
     def create_child(self, name, fields=None):
         """
@@ -41,12 +46,13 @@ class Collection(QueryableType):
         with the specified `fields`.
         """
         _input = CreateCollectionInput(name=name, parent_id=self.id)
-        return self._conservator.query(
+        result = self._conservator.query(
             Mutation.create_collection,
             operation_base=Mutation,
             input=_input,
             fields=fields,
         )
+        return Collection(self._conservator, result)
 
     @requires_fields("path")
     def get_child(self, name, make_if_no_exists=False, fields=None):
@@ -57,26 +63,17 @@ class Collection(QueryableType):
         """
         path = os.path.join(self.path, name)
         try:
-            child = Collection.from_remote_path(self._conservator, path, fields)
+            child = Collection.from_remote_path(
+                conservator=self._conservator,
+                path=path,
+                make_if_no_exist=False,
+                fields=fields,
+            )
         except InvalidRemotePathException:
             if make_if_no_exists:
                 return self.create_child(name, fields)
             raise
         return child
-
-    def generate_signed_locker_upload_url(self, filename, content_type):
-        """
-        Returns a signed url for uploading a new file locker file with the given `filename` and
-        `content_type`.
-        """
-        result = self._conservator.query(
-            Mutation.generate_signed_collection_file_locker_upload_url,
-            operation_base=Mutation,
-            dataset_id=self.id,
-            content_type=content_type,
-            filename=filename,
-        )
-        return result.signed_url
 
     @classmethod
     def create_root(cls, conservator, name, fields=None):
@@ -97,16 +94,28 @@ class Collection(QueryableType):
         Return a new collection at the specified `path`, with the given `fields`,
         creating new collections as necessary.
         """
-        split_path = os.path.split(path)
-        root_path = split_path[0]
+        if not path.startswith("/"):
+            path = "/" + path
+
+        split_path = path.split("/")[1:]
+        root_path = "/" + split_path[0]
+        temp_fields = ["id", "path"]
         try:
-            root = Collection.from_remote_path(conservator, root_path, False, fields)
+            root = Collection.from_remote_path(
+                conservator, path=root_path, make_if_no_exist=False, fields=temp_fields
+            )
         except InvalidRemotePathException:
-            root = Collection.create_root(conservator, root_path, fields)
+            root = Collection.create_root(
+                conservator, name=root_path, fields=temp_fields
+            )
 
         current = root
         for name in split_path[1:]:
-            current = current.get_child(name, make_if_no_exists=True, fields=fields)
+            current = current.get_child(
+                name, make_if_no_exists=True, fields=temp_fields
+            )
+
+        current.populate(fields)
         return current
 
     @classmethod
@@ -121,8 +130,9 @@ class Collection(QueryableType):
         )
         if collection is None:
             if make_if_no_exist:
-                cls.create_from_remote_path(conservator, path, fields)
-            raise InvalidRemotePathException(path)
+                return cls.create_from_remote_path(conservator, path, fields)
+            else:
+                raise InvalidRemotePathException(path)
         return Collection(conservator, collection)
 
     def recursively_get_children(self, include_self=False, fields=None):
@@ -254,15 +264,6 @@ class Collection(QueryableType):
         for image in images:
             image.download_metadata(path)
 
-    @requires_fields("file_locker_files")
-    def download_associated_files(self, path, no_meter=False):
-        """Downloads associated files (from file locker) to
-        ``associated_files/``."""
-        path = os.path.join(path, "associated_files")
-        os.makedirs(path, exist_ok=True)
-        assets = [(path, file.name, file.url) for file in self.file_locker_files]
-        download_files(assets, no_meter=no_meter)
-
     def download_media(self, path, no_meter=False):
         """Downloads videos and images."""
         self.download_videos(path, no_meter=no_meter)
@@ -294,6 +295,6 @@ class Collection(QueryableType):
         fields.include_field("name", "repository.master")
         datasets = self.get_datasets(fields=fields)
         for dataset in datasets:
-            path = os.path.join(path, dataset.name)
-            lds = LocalDataset.clone(dataset, clone_path=path)
+            clone_path = os.path.join(path, dataset.name)
+            lds = LocalDataset.clone(dataset, clone_path=clone_path)
             lds.download(no_meter=no_meter)
