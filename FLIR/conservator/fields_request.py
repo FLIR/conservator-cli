@@ -128,10 +128,10 @@ class FieldsRequest:
         # start by adding all requested fields
         all_selectors = []
         for path, value in self.paths.items():
-            field = self.get_attr_by_path(path, query_selector)
             if value is False or value is None:
                 # excluded field
                 continue
+            field = self.get_attr_by_path(path, query_selector)
             all_selectors.append((path, field))
             if value is True:
                 field()
@@ -153,7 +153,7 @@ class FieldsRequest:
                 leaf_selectors.append(selector)
 
         # if no fields are selected, select defaults on query
-        if len(self.paths) == 0:
+        if len(leaf_selectors) == 0:
             leaf_selectors.append(query_selector)
 
         # add default fields to all leafs:
