@@ -37,7 +37,11 @@ class LocalDataset:
         self.analytics_path = os.path.join(self.path, "analyticsData")
         self.cvc_path = os.path.join(self.path, ".cvc")
         self.staging_path = os.path.join(self.cvc_path, ".staging.json")
-        self.cache_path = os.path.join(self.cvc_path, "cache")
+        self.cache_path = conservator.config.cvc_cache_path
+
+        if not os.path.isabs(self.cache_path):
+            self.cache_path = os.path.join(self.path, self.cache_path)
+        logger.debug(f"Using cache at {self.cache_path}")
 
         if not os.path.exists(self.index_path):
             return

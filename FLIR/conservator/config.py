@@ -34,6 +34,7 @@ class Config:
         - CONSERVATOR_API_KEY
         - CONSERVATOR_URL (default: https://flirconservator.com/)
         - CONSERVATOR_MAX_RETRIES (default: 5)
+        - CONSERVATOR_CVC_CACHE_PATH (default: .cvc/cache)
 
     :param kwargs: A dictionary of (str: str) providing values for all of the Config attributes.
         Any attribute not in the dictionary, will use the default value. If no default value is defined,
@@ -48,6 +49,9 @@ class Config:
         "max_retries": ConfigAttribute(
             "CONSERVATOR_MAX_RETRIES", "Conservator Max Retries", default=5, type_=int
         ),
+        "cvc_cache_path": ConfigAttribute(
+            "CONSERVATOR_CVC_CACHE_PATH", "CVC Cache Path", default=".cvc/cache"
+        )
     }
 
     def __init__(self, **kwargs):
