@@ -51,7 +51,7 @@ class Config:
         ),
         "cvc_cache_path": ConfigAttribute(
             "CONSERVATOR_CVC_CACHE_PATH", "CVC Cache Path", default=".cvc/cache"
-        )
+        ),
     }
 
     def __init__(self, **kwargs):
