@@ -12,7 +12,10 @@ class FieldsManager:
     """
 
     def __init__(self):
-        self.problematic_fields = {}
+        self.problematic_fields = {
+            schema.Repository: {"id"},
+            schema.Dataset: {"repository.id"},
+        }
 
     def get_problematic_paths(self, typ):
         """Get problematic field paths for a given SGQLC `type`"""
@@ -181,6 +184,9 @@ class FieldsManager:
             selector.role()
             FieldsManager.select_default_fields(selector.groups)
             selector.is_removed()
+        elif issubclass(type_, schema.Repository):
+            selector.master()
+            selector.repo_state()
         elif issubclass(type_, schema.Video):
             selector.id()
             selector.filename()

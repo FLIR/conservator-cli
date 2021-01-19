@@ -1,3 +1,5 @@
+import os
+
 import click
 import functools
 
@@ -7,7 +9,9 @@ from FLIR.conservator.managers import (
     SearchableTypeManager,
     CollectionManager,
     MediaTypeManager,
+    DatasetManager,
 )
+from FLIR.conservator.util import to_clean_string
 
 
 def fields_request(func):
@@ -149,6 +153,107 @@ def get_manager_command(type_manager, sgqlc_type, name):
         def upload(id, path, video_metadata, associated_files, media, recursive):
             i = get_instance()
             i.upload(id, path, video_metadata, associated_files, media, recursive)
+
+    if issubclass(type_manager, DatasetManager):
+
+        @group.command(help="List a Dataset's commit history.")
+        @click.argument("id")
+        def history(id):
+            dataset = get_instance().from_id(id)
+            commit_fields = [
+                "_id",
+                "author_name",
+                "author_email",
+                "short_message",
+                "parents",
+                "tree",
+            ]
+            for commit in dataset.get_commit_history(fields=commit_fields):
+                click.echo(to_clean_string(commit))
+
+        @group.command(
+            name="commit",
+            help="View a specific Dataset commit. You can pass a commit hash, or a reference like HEAD~2.",
+        )
+        @click.argument("dataset_id")
+        @click.argument("commit_id")
+        def commit_(dataset_id, commit_id):
+            dataset = get_instance().from_id(dataset_id)
+            commit_fields = [
+                "_id",
+                "author_name",
+                "author_email",
+                "short_message",
+                "parents",
+                "tree",
+            ]
+            commit = dataset.get_commit_by_id(commit_id, fields=commit_fields)
+            click.echo(to_clean_string(commit))
+
+        @group.command(
+            name="tree",
+            help="List contents of a Dataset's version control tree. You can pass a tree hash, or a reference like HEAD.",
+        )
+        @click.argument("dataset_id")
+        @click.argument("tree_id", default="HEAD")
+        def tree_(dataset_id, tree_id):
+            dataset = get_instance().from_id(dataset_id)
+            tree_fields = [
+                "size",
+                "tree_list._id",
+                "tree_list.type",
+                "tree_list.name",
+                "tree_list.mode",
+                "tree_list.size",
+            ]
+            tree = dataset.get_tree_by_id(tree_id, fields=tree_fields)
+            click.echo(f"Tree {tree_id} (size: {tree.size})")
+            click.echo(f"  Type\tName\tHash")
+            for item in tree.tree_list:
+                click.echo(f"  {item.type}\t{item.name}\t{item._id}")
+
+        @group.command(
+            name="blob", help="Download a blob from a Dataset's version control tree."
+        )
+        @click.argument("dataset_id")
+        @click.argument("blob_id")
+        @click.argument("path", default="./blob")
+        @click.option(
+            "-b",
+            "--browser",
+            is_flag=True,
+            help="If passed, perform the download using a browser.",
+        )
+        def blob(dataset_id, blob_id, path, browser):
+            dataset = get_instance().from_id(dataset_id)
+            if browser:
+                blob_url = dataset.get_blob_url_by_id(blob_id)
+                click.launch(blob_url)
+                return
+            dataset.download_blob(blob_id, path)
+
+        @group.command(
+            name="download-file",
+            help="Download a Dataset's index.json or associated file. Defaults to latest commit.",
+        )
+        @click.argument("dataset_id")
+        @click.argument("filename")
+        @click.argument("path", default=".")
+        @click.option("-c", "--commit-hash", default="HEAD")
+        def download_file(dataset_id, filename, path, commit_hash):
+            dataset = get_instance().from_id(dataset_id)
+            dataset.download_blob_by_name(filename, path, commit_id=commit_hash)
+
+        @group.command(
+            name="download-index",
+            help="Download a Dataset's index.json. Defaults to latest commit.",
+        )
+        @click.argument("dataset_id")
+        @click.argument("path", default=".")
+        @click.option("-c", "--commit-hash", default="HEAD")
+        def download_index(dataset_id, path, commit_hash):
+            dataset = get_instance().from_id(dataset_id)
+            dataset.download_blob_by_name("index.json", path, commit_id=commit_hash)
 
     if issubclass(type_manager, MediaTypeManager):
 

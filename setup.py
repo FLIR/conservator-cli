@@ -39,7 +39,7 @@ setuptools.setup(
     entry_points="""
         [console_scripts]
         conservator=FLIR.conservator.cli:main
-        cvc=FLIR.conservator.cli:cvc
+        cvc=FLIR.conservator.cli.cvc:main
     """,
     zip_safe=False,
     classifiers=[
