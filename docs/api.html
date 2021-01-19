@@ -886,6 +886,32 @@ The dataset is returned with the requested <cite>fields</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.download_blob">
+<code class="sig-name descname">download_blob</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">blob_id</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.download_blob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a blob to the specified <cite>path</cite>. A <cite>blob_id</cite> can be
+gotten using <a class="reference internal" href="#FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id" title="FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_tree_by_id()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.download_blob_by_name">
+<code class="sig-name descname">download_blob_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">commit_id</span><span class="o">=</span><span class="default_value">'HEAD'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.download_blob_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a blob to the specified <cite>path</cite>. A <cite>blob_id</cite> can be
+gotten using <a class="reference internal" href="#FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id" title="FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_tree_by_id()</span></code></a>.</p>
+<p>If <cite>path</cite> is a file, the blob will be saved to that file. If it is a directory,
+the blob will be saved to a file named <cite>filename</cite> within the directory at <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.download_latest_index">
+<code class="sig-name descname">download_latest_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.download_latest_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the Dataset’s latest <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file to the
+specified path. If the path is a directory, the file will
+be downloaded to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> within that directory.</p>
+<p>This can be used as a faster alternative to a full repository
+clone for some operations.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.from_local_path">
 <em class="property">classmethod </em><code class="sig-name descname">from_local_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.from_local_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new Dataset instance using the ID found in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>
@@ -913,6 +939,36 @@ at the provided <cite>path</cite></p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.get_blob_id_by_name">
+<code class="sig-name descname">get_blob_id_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">commit_id</span><span class="o">=</span><span class="default_value">'HEAD'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_blob_id_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a blob’s id (hash) from <cite>filename</cite>. This searches the root directory of
+the given <cite>commit_id</cite>, and then searches <cite>associated_files</cite>. It returns the hash of
+the first blob found with a matching name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.get_blob_url_by_id">
+<code class="sig-name descname">get_blob_url_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">blob_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_blob_url_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a URL that can be used to download a blob. A <cite>blob_id</cite> can be
+gotten using <a class="reference internal" href="#FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id" title="FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_tree_by_id()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.get_commit_by_id">
+<code class="sig-name descname">get_commit_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit_id</span><span class="o">=</span><span class="default_value">'HEAD'</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_commit_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a specific commit from a <cite>commit_id</cite>. The ID can be a hash, or an
+identifier like <code class="docutils literal notranslate"><span class="pre">HEAD</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.get_commit_history">
+<code class="sig-name descname">get_commit_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_commit_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of version control commits for the Dataset. Note
+that some older datasets may not have a repository, causing this
+method to fail.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.get_frames">
 <code class="sig-name descname">get_frames</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_frames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a paginated query for dataset frames within this dataset, filtering
@@ -923,6 +979,21 @@ with <cite>search_text</cite>.</p>
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.get_git_url">
 <code class="sig-name descname">get_git_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_git_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the Git URL used for cloning this Dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.get_root_tree_id">
+<code class="sig-name descname">get_root_tree_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit_id</span><span class="o">=</span><span class="default_value">'HEAD'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_root_tree_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the id (hash) of the tree at the given <cite>commit_id</cite>. The ID
+can be a hash, or an identifier like <code class="docutils literal notranslate"><span class="pre">HEAD</span></code>.</p>
+<p>Defaults to the latest commit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id">
+<code class="sig-name descname">get_tree_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tree_id</span><span class="o">=</span><span class="default_value">'HEAD'</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_tree_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tree from a <cite>tree_id</cite>. The ID can be a hash, or an
+identifier like <code class="docutils literal notranslate"><span class="pre">HEAD</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
