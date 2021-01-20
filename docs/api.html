@@ -1465,6 +1465,14 @@ the filter function for each instance.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.paginated_query.PaginatedQuery.page_size">
+<code class="sig-name descname">page_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">page_size</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.page_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of items to request in each query.</p>
+<p>Typically, larger values will make the overall execution faster,
+but individual requests may be large and slow.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.paginated_query.PaginatedQuery.with_fields">
 <code class="sig-name descname">with_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.with_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the query’s <a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest" title="FLIR.conservator.fields_request.FieldsRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldsRequest</span></code></a> to <cite>fields</cite>.</p>
