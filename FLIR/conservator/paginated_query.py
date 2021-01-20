@@ -128,6 +128,18 @@ class PaginatedQuery:
         self.fields = FieldsRequest.create(None)
         return self
 
+    def page_size(self, page_size):
+        """
+        Set the number of items to request in each query.
+
+        Typically, larger values will make the overall execution faster,
+        but individual requests may be large and slow.
+        """
+        if self.started:
+            raise ConcurrentQueryModificationException()
+        self._limit = page_size
+        return self
+
     def first(self):
         """
         Returns the first result, or `None` if it doesn't exist.
