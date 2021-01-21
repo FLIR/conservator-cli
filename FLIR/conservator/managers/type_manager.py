@@ -27,6 +27,14 @@ class TypeManager:
     def from_id(self, id_):
         """
         Creates a new instance of `underlying_type` from an ID.
+
+        This does not populate any fields besides ``id``. You must call
+        :meth:`~FLIR.conservator.wrappers.queryable.QueryableType.populate`
+        on the returned instance to populate any fields.
+
+        .. note:: Use :meth:`~FLIR.conservator.managers.type_manager.TypeManager.id_exists`
+           to verify that an ID is correct. Otherwise an :class:`InvalidIdException` may
+           be thrown on later operations.
         """
         return self._underlying_type.from_id(self._conservator, id_)
 

@@ -28,6 +28,22 @@ class CollectionManager(SearchableTypeManager):
     def __init__(self, conservator):
         super().__init__(conservator, Collection)
 
+    def from_string(self, string, fields="id"):
+        """
+        Returns a Collection with the given `fields` from a `string`.
+        If the `string` contains any slashes, it is assumed to be a path,
+        and :meth:`from_remote_path` is used. Otherwise, `from_id` is used.
+
+        This is used for CLI commands to let users specify paths or ids when
+        doing operations, and should be the preferred method for getting a Collection from
+        any user-facing input.
+        """
+        if string.startswith("/"):
+            return self.from_remote_path(path=string, make_if_no_exist=False, fields=fields)
+        collection = self.from_id(string)
+        collection.populate(fields)
+        return collection
+
     def from_remote_path(self, path, make_if_no_exist=False, fields=None):
         """
         Returns a collection at the specified `path`, with the specified `fields`.

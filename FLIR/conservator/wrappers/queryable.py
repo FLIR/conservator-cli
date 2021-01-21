@@ -3,16 +3,18 @@ from FLIR.conservator.wrappers import TypeProxy
 
 
 class InvalidIdException(Exception):
-    pass
+    """
+    Raised when a query fails due to an invalid ID.
+    """
 
 
 class QueryableType(TypeProxy):
     """
-    Adds :func:``populate`` for querying and populating additional fields.
+    Adds :meth:`populate` for querying and populating additional fields.
 
     Subclasses must define ``by_id_query`` to be a query that can
     return more fields of the type given an id. Alternatively, they may define
-    a custom ``_populate`` if the method of querying varies.
+    a custom ``_populate`` method if the method of querying is unique.
     """
 
     by_id_query = None
@@ -26,7 +28,7 @@ class QueryableType(TypeProxy):
         Query conservator for the specified fields, even if they
         already exist on the object.
 
-        To filter existing fields, use `requires_fields`
+        To filter existing fields, use :func:`~FLIR.conservator.wrappers.type_proxy.requires_fields`
         """
 
         fields = FieldsRequest.create(fields)

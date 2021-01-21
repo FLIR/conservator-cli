@@ -44,6 +44,12 @@ TypeProxy
 .. automodule:: FLIR.conservator.wrappers.type_proxy
     :members:
 
+Queryable
+^^^^^^^^^
+
+.. automodule:: FLIR.conservator.wrappers.queryable
+    :members:
+
 Collection
 ^^^^^^^^^^
 
