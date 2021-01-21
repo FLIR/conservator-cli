@@ -147,6 +147,7 @@ def requires_fields(*fields):
     :param fields: Strings containing the names of required fields. They can be
         subfields (such as "repository.master" on a Dataset).
     """
+
     def decorator(f):
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):

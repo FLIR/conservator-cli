@@ -38,9 +38,14 @@ class CollectionManager(SearchableTypeManager):
         doing operations, and should be the preferred method for getting a Collection from
         any user-facing input.
         """
-        if string.startswith("/"):
-            return self.from_remote_path(path=string, make_if_no_exist=False, fields=fields)
+        if "/" in string:
+            # slash cannot exist in an ID
+            # this will throw InvalidRemotePathException if path cannot be found.
+            return self.from_remote_path(
+                path=string, make_if_no_exist=False, fields=fields
+            )
         collection = self.from_id(string)
+        # this will throw InvalidIdException if the ID doesn't exist
         collection.populate(fields)
         return collection
 

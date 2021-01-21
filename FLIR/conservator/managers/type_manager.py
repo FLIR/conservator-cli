@@ -45,3 +45,18 @@ class TypeManager:
         instance to be useful.
         """
         return self._underlying_type.from_json(self._conservator, json)
+
+    def from_string(self, string, fields=None):
+        """
+        This returns an instance from a string identifier.
+
+        By default, it expects an ID, but subclasses can (and should)
+        add alternative identifiers. For instance, collections can be
+        identified by their path, so the collections manager should be
+        checking if the identifier is a path.
+
+        Invalid identifiers should raise helpful exceptions.
+        """
+        instance = self.from_id(string)
+        instance.populate(fields)
+        return instance
