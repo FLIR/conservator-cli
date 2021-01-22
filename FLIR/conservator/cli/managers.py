@@ -145,7 +145,9 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 localpath, datasets, video_metadata, associated_files, media, recursive
             )
 
-        @group.command(help="Upload a local directory to a Collection by ID or remote path")
+        @group.command(
+            help="Upload a local directory to a Collection by ID or remote path"
+        )
         @click.argument("identifier")
         @click.argument("localpath")
         @click.option(
@@ -176,14 +178,29 @@ def get_manager_command(type_manager, sgqlc_type, name):
             help="Include child directories recursively, creating collections as needed",
         )
         def upload(
-            identifier, localpath, video_metadata, associated_files, media, recursive, create_collection
+            identifier,
+            localpath,
+            video_metadata,
+            associated_files,
+            media,
+            recursive,
+            create_collection,
         ):
             manager = get_instance()
             if create_collection:
-                collection = manager.from_remote_path(identifier, make_if_no_exist=True, fields="id")
+                collection = manager.from_remote_path(
+                    identifier, make_if_no_exist=True, fields="id"
+                )
             else:
                 collection = manager.from_string(identifier)
-            manager.upload(collection.id, localpath, video_metadata, associated_files, media, recursive)
+            manager.upload(
+                collection.id,
+                localpath,
+                video_metadata,
+                associated_files,
+                media,
+                recursive,
+            )
 
     if issubclass(type_manager, DatasetManager):
 
