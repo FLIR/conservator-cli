@@ -120,12 +120,6 @@ def get_manager_command(type_manager, sgqlc_type, name):
             is_flag=True,
             help="Include child collections recursively",
         )
-        @click.option(
-            "-c",
-            "--create-collection",
-            is_flag=True,
-            help="If identifier is a remote path that doesn't exist, attempt to create a collection at that path",
-        )
         def download(
             identifier,
             localpath,
@@ -134,13 +128,9 @@ def get_manager_command(type_manager, sgqlc_type, name):
             associated_files,
             media,
             recursive,
-            create_collection,
         ):
             manager = get_instance()
-            if create_collection:
-                collection = manager.from_remote_path(identifier, make_if_no_exist=True)
-            else:
-                collection = manager.from_string(identifier)
+            collection = manager.from_string(identifier)
             collection.download(
                 localpath, datasets, video_metadata, associated_files, media, recursive
             )
