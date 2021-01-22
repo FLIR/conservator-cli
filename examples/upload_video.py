@@ -1,3 +1,4 @@
+import sys
 import logging
 
 from FLIR.conservator.conservator import Conservator
@@ -25,6 +26,9 @@ print("Starting upload")
 media_id = conservator.upload(
     local_path, collection=collection, remote_name=remote_name
 )
+if not media_id:
+    print("Upload failed")
+    sys.exit(1)
 
 print("Waiting for processing")
 conservator.wait_for_processing(media_id)

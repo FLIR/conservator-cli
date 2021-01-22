@@ -1,4 +1,6 @@
 import os
+import traceback
+from dataclasses import dataclass
 
 from FLIR.conservator.generated.schema import Mutation
 from FLIR.conservator.util import download_file
@@ -13,6 +15,29 @@ class MediaUploadException(Exception):
     """Raised if an exception occurs during a media upload"""
 
     pass
+
+
+@dataclass
+class MediaUploadRequest:
+    """tracks inputs and results of a media upload"""
+
+    file_path: str
+    collection_id: str = ""
+    remote_name: str = ""
+    complete: bool = False
+    media_id: str = ""
+    error_message: str = ""
+
+    def __eq__(self, other):
+        # ignore status fields when deciding on a match
+        match = False
+        if isinstance(other, MediaUploadRequest):
+            match = (
+                self.file_path == other.file_path
+                and self.collection_id == other.collection_id
+                and self.remote_name == other.remote_name
+            )
+        return match
 
 
 class MediaType(QueryableType, FileLockerType, MetadataType):
@@ -121,11 +146,12 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         return MediaType(conservator, result)
 
     @staticmethod
-    def upload(conservator, file_path, collection=None, remote_name=None):
+    def upload(conservator, upload_request):
         """
-        Upload a new media object from a local `file_path`, with the specified
-        `remote_name`. It is added to `collection` if given, otherwise it is
-        added to no collection (orphan).
+        Upload a new media object based on info in :class:`MediaUploadRequest` object:
+        * from a local `file_path`
+        * to conservator name `remote_name`
+        * as member of `collection` if given, otherwise added to no collection (orphan)
 
         Conservator Images have separate queries than Videos, but they do not get
         their own mutations, e.g. they are treated as "Videos" in the upload process.
@@ -133,33 +159,47 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         until file processing has finished; if it turned out to be an image type
         (e.g. jpeg) then it will disappear from Videos and appear under Images.
 
-        Returns the ID of the created media object. Note, that it may be a Video ID
-        or an Image ID.
+        Returns updated MediaUploadRequest, which contains ID of the created media object (may be a
+        Video ID or an Image ID) or else an error message if something went wrong.
         """
+        assert isinstance(upload_request, MediaUploadRequest)
+        file_path = upload_request.file_path
+        remote_name = upload_request.remote_name
+        collection_id = upload_request.collection_id or None
+
         file_path = os.path.expanduser(file_path)
         assert os.path.isfile(file_path)
         if remote_name is None:
             remote_name = os.path.split(file_path)[-1]
 
-        parent_id = None
-        if collection is not None:
-            parent_id = collection.id
-        media = MediaType._create(conservator, remote_name, parent_id)
+        try:
+            media = MediaType._create(conservator, remote_name, collection_id)
+            upload_id = media._initiate_upload(remote_name)
 
-        upload_id = media._initiate_upload(remote_name)
+            url = media._generate_signed_upload_url(upload_id)
+            upload = upload_file(file_path, url)
+            if not upload.ok:
+                raise MediaUploadException(
+                    f"Upload failed ({upload.status_code}: {upload.reason})"
+                )
+            completion_tag = upload.headers["ETag"]
 
-        url = media._generate_signed_upload_url(upload_id)
-        upload = upload_file(file_path, url)
-        if not upload.ok:
-            media.remove()
-            raise MediaUploadException(
-                f"Upload failed ({upload.status_code}: {upload.reason})"
+            media._complete_upload(
+                remote_name, upload_id, completion_tags=[completion_tag]
             )
-        completion_tag = upload.headers["ETag"]
+            media._trigger_processing()
 
-        media._complete_upload(remote_name, upload_id, completion_tags=[completion_tag])
-        media._trigger_processing()
-        return media.id
+            upload_request.complete = True
+            upload_request.error_message = ""
+            upload_request.media_id = media.id
+        except Exception as e:
+            if media:
+                media.remove()
+
+            upload_request.complete = False
+            upload_request.error_message = traceback.format_exc()
+
+        return upload_request
 
     @requires_fields("url", "filename")
     def download(self, path, no_meter=False):
