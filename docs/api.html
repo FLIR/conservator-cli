@@ -641,6 +641,15 @@ some query.</p></li>
 <em class="property">classmethod </em><code class="sig-name descname">from_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.from_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a wrapped instance from an ID. The underlying type
 of the class should match the type of the ID.</p>
+<p>This does not populate any fields besides <code class="docutils literal notranslate"><span class="pre">id</span></code>. You must call
+<a class="reference internal" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate" title="FLIR.conservator.wrappers.queryable.QueryableType.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a>
+on the returned instance to populate any fields.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use <a class="reference internal" href="#FLIR.conservator.managers.type_manager.TypeManager.id_exists" title="FLIR.conservator.managers.type_manager.TypeManager.id_exists"><code class="xref py py-meth docutils literal notranslate"><span class="pre">id_exists()</span></code></a>
+to verify that an ID is correct. Otherwise an <a class="reference internal" href="#FLIR.conservator.wrappers.queryable.InvalidIdException" title="FLIR.conservator.wrappers.queryable.InvalidIdException"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidIdException</span></code></a> may
+be thrown on later operations.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -693,8 +702,48 @@ subclass, if one exists.</p>
 <dl class="py function">
 <dt id="FLIR.conservator.wrappers.type_proxy.requires_fields">
 <code class="sig-prename descclassname">FLIR.conservator.wrappers.type_proxy.</code><code class="sig-name descname">requires_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">fields</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.requires_fields" title="Permalink to this definition">¶</a></dt>
-<dd><p>Require <cite>fields</cite> for an instance method. If missing, calls
+<dd><p>Decorator for requiring <cite>fields</cite> for an instance method. If missing, calls
 <cite>populate</cite>. If <cite>populate</cite> fails, raises <cite>MissingFieldException</cite>.</p>
+<p>This should be used on any instance method that requires certain fields to
+function correctly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fields</strong> – Strings containing the names of required fields. They can be
+subfields (such as “repository.master” on a Dataset).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.wrappers.queryable">
+<span id="queryable"></span><h3>Queryable<a class="headerlink" href="#module-FLIR.conservator.wrappers.queryable" title="Permalink to this headline">¶</a></h3>
+<dl class="py exception">
+<dt id="FLIR.conservator.wrappers.queryable.InvalidIdException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.wrappers.queryable.</code><code class="sig-name descname">InvalidIdException</code><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.InvalidIdException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a query fails due to an invalid ID.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.queryable.QueryableType">
+<em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.wrappers.queryable.</code><code class="sig-name descname">QueryableType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.QueryableType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds <a class="reference internal" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate" title="FLIR.conservator.wrappers.queryable.QueryableType.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a> for querying and populating additional fields.</p>
+<p>Subclasses must define <code class="docutils literal notranslate"><span class="pre">by_id_query</span></code> to be a query that can
+return more fields of the type given an id. Alternatively, they may define
+a custom <code class="docutils literal notranslate"><span class="pre">_populate</span></code> method if the method of querying is unique.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.queryable.QueryableType.populate">
+<code class="sig-name descname">populate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query conservator for the specified fields, even if they
+already exist on the object.</p>
+<p>To filter existing fields, use <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.requires_fields" title="FLIR.conservator.wrappers.type_proxy.requires_fields"><code class="xref py py-func docutils literal notranslate"><span class="pre">requires_fields()</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.queryable.QueryableType.populate_all">
+<code class="sig-name descname">populate_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query conservator for all missing fields.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1220,6 +1269,17 @@ reach that path.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.managers.CollectionManager.from_string">
+<code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">'id'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Collection with the given <cite>fields</cite> from a <cite>string</cite>.
+If the <cite>string</cite> contains any slashes, it is assumed to be a path,
+and <a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.from_remote_path" title="FLIR.conservator.managers.CollectionManager.from_remote_path"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_remote_path()</span></code></a> is used. Otherwise, <cite>from_id</cite> is used.</p>
+<p>This is used for CLI commands to let users specify paths or ids when
+doing operations, and should be the preferred method for getting a Collection from
+any user-facing input.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.managers.CollectionManager.upload">
 <code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collection_id</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">video_metadata</span></em>, <em class="sig-param"><span class="n">associated_files</span></em>, <em class="sig-param"><span class="n">media</span></em>, <em class="sig-param"><span class="n">recursive</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.upload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload files under the specified <cite>path</cite> to given collection.</p>
@@ -1290,6 +1350,15 @@ it with the specified <cite>fields</cite>.</p>
 <dt id="FLIR.conservator.managers.type_manager.TypeManager.from_id">
 <code class="sig-name descname">from_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager.from_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new instance of <cite>underlying_type</cite> from an ID.</p>
+<p>This does not populate any fields besides <code class="docutils literal notranslate"><span class="pre">id</span></code>. You must call
+<a class="reference internal" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate" title="FLIR.conservator.wrappers.queryable.QueryableType.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a>
+on the returned instance to populate any fields.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use <a class="reference internal" href="#FLIR.conservator.managers.type_manager.TypeManager.id_exists" title="FLIR.conservator.managers.type_manager.TypeManager.id_exists"><code class="xref py py-meth docutils literal notranslate"><span class="pre">id_exists()</span></code></a>
+to verify that an ID is correct. Otherwise an <code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidIdException</span></code> may
+be thrown on later operations.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -1298,6 +1367,17 @@ it with the specified <cite>fields</cite>.</p>
 <dd><p>Return a wrapped instance from a dictionary (usually produced by calling
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code>). The ID should be included for the returned
 instance to be useful.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.type_manager.TypeManager.from_string">
+<code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns an instance from a string identifier.</p>
+<p>By default, it expects an ID, but subclasses can (and should)
+add alternative identifiers. For instance, collections can be
+identified by their path, so the collections manager should be
+checking if the identifier is a path.</p>
+<p>Invalid identifiers should raise helpful exceptions.</p>
 </dd></dl>
 
 <dl class="py method">
