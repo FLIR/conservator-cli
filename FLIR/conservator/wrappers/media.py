@@ -194,7 +194,11 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             upload_request.media_id = media.id
         except Exception as e:
             if media:
-                media.remove()
+                # clean up partial upload if possible
+                try:
+                    media.remove()
+                except Exception:
+                    pass
 
             upload_request.complete = False
             upload_request.error_message = traceback.format_exc()
