@@ -57,11 +57,13 @@ def get_manager_command(type_manager, sgqlc_type, name):
         for field in sgqlc_type.__field_names__:
             click.echo(field)
 
-    @group.command(help=f"Print a {sgqlc_type} from an ID")
-    @click.argument("id")
+    @group.command(
+        help=f"Print a {sgqlc_type} from a unique identifier (ID, Path, Name, etc.)"
+    )
+    @click.argument("identifier")
     @fields_request
-    def get(fields, id):
-        item = get_instance().from_id(id)
+    def get(fields, identifier):
+        item = get_instance().from_string(identifier)
         item.populate(fields)
         click.echo(item)
 
@@ -92,10 +94,10 @@ def get_manager_command(type_manager, sgqlc_type, name):
     if issubclass(type_manager, CollectionManager):
 
         @group.command(
-            help="Download a collection to the current directory, or the specified path."
+            help="Download a Collection to the current directory, or the specified path."
         )
-        @click.argument("id")
-        @click.argument("path", default=".")
+        @click.argument("identifier")
+        @click.argument("localpath", default=".")
         @click.option("-d", "--datasets", is_flag=True, help="Pull datasets")
         @click.option(
             "-v",
@@ -119,16 +121,31 @@ def get_manager_command(type_manager, sgqlc_type, name):
             help="Include child collections recursively",
         )
         def download(
-            id, path, datasets, video_metadata, associated_files, media, recursive
+            identifier,
+            localpath,
+            datasets,
+            video_metadata,
+            associated_files,
+            media,
+            recursive,
         ):
-            collection = get_instance().from_id(id)
+            manager = get_instance()
+            collection = manager.from_string(identifier)
             collection.download(
-                path, datasets, video_metadata, associated_files, media, recursive
+                localpath, datasets, video_metadata, associated_files, media, recursive
             )
 
-        @group.command(help="Upload a local directory to a Collection")
-        @click.argument("id")
-        @click.argument("path")
+        @group.command(
+            help="Upload a local directory to a Collection by ID or remote path"
+        )
+        @click.argument("identifier")
+        @click.argument("localpath")
+        @click.option(
+            "-c",
+            "--create-collection",
+            is_flag=True,
+            help="If identifier is a remote path that doesn't exist, attempt to create a collection at that path",
+        )
         @click.option(
             "-v",
             "--video-metadata",
@@ -139,7 +156,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             "-f",
             "--associated-files",
             is_flag=True,
-            help="Include associated filesi under subdir 'associated_files/'",
+            help="Include associated files under subdir 'associated_files/'",
         )
         @click.option(
             "-m", "--media", is_flag=True, help="Include media (videos and images)"
@@ -150,9 +167,30 @@ def get_manager_command(type_manager, sgqlc_type, name):
             is_flag=True,
             help="Include child directories recursively, creating collections as needed",
         )
-        def upload(id, path, video_metadata, associated_files, media, recursive):
-            i = get_instance()
-            i.upload(id, path, video_metadata, associated_files, media, recursive)
+        def upload(
+            identifier,
+            localpath,
+            video_metadata,
+            associated_files,
+            media,
+            recursive,
+            create_collection,
+        ):
+            manager = get_instance()
+            if create_collection:
+                collection = manager.from_remote_path(
+                    identifier, make_if_no_exist=True, fields="id"
+                )
+            else:
+                collection = manager.from_string(identifier)
+            manager.upload(
+                collection.id,
+                localpath,
+                video_metadata,
+                associated_files,
+                media,
+                recursive,
+            )
 
     if issubclass(type_manager, DatasetManager):
 

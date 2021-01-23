@@ -59,7 +59,16 @@ class TypeProxy(object):
     @classmethod
     def from_id(cls, conservator, id_):
         """Return a wrapped instance from an ID. The underlying type
-        of the class should match the type of the ID."""
+        of the class should match the type of the ID.
+
+        This does not populate any fields besides ``id``. You must call
+        :meth:`~FLIR.conservator.wrappers.queryable.QueryableType.populate`
+        on the returned instance to populate any fields.
+
+        .. note:: Use :meth:`~FLIR.conservator.managers.type_manager.TypeManager.id_exists`
+           to verify that an ID is correct. Otherwise an :class:`~FLIR.conservator.wrappers.queryable.InvalidIdException` may
+           be thrown on later operations.
+        """
         return cls.from_json(conservator, {"id": id_})
 
     @classmethod
@@ -128,8 +137,16 @@ class MissingFieldException(Exception):
 
 
 def requires_fields(*fields):
-    """Require `fields` for an instance method. If missing, calls
-    `populate`. If `populate` fails, raises `MissingFieldException`."""
+    """
+    Decorator for requiring `fields` for an instance method. If missing, calls
+    `populate`. If `populate` fails, raises `MissingFieldException`.
+
+    This should be used on any instance method that requires certain fields to
+    function correctly.
+
+    :param fields: Strings containing the names of required fields. They can be
+        subfields (such as "repository.master" on a Dataset).
+    """
 
     def decorator(f):
         @functools.wraps(f)

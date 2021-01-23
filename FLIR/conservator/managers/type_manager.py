@@ -27,6 +27,14 @@ class TypeManager:
     def from_id(self, id_):
         """
         Creates a new instance of `underlying_type` from an ID.
+
+        This does not populate any fields besides ``id``. You must call
+        :meth:`~FLIR.conservator.wrappers.queryable.QueryableType.populate`
+        on the returned instance to populate any fields.
+
+        .. note:: Use :meth:`~FLIR.conservator.managers.type_manager.TypeManager.id_exists`
+           to verify that an ID is correct. Otherwise an :class:`InvalidIdException` may
+           be thrown on later operations.
         """
         return self._underlying_type.from_id(self._conservator, id_)
 
@@ -37,3 +45,18 @@ class TypeManager:
         instance to be useful.
         """
         return self._underlying_type.from_json(self._conservator, json)
+
+    def from_string(self, string, fields=None):
+        """
+        This returns an instance from a string identifier.
+
+        By default, it expects an ID, but subclasses can (and should)
+        add alternative identifiers. For instance, collections can be
+        identified by their path, so the collections manager should be
+        checking if the identifier is a path.
+
+        Invalid identifiers should raise helpful exceptions.
+        """
+        instance = self.from_id(string)
+        instance.populate(fields)
+        return instance
