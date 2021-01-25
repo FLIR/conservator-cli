@@ -80,7 +80,9 @@ class Conservator(ConservatorConnection):
 
     @staticmethod
     def is_valid_id(id_):
-        return re.fullmatch(r"^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$", id_)
+        return re.fullmatch(
+            r"^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$", id_
+        )
 
     @staticmethod
     def default(save=True):
