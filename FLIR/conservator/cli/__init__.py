@@ -48,6 +48,7 @@ def config(delete):
     click.echo(f"  URL: {default_config.url}")
     click.echo(f"  Key: {default_config.key}")
     click.echo(f"  Max Retries: {default_config.max_retries}")
+    click.echo(f"  CVC Cache Path: {default_config.cvc_cache_path}")
     click.echo(f"Corresponds to email: {Conservator.default().get_email()}")
 
 
