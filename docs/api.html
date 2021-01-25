@@ -259,24 +259,8 @@ name is used.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="FLIR.conservator.conservator.Conservator.upload_many">
-<code class="sig-name descname">upload_many</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upload_tuples</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload_many" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upload many files in parallel. Returns a list of the uploaded media IDs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>upload_tuples</strong> – A list of <cite>file_path</cite>, <cite>collection_id</cite>, <cite>remote_name</cite> tuples
-that will be passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">upload()</span></code>.</p></li>
-<li><p><strong>process_count</strong> – Number of concurrent upload processes. Passing <cite>None</cite>
-will use <cite>os.cpu_count()</cite>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="FLIR.conservator.conservator.Conservator.upload_many_to_collection">
-<code class="sig-name descname">upload_many_to_collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_paths</span></em>, <em class="sig-param"><span class="n">collection</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload_many_to_collection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">upload_many_to_collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_paths</span></em>, <em class="sig-param"><span class="n">collection</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_retries</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload_many_to_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload many files in parallel. Returns a list of the uploaded media IDs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -307,13 +291,6 @@ will use <cite>os.cpu_count()</cite>.</p></li>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py exception">
-<dt id="FLIR.conservator.conservator.MediaUploadException">
-<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">MediaUploadException</code><a class="headerlink" href="#FLIR.conservator.conservator.MediaUploadException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Raised if an exception occurs during a media upload</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -1293,8 +1270,9 @@ any user-facing input.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.managers.CollectionManager.upload">
-<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collection_id</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">video_metadata</span></em>, <em class="sig-param"><span class="n">associated_files</span></em>, <em class="sig-param"><span class="n">media</span></em>, <em class="sig-param"><span class="n">recursive</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.upload" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upload files under the specified <cite>path</cite> to given collection.</p>
+<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collection_id</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">video_metadata</span></em>, <em class="sig-param"><span class="n">associated_files</span></em>, <em class="sig-param"><span class="n">media</span></em>, <em class="sig-param"><span class="n">recursive</span></em>, <em class="sig-param"><span class="n">max_retries</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload files under the specified <cite>path</cite> to given collection. <cite>max_retries</cite> only applies
+to media files (other types of files are usually small enough not to need them).</p>
 </dd></dl>
 
 </dd></dl>
