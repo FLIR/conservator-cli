@@ -21,6 +21,11 @@ from FLIR.conservator.wrappers import (
 logger = logging.getLogger(__name__)
 
 
+class AmbiguousIdentifierException(Exception):
+    def __init__(self, identifier):
+        super().__init__(f"Multiple items found for '{identifier}', use ID")
+
+
 class CollectionManager(SearchableTypeManager):
     metadata_subdir = "media_metadata"
     associated_files_subdir = "associated_files"
@@ -44,6 +49,7 @@ class CollectionManager(SearchableTypeManager):
             return self.from_remote_path(
                 path=string, make_if_no_exist=False, fields=fields
             )
+        # this throws InvalidIdException is ID is invalid format
         collection = self.from_id(string)
         # this will throw InvalidIdException if the ID doesn't exist
         collection.populate(fields)
@@ -203,13 +209,18 @@ class DatasetManager(SearchableTypeManager):
             datasets = list(parent.get_datasets(fields=fields).filtered_by(name=name))
             if len(datasets) == 1:
                 return datasets[0]
+            if len(datasets) > 1:
+                raise AmbiguousIdentifierException(string)
 
         # if path fails, look for exact name
         datasets = list(self.by_exact_name(name=string, fields=fields))
         if len(datasets) == 1:
             return datasets[0]
+        if len(datasets) > 1:
+            raise AmbiguousIdentifierException(string)
 
         # if that fails, look by id
+        # this throws InvalidIdException is ID is invalid format
         dataset = self.from_id(string)
         # this will throw InvalidIdException if the ID doesn't exist
         dataset.populate(fields)
@@ -262,11 +273,15 @@ class VideoManager(SearchableTypeManager, MediaTypeManager):
             videos = list(parent.get_videos(fields=fields).filtered_by(name=name))
             if len(videos) == 1:
                 return videos[0]
+            if len(videos) > 1:
+                raise AmbiguousIdentifierException(string)
 
         # if path fails, look for exact name
         videos = list(self.by_exact_name(name=string, fields=fields))
         if len(videos) == 1:
             return videos[0]
+        if len(videos) > 1:
+            raise AmbiguousIdentifierException(string)
 
         # if that fails, look by id
         video = self.from_id(string)
@@ -309,13 +324,18 @@ class ImageManager(SearchableTypeManager, MediaTypeManager):
             images = list(parent.get_images(fields=fields).filtered_by(name=name))
             if len(images) == 1:
                 return images[0]
+            if len(images) > 1:
+                raise AmbiguousIdentifierException(string)
 
         # if path fails, look for exact name
         images = list(self.by_exact_name(name=string, fields=fields))
         if len(images) == 1:
             return images[0]
+        if len(images) > 1:
+            raise AmbiguousIdentifierException(string)
 
         # if that fails, look by id
+        # this throws InvalidIdException is ID is invalid format
         image = self.from_id(string)
         # this will throw InvalidIdException if the ID doesn't exist
         image.populate(fields)
