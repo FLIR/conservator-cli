@@ -1,5 +1,3 @@
-import os
-
 import click
 import functools
 
@@ -195,9 +193,9 @@ def get_manager_command(type_manager, sgqlc_type, name):
     if issubclass(type_manager, DatasetManager):
 
         @group.command(help="List a Dataset's commit history.")
-        @click.argument("id")
-        def history(id):
-            dataset = get_instance().from_id(id)
+        @click.argument("identifier")
+        def history(identifier):
+            dataset = get_instance().from_string(identifier)
             commit_fields = [
                 "_id",
                 "author_name",
@@ -213,10 +211,10 @@ def get_manager_command(type_manager, sgqlc_type, name):
             name="commit",
             help="View a specific Dataset commit. You can pass a commit hash, or a reference like HEAD~2.",
         )
-        @click.argument("dataset_id")
+        @click.argument("dataset_identifier")
         @click.argument("commit_id")
-        def commit_(dataset_id, commit_id):
-            dataset = get_instance().from_id(dataset_id)
+        def commit_(dataset_identifier, commit_id):
+            dataset = get_instance().from_string(dataset_identifier)
             commit_fields = [
                 "_id",
                 "author_name",
@@ -232,10 +230,10 @@ def get_manager_command(type_manager, sgqlc_type, name):
             name="tree",
             help="List contents of a Dataset's version control tree. You can pass a tree hash, or a reference like HEAD.",
         )
-        @click.argument("dataset_id")
+        @click.argument("dataset_identifier")
         @click.argument("tree_id", default="HEAD")
-        def tree_(dataset_id, tree_id):
-            dataset = get_instance().from_id(dataset_id)
+        def tree_(dataset_identifier, tree_id):
+            dataset = get_instance().from_string(dataset_identifier)
             tree_fields = [
                 "size",
                 "tree_list._id",
@@ -253,7 +251,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @group.command(
             name="blob", help="Download a blob from a Dataset's version control tree."
         )
-        @click.argument("dataset_id")
+        @click.argument("dataset_identifier")
         @click.argument("blob_id")
         @click.argument("path", default="./blob")
         @click.option(
@@ -262,8 +260,8 @@ def get_manager_command(type_manager, sgqlc_type, name):
             is_flag=True,
             help="If passed, perform the download using a browser.",
         )
-        def blob(dataset_id, blob_id, path, browser):
-            dataset = get_instance().from_id(dataset_id)
+        def blob(dataset_identifier, blob_id, path, browser):
+            dataset = get_instance().from_string(dataset_identifier)
             if browser:
                 blob_url = dataset.get_blob_url_by_id(blob_id)
                 click.launch(blob_url)
@@ -274,30 +272,30 @@ def get_manager_command(type_manager, sgqlc_type, name):
             name="download-file",
             help="Download a Dataset's index.json or associated file. Defaults to latest commit.",
         )
-        @click.argument("dataset_id")
+        @click.argument("dataset_identifier")
         @click.argument("filename")
         @click.argument("path", default=".")
         @click.option("-c", "--commit-hash", default="HEAD")
-        def download_file(dataset_id, filename, path, commit_hash):
-            dataset = get_instance().from_id(dataset_id)
+        def download_file(dataset_identifier, filename, path, commit_hash):
+            dataset = get_instance().from_string(dataset_identifier)
             dataset.download_blob_by_name(filename, path, commit_id=commit_hash)
 
         @group.command(
             name="download-index",
             help="Download a Dataset's index.json. Defaults to latest commit.",
         )
-        @click.argument("dataset_id")
+        @click.argument("dataset_identifier")
         @click.argument("path", default=".")
         @click.option("-c", "--commit-hash", default="HEAD")
-        def download_index(dataset_id, path, commit_hash):
-            dataset = get_instance().from_id(dataset_id)
+        def download_index(dataset_identifier, path, commit_hash):
+            dataset = get_instance().from_string(dataset_identifier)
             dataset.download_blob_by_name("index.json", path, commit_id=commit_hash)
 
     if issubclass(type_manager, MediaTypeManager):
 
         @group.command(help="Upload a media file to collection")
         @click.argument("localpath", default=".")
-        @click.argument("remotepath", default=".")
+        @click.argument("remote_collection", default=".")
         @click.option(
             "-r",
             "--remote-name",
@@ -307,13 +305,18 @@ def get_manager_command(type_manager, sgqlc_type, name):
             "-c",
             "--create-collections",
             is_flag=True,
-            help="If given, collections will be created to reach the remote path",
+            help="If given and a remote path is provided, collections will be created to reach the remote path",
         )
-        def upload(localpath, remotepath, remote_name, create_collections):
+        def upload(localpath, remote_collection, remote_name, create_collections):
             conservator = Conservator.default()
-            collection = conservator.collections.from_remote_path(
-                remotepath, make_if_no_exist=create_collections
-            )
+            if create_collections:
+                collection = conservator.collections.from_remote_path(
+                    path=remote_collection, make_if_no_exist=True, fields="id"
+                )
+            else:
+                collection = conservator.collections.from_string(
+                    remote_collection, fields="id"
+                )
             conservator.upload(
                 localpath, collection=collection, remote_name=remote_name
             )
@@ -321,14 +324,14 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @group.command(
             help="Download media to the current directory, or the specified path."
         )
-        @click.argument("id")
+        @click.argument("identifier")
         @click.argument("path", default=".")
         @click.option("-m", "--metadata", is_flag=True, help="Include metadata")
         @click.option(
             "-mo", "--metadata-only", is_flag=True, help="Only download metadata"
         )
-        def download(id, path, metadata, metadata_only):
-            media = get_instance().from_id(id)
+        def download(identifier, path, metadata, metadata_only):
+            media = get_instance().from_string(identifier)
             if metadata_only or metadata:
                 media.download_metadata(path)
             if not metadata_only:

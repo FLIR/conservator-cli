@@ -2,6 +2,7 @@ import logging
 import multiprocessing
 import os
 import random
+import re
 import time
 
 from FLIR.conservator.config import Config
@@ -76,6 +77,12 @@ class Conservator(ConservatorConnection):
         remaining_digits = Conservator.ID_LENGTH - len(id_)
         id_ += random.sample(Conservator.ID_CHARSET, remaining_digits)
         return "".join(id_)
+
+    @staticmethod
+    def is_valid_id(id_):
+        return re.fullmatch(
+            r"^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$", id_
+        )
 
     @staticmethod
     def default(save=True):

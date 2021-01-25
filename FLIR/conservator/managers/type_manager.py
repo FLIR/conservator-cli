@@ -36,6 +36,9 @@ class TypeManager:
            to verify that an ID is correct. Otherwise an :class:`InvalidIdException` may
            be thrown on later operations.
         """
+        if not self._conservator.is_valid_id(id_):
+            raise InvalidIdException(id_)
+
         return self._underlying_type.from_id(self._conservator, id_)
 
     def from_json(self, json):

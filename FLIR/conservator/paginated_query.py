@@ -68,6 +68,8 @@ class PaginatedQuery:
             the filter function for each instance.
         """
 
+        self.including(*kwargs.keys())
+
         def filter_(instance):
             for field_name, filter_value in kwargs.items():
                 if not hasattr(instance, field_name):

@@ -25,9 +25,10 @@ class SearchableTypeManager(TypeManager):
 
     def by_exact_name(self, name, fields=None):
         """
-        Returns a search for a specific `name`.
+        Returns a search for an exact `name`.
 
-        The "name" field MUST be included in the requested `fields`.
+        Convert the returned query to a list, and check length to determine if a
+        single match was found (or none, or many).
         """
         return self.search(f'name:"{name}"', fields=fields).filtered_by(name=name)
 
