@@ -174,6 +174,47 @@ class DatasetManager(SearchableTypeManager):
             self._conservator, name, collections=collections, fields=fields
         )
 
+    def from_string(self, string, fields="id"):
+        """
+        Returns a Dataset with the given `fields` from a `string`.
+        If the `string` contains any slashes (for instance `/path/to/some/collection/dataset_name`),
+        it is assumed to be a path, and the parent directory of the path will be fetched,
+        and its datasets will be searched for an exact match on dataset name.
+
+        Next, we check if `string` matches any single dataset name exactly using
+        :meth:`~FLIR.conservator.managers.SearchableTypeManager.by_exact_name`.
+
+        Otherwise, we assume `string` is an `ID`, and use :meth:`from_id`.
+
+        This is used for CLI commands to let users specify paths or ids when
+        doing operations, and should be the preferred method for getting a Dataset from
+        any user-facing input.
+        """
+        if "/" in string:
+            # start by path lookup
+            parent_path = "/".join(string.split("/")[:-1])
+            name = string.split("/")[-1]
+
+            parent = self._conservator.collections.from_remote_path(
+                path=parent_path, make_if_no_exist=False, fields="id"
+            )
+
+            # collection must contain dataset with exact name match
+            datasets = list(parent.get_datasets(fields=fields).filtered_by(name=name))
+            if len(datasets) == 1:
+                return datasets[0]
+
+        # if path fails, look for exact name
+        datasets = list(self.by_exact_name(name=string, fields=fields))
+        if len(datasets) == 1:
+            return datasets[0]
+
+        # if that fails, look by id
+        dataset = self.from_id(string)
+        # this will throw InvalidIdException if the ID doesn't exist
+        dataset.populate(fields)
+        return dataset
+
 
 class ProjectManager(SearchableTypeManager):
     def __init__(self, conservator):
@@ -192,8 +233,90 @@ class VideoManager(SearchableTypeManager, MediaTypeManager):
         SearchableTypeManager.__init__(self, conservator, Video)
         MediaTypeManager.__init__(self, conservator)
 
+    def from_string(self, string, fields="id"):
+        """
+        Returns a Video with the given `fields` from a `string`.
+        If the `string` contains any slashes (for instance `/path/to/some/collection/video_name`),
+        it is assumed to be a path, and the parent directory of the path will be fetched,
+        and its videos will be searched for an exact match on dataset name.
+
+        Next, we check if `string` matches any single video name exactly using
+        :meth:`~FLIR.conservator.managers.SearchableTypeManager.by_exact_name`.
+
+        Otherwise, we assume `string` is an `ID`, and use :meth:`from_id`.
+
+        This is used for CLI commands to let users specify paths or ids when
+        doing operations, and should be the preferred method for getting a Video from
+        any user-facing input.
+        """
+        if "/" in string:
+            # start by path lookup
+            parent_path = "/".join(string.split("/")[:-1])
+            name = string.split("/")[-1]
+
+            parent = self._conservator.collections.from_remote_path(
+                path=parent_path, make_if_no_exist=False, fields="id"
+            )
+
+            # collection must contain video with exact name match
+            videos = list(parent.get_videos(fields=fields).filtered_by(name=name))
+            if len(videos) == 1:
+                return videos[0]
+
+        # if path fails, look for exact name
+        videos = list(self.by_exact_name(name=string, fields=fields))
+        if len(videos) == 1:
+            return videos[0]
+
+        # if that fails, look by id
+        video = self.from_id(string)
+        # this will throw InvalidIdException if the ID doesn't exist
+        video.populate(fields)
+        return video
+
 
 class ImageManager(SearchableTypeManager, MediaTypeManager):
     def __init__(self, conservator):
         SearchableTypeManager.__init__(self, conservator, Image)
         MediaTypeManager.__init__(self, conservator)
+
+    def from_string(self, string, fields="id"):
+        """
+        Returns an Image with the given `fields` from a `string`.
+        If the `string` contains any slashes (for instance `/path/to/some/collection/image_name`),
+        it is assumed to be a path, and the parent directory of the path will be fetched,
+        and its images will be searched for an exact match on dataset name.
+
+        Next, we check if `string` matches any single image name exactly using
+        :meth:`~FLIR.conservator.managers.SearchableTypeManager.by_exact_name`.
+
+        Otherwise, we assume `string` is an `ID`, and use :meth:`from_id`.
+
+        This is used for CLI commands to let users specify paths or ids when
+        doing operations, and should be the preferred method for getting an Image from
+        any user-facing input.
+        """
+        if "/" in string:
+            # start by path lookup
+            parent_path = "/".join(string.split("/")[:-1])
+            name = string.split("/")[-1]
+
+            parent = self._conservator.collections.from_remote_path(
+                path=parent_path, make_if_no_exist=False, fields="id"
+            )
+
+            # collection must contain video with exact name match
+            images = list(parent.get_images(fields=fields).filtered_by(name=name))
+            if len(images) == 1:
+                return images[0]
+
+        # if path fails, look for exact name
+        images = list(self.by_exact_name(name=string, fields=fields))
+        if len(images) == 1:
+            return images[0]
+
+        # if that fails, look by id
+        image = self.from_id(string)
+        # this will throw InvalidIdException if the ID doesn't exist
+        image.populate(fields)
+        return image

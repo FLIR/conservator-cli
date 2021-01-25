@@ -52,8 +52,8 @@ def main(ctx, log, path):
     ctx.obj = LocalDataset(conservator, path)
 
 
-@main.command(help="Clone a dataset by id")
-@click.argument("id")
+@main.command(help="Clone a dataset by id, path, or name (if unique)")
+@click.argument("identifier")
 @click.option(
     "-p",
     "--path",
@@ -64,9 +64,9 @@ def main(ctx, log, path):
 @click.option(
     "-c", "--checkout", help="If specified, a commit hash to checkout after cloning"
 )
-def clone(id, path, checkout):
+def clone(identifier, path, checkout):
     conservator = Conservator.default()
-    dataset = conservator.datasets.from_id(id)
+    dataset = conservator.datasets.from_string(identifier)
     cloned = LocalDataset.clone(dataset, path)
     if checkout is not None:
         cloned.checkout(checkout)
