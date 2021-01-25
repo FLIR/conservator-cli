@@ -120,6 +120,21 @@ commands. Unfortunately, not many features of <code class="docutils literal notr
 as branching). For that reason, please avoid using raw <code class="docutils literal notranslate"><span class="pre">git</span></code> commands, and prefer using
 <code class="docutils literal notranslate"><span class="pre">cvc</span></code> for everything. There are also plans to transition away from <code class="docutils literal notranslate"><span class="pre">git</span></code>, so getting
 used to using <code class="docutils literal notranslate"><span class="pre">cvc</span></code> now will make that transition easier later.</p>
+<div class="section" id="global-cache">
+<h3>Global Cache<a class="headerlink" href="#global-cache" title="Permalink to this headline">¶</a></h3>
+<p>By default, Conservator-CLI uses <code class="docutils literal notranslate"><span class="pre">.cvc/cache</span></code> to store downloaded frames. In some
+cases, it can be useful to use a single cache shared across many dataset downloads.
+Duplicate frames will not be downloaded twice. To use a global cache, set the <cite>CVC Cache Path</cite>
+to an absolute path. This can be done when initially configuring Conservator, or by deleting
+and recreating your config:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config  # print current config
+$ conservator config --delete
+$ conservator config  # set config, be sure to change the CVC Cache Path.
+</pre></div>
+</div>
+<p>Be careful, using a global config makes it difficult to clean up downloaded frames from a
+single dataset.</p>
+</div>
 <div class="section" id="cloning">
 <h3>Cloning<a class="headerlink" href="#cloning" title="Permalink to this headline">¶</a></h3>
 <p>Clone a Dataset from a known ID:</p>

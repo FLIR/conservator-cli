@@ -68,7 +68,7 @@ will commit and push the changes to ``index.json``
    directory).
 
 Additional Reference
-----------------------------
+--------------------
 
 You can use the ``--log`` option before any command to set the log-level. For instance,
 to see debug prints while uploading some frames::
@@ -87,6 +87,22 @@ commands. Unfortunately, not many features of ``git`` are supported by Conservat
 as branching). For that reason, please avoid using raw ``git`` commands, and prefer using
 ``cvc`` for everything. There are also plans to transition away from ``git``, so getting
 used to using ``cvc`` now will make that transition easier later.
+
+Global Cache
+^^^^^^^^^^^^
+
+By default, Conservator-CLI uses ``.cvc/cache`` to store downloaded frames. In some
+cases, it can be useful to use a single cache shared across many dataset downloads.
+Duplicate frames will not be downloaded twice. To use a global cache, set the `CVC Cache Path`
+to an absolute path. This can be done when initially configuring Conservator, or by deleting
+and recreating your config::
+
+    $ conservator config  # print current config
+    $ conservator config --delete
+    $ conservator config  # set config, be sure to change the CVC Cache Path.
+
+Be careful, using a global config makes it difficult to clean up downloaded frames from a
+single dataset.
 
 Cloning
 ^^^^^^^
