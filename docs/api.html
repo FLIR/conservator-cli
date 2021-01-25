@@ -1240,6 +1240,12 @@ you could just use <code class="docutils literal notranslate"><span class="pre">
 <div class="section" id="module-FLIR.conservator.managers">
 <span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this headline">¶</a></h2>
 <p>A Manager is simply a bundle of utilities for querying a specific type.</p>
+<dl class="py exception">
+<dt id="FLIR.conservator.managers.AmbiguousIdentifierException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">AmbiguousIdentifierException</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.AmbiguousIdentifierException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="FLIR.conservator.managers.CollectionManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">CollectionManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager" title="Permalink to this definition">¶</a></dt>
@@ -1311,12 +1317,42 @@ The dataset is returned with the requested <cite>fields</cite>.</p>
 containing an <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="FLIR.conservator.managers.DatasetManager.from_string">
+<code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">'id'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Dataset with the given <cite>fields</cite> from a <cite>string</cite>.
+If the <cite>string</cite> contains any slashes (for instance <cite>/path/to/some/collection/dataset_name</cite>),
+it is assumed to be a path, and the parent directory of the path will be fetched,
+and its datasets will be searched for an exact match on dataset name.</p>
+<p>Next, we check if <cite>string</cite> matches any single dataset name exactly using
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">by_exact_name()</span></code>.</p>
+<p>Otherwise, we assume <cite>string</cite> is an <cite>ID</cite>, and use <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_id()</span></code>.</p>
+<p>This is used for CLI commands to let users specify paths or ids when
+doing operations, and should be the preferred method for getting a Dataset from
+any user-facing input.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt id="FLIR.conservator.managers.ImageManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">ImageManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImageManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.ImageManager.from_string">
+<code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">'id'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImageManager.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an Image with the given <cite>fields</cite> from a <cite>string</cite>.
+If the <cite>string</cite> contains any slashes (for instance <cite>/path/to/some/collection/image_name</cite>),
+it is assumed to be a path, and the parent directory of the path will be fetched,
+and its images will be searched for an exact match on dataset name.</p>
+<p>Next, we check if <cite>string</cite> matches any single image name exactly using
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">by_exact_name()</span></code>.</p>
+<p>Otherwise, we assume <cite>string</cite> is an <cite>ID</cite>, and use <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_id()</span></code>.</p>
+<p>This is used for CLI commands to let users specify paths or ids when
+doing operations, and should be the preferred method for getting an Image from
+any user-facing input.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1336,6 +1372,21 @@ it with the specified <cite>fields</cite>.</p>
 <dt id="FLIR.conservator.managers.VideoManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">VideoManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.VideoManager.from_string">
+<code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">'id'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Video with the given <cite>fields</cite> from a <cite>string</cite>.
+If the <cite>string</cite> contains any slashes (for instance <cite>/path/to/some/collection/video_name</cite>),
+it is assumed to be a path, and the parent directory of the path will be fetched,
+and its videos will be searched for an exact match on dataset name.</p>
+<p>Next, we check if <cite>string</cite> matches any single video name exactly using
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">by_exact_name()</span></code>.</p>
+<p>Otherwise, we assume <cite>string</cite> is an <cite>ID</cite>, and use <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_id()</span></code>.</p>
+<p>This is used for CLI commands to let users specify paths or ids when
+doing operations, and should be the preferred method for getting a Video from
+any user-facing input.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="section" id="module-FLIR.conservator.managers.type_manager">
@@ -1413,8 +1464,9 @@ checking if the identifier is a path.</p>
 <dl class="py method">
 <dt id="FLIR.conservator.managers.searchable.SearchableTypeManager.by_exact_name">
 <code class="sig-name descname">by_exact_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager.by_exact_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a search for a specific <cite>name</cite>.</p>
-<p>The “name” field MUST be included in the requested <cite>fields</cite>.</p>
+<dd><p>Returns a search for an exact <cite>name</cite>.</p>
+<p>Convert the returned query to a list, and check length to determine if a
+single match was found (or none, or many).</p>
 </dd></dl>
 
 <dl class="py method">
