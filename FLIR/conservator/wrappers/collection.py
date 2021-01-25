@@ -125,6 +125,9 @@ class Collection(QueryableType, FileLockerType):
         If `make_if_no_exist` is `True`, then collection(s) will be created to
         reach that path if it doesn't exist.
         """
+        if not path.startswith("/"):
+            path = "/" + path
+
         collection = conservator.query(
             Query.collection_by_path, path=path, fields=fields
         )
