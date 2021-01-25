@@ -165,6 +165,13 @@ def get_manager_command(type_manager, sgqlc_type, name):
             is_flag=True,
             help="Include child directories recursively, creating collections as needed",
         )
+        @click.option(
+            "-n",
+            "--max-retries",
+            type=int,
+            default=-1,
+            help="max number of retries for uploading a media file (negative for infinite retries)",
+        )
         def upload(
             identifier,
             localpath,
@@ -173,6 +180,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             media,
             recursive,
             create_collection,
+            max_retries,
         ):
             manager = get_instance()
             if create_collection:
@@ -188,6 +196,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 associated_files,
                 media,
                 recursive,
+                max_retries,
             )
 
     if issubclass(type_manager, DatasetManager):

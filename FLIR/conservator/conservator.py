@@ -1,3 +1,4 @@
+import functools
 import logging
 import multiprocessing
 import os
@@ -16,7 +17,7 @@ from FLIR.conservator.managers import (
     ImageManager,
 )
 from FLIR.conservator.util import base_convert, upload_file
-from FLIR.conservator.wrappers import MediaType
+from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 logger = logging.getLogger(__name__)
@@ -119,12 +120,15 @@ class Conservator(ConservatorConnection):
             remote_name = os.path.split(file_path)[-1]
 
         if isinstance(collection, str):
-            collection = self.collections.from_id(collection)
+            collection_id = collection
+        else:
+            collection_id = collection.id
 
-        media_id = MediaType.upload(
-            self, file_path, collection=collection, remote_name=remote_name
+        upload_request = MediaUploadRequest(
+            file_path=file_path, collection_id=collection_id, remote_name=remote_name
         )
-        return media_id
+        result = MediaType.upload(self, upload_request)
+        return result.media_id
 
     def get_media_instance_from_id(self, media_id, fields=None):
         """
@@ -191,20 +195,56 @@ class Conservator(ConservatorConnection):
             logger.debug(f"Media processing check timed out!")
             raise ProcessingTimeoutError()
 
-    def upload_many(self, upload_tuples, process_count=None):
+    def _upload_many(self, upload_requests, process_count=None, max_retries=-1):
         """
-        Upload many files in parallel. Returns a list of the uploaded media IDs.
+        Upload many files in parallel. Returns the ids for media that were
+        successfully uploaded (failed uploads will be logged as warning).
 
-        :param upload_tuples: A list of `file_path`, `collection_id`, `remote_name` tuples
+        :param upload_requests: A list of :class:`MediaUploadRequest` objects
             that will be passed to :meth:`~MediaTypeManager.upload`.
         :param process_count: Number of concurrent upload processes. Passing `None`
             will use `os.cpu_count()`.
+        :param max_retries: maximum number of times upload will be attempted again
+            for a file, if the initial attempt to upload that file fails. Value less
+            than zero is interpreted as infinite retries.
         """
         pool = multiprocessing.Pool(process_count)
-        results = pool.starmap(self.upload, upload_tuples)
-        return results
+        upload_func = functools.partial(
+            MediaType.upload, self
+        )  # pass in conservator instance
+        pending_uploads = list(upload_requests)
+        complete_uploads = []
 
-    def upload_many_to_collection(self, file_paths, collection, process_count=None):
+        tries = 0
+        while pending_uploads:
+            if max_retries >= 0 and tries > max_retries:
+                logger.info("Ran out of retries, giving up")
+                break
+
+            logger.info("Upload attempt #%d", tries)
+            results = pool.map(upload_func, pending_uploads)
+            for upload in results:
+                if upload.complete:
+                    complete_uploads.append(upload)
+                    pending_uploads.remove(upload)
+                else:
+                    logger.warning(
+                        "Failed attempt to upload %s: %s",
+                        upload.file_path,
+                        upload.error_message,
+                    )
+            tries += 1
+
+        if pending_uploads:
+            file_list = [upload.file_path for upload in pending_uploads]
+            logger.warning("Following files failed to upload: %s", file_list)
+
+        media_ids = [upload.media_id for upload in complete_uploads]
+        return media_ids
+
+    def upload_many_to_collection(
+        self, file_paths, collection, process_count=None, max_retries=-1
+    ):
         """
         Upload many files in parallel. Returns a list of the uploaded media IDs.
 
@@ -221,16 +261,13 @@ class Conservator(ConservatorConnection):
         if isinstance(file_paths[0], str):
             file_paths = [(file_path, None) for file_path in file_paths]
 
-        upload_tuples = [
-            (file_path[0], collection.id, file_path[1]) for file_path in file_paths
+        upload_requests = [
+            MediaUploadRequest(file_path[0], collection.id, file_path[1])
+            for file_path in file_paths
         ]
-        return self.upload_many(upload_tuples, process_count=process_count)
-
-
-class MediaUploadException(Exception):
-    """Raised if an exception occurs during a media upload"""
-
-    pass
+        return self._upload_many(
+            upload_requests, process_count=process_count, max_retries=max_retries
+        )
 
 
 class ProcessingTimeoutError(TimeoutError):

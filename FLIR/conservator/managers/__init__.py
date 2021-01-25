@@ -89,10 +89,18 @@ class CollectionManager(SearchableTypeManager):
         return self.from_remote_path(path, make_if_no_exist=True, fields=fields)
 
     def upload(
-        self, collection_id, path, video_metadata, associated_files, media, recursive
+        self,
+        collection_id,
+        path,
+        video_metadata,
+        associated_files,
+        media,
+        recursive,
+        max_retries,
     ):
         """
-        Upload files under the specified `path` to given collection.
+        Upload files under the specified `path` to given collection. `max_retries` only applies
+        to media files (other types of files are usually small enough not to need them).
         """
 
         collection = self.from_id(collection_id)
@@ -114,7 +122,9 @@ class CollectionManager(SearchableTypeManager):
 
         if media:
             logger.info("Uploading media to collection %s", collection.path)
-            self._conservator.upload_many_to_collection(media_paths, collection)
+            self._conservator.upload_many_to_collection(
+                media_paths, collection, max_retries=max_retries
+            )
 
         if video_metadata:
             logger.info("Uploading metadata to collection %s", collection.path)
