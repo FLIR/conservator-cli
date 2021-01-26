@@ -159,7 +159,26 @@ the website, search, etc.</p>
 </div>
 <div class="section" id="uploading-media">
 <h2>Uploading Media<a class="headerlink" href="#uploading-media" title="Permalink to this headline">¶</a></h2>
-<p>Images and videos can be uploaded with the <cite>upload</cite> command:</p>
+<p>Media can be uploaded using the <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">collections</span> <span class="pre">upload</span></code> command. This
+command takes a remote collection, and a local path. Its the preferred method of
+uploading media, as it has safeguards to retry failures, perform uploads in parallel,
+and output status clearly. To recursively create remote collections and uploads media
+from a local path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator collections upload --recursive /remote/collection/path /local/path/to/upload
+</pre></div>
+</div>
+<p>This command has options to filter the uploaded files and behavior. For all options,
+run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator collections upload --help
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, this command only accepts a directory path and can’t upload a single file
+path. You would need to create a directory containing only the single file, or use
+an individual media upload command as explained below.</p>
+</div>
+<p>Alternatively, individual Images and videos can be uploaded with the <cite>upload</cite> command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator videos upload path/to/local/media.mp4 /path/on/conservator/
 </pre></div>
 </div>

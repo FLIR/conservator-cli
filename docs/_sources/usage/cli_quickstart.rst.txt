@@ -134,9 +134,27 @@ The same commands also work for images (just replace ``videos`` with
 ``images``).
 
 Uploading Media
-----------------
+---------------
 
-Images and videos can be uploaded with the `upload` command::
+Media can be uploaded using the ``conservator collections upload`` command. This
+command takes a remote collection, and a local path. Its the preferred method of
+uploading media, as it has safeguards to retry failures, perform uploads in parallel,
+and output status clearly. To recursively create remote collections and uploads media
+from a local path::
+
+    $ conservator collections upload --recursive /remote/collection/path /local/path/to/upload
+
+This command has options to filter the uploaded files and behavior. For all options,
+run::
+
+    $ conservator collections upload --help
+
+.. note::
+    Currently, this command only accepts a directory path and can't upload a single file
+    path. You would need to create a directory containing only the single file, or use
+    an individual media upload command as explained below.
+
+Alternatively, individual Images and videos can be uploaded with the `upload` command::
 
     $ conservator videos upload path/to/local/media.mp4 /path/on/conservator/
 
