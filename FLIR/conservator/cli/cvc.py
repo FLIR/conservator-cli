@@ -147,7 +147,7 @@ def status(local_dataset):
         return
 
     for image_path in images:
-        click.echo("Staged:", image_path)
+        click.echo(f"Staged: {image_path}")
     click.echo("Use 'cvc upload' to upload these images and add them to index.json")
 
 
