@@ -180,8 +180,20 @@ class LocalDataset:
         }
         logger.info(f"Uploading '{path}'.")
         with open(path, "rb") as data:
-            r = requests.put(url, data, headers=headers)
-        assert r.status_code == 200
+            r = requests.put(url, data, allow_redirects=False, headers=headers)
+            # For some reason auto redirect dosen't work,
+            # so might have a redirect to handle manually
+            if r.status_code == 302:
+                rurl = r.headers["location"]
+                # If we have a relative url, prepend prefix
+                if not rurl.startswith("http"):
+                    rurl = "/".join(url.split("/")[:3]) + rurl
+                data.seek(0)
+                r = requests.put(rurl, data, allow_redirects=False, headers=headers)
+        if r.status_code != 200:
+            raise RuntimeError(
+                f"Upload failed with code {r.status_code} message {r.text}"
+            )
         assert r.headers["ETag"] == f'"{md5}"'
 
     def get_index(self):
