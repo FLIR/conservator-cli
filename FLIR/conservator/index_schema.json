@@ -199,6 +199,7 @@
           "type": "array",
           "items": {"$ref": "#/components/frame"}
         },
+        "isRemoved": {"type": "boolean"},
         "owner": {"$ref": "#/definitions/email"},
         "custom": {"$ref": "#/definitions/custom"}
       },
