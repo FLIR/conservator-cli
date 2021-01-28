@@ -152,8 +152,7 @@ class LocalDataset:
             logger.debug(f"Added new DatasetFrame with id {frame_id}")
 
             if copy_to_data:
-                # Since data path exists, chances are media files are downloaded.
-                # We should move this to data as if it was also downloaded.
+                os.makedirs(self.data_path, exist_ok=True)
 
                 # First copy it to the cache:
                 cache_path = self.get_cache_path(md5)
