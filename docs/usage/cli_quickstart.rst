@@ -28,7 +28,7 @@ This should output information on your account.
 
 If you want to change credentials, you can delete your config by running::
 
-    $ conservator config delete
+    $ conservator config --delete
 
 Basic Queries
 -------------
