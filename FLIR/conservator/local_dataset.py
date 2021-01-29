@@ -98,12 +98,16 @@ class LocalDataset:
         # changes wont appear to be pushed, but they were. so we pull
         self.pull()
 
-    def push_staged_images(self):
+    def push_staged_images(self, copy_to_data=True):
         """
         Push the staged images.
 
         This reads the staged image paths, uploads them, adds metadata
         to ``index.json``, and deletes the staged image paths.
+
+        :param copy_to_data: If `True`, copy the staged images to the cache and
+            link with the data directory. This produces the same result as
+            downloading the images back from conservator (but without downloading).
         """
         image_paths = self.get_staged_images()
         if len(image_paths) == 0:
@@ -147,9 +151,8 @@ class LocalDataset:
             index["frames"].append(new_frame)
             logger.debug(f"Added new DatasetFrame with id {frame_id}")
 
-            if os.path.exists(self.data_path):
-                # Since data path exists, chances are media files are downloaded.
-                # We should move this to data as if it was also downloaded.
+            if copy_to_data:
+                os.makedirs(self.data_path, exist_ok=True)
 
                 # First copy it to the cache:
                 cache_path = self.get_cache_path(md5)

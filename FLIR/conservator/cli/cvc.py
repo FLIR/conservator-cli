@@ -186,9 +186,14 @@ def validate(local_dataset):
 
 
 @main.command(help="Upload staged images and add them to index.json")
+@click.option(
+    "--skip-copy",
+    is_flag=True,
+    help="If provided, skip copying images to the cache and /data directory",
+)
 @pass_valid_local_dataset
-def upload(local_dataset):
-    local_dataset.push_staged_images()
+def upload(local_dataset, skip_copy):
+    local_dataset.push_staged_images(copy_to_data=not skip_copy)
 
 
 @main.command(
