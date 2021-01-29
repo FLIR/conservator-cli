@@ -55,6 +55,8 @@ class LocalDataset:
     def pull(self, verbose=True):
         """
         Pulls the latest ``index.json``.
+
+        :param verbose: If False, run git commands with the `-q` option.
         """
         fetch_cmd = ["git", "fetch"]
         if not verbose:
@@ -69,6 +71,8 @@ class LocalDataset:
         """
         Checks out a specific commit. This will delete any local changes in ``index.json``
         or ``associated_files``.
+
+        :param verbose: If False, run git commands with the `-q` option.
         """
         checkout_cmd = ["git", "reset", "--hard"]
         if not verbose:
@@ -89,6 +93,8 @@ class LocalDataset:
     def commit(self, message, verbose=True):
         """
         Commit added changes to the local git repo, with the given commit `message`.
+
+        :param verbose: If False, run git commands with the `-q` option.
         """
         commit_cmd = ["git", "commit"]
         if not verbose:
@@ -99,6 +105,8 @@ class LocalDataset:
     def push_commits(self, verbose=True):
         """
         Push the git repo.
+
+        :param verbose: If False, run git commands with the `-q` option.
         """
         # The subprocess will return a non-zero exit code even if it succeeded.
         # Check its output to determine whether it worked.
@@ -379,6 +387,7 @@ class LocalDataset:
         :param clone_path: The path where the git repo should be created. If `None`,
             the dataset is cloned into a subdirectory of the current path, using
             the Dataset's name.
+        :param verbose: If False, run git commands with the `-q` option.
         """
         dataset.populate(["name", "repository.master"])
         if not dataset.has_field("repository.master"):
