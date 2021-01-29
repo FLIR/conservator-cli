@@ -7,6 +7,7 @@ import shutil
 import requests
 import logging
 import pkg_resources
+import time
 
 import jsonschema
 from PIL import Image
@@ -394,7 +395,7 @@ class LocalDataset:
         logger.info(f"Number of Files: {success}, Errors: {total - success}")
 
     @staticmethod
-    def clone(dataset, clone_path=None, verbose=True):
+    def clone(dataset, clone_path=None, verbose=True, max_retries=2, timeout=5):
         """Clone a `dataset` to a local path, returning a :class:`LocalDatasetOperations`.
 
         :param dataset: The dataset to clone. It must have a repository registered
@@ -403,8 +404,22 @@ class LocalDataset:
             the dataset is cloned into a subdirectory of the current path, using
             the Dataset's name.
         :param verbose: If False, run git commands with the `-q` option.
+        :param max_retries: Retry this many times if the git clone command fails.
+            This is intended to account for the race condition when a dataset has
+            just been created using an API call and its repository is not
+            immediately available.
+        :param timeout: Delay this many seconds between retries.
         """
         dataset.populate(["name", "repository.master"])
+        # Newly created datasets may not have a fully populated repository
+        # right away, so allow for retries until the queued commits
+        # produced by the server have finished.
+        for _ in range(max_retries):
+            if dataset.has_field("repository.master"):
+                break
+            time.sleep(timeout)
+            dataset.populate(["name", "repository.master"])
+
         if not dataset.has_field("repository.master"):
             logging.error("Dataset has no repository. Unable to clone.")
             return
