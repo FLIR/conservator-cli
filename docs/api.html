@@ -1712,10 +1712,17 @@ and get the dimensions.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.push_staged_images">
-<code class="sig-name descname">push_staged_images</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">push_staged_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">copy_to_data</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Push the staged images.</p>
 <p>This reads the staged image paths, uploads them, adds metadata
 to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>, and deletes the staged image paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>copy_to_data</strong> – If <cite>True</cite>, copy the staged images to the cache and
+link with the data directory. This produces the same result as
+downloading the images back from conservator (but without downloading).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
