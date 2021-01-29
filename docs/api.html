@@ -127,6 +127,10 @@ at the <a class="reference internal" href="#FLIR.conservator.config.Config.defau
 <dt id="FLIR.conservator.config.Config.from_file">
 <em class="property">static </em><code class="sig-name descname">from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from a JSON config file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For security, this file’s mode will be set to <code class="docutils literal notranslate"><span class="pre">600</span></code>.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> – The path to the JSON config file.</p>
@@ -150,8 +154,12 @@ this config will be loaded by <a class="reference internal" href="#FLIR.conserva
 <dl class="py method">
 <dt id="FLIR.conservator.config.Config.save_to_file">
 <code class="sig-name descname">save_to_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.save_to_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to as JSON.</p>
+<dd><p>Saves the <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to as JSON</p>
 <p>This file can be loaded using <a class="reference internal" href="#FLIR.conservator.config.Config.from_file" title="FLIR.conservator.config.Config.from_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.from_file()</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For security, this file’s mode will be set to <code class="docutils literal notranslate"><span class="pre">600</span></code>.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> – The file path to save to.</p>
