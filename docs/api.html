@@ -1617,8 +1617,16 @@ directory (containing <code class="docutils literal notranslate"><span class="pr
 </dl>
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.add_local_changes">
-<code class="sig-name descname">add_local_changes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.add_local_changes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_local_changes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">skip_validation</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.add_local_changes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stages changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> for the next commit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>skip_validation</strong> – By default, <code class="docutils literal notranslate"><span class="pre">index.json</span></code> is validated against a schema.
+If the schema is incorrect and you’re sure your <code class="docutils literal notranslate"><span class="pre">index.json</span></code> is valid, you can
+pass <cite>True</cite> to skip the check. In this case, please also submit a PR so we can
+update the schema.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
