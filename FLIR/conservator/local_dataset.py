@@ -52,21 +52,28 @@ class LocalDataset:
                 json.dump([], f)
         logger.debug(f"Opened local dataset at {self.path}")
 
-    def pull(self):
+    def pull(self, verbose=True):
         """
         Pulls the latest ``index.json``.
         """
-        subprocess.call(["git", "fetch"], cwd=self.path)
-        return subprocess.call(
-            ["git", "checkout", "origin/master", "-B", "master"], cwd=self.path
-        )
+        fetch_cmd = ["git", "fetch"]
+        if not verbose:
+            fetch_cmd.append("-q")
+        subprocess.call(fetch_cmd, cwd=self.path)
+        checkout_cmd = ["git", "checkout", "origin/master", "-B", "master"]
+        if not verbose:
+            checkout_cmd.append("-q")
+        return subprocess.call(checkout_cmd, cwd=self.path)
 
-    def checkout(self, commit_hash):
+    def checkout(self, commit_hash, verbose=True):
         """
         Checks out a specific commit. This will delete any local changes in ``index.json``
         or ``associated_files``.
         """
-        return subprocess.call(["git", "reset", "--hard", commit_hash], cwd=self.path)
+        checkout_cmd = ["git", "reset", "--hard"]
+        if not verbose:
+            checkout_cmd.append("-q")
+        return subprocess.call(checkout_cmd + [commit_hash], cwd=self.path)
 
     def add_local_changes(self):
         """
@@ -79,24 +86,38 @@ class LocalDataset:
             ["git", "add", "index.json", "associated_files"], cwd=self.path
         )
 
-    def commit(self, message):
+    def commit(self, message, verbose=True):
         """
         Commit added changes to the local git repo, with the given commit `message`.
         """
-        return subprocess.call(["git", "commit", "-m", message], cwd=self.path)
+        commit_cmd = ["git", "commit"]
+        if not verbose:
+            commit_cmd.append("-q")
+        commit_cmd += ["-m", message]
+        return subprocess.call(commit_cmd, cwd=self.path)
 
-    def push_commits(self):
+    def push_commits(self, verbose=True):
         """
         Push the git repo.
         """
-        subprocess.call(
+        # The subprocess will return a non-zero exit code even if it succeeded.
+        # Check its output to determine whether it worked.
+        push_proc = subprocess.run(
             ["git", "push"],
             cwd=self.path,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
         )
-        # changes wont appear to be pushed, but they were. so we pull
-        self.pull()
+        if "updated in conservator" not in push_proc.stdout:
+            if "Everything up-to-date" in push_proc.stdout:
+                logger.warning(push_proc.stdout)
+            else:
+                logger.error(
+                    "Server did not accept changes to index.json:\n%s", push_proc.stdout
+                )
+                raise RuntimeError("Failed to push changes to index.json")
+        self.pull(verbose)
 
     def push_staged_images(self):
         """
@@ -350,7 +371,7 @@ class LocalDataset:
         logger.info(f"Number of Files: {success}, Errors: {total - success}")
 
     @staticmethod
-    def clone(dataset, clone_path=None):
+    def clone(dataset, clone_path=None, verbose=True):
         """Clone a `dataset` to a local path, returning a :class:`LocalDatasetOperations`.
 
         :param dataset: The dataset to clone. It must have a repository registered
@@ -372,7 +393,11 @@ class LocalDataset:
             return
 
         url = dataset.get_git_url()
-        r = subprocess.call(["git", "clone", url, clone_path])
+        clone_cmd = ["git", "clone"]
+        if not verbose:
+            clone_cmd.append("-q")
+        clone_cmd += [url, clone_path]
+        r = subprocess.call(clone_cmd)
         if r != 0:
             logging.error(f"Error {r} when cloning.")
             return
