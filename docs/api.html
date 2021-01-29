@@ -1639,14 +1639,19 @@ update the schema.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.checkout">
-<code class="sig-name descname">checkout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit_hash</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.checkout" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">checkout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commit_hash</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.checkout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks out a specific commit. This will delete any local changes in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>
 or <code class="docutils literal notranslate"><span class="pre">associated_files</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.clone">
-<em class="property">static </em><code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">clone_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.clone" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">clone_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clone a <cite>dataset</cite> to a local path, returning a <code class="xref py py-class docutils literal notranslate"><span class="pre">LocalDatasetOperations</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1656,6 +1661,7 @@ in Conservator.</p></li>
 <li><p><strong>clone_path</strong> – The path where the git repo should be created. If <cite>None</cite>,
 the dataset is cloned into a subdirectory of the current path, using
 the Dataset’s name.</p></li>
+<li><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1663,8 +1669,13 @@ the Dataset’s name.</p></li>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.commit">
-<code class="sig-name descname">commit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.commit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">commit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Commit added changes to the local git repo, with the given commit <cite>message</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1716,14 +1727,24 @@ and get the dimensions.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.pull">
-<code class="sig-name descname">pull</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.pull" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.pull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pulls the latest <code class="docutils literal notranslate"><span class="pre">index.json</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.push_commits">
-<code class="sig-name descname">push_commits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_commits" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">push_commits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_commits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Push the git repo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
