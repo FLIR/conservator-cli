@@ -68,12 +68,20 @@ class LocalDataset:
         """
         return subprocess.call(["git", "reset", "--hard", commit_hash], cwd=self.path)
 
-    def add_local_changes(self):
+    def add_local_changes(self, skip_validation=False):
         """
         Stages changes to ``index.json`` and ``associated_files`` for the next commit.
+
+        :param skip_validation: By default, ``index.json`` is validated against a schema.
+            If the schema is incorrect and you're sure your ``index.json`` is valid, you can
+            pass `True` to skip the check. In this case, please also submit a PR so we can
+            update the schema.
         """
-        if not self.validate_index():
-            logger.error("Not adding changes. Invalid index.json.")
+        if skip_validation:
+            logger.warning("Skipping index.json check. Please submit a PR if the schema should be changed.")
+        elif not self.validate_index():
+            logger.error("Not adding changes to index.json. Doesn't match schema.")
+            logger.error("You may be able to skip this check with '--skip-validation' if you're sure your file conforms.")
             exit(-1)
         return subprocess.call(
             ["git", "add", "index.json", "associated_files"], cwd=self.path
