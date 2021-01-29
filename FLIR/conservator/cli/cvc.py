@@ -186,7 +186,7 @@ def validate(local_dataset):
 
 
 @main.command(help="Upload staged images and add them to index.json")
-@main.option(
+@click.option(
     "--skip-copy",
     is_flag=True,
     help="If provided, skip copying images to the cache and /data directory",
