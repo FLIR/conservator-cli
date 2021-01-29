@@ -78,10 +78,14 @@ class LocalDataset:
             update the schema.
         """
         if skip_validation:
-            logger.warning("Skipping index.json check. Please submit a PR if the schema should be changed.")
+            logger.warning(
+                "Skipping index.json check. Please submit a PR if the schema should be changed."
+            )
         elif not self.validate_index():
             logger.error("Not adding changes to index.json. Doesn't match schema.")
-            logger.error("You may be able to skip this check with '--skip-validation' if you're sure your file conforms.")
+            logger.error(
+                "You may be able to skip this check with '--skip-validation' if you're sure your file conforms."
+            )
             exit(-1)
         return subprocess.call(
             ["git", "add", "index.json", "associated_files"], cwd=self.path
