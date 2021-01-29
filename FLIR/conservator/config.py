@@ -68,14 +68,19 @@ class Config:
 
     def save_to_file(self, path):
         """
-        Saves the :class:`Config` to as JSON.
+        Saves the :class:`Config` to as JSON
 
         This file can be loaded using :func:`Config.from_file`.
+
+        .. note:: For security, this file's mode will be set to ``600``.
 
         :param path: The file path to save to.
         """
         with open(path, "w") as f:
             json.dump(self.to_dict(), f)
+        if os.stat(path).st_mode & 0o777 != 0o600:
+            logger.warning("Changing config file mode to 600.")
+            os.chmod(path, 0o600)
 
     def to_dict(self):
         return {
@@ -99,11 +104,16 @@ class Config:
         """
         Creates a :class:`Config` object from a JSON config file.
 
+        .. note:: For security, this file's mode will be set to ``600``.
+
         :param path: The path to the JSON config file.
         """
         try:
             with open(path, "r") as config:
                 data = json.load(config)
+            if os.stat(path).st_mode & 0o777 != 0o600:
+                logger.warning("Changing config file mode to 0600.")
+                os.chmod(path, 0o600)
             return Config.from_dict(data)
         except FileNotFoundError:
             return None
