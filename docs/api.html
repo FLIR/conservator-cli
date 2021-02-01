@@ -1651,7 +1651,7 @@ or <code class="docutils literal notranslate"><span class="pre">associated_files
 
 <dl class="py method">
 <dt id="FLIR.conservator.local_dataset.LocalDataset.clone">
-<em class="property">static </em><code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">clone_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.clone" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">clone_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">max_retries</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clone a <cite>dataset</cite> to a local path, returning a <code class="xref py py-class docutils literal notranslate"><span class="pre">LocalDatasetOperations</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1662,6 +1662,11 @@ in Conservator.</p></li>
 the dataset is cloned into a subdirectory of the current path, using
 the Dataset’s name.</p></li>
 <li><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p></li>
+<li><p><strong>max_retries</strong> – Retry this many times if the git clone command fails.
+This is intended to account for the race condition when a dataset has
+just been created using an API call and its repository is not
+immediately available.</p></li>
+<li><p><strong>timeout</strong> – Delay this many seconds between retries.</p></li>
 </ul>
 </dd>
 </dl>
