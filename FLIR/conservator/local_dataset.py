@@ -417,11 +417,17 @@ class LocalDataset:
         for _ in range(max_retries):
             if dataset.has_field("repository.master"):
                 break
+            logger.info(
+                f"Dataset {dataset.name} not available for cloning, retry in {timeout} seconds..."
+            )
             time.sleep(timeout)
             dataset.populate(["name", "repository.master"])
 
         if not dataset.has_field("repository.master"):
-            logging.error("Dataset has no repository. Unable to clone.")
+            logging.error(f"Dataset {dataset.name} has no repository. Unable to clone.")
+            logging.error(
+                "This dataset can be fixed by browsing to it in Conservator web ui and clicking 'Commit Changes'."
+            )
             return
 
         if clone_path is None:
