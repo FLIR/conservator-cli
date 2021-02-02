@@ -431,7 +431,7 @@ class LocalDataset:
             return
 
         if clone_path is None:
-            clone_path = f"./{dataset.name}"
+            clone_path = dataset.name
 
         if os.path.exists(clone_path):
             logging.error(f"Path {clone_path} already exists, can't clone.")

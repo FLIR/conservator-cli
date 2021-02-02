@@ -50,7 +50,9 @@ class Config:
             "CONSERVATOR_MAX_RETRIES", "Conservator Max Retries", default=5, type_=int
         ),
         "cvc_cache_path": ConfigAttribute(
-            "CONSERVATOR_CVC_CACHE_PATH", "CVC Cache Path", default=".cvc/cache"
+            "CONSERVATOR_CVC_CACHE_PATH",
+            "CVC Cache Path",
+            default=os.path.join(".cvc", "cache"),
         ),
     }
 
