@@ -35,30 +35,10 @@
             
   <div class="section" id="cli-quickstart">
 <h1>CLI Quickstart<a class="headerlink" href="#cli-quickstart" title="Permalink to this headline">¶</a></h1>
-<p>This page assumes you already have Conservator CLI installed.  If you do not,
+<p>This page assumes you already have Conservator CLI installed and configured.  If you do not,
 follow the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> instructions first.</p>
 <p>This guide will show you how to perform basic operations using the CLI.
 Please see the <a class="reference internal" href="api_quickstart.html"><span class="doc">Python API Quickstart</span></a> to get started using the Python API.</p>
-<div class="section" id="config">
-<h2>Config<a class="headerlink" href="#config" title="Permalink to this headline">¶</a></h2>
-<p>The first step to interfacing with Conservator is setting your config.</p>
-<p>Log in to your conservator instance, and find your API key.</p>
-<p>Then run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config
-</pre></div>
-</div>
-<p>Conservator CLI will ask you for your API key, and some other settings.
-The defaults should work for most users. These settings will be
-saved in a config file for future use. To verify that they’re correct, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator whoami
-</pre></div>
-</div>
-<p>This should output information on your account.</p>
-<p>If you want to change credentials, you can delete your config by running:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config --delete
-</pre></div>
-</div>
-</div>
 <div class="section" id="basic-queries">
 <h2>Basic Queries<a class="headerlink" href="#basic-queries" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
@@ -251,7 +231,6 @@ about any specific command within the shell.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">CLI Quickstart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#config">Config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-queries">Basic Queries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-datasets">Downloading Datasets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-collections">Downloading Collections</a></li>

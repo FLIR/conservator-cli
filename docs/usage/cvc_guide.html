@@ -62,6 +62,12 @@ the Conservator CLI library by following the <a class="reference internal" href=
 </ul>
 </div></blockquote>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--help</span></code> option only provides subcommands and options for the command
+it immediately follows. To get the options of a subcommand, you must explicitly
+type it. For instance: <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">upload</span> <span class="pre">--help</span></code>.</p>
+</div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>The basic workflow to clone and download a dataset:</p>
@@ -96,14 +102,19 @@ $ cvc add ./someimages/*.jpg
 will commit and push the changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Uploading will also copy staged images alongside other downloaded dataset frames,
-if it is detected that media has been downloaded (by the presence of a <code class="docutils literal notranslate"><span class="pre">data/</span></code>
-directory).</p>
+<dl class="simple">
+<dt>Uploading will also copy staged images alongside other downloaded dataset frames</dt><dd><p>in <code class="docutils literal notranslate"><span class="pre">data/</span></code>. Pass <code class="docutils literal notranslate"><span class="pre">--skip-copy</span></code> to not copy frames.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="section" id="additional-reference">
 <h2>Additional Reference<a class="headerlink" href="#additional-reference" title="Permalink to this headline">¶</a></h2>
+<p>For information on any command, pass <code class="docutils literal notranslate"><span class="pre">--help</span></code> <em>after the command</em>. For instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc download --help
+</pre></div>
+</div>
 <p>You can use the <code class="docutils literal notranslate"><span class="pre">--log</span></code> option before any command to set the log-level. For instance,
 to see debug prints while uploading some frames:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc --log DEBUG upload
@@ -167,6 +178,11 @@ the dataset.</p>
 </pre></div>
 </div>
 <p>This will be downloaded to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p>
+<p>By default, this performs 10 downloads in parallel at a time. For faster connections,
+you can increase this number by passing <code class="docutils literal notranslate"><span class="pre">--pool-size</span></code> (<code class="docutils literal notranslate"><span class="pre">-p</span></code> for short):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc download --pool-size 50  # download 50 frames at a time
+</pre></div>
+</div>
 </div>
 <div class="section" id="commit-history">
 <h3>Commit History<a class="headerlink" href="#commit-history" title="Permalink to this headline">¶</a></h3>
@@ -237,9 +253,9 @@ using the <code class="docutils literal notranslate"><span class="pre">cvc</span
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc upload
 </pre></div>
 </div>
-<p>If it’s detected that you’ve downloaded frames before (by the presence of a <code class="docutils literal notranslate"><span class="pre">data/</span></code>
-directory), then the images will also be copied there. This way you
-don’t need to re-download the frames.</p>
+<p>By default, the staged images will also be copied to the local dataset’s <code class="docutils literal notranslate"><span class="pre">data/</span></code>
+directory. This way you don’t need to re-download the frames. To disable the copy,
+pass <code class="docutils literal notranslate"><span class="pre">--skip-copy</span></code>.</p>
 </div>
 <div class="section" id="validating-changes">
 <h3>Validating Changes<a class="headerlink" href="#validating-changes" title="Permalink to this headline">¶</a></h3>

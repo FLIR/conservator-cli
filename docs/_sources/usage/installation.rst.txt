@@ -17,6 +17,24 @@ The easiest way to install Conservator CLI is with ``pip`` over ssh::
 This will add the ``FLIR.conservator`` package and ``conservator`` command to
 your current Python Environment.
 
+Before you can use the command, you need to tell Conservator-CLI your API key and
+other settings. Log in to your conservator instance, and find your API key. Then run::
+
+    $ conservator config
+
+Conservator CLI will ask you for your API key, and some other settings.
+The defaults should work for most users. These settings will be
+saved in a config file for future use. To verify that they're correct, run::
+
+    $ conservator whoami
+
+This should output information on your account. You're now free to start
+with :doc:`cli_quickstart` or :doc:`cvc_guide`.
+
+If you want to change credentials, you can delete your config by running::
+
+    $ conservator config --delete
+
 Dependency
 ----------
 
