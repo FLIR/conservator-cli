@@ -68,7 +68,7 @@ This will upload the frames to conservator, and also add them to ``index.json``.
 will commit and push the changes to ``index.json``
 
 .. note::
-   Uploading will also copy staged images into alongside other downloaded dataset frames
+   Uploading will also copy staged images alongside other downloaded dataset frames
     in ``data/``. Pass ``--skip-copy`` to not copy frames.
 
 Additional Reference
