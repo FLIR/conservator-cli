@@ -1,34 +1,11 @@
 CLI Quickstart
 ==============
 
-This page assumes you already have Conservator CLI installed.  If you do not,
+This page assumes you already have Conservator CLI installed and configured.  If you do not,
 follow the :doc:`installation` instructions first.
 
 This guide will show you how to perform basic operations using the CLI.
 Please see the :doc:`api_quickstart` to get started using the Python API.
-
-Config
-------
-
-The first step to interfacing with Conservator is setting your config.
-
-Log in to your conservator instance, and find your API key.
-
-Then run::
-
-    $ conservator config
-
-Conservator CLI will ask you for your API key, and some other settings.
-The defaults should work for most users. These settings will be
-saved in a config file for future use. To verify that they're correct, run::
-
-    $ conservator whoami
-
-This should output information on your account.
-
-If you want to change credentials, you can delete your config by running::
-
-    $ conservator config --delete
 
 Basic Queries
 -------------

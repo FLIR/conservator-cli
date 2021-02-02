@@ -70,6 +70,10 @@ will commit and push the changes to ``index.json``
 Additional Reference
 --------------------
 
+For information on any command, pass ``--help``. For instance::
+
+    $ cvc download --help
+
 You can use the ``--log`` option before any command to set the log-level. For instance,
 to see debug prints while uploading some frames::
 
@@ -142,6 +146,10 @@ You can also include analytic data::
 
 This will be downloaded to ``analyticsData/``.
 
+By default, this performs 10 downloads in parallel at a time. For faster connections,
+you can increase this number by passing ``--pool-size`` (``-p`` for short)::
+
+    $ cvc download --pool-size 50  # download 50 frames at a time
 
 Commit History
 ^^^^^^^^^^^^^^
@@ -219,9 +227,9 @@ Upload any staged images, and add them to ``index.json``::
 
     $ cvc upload
 
-If it's detected that you've downloaded frames before (by the presence of a ``data/``
-directory), then the images will also be copied there. This way you
-don't need to re-download the frames.
+By default, the staged images will also be copied to the local dataset's ``data/``
+directory. This way you don't need to re-download the frames. To disable the copy,
+pass ``--skip-copy``.
 
 
 Validating Changes
