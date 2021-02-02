@@ -26,6 +26,11 @@ the Conservator CLI library by following the :doc:`installation` guide.
     - Add/edit custom dataset/frame metadata
     - Adding, removing, or changing associated files
 
+.. note::
+    The ``--help`` option only provides subcommands and options for the command
+    it immediately follows. To get the options of a subcommand, you must explicitly
+    type it. For instance: ``cvc upload --help``.
+
 Overview
 --------
 
@@ -63,14 +68,13 @@ This will upload the frames to conservator, and also add them to ``index.json``.
 will commit and push the changes to ``index.json``
 
 .. note::
-   Uploading will also copy staged images alongside other downloaded dataset frames,
-   if it is detected that media has been downloaded (by the presence of a ``data/``
-   directory).
+   Uploading will also copy staged images into alongside other downloaded dataset frames
+    in ``data/``. Pass ``--skip-copy`` to not copy frames.
 
 Additional Reference
 --------------------
 
-For information on any command, pass ``--help``. For instance::
+For information on any command, pass ``--help`` *after the command*. For instance::
 
     $ cvc download --help
 
