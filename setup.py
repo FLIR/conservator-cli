@@ -1,3 +1,5 @@
+import sys
+
 import setuptools
 import re
 
@@ -24,6 +26,25 @@ print("VERSION: ", git_version)
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+
+# NOTE: add new requirements to requirements.txt as well
+INSTALL_REQUIRES = [
+    "sphinx",
+    "sgqlc",
+    "click",
+    "tqdm",
+    "pytest",
+    "requests",
+    "black",
+    "Pillow",
+    "jsonschema",
+]
+
+if sys.platform.startswith("win"):
+    # windows specific requirements (see issue #163)
+    INSTALL_REQUIRES.append("pyreadline")
+
+
 setuptools.setup(
     name="conservator-cli",
     version=git_version,
@@ -48,16 +69,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
-    # NOTE: add new requirements to requirements.txt as well
-    install_requires=[
-        "sphinx",
-        "sgqlc",
-        "click",
-        "tqdm",
-        "pytest",
-        "requests",
-        "black",
-        "Pillow",
-        "jsonschema",
-    ],
+    install_requires=INSTALL_REQUIRES,
 )
