@@ -164,7 +164,12 @@ class Collection(QueryableType, FileLockerType):
     def get_images(self, fields=None, search_text=""):
         """Returns a query for all images in this collection."""
         images = PaginatedQuery(
-            self._conservator, Image, Query.images, fields=fields, search_text=search_text, collection_id=self.id
+            self._conservator,
+            Image,
+            Query.images,
+            fields=fields,
+            search_text=search_text,
+            collection_id=self.id,
         )
         return images
 
@@ -176,7 +181,12 @@ class Collection(QueryableType, FileLockerType):
     def get_videos(self, fields=None, search_text=""):
         """Returns a query for all videos in this collection."""
         videos = PaginatedQuery(
-            self._conservator, Video, Query.videos, fields=fields, search_text=search_text, collection_id=self.id
+            self._conservator,
+            Video,
+            Query.videos,
+            fields=fields,
+            search_text=search_text,
+            collection_id=self.id,
         )
         return videos
 
@@ -218,7 +228,11 @@ class Collection(QueryableType, FileLockerType):
         """
         metadata = MetadataInput(mode="remove", collections=[self.id])
         self._conservator.query(
-            Mutation.update_video, operation_base=Mutation, id=media_id, metadata=metadata, fields="id"
+            Mutation.update_video,
+            operation_base=Mutation,
+            id=media_id,
+            metadata=metadata,
+            fields="id",
         )
 
     def delete(self):

@@ -1,3 +1,4 @@
+import enum
 import os
 import traceback
 from dataclasses import dataclass
@@ -15,6 +16,16 @@ class MediaUploadException(Exception):
     """Raised if an exception occurs during a media upload"""
 
     pass
+
+
+class MediaCompare(enum.Enum):
+    """results of comparing local file and Conservator file"""
+
+    MISMATCH = 0
+    MATCH = 1
+
+    def ok(self):
+        return self.name == "MATCH"
 
 
 @dataclass

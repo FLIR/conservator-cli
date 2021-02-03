@@ -7,7 +7,10 @@ import logging
 import os
 
 from FLIR.conservator.managers.media import MediaTypeManager
-from FLIR.conservator.managers.searchable import SearchableTypeManager, AmbiguousIdentifierException
+from FLIR.conservator.managers.searchable import (
+    SearchableTypeManager,
+    AmbiguousIdentifierException,
+)
 from FLIR.conservator.wrappers import (
     Collection,
     Dataset,
@@ -91,6 +94,7 @@ class CollectionManager(SearchableTypeManager):
         associated_files,
         media,
         recursive,
+        resume_media,
         max_retries,
     ):
         """
@@ -119,7 +123,7 @@ class CollectionManager(SearchableTypeManager):
             logger.info("Uploading media to collection %s", collection.path)
             media_manager = MediaTypeManager(self._conservator)
             media_manager.upload_many_to_collection(
-                media_paths, collection, max_retries=max_retries
+                media_paths, collection, resume=resume_media, max_retries=max_retries
             )
 
         if video_metadata:
@@ -165,6 +169,7 @@ class CollectionManager(SearchableTypeManager):
                     associated_files,
                     media,
                     recursive,
+                    resume_media,
                     max_retries,
                 )
 

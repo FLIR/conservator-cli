@@ -1,7 +1,7 @@
+import hashlib
 import multiprocessing
 import os
 import logging
-
 import requests
 import tqdm
 
@@ -76,6 +76,16 @@ def download_file(path, name, url, silent=False, no_meter=False):
             fd.write(chunk)
     progress.close()
     return True
+
+
+def md5sum_file(path, block_size=1024 * 1024):
+    hasher = hashlib.md5()
+    with open(path, "rb") as fp:
+        block = fp.read(block_size)
+        while block:
+            hasher.update(block)
+            block = fp.read(block_size)
+    return hasher.hexdigest()
 
 
 def upload_file(path, url):

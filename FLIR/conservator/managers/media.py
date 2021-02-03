@@ -7,7 +7,7 @@ import time
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.util import upload_file
 from FLIR.conservator.managers.searchable import AmbiguousIdentifierException
-from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest
+from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest, MediaCompare
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class MediaTypeManager:
         # look inside parent for media with exact name match
         fields = FieldsRequest.create(fields)
         fields.include_field("name")
-        media = list(parent.get_media(fields=fields, search_text="name:"+name))
+        media = list(parent.get_media(fields=fields, search_text="name:" + name))
         media = [m for m in media if m.name == name]
         if len(media) == 1:
             return media[0]
@@ -181,8 +181,51 @@ class MediaTypeManager:
         media_ids = [upload.media_id for upload in complete_uploads]
         return media_ids
 
+    def _clean_upload_list(self, file_paths, collection):
+        """
+        Clean up list of files prior to performing upload
+
+        Side effects:
+        * deletes remote file from Conservator if only partially uploaded
+        * removes remote file from Conservator folder if complete but differs from local copy
+
+        Returns list of files that need upload (anything from input list that did not match
+          perfectly between local and remote copies)
+
+        :param file_paths: List of `(str, str)` tuples holding pairs of `local_path`, `remote_name`.
+            If `remote_name` is `None`, the local filename will be used.
+        :param collection: The collection to which given files will later be uploaded.
+        """
+        redo_upload_paths = file_paths
+        collection.populate("path")
+        # iterate copy of list since items might be removed
+        for path in list(file_paths):
+            (local_path, remote_name) = path
+            if remote_name is None:
+                remote_name = os.path.split(local_path)[-1]
+            remote_path = "/".join((collection.path, remote_name))
+            media = self.from_path(remote_path, fields="state")
+            if media:
+                if media.state == "uploading":
+                    # remove partially uploaded files from Conservator,
+                    # leave on list to try uploading
+                    logger.info("Removing incomplete upload of '%s'", remote_path)
+                    media.remove()
+                else:
+                    if media.compare(local_path).ok():
+                        # perfectly matching file,
+                        # don't need to upload again
+                        logger.info("File '%s' was already uploaded", remote_path)
+                        redo_upload_paths.remove(path)
+                    else:
+                        # remove unmatching file from Conservator folder,
+                        # leave on list to try uploading
+                        logger.info("Unlinking file '%s' from folder", remote_path)
+                        collection.remove_media(media.id)
+        return redo_upload_paths
+
     def upload_many_to_collection(
-        self, file_paths, collection, process_count=None, max_retries=-1
+        self, file_paths, collection, process_count=None, resume=False, max_retries=-1
     ):
         """
         Upload many files in parallel. Returns a list of the uploaded media IDs.
@@ -193,12 +236,17 @@ class MediaTypeManager:
         :param collection: The collection to upload media files to.
         :param process_count: Number of concurrent upload processes. Passing `None`
             will use `os.cpu_count()`.
+        :param resume: Whether to check first if file was previously uploaded.
+        :param max_retries: max number of upload retries per file in case of network errors.
         """
         if len(file_paths) == 0:
             return
 
         if isinstance(file_paths[0], str):
             file_paths = [(file_path, None) for file_path in file_paths]
+
+        if resume:
+            file_paths = self._clean_upload_list(file_paths, collection)
 
         upload_requests = [
             MediaUploadRequest(file_path[0], collection.id, file_path[1])
