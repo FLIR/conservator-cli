@@ -262,7 +262,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         )
         @click.argument("dataset_identifier")
         @click.argument("blob_id")
-        @click.argument("path", default="./blob")
+        @click.argument("path", default="blob")
         @click.option(
             "-b",
             "--browser",

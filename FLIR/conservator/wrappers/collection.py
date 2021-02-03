@@ -61,7 +61,7 @@ class Collection(QueryableType, FileLockerType):
 
         If it does not exist, and `make_if_no_exists` is `True`, it will be created.
         """
-        path = os.path.join(self.path, name)
+        path = "/".join([self.path, name])
         try:
             child = Collection.from_remote_path(
                 conservator=self._conservator,
