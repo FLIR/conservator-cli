@@ -122,7 +122,8 @@ class CollectionManager(SearchableTypeManager):
 
         if media:
             logger.info("Uploading media to collection %s", collection.path)
-            self._conservator.upload_many_to_collection(
+            media_manager = MediaTypeManager(self._conservator)
+            media_manager.upload_many_to_collection(
                 media_paths, collection, max_retries=max_retries
             )
 
@@ -169,6 +170,7 @@ class CollectionManager(SearchableTypeManager):
                     associated_files,
                     media,
                     recursive,
+                    max_retries,
                 )
 
 
