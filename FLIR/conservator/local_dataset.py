@@ -17,6 +17,11 @@ from FLIR.conservator.util import download_files
 logger = logging.getLogger(__name__)
 
 
+class InvalidLocalDatasetPath(Exception):
+    def __init__(self, path):
+        self.path = path
+
+
 class LocalDataset:
     """
     Provides utilities for managing local datasets.
@@ -34,6 +39,8 @@ class LocalDataset:
         self.conservator = conservator
         self.path = os.path.abspath(path)
         self.index_path = os.path.join(self.path, "index.json")
+        if not os.path.exists(self.index_path):
+            raise InvalidLocalDatasetPath(self.path)
         self.data_path = os.path.join(self.path, "data")
         self.analytics_path = os.path.join(self.path, "analyticsData")
         self.cvc_path = os.path.join(self.path, ".cvc")
@@ -44,8 +51,6 @@ class LocalDataset:
             self.cache_path = os.path.join(self.path, self.cache_path)
         logger.debug(f"Using cache at {self.cache_path}")
 
-        if not os.path.exists(self.index_path):
-            return
         if not os.path.exists(self.cvc_path):
             os.makedirs(self.cvc_path)
         if not os.path.exists(self.staging_path):
@@ -426,7 +431,7 @@ class LocalDataset:
         if not dataset.has_field("repository.master"):
             logging.error(f"Dataset {dataset.name} has no repository. Unable to clone.")
             logging.error(
-                "This dataset can be fixed by browsing to it in Conservator web ui and clicking 'Commit Changes'."
+                "This dataset can be fixed by browsing to it in Conservator Web UI and clicking 'Commit Changes'."
             )
             return
 
@@ -449,6 +454,20 @@ class LocalDataset:
 
         email = dataset._conservator.get_email()
         subprocess.call(["git", "config", "user.email", email], cwd=clone_path)
+
+        # it's possible for the repository to exist, but for
+        # the clone to go through before index.json has been downloaded.
+        # this will cause the LocalDataset constructor to fail.
+        # this re-pulls until index.json exists (or we timeout)
+        index_path = os.path.join(clone_path, "index.json")
+        for _ in range(max_retries):
+            if os.path.exists(index_path):
+                break
+            time.sleep(timeout)
+            subprocess.call(["git", "pull"], cwd=clone_path)
+        else:
+            # raise RuntimeError for compatibility with dataset-toolkit (see #165)
+            raise RuntimeError("The repository exists, but does not contain index.json")
 
         return LocalDataset(dataset._conservator, clone_path)
 
