@@ -2,6 +2,11 @@ from FLIR.conservator.managers.type_manager import TypeManager
 from FLIR.conservator.paginated_query import PaginatedQuery
 
 
+class AmbiguousIdentifierException(Exception):
+    def __init__(self, identifier):
+        super().__init__(f"Multiple items found for '{identifier}', use ID")
+
+
 class SearchableTypeManager(TypeManager):
     """
     Adds the ability to search using Conservator's Advanced Search.

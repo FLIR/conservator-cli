@@ -4,7 +4,9 @@ import multiprocessing
 import os
 import time
 
+from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.util import upload_file
+from FLIR.conservator.managers.searchable import AmbiguousIdentifierException
 from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
@@ -23,6 +25,29 @@ class ProcessingTimeoutError(TimeoutError):
 class MediaTypeManager:
     def __init__(self, conservator):
         self._conservator = conservator
+
+    def from_path(self, string, fields="id"):
+        if not "/" in string:
+            return None
+
+        # start by path lookup
+        parent_path = "/".join(string.split("/")[:-1])
+        name = string.split("/")[-1]
+
+        parent = self._conservator.collections.from_remote_path(
+            path=parent_path, make_if_no_exist=False, fields="id"
+        )
+
+        # look inside parent for media with exact name match
+        fields = FieldsRequest.create(fields)
+        fields.include_field("name")
+        media = list(parent.get_media(fields=fields, search_text="name:"+name))
+        media = [m for m in media if m.name == name]
+        if len(media) == 1:
+            return media[0]
+        if len(media) > 1:
+            raise AmbiguousIdentifierException(string)
+        return None
 
     def upload(self, file_path, collection=None, remote_name=None):
         """

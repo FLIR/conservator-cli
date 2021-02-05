@@ -7,7 +7,7 @@ import logging
 import os
 
 from FLIR.conservator.managers.media import MediaTypeManager
-from FLIR.conservator.managers.searchable import SearchableTypeManager
+from FLIR.conservator.managers.searchable import SearchableTypeManager, AmbiguousIdentifierException
 from FLIR.conservator.wrappers import (
     Collection,
     Dataset,
@@ -19,11 +19,6 @@ from FLIR.conservator.wrappers import (
 
 
 logger = logging.getLogger(__name__)
-
-
-class AmbiguousIdentifierException(Exception):
-    def __init__(self, identifier):
-        super().__init__(f"Multiple items found for '{identifier}', use ID")
 
 
 class CollectionManager(SearchableTypeManager):
