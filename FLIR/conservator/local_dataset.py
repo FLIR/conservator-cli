@@ -379,6 +379,14 @@ class LocalDataset:
 
         results = download_files(assets, process_count, no_meter=no_meter)
 
+        # delete any symlinks or links in the data directory
+        # we will remake all for existing frames; this effectively
+        # removes old frames.
+        for file in os.listdir(self.data_path):
+            file_path = os.path.join(self.data_path, file)
+            if os.path.islink(file_path) or os.stat(file_path).st_nlink > 1:
+                os.remove(file_path)
+
         for link in links:
             dest, src = link
             logger.debug(f"Linking '{src}' to '{dest}'")
