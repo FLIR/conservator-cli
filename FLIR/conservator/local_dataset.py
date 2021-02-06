@@ -370,10 +370,12 @@ class LocalDataset:
                     cache_path = self.get_cache_path(md5)
                     links.append((cache_path, path))
 
+        cache_hits = 0
         assets = []  # (path, name, url)
         for md5 in hashes_required:
             cache_path = self.get_cache_path(md5)
-            if os.path.exists(cache_path):
+            if os.path.exists(cache_path) and os.path.getsize(cache_path) > 0:
+                cache_hits += 1
                 logger.info(f"Skipping {md5}: already downloaded.")
                 continue
             path, name = os.path.split(cache_path)
@@ -392,20 +394,33 @@ class LocalDataset:
             if os.path.islink(file_path) or os.stat(file_path).st_nlink > 1:
                 os.remove(file_path)
 
-        for link in links:
-            dest, src = link
-            logger.debug(f"Linking '{src}' to '{dest}'")
-            if os.path.exists(src):
-                os.remove(src)
+        for cache_path, data_path in links:
+            logger.debug(f"Linking '{data_path}' to '{cache_path}'")
+            if os.path.exists(data_path):
+                os.remove(data_path)
             if use_symlink:
-                os.symlink(dest, src)
+                os.symlink(cache_path, data_path)
             else:
-                os.link(dest, src)
+                os.link(cache_path, data_path)
 
-        # See if we have any errors
-        total = len(results)
-        success = sum(results)
-        logger.info(f"Number of Files: {success}, Errors: {total - success}")
+        failures = 0
+        for path, name, _ in assets:
+            full_path = os.path.join(path, name)
+            if not os.path.exists(full_path) or os.path.getsize(full_path) == 0:
+                logger.error(
+                    f"Download to {full_path} seems to have failed. Try rerunning or submit an issue."
+                )
+                failures += 1
+        successes = len(assets) - failures
+
+        logger.info(f"Total frames: {len(links)}")
+        logger.info(f"  Unique hashes: {len(hashes_required)}")
+        logger.info(f"  Cache hits: {cache_hits}")
+        logger.info(f"Downloads attempted: {len(assets)}")
+        logger.info(f"  Reported {sum(results)} successes.")
+        logger.info(f"  Successful downloads: {successes}")
+        logger.info(f"  Failed downloads: {failures}")
+        logger.info(f"Linked {len(links)} files.")
 
     @staticmethod
     def clone(dataset, clone_path=None, verbose=True, max_retries=2, timeout=5):
