@@ -11,18 +11,15 @@ from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
 
 
-class InvalidLocalDataset(Exception):
-    def __init__(self, path):
-        self.path = path
-
-
 def pass_valid_local_dataset(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        ops = get_current_context().obj
-        if not os.path.exists(ops.index_path):
-            raise InvalidLocalDataset(ops.path)
-        return func(ops, *args, **kwargs)
+        path = get_current_context().obj
+        conservator = Conservator.default()
+        # raises InvalidLocalDatasetPath if the path does not point to a
+        # valid LocalDataset (defined as a directory containing index.json).
+        local_dataset = LocalDataset(conservator, path)
+        return func(local_dataset, *args, **kwargs)
 
     return wrapper
 
@@ -48,8 +45,7 @@ def main(ctx, log, path):
         "CRITICAL": logging.CRITICAL,
     }
     logging.basicConfig(level=levels[log])
-    conservator = Conservator.default()
-    ctx.obj = LocalDataset(conservator, path)
+    ctx.obj = path
 
 
 @main.command(help="Clone a dataset by id, path, or name (if unique)")
