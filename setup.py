@@ -70,7 +70,5 @@ setuptools.setup(
     ],
     python_requires=">=3.6",
     install_requires=INSTALL_REQUIRES,
-    setup_requires=[
-        "wheel"
-    ],
+    setup_requires=["wheel"],
 )
