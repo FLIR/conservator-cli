@@ -135,6 +135,23 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         """Returns the Git URL used for cloning this Dataset."""
         return f"{self._conservator.get_authenticated_url()}/git/dataset_{self.id}"
 
+    def commit(self, message):
+        """
+        Commits changes to the dataset made outside of CVC/Git system (for instance,
+        using the Web UI, or most methods within this class). The current user will
+        be the author of the commit.
+
+        :param message: The commit message.
+        """
+        user = self._conservator.get_user()
+        return self._conservator.query(
+            Mutation.commit_dataset,
+            operation_base=Mutation,
+            dataset_id=self.id,
+            commit_message=message,
+            user_id=user.id,
+        )
+
     @requires_fields("repository.master")
     def get_commit_history(self, fields=None):
         """
