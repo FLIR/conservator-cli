@@ -4,8 +4,7 @@ import traceback
 from dataclasses import dataclass
 
 from FLIR.conservator.generated.schema import Mutation
-from FLIR.conservator.util import download_file
-from FLIR.conservator.util import upload_file
+from FLIR.conservator.util import md5sum_file, download_file, upload_file
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
@@ -68,6 +67,16 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
     # metadata operations
     metadata_gen_url = Mutation.generate_signed_metadata_upload_url
     metadata_confirm_url = Mutation.mark_annotation_as_uploaded
+
+    def verify_md5(self, local_path, expected_md5):
+        """
+        Helper for Video and Image md5sum comparisons, each of which
+        track md5sum in Conservator but not in the same field
+        """
+        local_md5 = md5sum_file(local_path)
+        if local_md5 == expected_md5:
+            return MediaCompare.MATCH
+        return MediaCompare.MISMATCH
 
     def _trigger_processing(
         self,

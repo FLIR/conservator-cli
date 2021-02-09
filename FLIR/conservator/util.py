@@ -78,14 +78,12 @@ def download_file(path, name, url, silent=False, no_meter=False):
     return True
 
 
-def md5sum_file(path, block_size=1024 * 1024):
-    hasher = hashlib.md5()
-    with open(path, "rb") as fp:
-        block = fp.read(block_size)
-        while block:
-            hasher.update(block)
-            block = fp.read(block_size)
-    return hasher.hexdigest()
+def download_files(files, process_count=None, no_meter=False):
+    # files = (path, name, url)
+    pool = multiprocessing.Pool(process_count)  # defaults to CPU count
+    args = [(*file, True, no_meter) for i, file in enumerate(files)]
+    results = pool.starmap(download_file, args)
+    return results
 
 
 def upload_file(path, url):
@@ -98,12 +96,14 @@ def upload_file(path, url):
     return response
 
 
-def download_files(files, process_count=None, no_meter=False):
-    # files = (path, name, url)
-    pool = multiprocessing.Pool(process_count)  # defaults to CPU count
-    args = [(*file, True, no_meter) for i, file in enumerate(files)]
-    results = pool.starmap(download_file, args)
-    return results
+def md5sum_file(path, block_size=1024 * 1024):
+    hasher = hashlib.md5()
+    with open(path, "rb") as fp:
+        block = fp.read(block_size)
+        while block:
+            hasher.update(block)
+            block = fp.read(block_size)
+    return hasher.hexdigest()
 
 
 def base_convert(b, n):

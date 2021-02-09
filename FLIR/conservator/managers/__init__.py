@@ -7,10 +7,8 @@ import logging
 import os
 
 from FLIR.conservator.managers.media import MediaTypeManager
-from FLIR.conservator.managers.searchable import (
-    SearchableTypeManager,
-    AmbiguousIdentifierException,
-)
+from FLIR.conservator.managers.searchable import SearchableTypeManager
+from FLIR.conservator.managers.type_manager import AmbiguousIdentifierException
 from FLIR.conservator.wrappers import (
     Collection,
     Dataset,

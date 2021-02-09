@@ -2,9 +2,8 @@ from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Query, Mutation
 from FLIR.conservator.paginated_query import PaginatedQuery
-from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers.frame import Frame
-from FLIR.conservator.wrappers.media import MediaType, MediaCompare
+from FLIR.conservator.wrappers.media import MediaType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 
 
@@ -22,11 +21,7 @@ class Video(MediaType):
 
         :param local_path: Path to local copy of file for comparison with remote.
         """
-        result = MediaCompare.MISMATCH
-        local_md5 = md5sum_file(local_path)
-        if local_md5 == self.md5:
-            result = MediaCompare.MATCH
-        return result
+        return self.verify_md5(local_path, self.md5)
 
     def get_annotations(self, fields=None):
         """
