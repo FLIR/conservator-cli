@@ -9,6 +9,7 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     CreateCollectionInput,
     DeleteCollectionInput,
+    MetadataInput,
 )
 from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
@@ -210,6 +211,15 @@ class Collection(QueryableType, FileLockerType):
             collection_id=self.id,
         )
         return datasets
+
+    def remove_media(self, media_id):
+        """
+        Remove given media from this collection.
+        """
+        metadata = MetadataInput(mode="remove", collections=[self.id])
+        self._conservator.query(
+            Mutation.update_video, operation_base=Mutation, id=media_id, metadata=metadata, fields="id"
+        )
 
     def delete(self):
         """
