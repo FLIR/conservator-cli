@@ -1,6 +1,11 @@
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 
+class AmbiguousIdentifierException(Exception):
+    def __init__(self, identifier):
+        super().__init__(f"Multiple items found for '{identifier}', use ID")
+
+
 class TypeManager:
     """
     Base Manger class.

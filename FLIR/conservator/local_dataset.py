@@ -11,7 +11,7 @@ import time
 
 import jsonschema
 from PIL import Image
-from FLIR.conservator.util import download_files
+from FLIR.conservator.util import download_files, md5sum_file
 
 
 logger = logging.getLogger(__name__)
@@ -297,7 +297,7 @@ class LocalDataset:
             "width": image.width,
             "height": image.height,
             "fileSize": os.path.getsize(path),
-            "md5": hashlib.md5(open(path, "rb").read()).hexdigest(),
+            "md5": md5sum_file(path, "rb"),
         }
         return info
 

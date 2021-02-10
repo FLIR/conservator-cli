@@ -8,6 +8,7 @@ import os
 
 from FLIR.conservator.managers.media import MediaTypeManager
 from FLIR.conservator.managers.searchable import SearchableTypeManager
+from FLIR.conservator.managers.type_manager import AmbiguousIdentifierException
 from FLIR.conservator.wrappers import (
     Collection,
     Dataset,
@@ -19,11 +20,6 @@ from FLIR.conservator.wrappers import (
 
 
 logger = logging.getLogger(__name__)
-
-
-class AmbiguousIdentifierException(Exception):
-    def __init__(self, identifier):
-        super().__init__(f"Multiple items found for '{identifier}', use ID")
 
 
 class CollectionManager(SearchableTypeManager):
@@ -96,6 +92,7 @@ class CollectionManager(SearchableTypeManager):
         associated_files,
         media,
         recursive,
+        resume_media,
         max_retries,
     ):
         """
@@ -122,8 +119,9 @@ class CollectionManager(SearchableTypeManager):
 
         if media:
             logger.info("Uploading media to collection %s", collection.path)
-            self._conservator.upload_many_to_collection(
-                media_paths, collection, max_retries=max_retries
+            media_manager = MediaTypeManager(self._conservator)
+            media_manager.upload_many_to_collection(
+                media_paths, collection, resume=resume_media, max_retries=max_retries
             )
 
         if video_metadata:
@@ -169,6 +167,8 @@ class CollectionManager(SearchableTypeManager):
                     associated_files,
                     media,
                     recursive,
+                    resume_media,
+                    max_retries,
                 )
 
 

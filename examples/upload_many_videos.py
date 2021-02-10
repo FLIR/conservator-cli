@@ -28,13 +28,13 @@ assert collection is not None
 upload_tuples = [(local_path, f"upload_many_test_{i}") for i in range(number_of_copies)]
 
 print("Starting upload")
-media_ids = conservator.upload_many_to_collection(
+media_ids = conservator.videos.upload_many_to_collection(
     upload_tuples, collection=collection, process_count=10
 )
 print("Created these ids:", media_ids)
 
 print("Waiting for processing")
-conservator.wait_for_processing(media_ids)
+conservator.videos.wait_for_processing(media_ids)
 
 # Print out all of the media names
 for media_id in media_ids:

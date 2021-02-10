@@ -9,6 +9,7 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     CreateCollectionInput,
     DeleteCollectionInput,
+    MetadataInput,
 )
 from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
@@ -160,55 +161,79 @@ class Collection(QueryableType, FileLockerType):
             yield collection
             collections.extend(collection.children)
 
-    def get_images(self, fields=None):
+    def get_images(self, fields=None, search_text=""):
         """Returns a query for all images in this collection."""
         images = PaginatedQuery(
-            self._conservator, Image, Query.images, fields=fields, collection_id=self.id
+            self._conservator,
+            Image,
+            Query.images,
+            fields=fields,
+            search_text=search_text,
+            collection_id=self.id,
         )
         return images
 
-    def recursively_get_images(self, fields=None):
+    def recursively_get_images(self, fields=None, search_text=""):
         """Yields all images in this and child collections recursively"""
         for collection in self.recursively_get_children(include_self=True, fields="id"):
-            yield from collection.get_images(fields)
+            yield from collection.get_images(fields, search_text)
 
-    def get_videos(self, fields=None):
+    def get_videos(self, fields=None, search_text=""):
         """Returns a query for all videos in this collection."""
         videos = PaginatedQuery(
-            self._conservator, Video, Query.videos, fields=fields, collection_id=self.id
+            self._conservator,
+            Video,
+            Query.videos,
+            fields=fields,
+            search_text=search_text,
+            collection_id=self.id,
         )
         return videos
 
-    def recursively_get_videos(self, fields=None):
+    def recursively_get_videos(self, fields=None, search_text=""):
         """Yields all videos in this and child collections recursively"""
         for collection in self.recursively_get_children(include_self=True, fields="id"):
-            yield from collection.get_videos(fields)
+            yield from collection.get_videos(fields, search_text)
 
-    def get_media(self, fields=None):
+    def get_media(self, fields=None, search_text=""):
         """
         Yields all videos, then images in this collection.
 
         :param fields: The `fields` to include in the media. All
             fields must exist on both Image and Video types.
         """
-        yield from self.get_videos(fields=fields)
-        yield from self.get_images(fields=fields)
+        yield from self.get_videos(fields=fields, search_text=search_text)
+        yield from self.get_images(fields=fields, search_text=search_text)
 
-    def recursively_get_media(self, fields=None):
+    def recursively_get_media(self, fields=None, search_text=""):
         """Yields all videos and images in this and child collections recursively"""
         for collection in self.recursively_get_children(include_self=True, fields="id"):
-            yield from collection.get_media(fields)
+            yield from collection.get_media(fields, search_text)
 
-    def get_datasets(self, fields=None):
+    def get_datasets(self, fields=None, search_text=""):
         """Returns a query for all datasets in this collection."""
         datasets = PaginatedQuery(
             self._conservator,
             Dataset,
             Query.datasets,
             fields=fields,
+            search_text=search_text,
             collection_id=self.id,
         )
         return datasets
+
+    def remove_media(self, media_id):
+        """
+        Remove given media from this collection.
+        """
+        metadata = MetadataInput(mode="remove", collections=[self.id])
+        self._conservator.query(
+            Mutation.update_video,
+            operation_base=Mutation,
+            id=media_id,
+            metadata=metadata,
+            fields="id",
+        )
 
     def delete(self):
         """

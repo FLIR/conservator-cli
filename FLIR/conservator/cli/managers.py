@@ -166,6 +166,11 @@ def get_manager_command(type_manager, sgqlc_type, name):
             help="Include child directories recursively, creating collections as needed",
         )
         @click.option(
+            "--resume-media",
+            is_flag=True,
+            help="Check if media files were previously uploaded, skip if so",
+        )
+        @click.option(
             "-n",
             "--max-retries",
             type=int,
@@ -180,6 +185,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             media,
             recursive,
             create_collection,
+            resume_media,
             max_retries,
         ):
             manager = get_instance()
@@ -196,6 +202,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 associated_files,
                 media,
                 recursive,
+                resume_media,
                 max_retries,
             )
 
