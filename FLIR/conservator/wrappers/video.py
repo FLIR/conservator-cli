@@ -21,7 +21,7 @@ class Video(MediaType):
 
         :param local_path: Path to local copy of file for comparison with remote.
         """
-        return self.verify_md5(local_path, self.md5)
+        return MediaType.verify_md5(local_path, self.md5)
 
     def get_annotations(self, fields=None):
         """
