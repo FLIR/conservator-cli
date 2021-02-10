@@ -73,7 +73,7 @@
 </li>
       <li><a href="api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.all">all() (FLIR.conservator.managers.searchable.SearchableTypeManager method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.managers.AmbiguousIdentifierException">AmbiguousIdentifierException</a>
+      <li><a href="api.html#FLIR.conservator.managers.type_manager.AmbiguousIdentifierException">AmbiguousIdentifierException</a>
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.approve">approve() (FLIR.conservator.wrappers.dataset_frame.DatasetFrame method)</a>
 </li>
@@ -105,6 +105,12 @@
         <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.commit">(FLIR.conservator.wrappers.dataset.Dataset method)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#FLIR.conservator.wrappers.image.Image.compare">compare() (FLIR.conservator.wrappers.image.Image method)</a>
+
+      <ul>
+        <li><a href="api.html#FLIR.conservator.wrappers.video.Video.compare">(FLIR.conservator.wrappers.video.Video method)</a>
+</li>
+      </ul></li>
       <li><a href="api.html#FLIR.conservator.paginated_query.ConcurrentQueryModificationException">ConcurrentQueryModificationException</a>
 </li>
       <li><a href="api.html#FLIR.conservator.config.Config">Config (class in FLIR.conservator.config)</a>
@@ -117,10 +123,10 @@
 </li>
       <li><a href="api.html#FLIR.conservator.connection.ConservatorGraphQLServerError">ConservatorGraphQLServerError</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.connection.ConservatorMalformedQueryException">ConservatorMalformedQueryException</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.connection.ConservatorMalformedQueryException">ConservatorMalformedQueryException</a>
+</li>
       <li><a href="api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.count">count() (FLIR.conservator.managers.searchable.SearchableTypeManager method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.managers.searchable.SearchableTypeManager.count_all">count_all() (FLIR.conservator.managers.searchable.SearchableTypeManager method)</a>
@@ -568,8 +574,6 @@
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.InvalidRemotePathException">InvalidRemotePathException</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.conservator.Conservator.is_uploaded_media_id_processed">is_uploaded_media_id_processed() (FLIR.conservator.conservator.Conservator method)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -649,7 +653,7 @@
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.queryable.QueryableType.populate_all">populate_all() (FLIR.conservator.wrappers.queryable.QueryableType method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.conservator.ProcessingTimeoutError">ProcessingTimeoutError</a>
+      <li><a href="api.html#FLIR.conservator.managers.media.ProcessingTimeoutError">ProcessingTimeoutError</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -687,9 +691,11 @@
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.recursively_get_media">recursively_get_media() (FLIR.conservator.wrappers.collection.Collection method)</a>
 </li>
+      <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.recursively_get_videos">recursively_get_videos() (FLIR.conservator.wrappers.collection.Collection method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.recursively_get_videos">recursively_get_videos() (FLIR.conservator.wrappers.collection.Collection method)</a>
+      <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.remove_media">remove_media() (FLIR.conservator.wrappers.collection.Collection method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.request_changes">request_changes() (FLIR.conservator.wrappers.dataset_frame.DatasetFrame method)</a>
 </li>
@@ -763,13 +769,7 @@
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.unset_qa_status">unset_qa_status() (FLIR.conservator.wrappers.dataset_frame.DatasetFrame method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.conservator.Conservator.upload">upload() (FLIR.conservator.conservator.Conservator method)</a>
-
-      <ul>
-        <li><a href="api.html#FLIR.conservator.managers.CollectionManager.upload">(FLIR.conservator.managers.CollectionManager method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#FLIR.conservator.conservator.Conservator.upload_many_to_collection">upload_many_to_collection() (FLIR.conservator.conservator.Conservator method)</a>
+      <li><a href="api.html#FLIR.conservator.managers.CollectionManager.upload">upload() (FLIR.conservator.managers.CollectionManager method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -791,12 +791,10 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#FLIR.conservator.conservator.Conservator.wait_for_processing">wait_for_processing() (FLIR.conservator.conservator.Conservator method)</a>
+      <li><a href="api.html#FLIR.conservator.paginated_query.PaginatedQuery.with_fields">with_fields() (FLIR.conservator.paginated_query.PaginatedQuery method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#FLIR.conservator.paginated_query.PaginatedQuery.with_fields">with_fields() (FLIR.conservator.paginated_query.PaginatedQuery method)</a>
-</li>
       <li><a href="api.html#FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap_instance">wrap_instance() (FLIR.conservator.wrappers.type_proxy.TypeProxy static method)</a>
 </li>
   </ul></td>

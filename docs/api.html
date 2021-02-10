@@ -229,84 +229,6 @@ returns <cite>True</cite>. If neither matches, an <a class="reference internal" 
 <dd><p>Returns the User that the provided API token authorizes</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="FLIR.conservator.conservator.Conservator.is_uploaded_media_id_processed">
-<code class="sig-name descname">is_uploaded_media_id_processed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">media_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.is_uploaded_media_id_processed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return <cite>True</cite> if an ID returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">upload()</span></code> has
-been processed, and <cite>False</cite> otherwise.</p>
-<p>When media is uploaded, it begins processing as a video. It may turn into
-an image, requiring different queries. This method can be used to verify
-that an ID is done processing, and its type won’t change in the future.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.conservator.Conservator.upload">
-<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em>, <em class="sig-param"><span class="n">collection</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">remote_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upload a new media object from a local <cite>file_path</cite>, with the specified
-<cite>remote_name</cite>. It is added to <cite>collection</cite> if given, otherwise it is
-added to no collection (orphan).</p>
-<p>Conservator Images have separate queries than Videos, but they do not get
-their own mutations, e.g. they are treated as “Videos” in the upload process.
-In fact, an uploaded media file is treated by Conservator server as a video
-until file processing has finished; if it turned out to be an image type
-(e.g. jpeg) then it will disappear from Videos and appear under Images.</p>
-<p>Returns the ID of the created media object. Note, that it may be a Video ID
-or an Image ID.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> – The local file path to upload.</p></li>
-<li><p><strong>collection</strong> – If specified, the Collection object, or <cite>str</cite> Collection ID to
-upload the media to. If not specified, the media is not uploaded to any
-specific collection (orphan).</p></li>
-<li><p><strong>remote_name</strong> – If given, the remote name of the media. Otherwise, the local file
-name is used.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.conservator.Conservator.upload_many_to_collection">
-<code class="sig-name descname">upload_many_to_collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_paths</span></em>, <em class="sig-param"><span class="n">collection</span></em>, <em class="sig-param"><span class="n">process_count</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_retries</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.upload_many_to_collection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upload many files in parallel. Returns a list of the uploaded media IDs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>file_paths</strong> – A list of <cite>str</cite> file paths to upload to <cite>collection</cite>. Alternatively,
-a list of <cite>(str, str)</cite> tuples holding pairs of <cite>local_path</cite>, <cite>remote_name</cite>. If <cite>remote_name</cite>
-is <cite>None</cite>, the local filename will be used.</p></li>
-<li><p><strong>collection</strong> – The collection to upload media files to.</p></li>
-<li><p><strong>process_count</strong> – Number of concurrent upload processes. Passing <cite>None</cite>
-will use <cite>os.cpu_count()</cite>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.conservator.Conservator.wait_for_processing">
-<code class="sig-name descname">wait_for_processing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">media_ids</span></em>, <em class="sig-param"><span class="n">timeout_seconds</span><span class="o">=</span><span class="default_value">600</span></em>, <em class="sig-param"><span class="n">check_frequency_seconds</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.wait_for_processing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wait for an id, or list of ids, to complete processing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>media_ids</strong> – A single <cite>str</cite> media ID, or a list of media ID to test.</p></li>
-<li><p><strong>timeout_seconds</strong> – A maximum amount of time to wait.</p></li>
-<li><p><strong>check_frequency_seconds</strong> – How long to wait between checks.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt id="FLIR.conservator.conservator.ProcessingTimeoutError">
-<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.conservator.</code><code class="sig-name descname">ProcessingTimeoutError</code><a class="headerlink" href="#FLIR.conservator.conservator.ProcessingTimeoutError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></p>
-<p>Raised when the amount of time spent waiting for media to process exceeds
-the requested timeout.</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -825,19 +747,19 @@ reach that path if it doesn’t exist.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.get_datasets">
-<code class="sig-name descname">get_datasets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_datasets" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_datasets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a query for all datasets in this collection.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.get_images">
-<code class="sig-name descname">get_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_images" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a query for all images in this collection.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.get_media">
-<code class="sig-name descname">get_media</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_media" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_media</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_media" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields all videos, then images in this collection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -849,7 +771,7 @@ fields must exist on both Image and Video types.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.get_videos">
-<code class="sig-name descname">get_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_videos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.get_videos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a query for all videos in this collection.</p>
 </dd></dl>
 
@@ -869,20 +791,26 @@ fields must exist on both Image and Video types.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.recursively_get_images">
-<code class="sig-name descname">recursively_get_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.recursively_get_images" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">recursively_get_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.recursively_get_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields all images in this and child collections recursively</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.recursively_get_media">
-<code class="sig-name descname">recursively_get_media</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.recursively_get_media" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">recursively_get_media</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.recursively_get_media" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields all videos and images in this and child collections recursively</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.collection.Collection.recursively_get_videos">
-<code class="sig-name descname">recursively_get_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.recursively_get_videos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">recursively_get_videos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">search_text</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.recursively_get_videos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields all videos in this and child collections recursively</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.collection.Collection.remove_media">
+<code class="sig-name descname">remove_media</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">media_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.remove_media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove given media from this collection.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1063,7 +991,19 @@ identifier like <code class="docutils literal notranslate"><span class="pre">HEA
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.image.Image">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.wrappers.image.</code><code class="sig-name descname">Image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py attribute">
+<dd><dl class="py method">
+<dt id="FLIR.conservator.wrappers.image.Image.compare">
+<code class="sig-name descname">compare</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">local_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use md5 checksums to compare image contents to local file</p>
+<p>Returns result as MediaCompare object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_path</strong> – Path to local copy of file for comparison with remote.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt id="FLIR.conservator.wrappers.image.Image.underlying_type">
 <code class="sig-name descname">underlying_type</code><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.underlying_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Image</span></code></p>
@@ -1106,6 +1046,18 @@ specified <cite>fields</cite>.</p>
 <dt id="FLIR.conservator.wrappers.video.Video">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.wrappers.video.</code><code class="sig-name descname">Video</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">instance</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
+<dt id="FLIR.conservator.wrappers.video.Video.compare">
+<code class="sig-name descname">compare</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">local_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use md5 checksums to compare video contents to local file</p>
+<p>Returns result as MediaCompare object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_path</strong> – Path to local copy of file for comparison with remote.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.wrappers.video.Video.get_all_frames_paginated">
 <code class="sig-name descname">get_all_frames_paginated</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.get_all_frames_paginated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields all frames in the video, 15 at a time, using
@@ -1238,12 +1190,6 @@ you could just use <code class="docutils literal notranslate"><span class="pre">
 <div class="section" id="module-FLIR.conservator.managers">
 <span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this headline">¶</a></h2>
 <p>A Manager is simply a bundle of utilities for querying a specific type.</p>
-<dl class="py exception">
-<dt id="FLIR.conservator.managers.AmbiguousIdentifierException">
-<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">AmbiguousIdentifierException</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.AmbiguousIdentifierException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
 <dl class="py class">
 <dt id="FLIR.conservator.managers.CollectionManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.</code><code class="sig-name descname">CollectionManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager" title="Permalink to this definition">¶</a></dt>
@@ -1291,7 +1237,7 @@ any user-facing input.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.managers.CollectionManager.upload">
-<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collection_id</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">video_metadata</span></em>, <em class="sig-param"><span class="n">associated_files</span></em>, <em class="sig-param"><span class="n">media</span></em>, <em class="sig-param"><span class="n">recursive</span></em>, <em class="sig-param"><span class="n">max_retries</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.upload" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collection_id</span></em>, <em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">video_metadata</span></em>, <em class="sig-param"><span class="n">associated_files</span></em>, <em class="sig-param"><span class="n">media</span></em>, <em class="sig-param"><span class="n">recursive</span></em>, <em class="sig-param"><span class="n">resume_media</span></em>, <em class="sig-param"><span class="n">max_retries</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.upload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload files under the specified <cite>path</cite> to given collection. <cite>max_retries</cite> only applies
 to media files (other types of files are usually small enough not to need them).</p>
 </dd></dl>
@@ -1390,6 +1336,11 @@ any user-facing input.</p>
 
 <div class="section" id="module-FLIR.conservator.managers.type_manager">
 <span id="typemanager"></span><h3>TypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.type_manager" title="Permalink to this headline">¶</a></h3>
+<dl class="py exception">
+<dt id="FLIR.conservator.managers.type_manager.AmbiguousIdentifierException">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.type_manager.</code><code class="sig-name descname">AmbiguousIdentifierException</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.AmbiguousIdentifierException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py class">
 <dt id="FLIR.conservator.managers.type_manager.TypeManager">
 <em class="property">class </em><code class="sig-prename descclassname">FLIR.conservator.managers.type_manager.</code><code class="sig-name descname">TypeManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conservator</span></em>, <em class="sig-param"><span class="n">underlying_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager" title="Permalink to this definition">¶</a></dt>
@@ -1491,6 +1442,14 @@ single match was found (or none, or many).</p>
 </div>
 <div class="section" id="module-FLIR.conservator.managers.media">
 <span id="mediatypemanager"></span><h3>MediaTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.media" title="Permalink to this headline">¶</a></h3>
+<dl class="py exception">
+<dt id="FLIR.conservator.managers.media.ProcessingTimeoutError">
+<em class="property">exception </em><code class="sig-prename descclassname">FLIR.conservator.managers.media.</code><code class="sig-name descname">ProcessingTimeoutError</code><a class="headerlink" href="#FLIR.conservator.managers.media.ProcessingTimeoutError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></p>
+<p>Raised when the amount of time spent waiting for media to process exceeds
+the requested timeout.</p>
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="module-FLIR.conservator.paginated_query">
