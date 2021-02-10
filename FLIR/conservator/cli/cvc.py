@@ -218,7 +218,7 @@ def cvc(ctx, path):
     # The conservator command handles logging, and would
     # result in confusing behavior if included twice.
     conservator = Conservator.default()
-    ctx.obj = LocalDataset(conservator, path)
+    ctx.obj = path
 
 
 # Hacky way to "add" commands to both groups
