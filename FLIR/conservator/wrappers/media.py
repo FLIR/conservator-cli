@@ -68,7 +68,8 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
     metadata_gen_url = Mutation.generate_signed_metadata_upload_url
     metadata_confirm_url = Mutation.mark_annotation_as_uploaded
 
-    def verify_md5(self, local_path, expected_md5):
+    @staticmethod
+    def verify_md5(local_path, expected_md5):
         """
         Helper for Video and Image md5sum comparisons, each of which
         track md5sum in Conservator but not in the same field
