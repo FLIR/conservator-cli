@@ -380,7 +380,7 @@ class LocalDataset:
                 continue
             path, name = os.path.split(cache_path)
             url = self.conservator.get_dvc_hash_url(md5)
-            asset = (path, name, url)
+            asset = (path, name, url, "")
             logger.debug(f"Going to download {md5}")
             assets.append(asset)
 

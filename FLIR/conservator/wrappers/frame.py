@@ -20,7 +20,7 @@ class Frame(QueryableType):
     @requires_fields("url", "filename")
     def download(self, path):
         """Download image to ``path``."""
-        download_file(path, self.filename, self.url)
+        download_file(path, self.filename, self.url, "")
 
     def _populate(self, fields):
         ids = [self.id]
