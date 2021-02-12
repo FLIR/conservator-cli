@@ -255,7 +255,7 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         url = self.get_blob_url_by_id(blob_id)
         parent, name = os.path.split(path)
         os.makedirs(parent, exist_ok=True)
-        download_file(parent, name, url, "")
+        download_file(parent, name, url)
 
     def download_latest_index(self, path):
         """

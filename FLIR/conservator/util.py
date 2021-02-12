@@ -54,7 +54,7 @@ class FileDownloadException(Exception):
     pass
 
 
-def download_file(path, name, url, remote_md5, silent=False, no_meter=False):
+def download_file(path, name, url, remote_md5="", silent=False, no_meter=False):
     path = os.path.abspath(path)
     file_path = os.path.join(path, name)
     os.makedirs(path, exist_ok=True)
@@ -87,11 +87,20 @@ def download_file(path, name, url, remote_md5, silent=False, no_meter=False):
     return True
 
 
-def download_files(files, process_count=None, no_meter=False):
-    # files = (path, name, url, remote_md5)
-    # where remote_md5 is empty string if unknown
+def download_files(files, resume=False, process_count=None, no_meter=False):
+    # incoming files argument is a list of 3 or 4-tuples per requested file:
+    #   if resume is enabled, must supply expected md5sum to determine
+    #   whether any existing files are complete
+    #     files = [(path, name, url, remote_md5), ...]
+    #   otherwise md5 field does not need to be provided and will be
+    #   ignored if given
+    #     files = [(path, name, url), ...]
     pool = multiprocessing.Pool(process_count)  # defaults to CPU count
-    args = [(*file, True, no_meter) for i, file in enumerate(files)]
+    if resume:
+        args = [(*file, True, no_meter) for i, file in enumerate(files)]
+    else:
+        # ignore any md5 values that may have been supplied
+        args = [(*file[0:3], "", True, no_meter) for i, file in enumerate(files)]
     results = pool.starmap(download_file, args)
     return results
 

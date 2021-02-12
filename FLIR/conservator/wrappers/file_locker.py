@@ -63,7 +63,7 @@ class FileLockerType(TypeProxy):
         ``associated_files/``."""
         path = os.path.join(path, "associated_files")
         os.makedirs(path, exist_ok=True)
-        assets = [(path, file.name, file.url, "") for file in self.file_locker_files]
+        assets = [(path, file.name, file.url) for file in self.file_locker_files]
         download_files(assets, no_meter=no_meter)
 
     def upload_associated_file(self, file_path, content_type=None):

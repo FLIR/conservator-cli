@@ -305,7 +305,7 @@ class Collection(QueryableType, FileLockerType):
         fields.include_field("filename", "url", "md5")
         videos = self.get_videos(fields=fields)
         assets = [(path, video.filename, video.url, video.md5) for video in videos]
-        download_files(assets, no_meter=no_meter)
+        download_files(assets, resume=True, no_meter=no_meter)
 
     def download_images(self, path, no_meter=False):
         """Downloads images to ``images/``."""
@@ -317,7 +317,7 @@ class Collection(QueryableType, FileLockerType):
         assets = [
             (path, image.filename, image.url, image.image_md5) for image in images
         ]
-        download_files(assets, no_meter=no_meter)
+        download_files(assets, resume=True, no_meter=no_meter)
 
     def download_datasets(self, path, no_meter=False):
         """Clones and pulls all datasets in the collection."""

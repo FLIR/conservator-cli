@@ -36,4 +36,6 @@ for video in videos:
     file = (download_path, video.filename, video.url, video.md5)
     files.append(file)
 
-download_files(files)
+# 'resume' means don't re-download local files if md5sum already matches
+# md5sum of the corresponding remote file
+download_files(files, resume=True)
