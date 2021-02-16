@@ -8,9 +8,8 @@
             "description": "upload a test folder to Conservator",
             "task_type": "conservator_cli",
             "task_config": {
-                "cmd_class": "collections",
-                "cmd_name": "upload",
-                "args": ["--media", "--recursive", "--resume-media", "/SomeTestFolder", "/tmp/dl"],
+                "cmd": "collections",
+                "args": ["upload", "--media", "--recursive", "--resume-media", "/SomeTestFolder", "/tmp/dl"],
                 "log": "DEBUG"
             }
         }

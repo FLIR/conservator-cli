@@ -8,9 +8,8 @@
             "description": "download a test folder from Conservator",
             "task_type": "conservator_cli",
             "task_config": {
-                "cmd_class": "collections",
-                "cmd_name": "download",
-                "args": ["--media", "--recursive", "/SomeTestFolder", "/tmp/dl"],
+                "cmd": "collections",
+                "args": ["download", "--media", "--recursive", "/SomeTestFolder", "/tmp/dl"],
                 "log": "DEBUG"
             }
         }
