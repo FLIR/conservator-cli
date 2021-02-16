@@ -256,7 +256,6 @@ class Collection(QueryableType, FileLockerType):
     ):
         """Downloads this collection to the `path` specified,
         with the specified assets included."""
-        path = os.path.join(path, self.name)
         os.makedirs(path, exist_ok=True)
 
         if include_metadata:
@@ -270,8 +269,10 @@ class Collection(QueryableType, FileLockerType):
         if recursive:
             for id_ in self.child_ids:
                 child = Collection.from_id(self._conservator, id_)
+                child.populate("name")
+                child_path = os.path.join(path, child.name)
                 child.download(
-                    path,
+                    child_path,
                     include_datasets,
                     include_metadata,
                     include_associated_files,
@@ -298,8 +299,7 @@ class Collection(QueryableType, FileLockerType):
         self.download_images(path, no_meter=no_meter)
 
     def download_videos(self, path, no_meter=False):
-        """Downloads videos to ``videos/``."""
-        path = os.path.join(path, "videos")
+        """Downloads videos to given path."""
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
         fields.include_field("filename", "url", "md5")
@@ -308,8 +308,7 @@ class Collection(QueryableType, FileLockerType):
         download_files(assets, resume=True, no_meter=no_meter)
 
     def download_images(self, path, no_meter=False):
-        """Downloads images to ``images/``."""
-        path = os.path.join(path, "images")
+        """Downloads images to given path."""
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
         fields.include_field("filename", "url", "image_md5")
