@@ -299,8 +299,7 @@ class Collection(QueryableType, FileLockerType):
         self.download_images(path, no_meter=no_meter)
 
     def download_videos(self, path, no_meter=False):
-        """Downloads videos to ``videos/``."""
-        path = os.path.join(path, "videos")
+        """Downloads videos to given path."""
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
         fields.include_field("filename", "url", "md5")
@@ -309,8 +308,7 @@ class Collection(QueryableType, FileLockerType):
         download_files(assets, resume=True, no_meter=no_meter)
 
     def download_images(self, path, no_meter=False):
-        """Downloads images to ``images/``."""
-        path = os.path.join(path, "images")
+        """Downloads images to given path."""
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
         fields.include_field("filename", "url", "image_md5")
