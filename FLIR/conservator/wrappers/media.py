@@ -229,6 +229,8 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
     @requires_fields("url", "filename")
     def download(self, path, no_meter=False):
         """Download video to ``path``."""
+        # FIXME: fill in md5 when Conservator gets consistent fieldname for it
+        ## download_file(path, self.filename, self.url, remote_md5=self.md5, no_meter=no_meter)
         download_file(path, self.filename, self.url, no_meter=no_meter)
 
     def remove(self):

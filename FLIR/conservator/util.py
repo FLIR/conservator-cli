@@ -54,9 +54,18 @@ class FileDownloadException(Exception):
     pass
 
 
-def download_file(path, name, url, silent=False, no_meter=False):
+def download_file(path, name, url, remote_md5="", silent=False, no_meter=False):
     path = os.path.abspath(path)
+    file_path = os.path.join(path, name)
     os.makedirs(path, exist_ok=True)
+
+    if remote_md5 and os.path.exists(file_path):
+        logger.debug(f"Comparing {name} to {url}")
+        local_md5 = md5sum_file(file_path)
+        if local_md5 == remote_md5:
+            logger.info(f"Skip {name} (already downloaded)")
+            return True
+
     logger.debug(f"Downloading {name} from {url}")
     r = requests.get(url, stream=True, allow_redirects=True)
     if r.status_code != 200:
@@ -70,7 +79,7 @@ def download_file(path, name, url, silent=False, no_meter=False):
     progress = tqdm.tqdm(total=size, disable=no_meter)
     progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")
     chunk_size = 1024 * 1024
-    with open(os.path.join(path, name), "wb") as fd:
+    with open(file_path, "wb") as fd:
         for chunk in r.iter_content(chunk_size=chunk_size):
             progress.update(len(chunk))
             fd.write(chunk)
@@ -78,10 +87,20 @@ def download_file(path, name, url, silent=False, no_meter=False):
     return True
 
 
-def download_files(files, process_count=None, no_meter=False):
-    # files = (path, name, url)
+def download_files(files, resume=False, process_count=None, no_meter=False):
+    # incoming files argument is a list of 3 or 4-tuples per requested file:
+    #   if resume is enabled, must supply expected md5sum to determine
+    #   whether any existing files are complete
+    #     files = [(path, name, url, remote_md5), ...]
+    #   otherwise md5 field does not need to be provided and will be
+    #   ignored if given
+    #     files = [(path, name, url), ...]
     pool = multiprocessing.Pool(process_count)  # defaults to CPU count
-    args = [(*file, True, no_meter) for i, file in enumerate(files)]
+    if resume:
+        args = [(*file, True, no_meter) for i, file in enumerate(files)]
+    else:
+        # ignore any md5 values that may have been supplied
+        args = [(*file[0:3], "", True, no_meter) for i, file in enumerate(files)]
     results = pool.starmap(download_file, args)
     return results
 
