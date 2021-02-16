@@ -1,0 +1,17 @@
+{
+    "name": "Folder upload example",
+    "description": "Demonstrate uploading a folder to Conservator",
+    "plugin_registry": { "$discover_tasks": "FLIR/*/run_tasks_plugins"},
+    "tasks": [
+        {
+            "name": "upload_folder",
+            "description": "upload a test folder to Conservator",
+            "task_type": "conservator_cli",
+            "task_config": {
+                "cmd": "collections",
+                "args": ["upload", "--media", "--recursive", "--resume-media", "/SomeTestFolder", "/tmp/dl"],
+                "log": "DEBUG"
+            }
+        }
+    ]
+}

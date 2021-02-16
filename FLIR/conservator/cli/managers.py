@@ -52,8 +52,10 @@ def get_manager_command(type_manager, sgqlc_type, name):
     @group.command(name="fields", help=f"List the fields of a {sgqlc_type}")
     def fields_():
         click.echo(f"Field names of {sgqlc_type}:")
-        for field in sgqlc_type.__field_names__:
+        field_names = sgqlc_type.__field_names__
+        for field in field_names:
             click.echo(field)
+        return field_names
 
     @group.command(
         help=f"Print a {sgqlc_type} from a unique identifier (ID, Path, Name, etc.)"
@@ -64,6 +66,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         item = get_instance().from_string(identifier)
         item.populate(fields)
         click.echo(item)
+        return item
 
     if issubclass(type_manager, SearchableTypeManager):
 
@@ -74,6 +77,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             items = get_instance().search(search_text).with_fields(fields)
             for number, item in enumerate(items):
                 click.echo(item)
+            return items
 
         @group.command(name="list", help=f"List all {sgqlc_type}s")
         @fields_request
@@ -81,13 +85,16 @@ def get_manager_command(type_manager, sgqlc_type, name):
             items = get_instance().all().with_fields(fields)
             for number, item in enumerate(items):
                 click.echo(item)
+            return items
 
         @group.command(
             help=f"Count all {sgqlc_type}s, or the number of {sgqlc_type}s returned in a search"
         )
         @click.argument("search_text", default="")
         def count(search_text):
-            click.echo(get_instance().count(search_text))
+            num_found = get_instance().count(search_text)
+            click.echo(num_found)
+            return num_found
 
     if issubclass(type_manager, CollectionManager):
 
@@ -132,6 +139,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             collection.download(
                 localpath, datasets, video_metadata, associated_files, media, recursive
             )
+            return True
 
         @group.command(
             help="Upload a local directory to a Collection by ID or remote path"
@@ -205,6 +213,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 resume_media,
                 max_retries,
             )
+            return True
 
     if issubclass(type_manager, DatasetManager):
 
@@ -220,8 +229,10 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 "parents",
                 "tree",
             ]
-            for commit in dataset.get_commit_history(fields=commit_fields):
+            history = dataset.get_commit_history(fields=commit_fields)
+            for commit in history:
                 click.echo(to_clean_string(commit))
+            return history
 
         @group.command(
             name="commit",
@@ -241,6 +252,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             ]
             commit = dataset.get_commit_by_id(commit_id, fields=commit_fields)
             click.echo(to_clean_string(commit))
+            return commit
 
         @group.command(
             name="tree",
@@ -263,6 +275,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             click.echo(f"  Type\tName\tHash")
             for item in tree.tree_list:
                 click.echo(f"  {item.type}\t{item.name}\t{item._id}")
+            return tree
 
         @group.command(
             name="blob", help="Download a blob from a Dataset's version control tree."
@@ -283,6 +296,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 click.launch(blob_url)
                 return
             dataset.download_blob(blob_id, path)
+            return True
 
         @group.command(
             name="download-file",
@@ -295,6 +309,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         def download_file(dataset_identifier, filename, path, commit_hash):
             dataset = get_instance().from_string(dataset_identifier)
             dataset.download_blob_by_name(filename, path, commit_id=commit_hash)
+            return True
 
         @group.command(
             name="download-index",
@@ -306,6 +321,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         def download_index(dataset_identifier, path, commit_hash):
             dataset = get_instance().from_string(dataset_identifier)
             dataset.download_blob_by_name("index.json", path, commit_id=commit_hash)
+            return True
 
     if issubclass(type_manager, MediaTypeManager):
 
@@ -336,6 +352,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             conservator.upload(
                 localpath, collection=collection, remote_name=remote_name
             )
+            return True
 
         @group.command(
             help="Download media to the current directory, or the specified path."
@@ -352,5 +369,6 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 media.download_metadata(path)
             if not metadata_only:
                 media.download(path)
+            return True
 
     return group
