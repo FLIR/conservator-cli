@@ -133,7 +133,9 @@ class Config:
         old_path = os.path.join(os.path.expanduser("~"), ".conservator_config.json")
         new_path = Config.default_config_path()
         if os.path.exists(old_path) and not os.path.exists(new_path):
-            logger.warning("Config files are now stored under ~/.config/conservator-cli, moving yours.")
+            logger.warning(
+                "Config files are now stored under ~/.config/conservator-cli, moving yours."
+            )
             Config.from_file(old_path).save_to_default_config()
             os.remove(old_path)
 
@@ -199,7 +201,9 @@ class Config:
         """
         By default, your config is saved in ``~/.config/conservator-cli/default.json``.
         """
-        return os.path.join(os.path.expanduser("~"), ".config", "conservator-cli", "default.json")
+        return os.path.join(
+            os.path.expanduser("~"), ".config", "conservator-cli", "default.json"
+        )
 
     @staticmethod
     def delete_saved_default_config():
