@@ -78,6 +78,8 @@ class Config:
 
         :param path: The file path to save to.
         """
+        directory = os.path.split(path)[0]
+        os.makedirs(directory, exist_ok=True)
         with open(path, "w") as f:
             json.dump(self.to_dict(), f)
         if os.stat(path).st_mode & 0o777 != 0o600:
@@ -126,6 +128,15 @@ class Config:
         Creates a :class:`Config` object from the JSON config file
         at the :func:`Config.default_config_path`.
         """
+        # for previous installs that loaded the config to a different location:
+        # eventually this check and warning can be removed.
+        old_path = os.path.join(os.path.expanduser("~"), ".conservator_config.json")
+        new_path = Config.default_config_path()
+        if os.path.exists(old_path) and not os.path.exists(new_path):
+            logger.warning("Config files are now stored under ~/.config/conservator-cli, moving yours.")
+            Config.from_file(old_path).save_to_default_config()
+            os.remove(old_path)
+
         return Config.from_file(Config.default_config_path())
 
     @staticmethod
@@ -186,9 +197,9 @@ class Config:
     @staticmethod
     def default_config_path():
         """
-        By default, your config is saved in ``~/.conservator_config.json``.
+        By default, your config is saved in ``~/.config/conservator-cli/default.json``.
         """
-        return os.path.join(os.path.expanduser("~"), ".conservator_config.json")
+        return os.path.join(os.path.expanduser("~"), ".config", "conservator-cli", "default.json")
 
     @staticmethod
     def delete_saved_default_config():
