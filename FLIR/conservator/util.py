@@ -18,17 +18,8 @@ def to_clean_string(o, first=True):
         s = s.replace("\n", "\n    ")
         s += "\n}"
     elif hasattr(o.__class__, "underlying_type"):
-        s += o.__class__.__name__
+        s += o._instance.__class__.__name__
         for field in o.underlying_type.__field_names__:
-            if not hasattr(o, field):
-                continue
-            value = getattr(o, field)
-            s += f"\n{field}: {to_clean_string(value, False)}"
-        s = s.replace("\n", "\n    ")
-
-    elif hasattr(o, "__field_names__"):
-        s += o.__class__.__name__
-        for field in o.__field_names__:
             if not hasattr(o, field):
                 continue
             value = getattr(o, field)
