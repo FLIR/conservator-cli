@@ -94,8 +94,8 @@ class TypeProxy(object):
         return self._instance.__to_json_value__()
 
     def __to_json_value__(self):
-        # this is added for backwards compatibility to scripts that may have
-        # been using this method on unwrapped instances.
+        # This is added for backwards compatibility to scripts that may have been
+        # using this method on unwrapped instances. It's undocumented to avoid confusion.
         return self._instance.__to_json_value__()
 
     def __str__(self):
@@ -121,7 +121,7 @@ class TypeProxy(object):
         Gets the :class:`TypeProxy` subclass with an `underlying_type`
         related to `type_`. If one doesn't exist, returns generic :class:`TypeProxy`.
 
-        This checks the base type. For instance, it will match ``![Video]`` with ``Video``.
+        This checks the base type. For instance, it will match ``[Video]!`` with ``Video``.
         """
         # rather hacky
         for subcls in all_subclasses(TypeProxy):
