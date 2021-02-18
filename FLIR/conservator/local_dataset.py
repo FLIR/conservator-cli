@@ -318,6 +318,18 @@ class LocalDataset:
     def get_cache_path(self, md5):
         return os.path.join(self.cache_path, md5[:2], md5[2:])
 
+    def exists_in_cache(self, md5):
+        cache_path = self.get_cache_path(md5)
+        if not os.path.exists(cache_path):
+            return False
+        if not os.path.getsize(cache_path) > 0:
+            logger.warning(f"Cache file '{cache_path}' was empty, ignoring.")
+            return False
+        if not md5sum_file(cache_path) == md5:
+            logger.warning(f"Cache file '{cache_path}' had invalid MD5, ignoring.")
+            return False
+        return True
+
     def download(
         self,
         include_analytics=False,
@@ -373,11 +385,12 @@ class LocalDataset:
         cache_hits = 0
         assets = []  # (path, name, url)
         for md5 in hashes_required:
-            cache_path = self.get_cache_path(md5)
-            if os.path.exists(cache_path) and os.path.getsize(cache_path) > 0:
+            if self.exists_in_cache(md5):
                 cache_hits += 1
                 logger.info(f"Skipping {md5}: already downloaded.")
                 continue
+
+            cache_path = self.get_cache_path(md5)
             path, name = os.path.split(cache_path)
             url = self.conservator.get_dvc_hash_url(md5)
             asset = (path, name, url)
