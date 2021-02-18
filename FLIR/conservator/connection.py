@@ -16,6 +16,7 @@ __all__ = [
     "ConservatorConnection",
 ]
 
+from FLIR.conservator.wrappers import TypeProxy
 
 logger = logging.getLogger(__name__)
 
@@ -241,14 +242,8 @@ class ConservatorConnection:
         fr.exclude_fields(self.fields_manager.get_problematic_paths(type_))
         fr.prepare_query(query)
 
-        ret = getattr(self.run(op), query_name)
-        try:
-            if len(ret) == 0:
-                # no fields were initialized, meaning the value was likely not found
-                return None
-        except TypeError:
-            # this is thrown if the returned type was a primitive without __len__
-            # for instance, a bool or int
-            pass
+        result = self.run(op)
+        field = result._ContainerTypeMeta__fields[query_name]
+        value = getattr(result, query_name)
 
-        return ret
+        return TypeProxy.wrap(self, field.type, value)

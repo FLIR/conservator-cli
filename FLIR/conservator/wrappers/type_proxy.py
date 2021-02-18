@@ -161,6 +161,11 @@ class TypeProxy(object):
         if isinstance(instance, unwrapped_types):
             return instance
 
+        if len(instance) == 0:
+            # No fields were initialized, meaning the value is likely None.
+            # __len__ should exist because we've already checked for int, bool, etc.
+            return None
+
         cls = TypeProxy.get_wrapping_type(type_)
         if isinstance(instance, list):
             return [cls(conservator, i) for i in instance]
