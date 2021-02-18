@@ -133,15 +133,23 @@ class TypeProxy(object):
     def wrap(conservator, type_, instance):
         """
         Creates a new :class:`TypeProxy` instance of the appropriate subclass, or a generic
-        if no subclass exists for the type. Returns `None` if instance is `None`.
+        if no subclass exists for the type. Scalar types, such as `None`, `str`, `bool`, etc.,
+        are not wrapped and returned as-is.
 
         :param conservator: Conservator instance tied to the instance. Subclasses use this for
             many instance methods.
         :param type_: The SGQLC type of the instance to wrap.
         :param instance: The SGQLC object to wrap.
         """
-        if instance is None:
-            return None
+        unwrapped_types = (
+            type(None),
+            str,
+            int,
+            float,
+            bool,
+        )
+        if isinstance(instance, unwrapped_types):
+            return instance
 
         cls = TypeProxy.get_wrapping_type(type_)
         if isinstance(instance, list):
