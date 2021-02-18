@@ -30,6 +30,16 @@ class TypeProxy(object):
     underlying_type = None
 
     def __init__(self, conservator, instance):
+        if isinstance(instance, TypeProxy):
+            # Before queries returned a TypeProxy, many methods had to
+            # wrap the raw type manually. This ensures any old scripts
+            # will not break.
+            self._conservator = instance._conservator
+            self._instance = instance._instance
+            self.underlying_type = instance.underlying_type
+            self._initialized_fields = instance._initialized_fields
+            return
+
         self._conservator = conservator
         self._instance = instance
         if self.underlying_type is None:
