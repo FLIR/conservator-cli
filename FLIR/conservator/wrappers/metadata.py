@@ -1,7 +1,6 @@
 import json
 import os
 
-from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Mutation
 from FLIR.conservator.wrappers import TypeProxy
 from FLIR.conservator.wrappers.type_proxy import requires_fields

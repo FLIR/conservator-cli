@@ -77,5 +77,4 @@ class Video(MediaType):
             fields=video_fields,
             id=self.id,
         )
-        wrapped = Video(self._conservator, video)
-        return wrapped.frames
+        return video.frames

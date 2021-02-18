@@ -149,6 +149,7 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             completion_tags=completion_tags,
         )
         assert result is True
+        return result
 
     @staticmethod
     def _create(conservator, filename, collection_id=None):
@@ -164,6 +165,8 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             filename=filename,
             collection_id=collection_id,
         )
+        # We want to re-wrap here, so we don't get Video-specific methods
+        # on something that might become an Image...
         return MediaType(conservator, result)
 
     @staticmethod
