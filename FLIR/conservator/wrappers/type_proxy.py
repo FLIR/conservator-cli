@@ -163,13 +163,17 @@ class TypeProxy(object):
         if isinstance(instance, unwrapped_types):
             return instance
 
+        if isinstance(instance, list):
+            # This isn't the most efficient method, as it recalculates type for each item,
+            # but it handles nested lists correctly... We can refactor if speed ever
+            # becomes a concern.
+            return [TypeProxy.wrap(conservator, type_, item) for item in instance]
+
         if isinstance(instance, sgqlc.types.ContainerType) and len(instance) == 0:
             # No fields were initialized, meaning the value is likely None.
             return None
 
         cls = TypeProxy.get_wrapping_type(type_)
-        if isinstance(instance, list):
-            return [cls(conservator, i) for i in instance]
         return cls(conservator, instance)
 
 
