@@ -1,8 +1,6 @@
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated import schema
-from FLIR.conservator.generated.schema import Query, Mutation
-from FLIR.conservator.paginated_query import PaginatedQuery
-from FLIR.conservator.wrappers.frame import Frame
+from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.wrappers.media import MediaType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 

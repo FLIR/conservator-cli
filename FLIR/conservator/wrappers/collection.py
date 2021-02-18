@@ -17,9 +17,6 @@ from FLIR.conservator.util import download_files
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.queryable import QueryableType
-from FLIR.conservator.wrappers.video import Video
-from FLIR.conservator.wrappers.image import Image
-from FLIR.conservator.wrappers.dataset import Dataset
 
 
 logger = logging.getLogger(__name__)
@@ -165,8 +162,7 @@ class Collection(QueryableType, FileLockerType):
         """Returns a query for all images in this collection."""
         images = PaginatedQuery(
             self._conservator,
-            Image,
-            Query.images,
+            query=Query.images,
             fields=fields,
             search_text=search_text,
             collection_id=self.id,
@@ -182,8 +178,7 @@ class Collection(QueryableType, FileLockerType):
         """Returns a query for all videos in this collection."""
         videos = PaginatedQuery(
             self._conservator,
-            Video,
-            Query.videos,
+            query=Query.videos,
             fields=fields,
             search_text=search_text,
             collection_id=self.id,
@@ -214,8 +209,7 @@ class Collection(QueryableType, FileLockerType):
         """Returns a query for all datasets in this collection."""
         datasets = PaginatedQuery(
             self._conservator,
-            Dataset,
-            Query.datasets,
+            query=Query.datasets,
             fields=fields,
             search_text=search_text,
             collection_id=self.id,

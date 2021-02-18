@@ -10,8 +10,8 @@ class PaginatedQuery:
     Assume you want to iterate through all the Projects in a project search
     query. You could do something like the following:
 
-    >>> results = PaginatedQuery(conservator, wrapping_type=Project, query=Query.projects, search_text="ADAS")
-    >>> results = results.including_fields("name")
+    >>> results = PaginatedQuery(conservator, query=Query.projects, search_text="ADAS")
+    >>> results = results.including("name")
     >>> for project in results:
     ...     print(project.name)
 

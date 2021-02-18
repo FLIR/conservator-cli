@@ -79,7 +79,6 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         return PaginatedQuery(
             self._conservator,
             query=Query.dataset_frames_only,
-            wrapping_type=DatasetFrame,
             unpack_field="dataset_frames",
             fields=fields,
             id=self.id,
