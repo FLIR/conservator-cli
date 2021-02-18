@@ -167,7 +167,9 @@ class TypeProxy(object):
             # This isn't the most efficient method, as it recalculates type for each item,
             # but it handles nested lists correctly... We can refactor if speed ever
             # becomes a concern.
-            return ListTypeProxy(TypeProxy.wrap(conservator, type_, item) for item in instance)
+            return ListTypeProxy(
+                TypeProxy.wrap(conservator, type_, item) for item in instance
+            )
 
         if isinstance(instance, sgqlc.types.ContainerType) and len(instance) == 0:
             # No fields were initialized, meaning the value is likely None.
@@ -182,6 +184,7 @@ class ListTypeProxy(list):
     Identical to built-in `list`, except it provides :meth:`to_json`. This ensures all types
     returned by queries have a :meth:`to_json`.
     """
+
     def to_json(self):
         """
         Returns a `list` suitable for turning into JSON.
