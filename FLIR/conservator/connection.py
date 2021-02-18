@@ -243,7 +243,6 @@ class ConservatorConnection:
         fr.prepare_query(query)
 
         result = self.run(op)
-        field = result._ContainerTypeMeta__fields[query_name]
         value = getattr(result, query_name)
 
-        return TypeProxy.wrap(self, field.type, value)
+        return TypeProxy.wrap(self, type_, value)
