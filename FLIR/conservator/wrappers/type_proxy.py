@@ -14,9 +14,9 @@ class TypeProxy(object):
     When you attempt to access a field, we first check that it exists on the
     underlying instance. If it doesn't, an `AttributeError` will be raised.
 
-    If it does exists, we check to see if a subclass of class:`TypeProxy` is defined
+    If it does exists, we check to see if a subclass of :class:`TypeProxy` is defined
     with a matching ``underlying_type``. If it does, an instance of that subclass is
-    returned with the value. Otherwise, a instance of the generic class:`TypeProxy`
+    returned with the value. Otherwise, a instance of the generic :class:`TypeProxy`
     is returned. This ensures all values returned by queries have the same basic methods
     (like :meth:`TypeProxy.to_json`). The type look-up is compatible with optional and
     list types.
