@@ -1,5 +1,4 @@
 from FLIR.conservator.conservator import Conservator
-from FLIR.conservator.fields_request import FieldsRequest
 
 conservator = Conservator.default()
 
@@ -12,5 +11,5 @@ adas_dataset.populate("name")
 print(adas_dataset)
 
 # Now we want all default fields:
-adas_dataset.populate_all()
+adas_dataset.populate()
 print(adas_dataset)

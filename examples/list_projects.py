@@ -2,11 +2,10 @@ from FLIR.conservator.conservator import Conservator
 
 conservator = Conservator.default()
 
-# Query all fields:
-# Notice there are errors, and the query needs to be repeated a few times.
-# It also takes a long time to finally execute.
+# Query all default fields:
+# Notice this takes a long time to finish.
 # This is not the recommended way to do a query (unless you actually want
-# all fields).
+# all default fields).
 print("SLOWER WAY:")
 for project in conservator.projects.all():
     print(project.id, project.name)
