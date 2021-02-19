@@ -437,7 +437,7 @@ class LocalDataset:
         for md5, paths_to_link in hashes_required.items():
             cache_path = self.get_cache_path(md5)
             if self.exists_in_cache(md5):
-                LocalDataset._add_links(cache_path, paths_to_link)
+                LocalDataset._add_links(cache_path, paths_to_link, use_symlink)
                 cache_hits += 1
                 logger.info(f"Skipping {md5}: already downloaded.")
                 continue
