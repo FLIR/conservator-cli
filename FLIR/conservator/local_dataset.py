@@ -1,9 +1,7 @@
-#!/usr/bin/env python
 import multiprocessing
 import subprocess
 import os
 import json
-import hashlib
 import shutil
 import requests
 import logging
@@ -12,7 +10,7 @@ import time
 
 import jsonschema
 from PIL import Image
-from FLIR.conservator.util import download_files, md5sum_file, download_file
+from FLIR.conservator.util import md5sum_file, download_file
 
 logger = logging.getLogger(__name__)
 
