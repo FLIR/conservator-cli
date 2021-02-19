@@ -318,6 +318,25 @@ class LocalDataset:
     def get_cache_path(self, md5):
         return os.path.join(self.cache_path, md5[:2], md5[2:])
 
+    def get_sorted_frames(self):
+        with open(self.index_path) as f:
+            data = json.load(f)
+
+        video_indexes = {}
+        for i, video in enumerate(data.get("videos", [])):
+            video_indexes[video["id"]] = i
+
+        def key(frame):
+            video_metadata = frame.get("videoMetadata", {})
+            video_id = video_metadata.get("videoId", "")
+            frame_index = video_metadata.get("frameIndex", 0)
+            video_index = video_indexes.get(video_id, len(video_indexes))
+            return video_index, frame_index
+
+        frames = data.get("frames", [])
+        
+        return sorted(frames, key=key)
+
     def download(
         self,
         include_analytics=False,
@@ -344,35 +363,33 @@ class LocalDataset:
             os.makedirs(self.analytics_path, exist_ok=True)
 
         links = []  # dest, src
-        hashes_required = set()
-        with open(self.index_path) as f:
-            data = json.load(f)
-            for frame in data.get("frames", []):
-                video_metadata = frame.get("videoMetadata", {})
-                video_id = video_metadata.get("videoId", "")
-                frame_index = video_metadata["frameIndex"]
-                dataset_frame_id = frame["datasetFrameId"]
-                if include_eight_bit:
-                    md5 = frame["md5"]
-                    hashes_required.add(md5)
+        hashes_required = dict()  # dict stores unique keys in order of insertion
+        for frame in self.get_sorted_frames():
+            video_metadata = frame.get("videoMetadata", {})
+            video_id = video_metadata.get("videoId", "")
+            frame_index = video_metadata["frameIndex"]
+            dataset_frame_id = frame["datasetFrameId"]
+            if include_eight_bit:
+                md5 = frame["md5"]
+                hashes_required[md5] = True
 
-                    name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
-                    path = os.path.join(self.data_path, name)
-                    cache_path = self.get_cache_path(md5)
-                    links.append((cache_path, path))
+                name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
+                path = os.path.join(self.data_path, name)
+                cache_path = self.get_cache_path(md5)
+                links.append((cache_path, path))
 
-                if include_analytics and ("analyticsMd5" in frame):
-                    md5 = frame["analyticsMd5"]
-                    hashes_required.add(md5)
+            if include_analytics and ("analyticsMd5" in frame):
+                md5 = frame["analyticsMd5"]
+                hashes_required[md5] = True
 
-                    name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
-                    path = os.path.join(self.analytics_path, name)
-                    cache_path = self.get_cache_path(md5)
-                    links.append((cache_path, path))
+                name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
+                path = os.path.join(self.analytics_path, name)
+                cache_path = self.get_cache_path(md5)
+                links.append((cache_path, path))
 
         cache_hits = 0
         assets = []  # (path, name, url)
-        for md5 in hashes_required:
+        for md5 in hashes_required.keys():
             cache_path = self.get_cache_path(md5)
             if os.path.exists(cache_path) and os.path.getsize(cache_path) > 0:
                 cache_hits += 1
