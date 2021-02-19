@@ -347,16 +347,31 @@ class LocalDataset:
     def _download_and_link(path, name, url, paths_to_link, use_symlink, no_meter):
         result = download_file(path, name, url, silent=True, no_meter=no_meter)
         downloaded_path = os.path.join(path, name)
+        LocalDataset._add_links(downloaded_path, paths_to_link, use_symlink)
+        return result
 
+    @staticmethod
+    def _add_links(path, paths_to_link, use_symlink):
         for link_path in paths_to_link:
-            logger.debug(f"Linking '{link_path}' to '{downloaded_path}'")
+            logger.debug(f"Linking '{link_path}' to '{path}'")
             if os.path.exists(link_path):
                 os.remove(link_path)
             if use_symlink:
-                os.symlink(downloaded_path, link_path)
+                os.symlink(path, link_path)
             else:
-                os.link(downloaded_path, link_path)
-        return result
+                os.link(path, link_path)
+
+    def exists_in_cache(self, md5):
+        cache_path = self.get_cache_path(md5)
+        if not os.path.exists(cache_path):
+            return False
+        if not os.path.getsize(cache_path) > 0:
+            logger.warning(f"Cache file '{cache_path}' was empty, ignoring.")
+            return False
+        if not md5sum_file(cache_path) == md5:
+            logger.warning(f"Cache file '{cache_path}' had invalid MD5, ignoring.")
+            return False
+        return True
 
     def download(
         self,
@@ -383,10 +398,9 @@ class LocalDataset:
         if include_analytics:
             os.makedirs(self.analytics_path, exist_ok=True)
 
-        links = []  # dest, src
-        hashes_required = (
-            dict()
-        )  # dict stores unique keys in order of insertion. this maps hash -> [links]
+        # dict stores unique keys in order of insertion. this maps hash -> [links]
+        frame_count = 0
+        hashes_required = dict()
         for frame in self.get_sorted_frames():
             video_metadata = frame.get("videoMetadata", {})
             video_id = video_metadata.get("videoId", "")
@@ -398,11 +412,10 @@ class LocalDataset:
                     f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
                 )
                 path = os.path.join(self.data_path, name)
-                cache_path = self.get_cache_path(md5)
-                links.append((cache_path, path))
 
                 hash_links = hashes_required.setdefault(md5, [])
                 hash_links.append(path)
+                frame_count += 1
 
             if include_analytics and ("analyticsMd5" in frame):
                 md5 = frame["analyticsMd5"]
@@ -410,11 +423,10 @@ class LocalDataset:
                     f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
                 )
                 path = os.path.join(self.analytics_path, name)
-                cache_path = self.get_cache_path(md5)
-                links.append((cache_path, path))
 
                 hash_links = hashes_required.setdefault(md5, [])
                 hash_links.append(path)
+                frame_count += 1
 
         # If frames were deleted from index.json, we need to clear them out of
         # the data directory. Because we have the cache, we can just delete everything.
@@ -424,7 +436,8 @@ class LocalDataset:
         assets = []  # (path, name, url, paths_to_link, use_symlink, no_meter)
         for md5, paths_to_link in hashes_required.items():
             cache_path = self.get_cache_path(md5)
-            if os.path.exists(cache_path) and os.path.getsize(cache_path) > 0:
+            if self.exists_in_cache(md5):
+                LocalDataset._add_links(cache_path, paths_to_link)
                 cache_hits += 1
                 logger.info(f"Skipping {md5}: already downloaded.")
                 continue
@@ -448,14 +461,13 @@ class LocalDataset:
                 failures += 1
         successes = len(assets) - failures
 
-        logger.info(f"Total frames: {len(links)}")
+        logger.info(f"Total frames: {frame_count}")
         logger.info(f"  Unique hashes: {len(hashes_required)}")
         logger.info(f"  Cache hits: {cache_hits}")
         logger.info(f"Downloads attempted: {len(assets)}")
         logger.info(f"  Reported {sum(results)} successes.")
         logger.info(f"  Successful downloads: {successes}")
         logger.info(f"  Failed downloads: {failures}")
-        logger.info(f"Linked {len(links)} files.")
 
     @staticmethod
     def clone(dataset, clone_path=None, verbose=True, max_retries=2, timeout=5):

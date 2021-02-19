@@ -5,7 +5,6 @@ import logging
 import requests
 import tqdm
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -18,17 +17,8 @@ def to_clean_string(o, first=True):
         s = s.replace("\n", "\n    ")
         s += "\n}"
     elif hasattr(o.__class__, "underlying_type"):
-        s += o.__class__.__name__
+        s += o._instance.__class__.__name__
         for field in o.underlying_type.__field_names__:
-            if not hasattr(o, field):
-                continue
-            value = getattr(o, field)
-            s += f"\n{field}: {to_clean_string(value, False)}"
-        s = s.replace("\n", "\n    ")
-
-    elif hasattr(o, "__field_names__"):
-        s += o.__class__.__name__
-        for field in o.__field_names__:
             if not hasattr(o, field):
                 continue
             value = getattr(o, field)
@@ -72,18 +62,31 @@ def download_file(path, name, url, remote_md5="", silent=False, no_meter=False):
         if not silent:
             raise FileDownloadException(url)
         else:
-            logger.debug(f"Skipped silent FileDownloadException for url: {url}")
+            logger.warning(f"Skipped silent FileDownloadException for url: {url}")
             return False
+
     size = int(r.headers.get("content-length", 0))
     size_mb = int(size / 1024 / 1024)
     progress = tqdm.tqdm(total=size, disable=no_meter)
     progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")
     chunk_size = 1024 * 1024
-    with open(file_path, "wb") as fd:
-        for chunk in r.iter_content(chunk_size=chunk_size):
-            progress.update(len(chunk))
-            fd.write(chunk)
-    progress.close()
+
+    try:
+        with open(file_path, "wb") as fd:
+            for chunk in r.iter_content(chunk_size=chunk_size):
+                progress.update(len(chunk))
+                fd.write(chunk)
+    except BaseException as e:
+        # To avoid partial downloads:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        if not silent:
+            raise FileDownloadException from e
+        logger.warning(f"Skipped silent FileDownloadException for url: {url}")
+        return False
+    finally:
+        progress.close()
     return True
 
 
