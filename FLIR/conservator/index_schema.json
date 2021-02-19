@@ -160,8 +160,8 @@
         "isEmpty": {"type": "boolean"},
         "isFlagged": {"type": "boolean"},
         "qaStatus": {
-          "type": "string",
-          "enum": ["approved", "changesRequested"]
+          "type":  ["string", "null"],
+          "enum": ["approved", "changesRequested", null]
         },
         "qaStatusNote": {"$ref": "#/definitions/noNull"},
         "md5": {"$ref": "#/definitions/md5hash"},
@@ -215,8 +215,8 @@
         "isEmpty": {"type": "boolean"},
         "isFlagged": {"type": "boolean"},
         "qaStatus": {
-          "type": "string",
-          "enum": ["approved", "changesRequested"]
+          "type": ["string", "null"],
+          "enum": ["approved", "changesRequested", null]
         },
         "qaStatusNote": {"$ref": "#/definitions/noNull"},
         "md5": {"$ref": "#/definitions/md5hash"},
