@@ -1,44 +1,61 @@
 import functools
 
+import sgqlc.types
+
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.util import to_clean_string
 
 
 class TypeProxy(object):
     """
-    Wraps an SGQLC object of a specific type with a known ``id``.
-
-    Subclasses can add class and instance methods to add functionality.
-
-    Fields of the underlying instance can be accessed on this instance.
+    Wraps an SGQLC object. Fields of the underlying instance can be accessed on this
+    instance. Subclasses can add class and instance methods to add functionality.
 
     When you attempt to access a field, we first check that it exists on the
-    underlying instance. If it doesn't, an `AttributeError` will be raised. If
-    it does exists, we check to see if its type has a known :class:`TypeProxy`
-    subclass. If it does, a type-proxied instance is returned, otherwise the base
-    SGQLC type is returned. This lookup is compatible with optional and list types.
+    underlying instance. If it doesn't, an `AttributeError` will be raised.
+
+    If it does exists, we check to see if a subclass of :class:`TypeProxy` is defined
+    with a matching ``underlying_type``. If it does, an instance of that subclass is
+    returned with the value. Otherwise, a instance of the generic :class:`TypeProxy`
+    is returned. This ensures all values returned by queries have the same basic methods
+    (like :meth:`TypeProxy.to_json`). The type look-up is compatible with optional and
+    list types.
+
+    Instances should be created using :func:`TypeProxy.wrap`, which will use the
+    appropriate class and constructor.
 
     :param conservator: The instance of :class:`~FLIR.conservator.conservator.Conservator`
         that created the underlying instance.
-    :param instance: The SGQLC object to wrap, usually returned by running
-        some query.
+    :param instance: The SGQLC object to wrap, usually returned by running some query.
     """
 
     underlying_type = None
 
     def __init__(self, conservator, instance):
+        if isinstance(instance, TypeProxy):
+            # Before queries returned a TypeProxy, many methods had to
+            # wrap the raw type manually. This ensures any old scripts
+            # will not break.
+            self._conservator = instance._conservator
+            self._instance = instance._instance
+            self.underlying_type = instance.underlying_type
+            self._initialized_fields = instance._initialized_fields
+            return
+
         self._conservator = conservator
         self._instance = instance
+        if self.underlying_type is None:
+            self.underlying_type = instance.__class__
         self._initialized_fields = [field for field in instance]
 
-    def __getattr__(self, item):
-        if item in self._initialized_fields:
-            field = self._instance._ContainerTypeMeta__fields[item]
-            value = getattr(self._instance, item)
+    def __getattr__(self, field_name):
+        if field_name in self._initialized_fields:
+            field = self._instance._ContainerTypeMeta__fields[field_name]
+            value = getattr(self._instance, field_name)
 
-            return TypeProxy.wrap_instance(self._conservator, field.type, value)
+            return TypeProxy.wrap(self._conservator, field.type, value)
 
-        raise AttributeError(f"Unknown or uninitialized attribute: '{item}'")
+        raise AttributeError(f"Unknown or uninitialized attribute: '{field_name}'")
 
     def has_field(self, path):
         """Returns `True` if the current instance has initialized the specified `path`.
@@ -88,15 +105,21 @@ class TypeProxy(object):
         """
         return self._instance.__to_json_value__()
 
+    def __to_json_value__(self):
+        # This is added for backwards compatibility to scripts that may have been
+        # using this method on unwrapped instances. It's undocumented to avoid confusion.
+        return self._instance.__to_json_value__()
+
     def __str__(self):
         return to_clean_string(self)
 
     @staticmethod
     def has_base_type(base_type, type_):
-        """Returns `True` if `type_` extends `base_type` in the
-        SGQLC type hierarchy.
+        """
+        Returns `True` if `type_` extends `base_type` in the SGQLC type hierarchy.
 
-        For instance, a `[Collection]` has base type `Collection`."""
+        For instance, a ``[Collection]`` has base type ``Collection``.
+        """
         b = type_
         while hasattr(b, "__base__"):
             if b == base_type:
@@ -106,27 +129,69 @@ class TypeProxy(object):
 
     @staticmethod
     def get_wrapping_type(type_):
-        """Gets the :class:`TypeProxy` with an `underlying_type`
-        related to `type_`. If one doesn't exist, returns `None`."""
+        """
+        Gets the :class:`TypeProxy` subclass with an `underlying_type`
+        related to `type_`. If one doesn't exist, returns generic :class:`TypeProxy`.
+
+        This checks the base type. For instance, it will match ``[Video]!`` with ``Video``.
+        """
         # rather hacky
-        cls = None
         for subcls in all_subclasses(TypeProxy):
             if TypeProxy.has_base_type(subcls.underlying_type, type_):
-                cls = subcls
-        return cls
+                return subcls
+        return TypeProxy
 
     @staticmethod
-    def wrap_instance(conservator, type_, instance):
-        """Creates a new TypeProxy instance of the appropriate
-        subclass, if one exists."""
-        # rather hacky
-        cls = TypeProxy.get_wrapping_type(type_)
-        if cls is None:
-            # no warping type exists
+    def wrap(conservator, type_, instance):
+        """
+        Creates a new :class:`TypeProxy` instance of the appropriate subclass, or a generic
+        if no subclass exists for the type. Scalar types, such as `None`, `str`, `bool`, etc.,
+        are not wrapped and returned as-is.
+
+        :param conservator: Conservator instance tied to the instance. Subclasses use this for
+            many instance methods.
+        :param type_: The SGQLC type of the instance to wrap.
+        :param instance: The SGQLC object to wrap.
+        """
+        unwrapped_types = (
+            type(None),
+            str,
+            int,
+            float,
+            bool,
+        )
+        if isinstance(instance, unwrapped_types):
             return instance
+
         if isinstance(instance, list):
-            return [cls(conservator, i) for i in instance]
+            # This isn't the most efficient method, as it recalculates type for each item,
+            # but it handles nested lists correctly... We can refactor if speed ever
+            # becomes a concern.
+            return ListTypeProxy(
+                TypeProxy.wrap(conservator, type_, item) for item in instance
+            )
+
+        if isinstance(instance, sgqlc.types.ContainerType) and len(instance) == 0:
+            # No fields were initialized, meaning the value is likely None.
+            return None
+
+        cls = TypeProxy.get_wrapping_type(type_)
         return cls(conservator, instance)
+
+
+class ListTypeProxy(list):
+    """
+    Identical to built-in `list`, except it provides :meth:`to_json`. This ensures all types
+    returned by queries have a :meth:`to_json`.
+    """
+
+    def to_json(self):
+        """
+        Returns a `list` suitable for turning into JSON.
+        """
+        return [
+            item.to_json() if isinstance(item, TypeProxy) else item for item in self
+        ]
 
 
 class MissingFieldException(Exception):

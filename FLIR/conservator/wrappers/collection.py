@@ -17,9 +17,6 @@ from FLIR.conservator.util import download_files
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.queryable import QueryableType
-from FLIR.conservator.wrappers.video import Video
-from FLIR.conservator.wrappers.image import Image
-from FLIR.conservator.wrappers.dataset import Dataset
 
 
 logger = logging.getLogger(__name__)
@@ -47,13 +44,12 @@ class Collection(QueryableType, FileLockerType):
         with the specified `fields`.
         """
         _input = CreateCollectionInput(name=name, parent_id=self.id)
-        result = self._conservator.query(
+        return self._conservator.query(
             Mutation.create_collection,
             operation_base=Mutation,
             input=_input,
             fields=fields,
         )
-        return Collection(self._conservator, result)
 
     @requires_fields("path")
     def get_child(self, name, make_if_no_exists=False, fields=None):
@@ -137,7 +133,7 @@ class Collection(QueryableType, FileLockerType):
                 return cls.create_from_remote_path(conservator, path, fields)
             else:
                 raise InvalidRemotePathException(path)
-        return Collection(conservator, collection)
+        return collection
 
     def recursively_get_children(self, include_self=False, fields=None):
         """
@@ -165,8 +161,7 @@ class Collection(QueryableType, FileLockerType):
         """Returns a query for all images in this collection."""
         images = PaginatedQuery(
             self._conservator,
-            Image,
-            Query.images,
+            query=Query.images,
             fields=fields,
             search_text=search_text,
             collection_id=self.id,
@@ -182,8 +177,7 @@ class Collection(QueryableType, FileLockerType):
         """Returns a query for all videos in this collection."""
         videos = PaginatedQuery(
             self._conservator,
-            Video,
-            Query.videos,
+            query=Query.videos,
             fields=fields,
             search_text=search_text,
             collection_id=self.id,
@@ -214,8 +208,7 @@ class Collection(QueryableType, FileLockerType):
         """Returns a query for all datasets in this collection."""
         datasets = PaginatedQuery(
             self._conservator,
-            Dataset,
-            Query.datasets,
+            query=Query.datasets,
             fields=fields,
             search_text=search_text,
             collection_id=self.id,
@@ -227,7 +220,7 @@ class Collection(QueryableType, FileLockerType):
         Remove given media from this collection.
         """
         metadata = MetadataInput(mode="remove", collections=[self.id])
-        self._conservator.query(
+        return self._conservator.query(
             Mutation.update_video,
             operation_base=Mutation,
             id=media_id,
@@ -240,7 +233,7 @@ class Collection(QueryableType, FileLockerType):
         Delete the collection.
         """
         input_ = DeleteCollectionInput(id=self.id)
-        self._conservator.query(
+        return self._conservator.query(
             Mutation.delete_collection, operation_base=Mutation, input=input_
         )
 

@@ -20,7 +20,11 @@ class QueryableType(TypeProxy):
     by_id_query = None
 
     def populate_all(self):
-        """Query conservator for all missing fields."""
+        """
+        .. deprecated:: 1.0.2
+            This no longer queries all fields, instead only selecting the defaults, which
+            is equivalent to calling :meth:`populate` with no arguments.
+        """
         self.populate(fields=FieldsRequest())
 
     def populate(self, fields=None):
@@ -33,11 +37,12 @@ class QueryableType(TypeProxy):
 
         fields = FieldsRequest.create(fields)
 
-        result = self._populate(fields)
+        result = self._populate(fields)  # returns a TypeProxy with the new fields
         if result is None:
             raise InvalidIdException(f"Query with id='{self.id}' returned None")
-        for field in result:
-            v = getattr(result, field)
+        # copy over fields from other _instance (to get unproxied)
+        for field in result._instance:
+            v = getattr(result._instance, field)
             setattr(self._instance, field, v)
             self._initialized_fields.append(field)
 

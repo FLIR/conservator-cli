@@ -32,10 +32,9 @@ for project in results:
     print(project)
 
 # The above is a common pattern, so it's been added as a function on
-# SearchableTypeManager. Notice: the "name" field must be included in
-# the requested fields.
+# SearchableTypeManager.
 print()
-print("Using built-in by_exact_name")
+print("Using built-in by_exact_name:")
 results = conservator.projects.by_exact_name(project_name, fields="name")
 for project in results:
     assert project.name == project_name

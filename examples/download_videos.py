@@ -1,7 +1,6 @@
 import os
 
 from FLIR.conservator.conservator import Conservator
-from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.util import download_files
 
 conservator = Conservator.default()

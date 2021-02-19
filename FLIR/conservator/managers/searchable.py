@@ -17,8 +17,7 @@ class SearchableTypeManager(TypeManager):
         """
         return PaginatedQuery(
             self._conservator,
-            self._underlying_type,
-            self._underlying_type.search_query,
+            query=self._underlying_type.search_query,
             search_text=search_text,
             **kwargs,
         )

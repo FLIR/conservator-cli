@@ -10,14 +10,13 @@ class PaginatedQuery:
     Assume you want to iterate through all the Projects in a project search
     query. You could do something like the following:
 
-    >>> results = PaginatedQuery(conservator, wrapping_type=Project, query=Query.projects, search_text="ADAS")
-    >>> results = results.including_fields("name")
+    >>> results = PaginatedQuery(conservator, query=Query.projects, search_text="ADAS")
+    >>> results = results.including("name")
     >>> for project in results:
     ...     print(project.name)
 
     :param conservator: The conservator instance to query.
-    :param wrapping_type: If specified, a :class:`~FLIR.conservator.wrappers.type_proxy.TypeProxy` class to
-        wrap instances in before they are returned.
+    :param wrapping_type: Not required. Included for backwards-compatibility.
     :param query: The GraphQL Query to use.
     :param base_operation: If specified, the base type of the query. Defaults to ``Query``.
     :param fields: Fields to include in the returned objects.
@@ -39,10 +38,9 @@ class PaginatedQuery:
         unpack_field=None,
         **kwargs
     ):
-        assert query is not None  # Unfortunately, this is a required arg, but
-        # for legacy reasons can't be moved before "wrapping_type" and made required.
+        # Unfortunately, query is a required arg, but for backwards-compatibility reasons can't be made required.
+        assert query is not None
         self._conservator = conservator
-        self._wrapping_type = wrapping_type
         self._query = query
         self._base_operation = base_operation
         self.fields = FieldsRequest.create(fields)
@@ -181,9 +179,7 @@ class PaginatedQuery:
             return []
         if self.unpack_field is not None:
             results = getattr(results, self.unpack_field)
-        if self._wrapping_type is None:
-            return results
-        return [self._wrapping_type(self._conservator, i) for i in results]
+        return results
 
     def _passes_filters(self, instance):
         return all(filter_(instance) for filter_ in self.filters)
