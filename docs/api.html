@@ -521,6 +521,19 @@ which runs the GraphQL query for a collection’s datasets, and returns
 them as proxied <a class="reference internal" href="#FLIR.conservator.wrappers.dataset.Dataset" title="FLIR.conservator.wrappers.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> objects.</p>
 <div class="section" id="module-FLIR.conservator.wrappers.type_proxy">
 <span id="typeproxy"></span><h3>TypeProxy<a class="headerlink" href="#module-FLIR.conservator.wrappers.type_proxy" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.type_proxy.ListTypeProxy">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></code><code class="sig-name descname"><span class="pre">ListTypeProxy</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identical to built-in <cite>list</cite>, except it provides <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json" title="FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>. This ensures all types
+returned by queries have a <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json" title="FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json">
+<code class="sig-name descname"><span class="pre">to_json</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <cite>list</cite> suitable for turning into JSON.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py exception">
 <dt id="FLIR.conservator.wrappers.type_proxy.MissingFieldException">
 <em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></code><code class="sig-name descname"><span class="pre">MissingFieldException</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.MissingFieldException" title="Permalink to this definition">¶</a></dt>
@@ -531,21 +544,24 @@ operation.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.type_proxy.TypeProxy">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></code><code class="sig-name descname"><span class="pre">TypeProxy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wraps an SGQLC object of a specific type with a known <code class="docutils literal notranslate"><span class="pre">id</span></code>.</p>
-<p>Subclasses can add class and instance methods to add functionality.</p>
-<p>Fields of the underlying instance can be accessed on this instance.</p>
+<dd><p>Wraps an SGQLC object. Fields of the underlying instance can be accessed on this
+instance. Subclasses can add class and instance methods to add functionality.</p>
 <p>When you attempt to access a field, we first check that it exists on the
-underlying instance. If it doesn’t, an <cite>AttributeError</cite> will be raised. If
-it does exists, we check to see if its type has a known <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>
-subclass. If it does, a type-proxied instance is returned, otherwise the base
-SGQLC type is returned. This lookup is compatible with optional and list types.</p>
+underlying instance. If it doesn’t, an <cite>AttributeError</cite> will be raised.</p>
+<p>If it does exists, we check to see if a subclass of <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> is defined
+with a matching <code class="docutils literal notranslate"><span class="pre">underlying_type</span></code>. If it does, an instance of that subclass is
+returned with the value. Otherwise, a instance of the generic <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>
+is returned. This ensures all values returned by queries have the same basic methods
+(like <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.to_json" title="FLIR.conservator.wrappers.type_proxy.TypeProxy.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">TypeProxy.to_json()</span></code></a>). The type look-up is compatible with optional and
+list types.</p>
+<p>Instances should be created using <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap" title="FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">TypeProxy.wrap()</span></code></a>, which will use the
+appropriate class and constructor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conservator</strong> – The instance of <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
 that created the underlying instance.</p></li>
-<li><p><strong>instance</strong> – The SGQLC object to wrap, usually returned by running
-some query.</p></li>
+<li><p><strong>instance</strong> – The SGQLC object to wrap, usually returned by running some query.</p></li>
 </ul>
 </dd>
 </dl>
@@ -576,16 +592,16 @@ instance to be useful.</p>
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.type_proxy.TypeProxy.get_wrapping_type">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_wrapping_type</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.get_wrapping_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> with an <cite>underlying_type</cite>
-related to <cite>type_</cite>. If one doesn’t exist, returns <cite>None</cite>.</p>
+<dd><p>Gets the <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> subclass with an <cite>underlying_type</cite>
+related to <cite>type_</cite>. If one doesn’t exist, returns generic <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>.</p>
+<p>This checks the base type. For instance, it will match <code class="docutils literal notranslate"><span class="pre">[Video]!</span></code> with <code class="docutils literal notranslate"><span class="pre">Video</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.type_proxy.TypeProxy.has_base_type">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">has_base_type</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.has_base_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns <cite>True</cite> if <cite>type_</cite> extends <cite>base_type</cite> in the
-SGQLC type hierarchy.</p>
-<p>For instance, a <cite>[Collection]</cite> has base type <cite>Collection</cite>.</p>
+<dd><p>Returns <cite>True</cite> if <cite>type_</cite> extends <cite>base_type</cite> in the SGQLC type hierarchy.</p>
+<p>For instance, a <code class="docutils literal notranslate"><span class="pre">[Collection]</span></code> has base type <code class="docutils literal notranslate"><span class="pre">Collection</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -604,10 +620,21 @@ into JSON.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap_instance">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">wrap_instance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap_instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new TypeProxy instance of the appropriate
-subclass, if one exists.</p>
+<dt id="FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">wrap</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> instance of the appropriate subclass, or a generic
+if no subclass exists for the type. Scalar types, such as <cite>None</cite>, <cite>str</cite>, <cite>bool</cite>, etc.,
+are not wrapped and returned as-is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conservator</strong> – Conservator instance tied to the instance. Subclasses use this for
+many instance methods.</p></li>
+<li><p><strong>type</strong> – The SGQLC type of the instance to wrap.</p></li>
+<li><p><strong>instance</strong> – The SGQLC object to wrap.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -654,7 +681,10 @@ already exist on the object.</p>
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.queryable.QueryableType.populate_all">
 <code class="sig-name descname"><span class="pre">populate_all</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Query conservator for all missing fields.</p>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.0.2: </span>This no longer queries all fields, instead only selecting the defaults, which
+is equivalent to calling <a class="reference internal" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate" title="FLIR.conservator.wrappers.queryable.QueryableType.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a> with no arguments.</p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -1467,8 +1497,8 @@ of its execution.</p>
 <dd><p>Enables pagination of any query with <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> arguments.</p>
 <p>Assume you want to iterate through all the Projects in a project search
 query. You could do something like the following:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">PaginatedQuery</span><span class="p">(</span><span class="n">conservator</span><span class="p">,</span> <span class="n">wrapping_type</span><span class="o">=</span><span class="n">Project</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span> <span class="n">search_text</span><span class="o">=</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">including_fields</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">PaginatedQuery</span><span class="p">(</span><span class="n">conservator</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span> <span class="n">search_text</span><span class="o">=</span><span class="s2">&quot;ADAS&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">including</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -1477,8 +1507,7 @@ query. You could do something like the following:</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conservator</strong> – The conservator instance to query.</p></li>
-<li><p><strong>wrapping_type</strong> – If specified, a <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> class to
-wrap instances in before they are returned.</p></li>
+<li><p><strong>wrapping_type</strong> – Not required. Included for backwards-compatibility.</p></li>
 <li><p><strong>query</strong> – The GraphQL Query to use.</p></li>
 <li><p><strong>base_operation</strong> – If specified, the base type of the query. Defaults to <code class="docutils literal notranslate"><span class="pre">Query</span></code>.</p></li>
 <li><p><strong>fields</strong> – Fields to include in the returned objects.</p></li>
