@@ -318,24 +318,10 @@ class LocalDataset:
     def get_cache_path(self, md5):
         return os.path.join(self.cache_path, md5[:2], md5[2:])
 
-    def get_sorted_frames(self):
+    def get_frames(self):
         with open(self.index_path) as f:
             data = json.load(f)
-
-        video_indexes = {}
-        for i, video in enumerate(data.get("videos", [])):
-            video_indexes[video["id"]] = i
-
-        def key(frame):
-            video_metadata = frame.get("videoMetadata", {})
-            video_id = video_metadata.get("videoId", "")
-            frame_index = video_metadata.get("frameIndex", 0)
-            video_index = video_indexes.get(video_id, len(video_indexes))
-            return video_index, frame_index
-
-        frames = data.get("frames", [])
-
-        return sorted(frames, key=key)
+        return data.get("frames", [])
 
     def clean_data_dir(self):
         for file in os.listdir(self.data_path):
@@ -401,7 +387,7 @@ class LocalDataset:
         # dict stores unique keys in order of insertion. this maps hash -> [links]
         frame_count = 0
         hashes_required = dict()
-        for frame in self.get_sorted_frames():
+        for frame in self.get_frames():
             video_metadata = frame.get("videoMetadata", {})
             video_id = video_metadata.get("videoId", "")
             frame_index = video_metadata["frameIndex"]
