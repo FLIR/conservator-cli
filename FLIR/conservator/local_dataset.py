@@ -1,3 +1,4 @@
+import collections
 import multiprocessing
 import subprocess
 import os
@@ -382,9 +383,10 @@ class LocalDataset:
         if include_analytics:
             os.makedirs(self.analytics_path, exist_ok=True)
 
-        # dict stores unique keys in order of insertion. this maps hash -> [links]
         frame_count = 0
-        hashes_required = dict()
+        # Stores unique keys in order of insertion. This maps hash -> [links]
+        # dict is unordered until Python version 3.7+ (we support 3.6)
+        hashes_required = collections.OrderedDict()
         for frame in self.get_frames():
             video_metadata = frame.get("videoMetadata", {})
             video_id = video_metadata.get("videoId", "")
