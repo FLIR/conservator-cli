@@ -25,4 +25,3 @@ class Image(MediaType):
         the same as :meth:`MediaType.get_frame_by_index` with index `0`.
         """
         return self.get_frame_by_index(0, fields=fields)
-
