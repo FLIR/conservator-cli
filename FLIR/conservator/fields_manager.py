@@ -7,25 +7,8 @@ from FLIR.conservator.generated import schema
 
 class FieldsManager:
     """
-    Stores a map of problematic fields for each SGQLC type. These
-    are used during queries to avoid errors.
+    Defines default fields for each SGQLC type.
     """
-
-    def __init__(self):
-        self.problematic_fields = {
-            schema.Repository: {"id"},
-            schema.Dataset: {"repository.id"},
-        }
-
-    def get_problematic_paths(self, typ):
-        """Get problematic field paths for a given SGQLC `type`"""
-        return self.problematic_fields.get(typ, ())
-
-    def add_problematic_path(self, typ, path):
-        """Add a problematic field path for a given SGQLC `type`"""
-        if self.problematic_fields.get(typ) is None:
-            self.problematic_fields[typ] = set()
-        self.problematic_fields[typ].add(path)
 
     @classmethod
     def select_default_fields(cls, selector):
@@ -227,6 +210,7 @@ class FieldsManager:
         Converts a GraphQL name to python in the same way as SGQLC codegen.
         """
         # This code copied from SGQLC codegen
+        # TODO: I got this code moved into the main SGQLC module, we can import it once next version is released.
         s = []
         for w in FieldsManager.re_camel_case_words.findall(name):
             s.append(w.lower())
