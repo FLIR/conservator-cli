@@ -46,7 +46,6 @@ class Collection(QueryableType, FileLockerType):
         _input = CreateCollectionInput(name=name, parent_id=self.id)
         return self._conservator.query(
             Mutation.create_collection,
-            operation_base=Mutation,
             input=_input,
             fields=fields,
         )
@@ -222,7 +221,6 @@ class Collection(QueryableType, FileLockerType):
         metadata = MetadataInput(mode="remove", collections=[self.id])
         return self._conservator.query(
             Mutation.update_video,
-            operation_base=Mutation,
             id=media_id,
             metadata=metadata,
             fields="id",
@@ -234,7 +232,8 @@ class Collection(QueryableType, FileLockerType):
         """
         input_ = DeleteCollectionInput(id=self.id)
         return self._conservator.query(
-            Mutation.delete_collection, operation_base=Mutation, input=input_
+            Mutation.delete_collection,
+            input=input_,
         )
 
     @requires_fields("name", "file_locker_files", "child_ids")

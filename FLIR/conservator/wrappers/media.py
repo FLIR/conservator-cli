@@ -91,7 +91,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         return self._conservator.query(
             Mutation.process_video,
-            operation_base=Mutation,
             fields=fields,
             id=self.id,
             metadata_url=metadata_url,
@@ -108,7 +107,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         result = self._conservator.query(
             Mutation.generate_signed_multipart_video_upload_url,
-            operation_base=Mutation,
             part_number=part_number,
             upload_id=upload_id,
             video_id=self.id,
@@ -122,7 +120,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         upload_id = self._conservator.query(
             Mutation.initiate_video_upload,
-            operation_base=Mutation,
             video_id=self.id,
             filename=filename,
         )
@@ -142,7 +139,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             completion_tags = []
         result = self._conservator.query(
             Mutation.complete_video_upload,
-            operation_base=Mutation,
             video_id=self.id,
             filename=filename,
             upload_id=upload_id,
@@ -161,7 +157,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         result = conservator.query(
             Mutation.create_video,
-            operation_base=Mutation,
             filename=filename,
             collection_id=collection_id,
         )
@@ -242,5 +237,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         remove it from **all** collections.
         """
         return self._conservator.query(
-            Mutation.remove_video, operation_base=Mutation, id=self.id
+            Mutation.remove_video,
+            id=self.id,
         )

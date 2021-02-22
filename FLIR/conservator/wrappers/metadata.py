@@ -51,7 +51,7 @@ class MetadataType(TypeProxy):
             "content_type": content_type,
         }
         result = self._conservator.query(
-            self.metadata_gen_url, operation_base=Mutation, **mutation_args
+            self.metadata_gen_url, **mutation_args
         )
         return result.signed_url
 
@@ -64,7 +64,7 @@ class MetadataType(TypeProxy):
             "url": url,
         }
         result = self._conservator.query(
-            self.metadata_confirm_url, operation_base=Mutation, **mutation_args
+            self.metadata_confirm_url, **mutation_args
         )
         return result
 

@@ -1,6 +1,5 @@
 import os
 
-from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import Mutation
 from FLIR.conservator.wrappers import TypeProxy
 from FLIR.conservator.wrappers.type_proxy import requires_fields
@@ -53,7 +52,7 @@ class FileLockerType(TypeProxy):
             "content_type": content_type,
         }
         result = self._conservator.query(
-            self.file_locker_gen_url, operation_base=Mutation, **mutation_args
+            self.file_locker_gen_url, **mutation_args
         )
         return result.signed_url
 
@@ -89,7 +88,6 @@ class FileLockerType(TypeProxy):
         mutation_args = {self.id_type: self.id, "filename": filename}
         result = self._conservator.query(
             self.file_locker_remove,
-            operation_base=Mutation,
             fields="id",
             **mutation_args,
         )

@@ -26,17 +26,6 @@ class Frame(QueryableType):
         ids = [self.id]
         return self._conservator.query(Frame.by_ids_query, fields=fields, ids=ids)[0]
 
-    def get_annotations(self, fields=None):
-        """
-        Returns the frame's annotations with the specified `fields`.
-        """
-        return self._conservator.query(
-            schema.Frame.annotations,
-            operation_base=schema.Frame,
-            fields=fields,
-            id=self.id,
-        )
-
     def add_annotation(self, annotation_create, fields=None):
         """
         Adds an annotation using the specified `annotation_create` object.
@@ -46,7 +35,6 @@ class Frame(QueryableType):
         assert isinstance(annotation_create, AnnotationCreate)
         return self._conservator.query(
             Mutation.create_annotation,
-            operation_base=Mutation,
             fields=fields,
             frame_id=self.id,
             annotation=annotation_create,
@@ -61,7 +49,6 @@ class Frame(QueryableType):
         assert isinstance(prediction_create, PredictionCreate)
         return self._conservator.query(
             Mutation.create_prediction,
-            operation_base=Mutation,
             fields=fields,
             frame_id=self.id,
             prediction=prediction_create,
