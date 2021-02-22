@@ -26,22 +26,23 @@ class ConfigAttribute:
 
 class Config:
     """
-    Contains a user's Email and API Key (token), to be used
-    when authenticating operations on an instance of :class:`~FLIR.conservator.conservator.Conservator`
+    Contains a user's API Key (token) and other settings, to be used when authenticating
+    operations on an instance of :class:`~FLIR.conservator.conservator.Conservator`
     at a certain URL.
 
-    Attributes:
-        - CONSERVATOR_API_KEY
-        - CONSERVATOR_URL (default: https://flirconservator.com/)
-        - CONSERVATOR_MAX_RETRIES (default: 5)
-        - CONSERVATOR_CVC_CACHE_PATH (default: .cvc/cache)
+    Config attribute names (environment variables, dictionary keys):
+     - ``CONSERVATOR_API_KEY``
+     - ``CONSERVATOR_URL`` (default: https://flirconservator.com/)
+     - ``CONSERVATOR_MAX_RETRIES`` (default: 5)
+     - ``CONSERVATOR_CVC_CACHE_PATH`` (default: .cvc/cache)
 
-    :param kwargs: A dictionary of (str: str) providing values for all of the Config attributes.
+    :param kwargs: A dictionary of (`str`: `str`) providing values for all of the Config attributes.
         Any attribute not in the dictionary, will use the default value. If no default value is defined,
         an error is raised.
     """
 
-    attributes = {
+    DEFAULT_NAME = "default"
+    ATTRIBUTES = {
         "key": ConfigAttribute("CONSERVATOR_API_KEY", "Conservator API Key"),
         "url": ConfigAttribute(
             "CONSERVATOR_URL", "Conservator URL", default="https://flirconservator.com/"
@@ -57,7 +58,7 @@ class Config:
     }
 
     def __init__(self, **kwargs):
-        for name, attr in Config.attributes.items():
+        for name, attr in Config.ATTRIBUTES.items():
             v = kwargs.get(attr.internal_name, None)
             if v is not None:
                 v = attr.type_(v)
@@ -67,6 +68,80 @@ class Config:
                 raise ConfigError(f"Missing value for '{name}'")
             assert type(v) == attr.type_
             setattr(self, name, v)
+
+    @staticmethod
+    def from_dict(data):
+        return Config(**data)
+
+    @staticmethod
+    def from_environ():
+        """
+        Creates a :class:`Config` object from environment variables.
+        """
+        return Config.from_dict(os.environ)
+
+    @staticmethod
+    def from_input():
+        """
+        Creates a :class:`Config` object from standard input.
+        """
+        d = {}
+        for name, attr in Config.ATTRIBUTES.items():
+            if attr.default is None:
+                v = input(f"{attr.friendly_name}: ")
+            else:
+                v = input(f"{attr.friendly_name} (leave empty for {attr.default}): ")
+            v = v.strip()
+            if len(v) == 0:
+                v = None
+            d[attr.internal_name] = v
+        return Config.from_dict(d)
+
+    @staticmethod
+    def from_file(path):
+        """
+        Creates a :class:`Config` object from a JSON config file.
+
+        .. note:: For security, this file's mode will be set to ``600``.
+
+        :param path: The path to the JSON config file.
+        """
+        try:
+            with open(path, "r") as config:
+                data = json.load(config)
+            if os.stat(path).st_mode & 0o777 != 0o600:
+                logger.warning("Changing config file mode to 0600.")
+                os.chmod(path, 0o600)
+            return Config.from_dict(data)
+        except FileNotFoundError:
+            return None
+
+    @classmethod
+    def from_named_config_file(cls, name):
+        return Config.from_file(Config.named_config_path(name))
+
+    @staticmethod
+    def from_name(name):
+        return Config.from_named_config_file(name)
+
+    @staticmethod
+    def from_default_config_file():
+        """
+        Creates a :class:`Config` object from the JSON config file
+        at the :func:`Config.default_config_path`.
+        """
+        # for previous installs that loaded the config to a different location:
+        # eventually this check and warning can be removed.
+        old_path = os.path.join(os.path.expanduser("~"), ".conservator_config.json")
+        new_path = Config.default_config_path()
+        if os.path.exists(old_path) and not os.path.exists(new_path):
+            logger.warning(
+                "Config files are now stored under ~/.config/conservator-cli, moving yours."
+            )
+            Config.from_file(old_path).save_to_default_config()
+            os.remove(old_path)
+
+        return Config.from_file(Config.default_config_path())
 
     def save_to_file(self, path):
         """
@@ -89,8 +164,15 @@ class Config:
     def to_dict(self):
         return {
             attr.internal_name: getattr(self, name)
-            for name, attr in self.attributes.items()
+            for name, attr in self.ATTRIBUTES.items()
         }
+
+    def save_to_named_config(self, name):
+        """
+        Saves the :class:`Config` to the named config file, meaning
+        this config can be loaded by :func:`Config.from_name`.
+        """
+        self.save_to_file(Config.named_config_path(name))
 
     def save_to_default_config(self):
         """
@@ -100,70 +182,43 @@ class Config:
         self.save_to_file(Config.default_config_path())
 
     @staticmethod
-    def from_dict(data):
-        return Config(**data)
+    def named_config_path(name):
+        """
+        Configs are saved in ``~/.config/conservator-cli/`` as ``name.json``.
+        """
+        assert os.path.sep not in name
+        return os.path.join(
+            os.path.expanduser("~"), ".config", "conservator-cli", f"{name}.json"
+        )
 
     @staticmethod
-    def from_file(path):
+    def default_config_path():
         """
-        Creates a :class:`Config` object from a JSON config file.
-
-        .. note:: For security, this file's mode will be set to ``600``.
-
-        :param path: The path to the JSON config file.
+        The default config is saved in ``~/.config/conservator-cli/default.json``.
         """
-        try:
-            with open(path, "r") as config:
-                data = json.load(config)
-            if os.stat(path).st_mode & 0o777 != 0o600:
-                logger.warning("Changing config file mode to 0600.")
-                os.chmod(path, 0o600)
-            return Config.from_dict(data)
-        except FileNotFoundError:
-            return None
+        return Config.named_config_path(Config.DEFAULT_NAME)
 
     @staticmethod
-    def from_default_config_file():
-        """
-        Creates a :class:`Config` object from the JSON config file
-        at the :func:`Config.default_config_path`.
-        """
-        # for previous installs that loaded the config to a different location:
-        # eventually this check and warning can be removed.
-        old_path = os.path.join(os.path.expanduser("~"), ".conservator_config.json")
-        new_path = Config.default_config_path()
-        if os.path.exists(old_path) and not os.path.exists(new_path):
-            logger.warning(
-                "Config files are now stored under ~/.config/conservator-cli, moving yours."
-            )
-            Config.from_file(old_path).save_to_default_config()
-            os.remove(old_path)
-
-        return Config.from_file(Config.default_config_path())
+    def saved_config_names():
+        root_path = os.path.join(os.path.expanduser("~"), ".config", "conservator-cli")
+        files = os.listdir(root_path)
+        return [file[: -len(".json")] for file in files]
 
     @staticmethod
-    def from_environ():
+    def delete_saved_default_config():
         """
-        Creates a :class:`Config` object from environment variables.
+        Delete the default saved config, if it exists.
         """
-        return Config.from_dict(os.environ)
+        Config.delete_saved_named_config(Config.default_config_path())
 
     @staticmethod
-    def from_input():
+    def delete_saved_named_config(name):
         """
-        Creates a :class:`Config` object from standard input.
+        Delete the config named `name`, if it exists.
         """
-        d = {}
-        for name, attr in Config.attributes.items():
-            if attr.default is None:
-                v = input(f"{attr.friendly_name}: ")
-            else:
-                v = input(f"{attr.friendly_name} (leave empty for {attr.default}): ")
-            v = v.strip()
-            if len(v) == 0:
-                v = None
-            d[attr.internal_name] = v
-        return Config.from_dict(d)
+        path = Config.named_config_path(name)
+        if os.path.exists(path):
+            os.remove(path)
 
     @staticmethod
     def default(save=True):
@@ -196,23 +251,11 @@ class Config:
                 return creds
         raise ConfigError("Couldn't find or create a config")
 
-    @staticmethod
-    def default_config_path():
-        """
-        By default, your config is saved in ``~/.config/conservator-cli/default.json``.
-        """
-        return os.path.join(
-            os.path.expanduser("~"), ".config", "conservator-cli", "default.json"
+    def __str__(self):
+        return f"""Config for {self.url}:""" + "".join(
+            f"\n  {attribute.friendly_name}: {getattr(self, key)}"
+            for key, attribute in Config.ATTRIBUTES.items()
         )
-
-    @staticmethod
-    def delete_saved_default_config():
-        """
-        Delete the default saved config, if it exists.
-        """
-        path = Config.default_config_path()
-        if os.path.exists(path):
-            os.remove(path)
 
     def __repr__(self):
         return f"<Config for {self.url}>"
@@ -220,5 +263,5 @@ class Config:
     def __eq__(self, other):
         return isinstance(other, Config) and all(
             getattr(other, name) == getattr(self, name)
-            for name in Config.attributes.keys()
+            for name in Config.ATTRIBUTES.keys()
         )

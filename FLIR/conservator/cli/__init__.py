@@ -1,5 +1,6 @@
 import click
-from FLIR.conservator.config import Config
+
+from FLIR.conservator.cli.config import config_
 from FLIR.conservator.cli.managers import get_manager_command
 from FLIR.conservator.cli.interactive import interactive
 from FLIR.conservator.conservator import Conservator
@@ -35,23 +36,6 @@ def main(log):
     logging.basicConfig(level=levels[log])
 
 
-@main.command(help="View or delete the current config")
-@click.option(
-    "--delete", is_flag=True, help="If passed, delete the default credentials."
-)
-def config(delete):
-    if delete:
-        Config.delete_saved_default_config()
-        return
-    default_config = Config.default()
-    click.echo("Default config:")
-    click.echo(f"  URL: {default_config.url}")
-    click.echo(f"  Key: {default_config.key}")
-    click.echo(f"  Max Retries: {default_config.max_retries}")
-    click.echo(f"  CVC Cache Path: {default_config.cvc_cache_path}")
-    click.echo(f"Corresponds to email: {Conservator.default().get_email()}")
-
-
 @main.command(help="Print information on the current user")
 def whoami():
     conservator = Conservator.default()
@@ -59,6 +43,7 @@ def whoami():
     click.echo(to_clean_string(user))
 
 
+main.add_command(config_)
 main.add_command(
     get_manager_command(CollectionManager, schema.Collection, "collections")
 )
