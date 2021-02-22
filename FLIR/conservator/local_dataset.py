@@ -337,6 +337,8 @@ class LocalDataset:
 
     @staticmethod
     def _add_links(path, paths_to_link, use_symlink):
+        if not os.path.exists(path):
+            return
         for link_path in paths_to_link:
             logger.debug(f"Linking '{link_path}' to '{path}'")
             if os.path.exists(link_path):
