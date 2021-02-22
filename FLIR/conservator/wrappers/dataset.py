@@ -11,7 +11,6 @@ from FLIR.conservator.generated.schema import (
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.util import download_file
-from FLIR.conservator.wrappers.dataset_frame import DatasetFrame
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.queryable import QueryableType
@@ -46,7 +45,6 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         input_ = CreateDatasetInput(name=name, collection_ids=collection_ids)
         dataset = conservator.query(
             Mutation.create_dataset,
-            operation_base=Mutation,
             input=input_,
             fields=fields,
         )
@@ -58,7 +56,8 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         """
         input_ = DeleteDatasetInput(id=self.id)
         self._conservator.query(
-            Mutation.delete_dataset, operation_base=Mutation, input=input_
+            Mutation.delete_dataset,
+            input=input_,
         )
 
     def generate_metadata(self):
@@ -67,7 +66,6 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         """
         return self._conservator.query(
             Mutation.generate_dataset_metadata,
-            operation_base=Mutation,
             dataset_id=self.id,
         )
 
@@ -97,38 +95,9 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         )
         return self._conservator.query(
             Mutation.add_frames_to_dataset,
-            operation_base=Mutation,
             fields=fields,
             input=_input,
         )
-
-    def generate_signed_metadata_upload_url(self, filename, content_type):
-        """
-        Returns a signed url for uploading metadata with the given `filename` and
-        `content_type`.
-        """
-        result = self._conservator.query(
-            Mutation.generate_signed_dataset_metadata_upload_url,
-            operation_base=Mutation,
-            dataset_id=self.id,
-            content_type=content_type,
-            filename=filename,
-        )
-        return result.signed_url
-
-    def generate_signed_locker_upload_url(self, filename, content_type):
-        """
-        Returns a signed url for uploading a new file locker file with the given `filename` and
-        `content_type`.
-        """
-        result = self._conservator.query(
-            Mutation.generate_signed_dataset_file_locker_upload_url,
-            operation_base=Mutation,
-            dataset_id=self.id,
-            content_type=content_type,
-            filename=filename,
-        )
-        return result.signed_url
 
     def get_git_url(self):
         """Returns the Git URL used for cloning this Dataset."""
@@ -145,7 +114,6 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         user = self._conservator.get_user()
         return self._conservator.query(
             Mutation.commit_dataset,
-            operation_base=Mutation,
             dataset_id=self.id,
             commit_message=message,
             user_id=user.id,

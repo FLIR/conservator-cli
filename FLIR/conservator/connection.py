@@ -194,14 +194,11 @@ class ConservatorConnection:
         Provides an alternative way to prepare and run SGQLC operations.
 
         :param query: The SGQLC query to run.
-        :param operation_base: The base object of the query.
-            Defaults to :class:`FLIR.conservator.generated.schema.Query`.
+        :param operation_base: Not required. Included for backwards-compatibility.
         :param fields: A :class:`FLIR.conservator.fields_request.FieldsRequest` of
             the fields to include (or exclude) in the results.
         :param kwargs: These named parameters are passed as arguments to the query.
         """
-        if operation_base is None:
-            operation_base = schema.query_type
 
         tries = 0
 
@@ -209,7 +206,7 @@ class ConservatorConnection:
             # TODO: This retry logic is pretty messy. We should refactor and add tests.
             try:
                 try:
-                    return self._query(query, operation_base, fields, **kwargs)
+                    return self._query(query, fields, **kwargs)
                 except ConservatorGraphQLServerError as e:
                     self._handle_errors(e.errors, query.type)
             except ConservatorGraphQLServerError as e:
@@ -231,9 +228,9 @@ class ConservatorConnection:
                 logger.debug("Retrying request after exception: " + str(e))
                 logger.debug("Retry #" + str(tries))
 
-    def _query(self, query, operation_base, fields, **kwargs):
+    def _query(self, query, fields, **kwargs):
         type_ = query.type
-        op = Operation(operation_base)
+        op = Operation(query.container)
         query_name = query.name
         query = getattr(op, query_name)
         query(**kwargs)

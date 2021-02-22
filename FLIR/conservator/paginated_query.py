@@ -18,7 +18,7 @@ class PaginatedQuery:
     :param conservator: The conservator instance to query.
     :param wrapping_type: Not required. Included for backwards-compatibility.
     :param query: The GraphQL Query to use.
-    :param base_operation: If specified, the base type of the query. Defaults to ``Query``.
+    :param base_operation: Not required. Included for backwards-compatibility.
     :param fields: Fields to include in the returned objects.
     :param page_size: The page size to use when submitting requests.
     :param unpack_field: If specified, instead of directly returning the resulting object(s) from a query,
@@ -42,7 +42,6 @@ class PaginatedQuery:
         assert query is not None
         self._conservator = conservator
         self._query = query
-        self._base_operation = base_operation
         self.fields = FieldsRequest.create(fields)
         self._page = 0
         self._limit = page_size
@@ -161,12 +160,7 @@ class PaginatedQuery:
 
     def _do_query(self, page, limit):
         results = self._conservator.query(
-            query=self._query,
-            operation_base=self._base_operation,
-            fields=self.fields,
-            page=page,
-            limit=limit,
-            **self.kwargs
+            query=self._query, fields=self.fields, page=page, limit=limit, **self.kwargs
         )
         return results
 
