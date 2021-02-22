@@ -315,8 +315,7 @@ URLs.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>query</strong> – The SGQLC query to run.</p></li>
-<li><p><strong>operation_base</strong> – The base object of the query.
-Defaults to <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Query</span></code>.</p></li>
+<li><p><strong>operation_base</strong> – Not required. Included for backwards-compatibility.</p></li>
 <li><p><strong>fields</strong> – A <a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest" title="FLIR.conservator.fields_request.FieldsRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.fields_request.FieldsRequest</span></code></a> of
 the fields to include (or exclude) in the results.</p></li>
 <li><p><strong>kwargs</strong> – These named parameters are passed as arguments to the query.</p></li>
@@ -936,20 +935,6 @@ at the provided <cite>path</cite></p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="FLIR.conservator.wrappers.dataset.Dataset.generate_signed_locker_upload_url">
-<code class="sig-name descname"><span class="pre">generate_signed_locker_upload_url</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.generate_signed_locker_upload_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a signed url for uploading a new file locker file with the given <cite>filename</cite> and
-<cite>content_type</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.wrappers.dataset.Dataset.generate_signed_metadata_upload_url">
-<code class="sig-name descname"><span class="pre">generate_signed_metadata_upload_url</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.generate_signed_metadata_upload_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a signed url for uploading metadata with the given <cite>filename</cite> and
-<cite>content_type</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="FLIR.conservator.wrappers.dataset.Dataset.get_blob_id_by_name">
 <code class="sig-name descname"><span class="pre">get_blob_id_by_name</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HEAD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_blob_id_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a blob’s id (hash) from <cite>filename</cite>. This searches the root directory of
@@ -1142,12 +1127,6 @@ you could just use <code class="docutils literal notranslate"><span class="pre">
 <dt id="FLIR.conservator.wrappers.frame.Frame.download">
 <code class="sig-name descname"><span class="pre">download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download image to <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.wrappers.frame.Frame.get_annotations">
-<code class="sig-name descname"><span class="pre">get_annotations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.get_annotations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the frame’s annotations with the specified <cite>fields</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1509,7 +1488,7 @@ query. You could do something like the following:</p>
 <li><p><strong>conservator</strong> – The conservator instance to query.</p></li>
 <li><p><strong>wrapping_type</strong> – Not required. Included for backwards-compatibility.</p></li>
 <li><p><strong>query</strong> – The GraphQL Query to use.</p></li>
-<li><p><strong>base_operation</strong> – If specified, the base type of the query. Defaults to <code class="docutils literal notranslate"><span class="pre">Query</span></code>.</p></li>
+<li><p><strong>base_operation</strong> – Not required. Included for backwards-compatibility.</p></li>
 <li><p><strong>fields</strong> – Fields to include in the returned objects.</p></li>
 <li><p><strong>page_size</strong> – The page size to use when submitting requests.</p></li>
 <li><p><strong>unpack_field</strong> – If specified, instead of directly returning the resulting object(s) from a query,
