@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+import collections
+import multiprocessing
 import subprocess
 import os
 import json
-import hashlib
 import shutil
 import requests
 import logging
@@ -11,8 +11,7 @@ import time
 
 import jsonschema
 from PIL import Image
-from FLIR.conservator.util import download_files, md5sum_file
-
+from FLIR.conservator.util import md5sum_file, download_file
 
 logger = logging.getLogger(__name__)
 
@@ -318,6 +317,35 @@ class LocalDataset:
     def get_cache_path(self, md5):
         return os.path.join(self.cache_path, md5[:2], md5[2:])
 
+    def get_frames(self):
+        with open(self.index_path) as f:
+            data = json.load(f)
+        return data.get("frames", [])
+
+    def clean_data_dir(self):
+        for file in os.listdir(self.data_path):
+            file_path = os.path.join(self.data_path, file)
+            if os.path.islink(file_path) or os.stat(file_path).st_nlink > 1:
+                os.remove(file_path)
+
+    @staticmethod
+    def _download_and_link(path, name, url, paths_to_link, use_symlink, no_meter):
+        result = download_file(path, name, url, silent=True, no_meter=no_meter)
+        downloaded_path = os.path.join(path, name)
+        LocalDataset._add_links(downloaded_path, paths_to_link, use_symlink)
+        return result
+
+    @staticmethod
+    def _add_links(path, paths_to_link, use_symlink):
+        for link_path in paths_to_link:
+            logger.debug(f"Linking '{link_path}' to '{path}'")
+            if os.path.exists(link_path):
+                os.remove(link_path)
+            if use_symlink:
+                os.symlink(path, link_path)
+            else:
+                os.link(path, link_path)
+
     def exists_in_cache(self, md5):
         cache_path = self.get_cache_path(md5)
         if not os.path.exists(cache_path):
@@ -355,69 +383,62 @@ class LocalDataset:
         if include_analytics:
             os.makedirs(self.analytics_path, exist_ok=True)
 
-        links = []  # dest, src
-        hashes_required = set()
-        with open(self.index_path) as f:
-            data = json.load(f)
-            for frame in data.get("frames", []):
-                video_metadata = frame.get("videoMetadata", {})
-                video_id = video_metadata.get("videoId", "")
-                frame_index = video_metadata["frameIndex"]
-                dataset_frame_id = frame["datasetFrameId"]
-                if include_eight_bit:
-                    md5 = frame["md5"]
-                    hashes_required.add(md5)
+        frame_count = 0
+        # Stores unique keys in order of insertion. This maps hash -> [links]
+        # dict is unordered until Python version 3.7+ (we support 3.6)
+        hashes_required = collections.OrderedDict()
+        for frame in self.get_frames():
+            video_metadata = frame.get("videoMetadata", {})
+            video_id = video_metadata.get("videoId", "")
+            frame_index = video_metadata["frameIndex"]
+            dataset_frame_id = frame["datasetFrameId"]
+            if include_eight_bit:
+                md5 = frame["md5"]
+                name = (
+                    f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
+                )
+                path = os.path.join(self.data_path, name)
 
-                    name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.jpg"
-                    path = os.path.join(self.data_path, name)
-                    cache_path = self.get_cache_path(md5)
-                    links.append((cache_path, path))
+                hash_links = hashes_required.setdefault(md5, [])
+                hash_links.append(path)
+                frame_count += 1
 
-                if include_analytics and ("analyticsMd5" in frame):
-                    md5 = frame["analyticsMd5"]
-                    hashes_required.add(md5)
+            if include_analytics and ("analyticsMd5" in frame):
+                md5 = frame["analyticsMd5"]
+                name = (
+                    f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
+                )
+                path = os.path.join(self.analytics_path, name)
 
-                    name = f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
-                    path = os.path.join(self.analytics_path, name)
-                    cache_path = self.get_cache_path(md5)
-                    links.append((cache_path, path))
+                hash_links = hashes_required.setdefault(md5, [])
+                hash_links.append(path)
+                frame_count += 1
+
+        # If frames were deleted from index.json, we need to clear them out of
+        # the data directory. Because we have the cache, we can just delete everything.
+        self.clean_data_dir()
 
         cache_hits = 0
-        assets = []  # (path, name, url)
-        for md5 in hashes_required:
+        assets = []  # (path, name, url, paths_to_link, use_symlink, no_meter)
+        for md5, paths_to_link in hashes_required.items():
+            cache_path = self.get_cache_path(md5)
             if self.exists_in_cache(md5):
+                LocalDataset._add_links(cache_path, paths_to_link, use_symlink)
                 cache_hits += 1
                 logger.info(f"Skipping {md5}: already downloaded.")
                 continue
-
-            cache_path = self.get_cache_path(md5)
             path, name = os.path.split(cache_path)
             url = self.conservator.get_dvc_hash_url(md5)
-            asset = (path, name, url)
+            asset = (path, name, url, paths_to_link, use_symlink, no_meter)
             logger.debug(f"Going to download {md5}")
             assets.append(asset)
 
-        results = download_files(assets, process_count, no_meter=no_meter)
+        pool = multiprocessing.Pool(process_count)  # defaults to CPU count
+        results = pool.starmap(LocalDataset._download_and_link, assets)
 
-        # delete any symlinks or links in the data directory
-        # we will remake all for existing frames; this effectively
-        # removes old frames.
-        for file in os.listdir(self.data_path):
-            file_path = os.path.join(self.data_path, file)
-            if os.path.islink(file_path) or os.stat(file_path).st_nlink > 1:
-                os.remove(file_path)
-
-        for cache_path, data_path in links:
-            logger.debug(f"Linking '{data_path}' to '{cache_path}'")
-            if os.path.exists(data_path):
-                os.remove(data_path)
-            if use_symlink:
-                os.symlink(cache_path, data_path)
-            else:
-                os.link(cache_path, data_path)
-
+        # we double check everything downloaded
         failures = 0
-        for path, name, _ in assets:
+        for path, name, *_ in assets:
             full_path = os.path.join(path, name)
             if not os.path.exists(full_path) or os.path.getsize(full_path) == 0:
                 logger.error(
@@ -426,14 +447,13 @@ class LocalDataset:
                 failures += 1
         successes = len(assets) - failures
 
-        logger.info(f"Total frames: {len(links)}")
+        logger.info(f"Total frames: {frame_count}")
         logger.info(f"  Unique hashes: {len(hashes_required)}")
         logger.info(f"  Cache hits: {cache_hits}")
         logger.info(f"Downloads attempted: {len(assets)}")
         logger.info(f"  Reported {sum(results)} successes.")
         logger.info(f"  Successful downloads: {successes}")
         logger.info(f"  Failed downloads: {failures}")
-        logger.info(f"Linked {len(links)} files.")
 
     @staticmethod
     def clone(dataset, clone_path=None, verbose=True, max_retries=2, timeout=5):
