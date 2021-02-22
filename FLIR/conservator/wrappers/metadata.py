@@ -50,9 +50,7 @@ class MetadataType(TypeProxy):
             "filename": filename,
             "content_type": content_type,
         }
-        result = self._conservator.query(
-            self.metadata_gen_url, **mutation_args
-        )
+        result = self._conservator.query(self.metadata_gen_url, **mutation_args)
         return result.signed_url
 
     def _confirm_metadata_upload(self, url):
@@ -63,9 +61,7 @@ class MetadataType(TypeProxy):
             "id": self.id,
             "url": url,
         }
-        result = self._conservator.query(
-            self.metadata_confirm_url, **mutation_args
-        )
+        result = self._conservator.query(self.metadata_confirm_url, **mutation_args)
         return result
 
     @requires_fields("metadata", "filename")

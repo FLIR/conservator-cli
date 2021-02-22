@@ -160,11 +160,7 @@ class PaginatedQuery:
 
     def _do_query(self, page, limit):
         results = self._conservator.query(
-            query=self._query,
-            fields=self.fields,
-            page=page,
-            limit=limit,
-            **self.kwargs
+            query=self._query, fields=self.fields, page=page, limit=limit, **self.kwargs
         )
         return results
 

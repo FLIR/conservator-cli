@@ -127,9 +127,7 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         method to fail.
         """
         return self._conservator.query(
-            query=Query.commit_history_by_id,
-            fields=fields,
-            id=self.repository.master
+            query=Query.commit_history_by_id, fields=fields, id=self.repository.master
         )
 
     def get_commit_by_id(self, commit_id="HEAD", fields=None):

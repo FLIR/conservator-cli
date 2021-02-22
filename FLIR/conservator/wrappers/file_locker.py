@@ -51,9 +51,7 @@ class FileLockerType(TypeProxy):
             "filename": filename,
             "content_type": content_type,
         }
-        result = self._conservator.query(
-            self.file_locker_gen_url, **mutation_args
-        )
+        result = self._conservator.query(self.file_locker_gen_url, **mutation_args)
         return result.signed_url
 
     @requires_fields("file_locker_files")

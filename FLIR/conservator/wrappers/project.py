@@ -16,14 +16,10 @@ class Project(QueryableType):
 
         Note that this requires the privilege to create projects.
         """
-        return conservator.query(
-            Mutation.create_project, name=name, fields=fields
-        )
+        return conservator.query(Mutation.create_project, name=name, fields=fields)
 
     def delete(self):
         """
         Delete the project.
         """
-        return self._conservator.query(
-            Mutation.delete_project, id=self.id
-        )
+        return self._conservator.query(Mutation.delete_project, id=self.id)
