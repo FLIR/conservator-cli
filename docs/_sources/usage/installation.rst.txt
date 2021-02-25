@@ -14,7 +14,7 @@ your current Python Environment.
 Before you can use the command, you need to tell Conservator-CLI your API key and
 other settings. Log in to your conservator instance, and find your API key. Then run::
 
-    $ conservator config
+    $ conservator config create default
 
 Conservator CLI will ask you for your API key, and some other settings.
 The defaults should work for most users. These settings will be
@@ -25,9 +25,12 @@ saved in a config file for future use. To verify that they're correct, run::
 This should output information on your account. You're now free to start
 with :doc:`cli_quickstart` or :doc:`cvc_guide`.
 
-If you want to change credentials, you can delete your config by running::
+If you want to change credentials, you can edit your config by running::
 
-    $ conservator config --delete
+    $ conservator config edit
+
+For developers working with multiple conservator instances, you can add
+multiple configs. See ``conservator config --help`` for more info.
 
 Dependency
 ----------

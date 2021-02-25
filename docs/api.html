@@ -42,37 +42,21 @@ a variety of ways to create an instance of config.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.config.Config">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.config.</span></code><code class="sig-name descname"><span class="pre">Config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains a user’s Email and API Key (token), to be used
-when authenticating operations on an instance of <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
+<dd><p>Contains a user’s API Key (token) and other settings, to be used when authenticating
+operations on an instance of <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
 at a certain URL.</p>
-<dl class="py attribute">
-<dt>
-<code class="sig-name descname"><span class="pre">-</span> <span class="pre">CONSERVATOR_API_KEY</span></code></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt>
-<code class="sig-name descname"><span class="pre">-</span> <span class="pre">CONSERVATOR_URL</span> <span class="pre">(default</span></code></dt>
-<dd><p><a class="reference external" href="https://flirconservator.com/">https://flirconservator.com/</a>)</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt>
-<code class="sig-name descname"><span class="pre">-</span> <span class="pre">CONSERVATOR_MAX_RETRIES</span> <span class="pre">(default</span></code></dt>
-<dd><ol class="arabic simple" start="5">
-<li></li>
-</ol>
-</dd></dl>
-
-<dl class="py attribute">
-<dt>
-<code class="sig-name descname"><span class="pre">-</span> <span class="pre">CONSERVATOR_CVC_CACHE_PATH</span> <span class="pre">(default</span></code></dt>
-<dd><p>.cvc/cache)</p>
-</dd></dl>
-
+<dl class="simple">
+<dt>Config attribute names (environment variables, dictionary keys):</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL</span></code> (default: <a class="reference external" href="https://flirconservator.com/">https://flirconservator.com/</a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_MAX_RETRIES</span></code> (default: 5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_CVC_CACHE_PATH</span></code> (default: .cvc/cache)</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>kwargs</strong> – A dictionary of (str: str) providing values for all of the Config attributes.
+<dd class="field-odd"><p><strong>kwargs</strong> – A dictionary of (<cite>str</cite>: <cite>str</cite>) providing values for all of the Config attributes.
 Any attribute not in the dictionary, will use the default value. If no default value is defined,
 an error is raised.</p>
 </dd>
@@ -101,13 +85,19 @@ This means a user won’t need to type them again.</p>
 <dl class="py method">
 <dt id="FLIR.conservator.config.Config.default_config_path">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">default_config_path</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.default_config_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>By default, your config is saved in <code class="docutils literal notranslate"><span class="pre">~/.config/conservator-cli/default.json</span></code>.</p>
+<dd><p>The default config is saved in <code class="docutils literal notranslate"><span class="pre">~/.config/conservator-cli/default.json</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="FLIR.conservator.config.Config.delete_saved_default_config">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">delete_saved_default_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.delete_saved_default_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the default saved config, if it exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.config.Config.delete_saved_named_config">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">delete_saved_named_config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.delete_saved_named_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the config named <cite>name</cite>, if it exists.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -145,6 +135,12 @@ at the <a class="reference internal" href="#FLIR.conservator.config.Config.defau
 </dd></dl>
 
 <dl class="py method">
+<dt id="FLIR.conservator.config.Config.named_config_path">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">named_config_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.named_config_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configs are saved in <code class="docutils literal notranslate"><span class="pre">~/.config/conservator-cli/</span></code> as <code class="docutils literal notranslate"><span class="pre">name.json</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="FLIR.conservator.config.Config.save_to_default_config">
 <code class="sig-name descname"><span class="pre">save_to_default_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.save_to_default_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to the Default config file, meaning
@@ -165,6 +161,13 @@ this config will be loaded by <a class="reference internal" href="#FLIR.conserva
 <dd class="field-odd"><p><strong>path</strong> – The file path to save to.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.config.Config.save_to_named_config">
+<code class="sig-name descname"><span class="pre">save_to_named_config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.save_to_named_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> to the named config file, meaning
+this config can be loaded by <code class="xref py py-func docutils literal notranslate"><span class="pre">Config.from_name()</span></code>.</p>
 </dd></dl>
 
 </dd></dl>

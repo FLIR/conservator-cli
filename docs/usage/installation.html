@@ -45,7 +45,7 @@
 your current Python Environment.</p>
 <p>Before you can use the command, you need to tell Conservator-CLI your API key and
 other settings. Log in to your conservator instance, and find your API key. Then run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config create default
 </pre></div>
 </div>
 <p>Conservator CLI will ask you for your API key, and some other settings.
@@ -56,10 +56,12 @@ saved in a config file for future use. To verify that they’re correct, run:</p
 </div>
 <p>This should output information on your account. You’re now free to start
 with <a class="reference internal" href="cli_quickstart.html"><span class="doc">CLI Quickstart</span></a> or <a class="reference internal" href="cvc_guide.html"><span class="doc">CVC Guide</span></a>.</p>
-<p>If you want to change credentials, you can delete your config by running:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config --delete
+<p>If you want to change credentials, you can edit your config by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config edit
 </pre></div>
 </div>
+<p>For developers working with multiple conservator instances, you can add
+multiple configs. See <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">config</span> <span class="pre">--help</span></code> for more info.</p>
 </div>
 <div class="section" id="dependency">
 <h2>Dependency<a class="headerlink" href="#dependency" title="Permalink to this headline">¶</a></h2>
