@@ -102,27 +102,29 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @group.command(help="Create a new collection with the given path.")
         @click.argument("collection_path")
         @click.option(
-            "-r", "--recursive", is_flag=True, help="Create all missing path components"
+            "-p",
+            "--parents",
+            is_flag=True,
+            help="Create all missing parent path components",
         )
-        def create_path(collection_path, recursive):
+        def create_path(collection_path, parents):
             cpath = collection_path
             if not cpath.startswith("/"):
                 cpath = "/" + collection_path
             split_path = cpath.split("/")[1:]
             manager = get_instance()
-            if len(split_path) > 1:
+            if len(split_path) > 1 and not parents:
                 # Path is not a project.
                 base_path = "/" + "/".join(split_path[:-1])
-                # Unless recursive is set, a missing base path is an error.
+                # Unless parents is set, a missing base path is an error.
                 try:
-                    collection = manager.from_string(base_path)
+                    manager.from_remote_path(base_path)
                 except InvalidRemotePathException:
-                    if not recursive:
-                        click.echo(f"Base path {base_path} doesn't exist.")
-                        click.echo("Specify '-r' to create all path components.")
-                        return False
+                    click.echo(f"Base path {base_path} doesn't exist.")
+                    click.echo("Specify '-p' to create all path components.")
+                    return False
             try:
-                collection = manager.from_string(cpath)
+                collection = manager.from_remote_path(cpath)
                 if collection:
                     click.echo(f"Path {cpath} already exists.")
                     return True
