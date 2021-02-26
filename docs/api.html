@@ -1021,6 +1021,13 @@ identifier like <code class="docutils literal notranslate"><span class="pre">HEA
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.image.Image.get_frame">
+<code class="sig-name descname"><span class="pre">get_frame</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.get_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the frame of the Image. Because images only have one frame, this is
+the same as <code class="xref py py-meth docutils literal notranslate"><span class="pre">MediaType.get_frame_by_index()</span></code> with index <cite>0</cite>.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="FLIR.conservator.wrappers.image.Image.underlying_type">
 <code class="sig-name descname"><span class="pre">underlying_type</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.underlying_type" title="Permalink to this definition">¶</a></dt>
@@ -1076,25 +1083,9 @@ specified <cite>fields</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="FLIR.conservator.wrappers.video.Video.get_all_frames_paginated">
-<code class="sig-name descname"><span class="pre">get_all_frames_paginated</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.get_all_frames_paginated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Yields all frames in the video, 15 at a time, using
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_paginated_frames()</span></code>.</p>
-<p>This is only useful if you’re dealing with very long videos
-and want to paginate frames yourself. If the video is short,
-you could just use <code class="docutils literal notranslate"><span class="pre">populate(&quot;frames&quot;)</span></code> to get all frames.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="FLIR.conservator.wrappers.video.Video.get_annotations">
 <code class="sig-name descname"><span class="pre">get_annotations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.get_annotations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the video’s annotations with the specified <cite>fields</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.wrappers.video.Video.get_frame_by_index">
-<code class="sig-name descname"><span class="pre">get_frame_by_index</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.get_frame_by_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a single frame at a specific <cite>index</cite> in the video.</p>
 </dd></dl>
 
 <dl class="py attribute">
