@@ -5,9 +5,8 @@ import os
 import time
 
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.util import upload_file
 from FLIR.conservator.managers.type_manager import AmbiguousIdentifierException
-from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest, MediaCompare
+from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 logger = logging.getLogger(__name__)
@@ -27,7 +26,7 @@ class MediaTypeManager:
         self._conservator = conservator
 
     def from_path(self, string, fields="id"):
-        if not "/" in string:
+        if "/" not in string:
             return None
 
         # start by path lookup

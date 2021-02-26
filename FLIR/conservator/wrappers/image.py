@@ -18,3 +18,10 @@ class Image(MediaType):
         :param local_path: Path to local copy of file for comparison with remote.
         """
         return MediaType.verify_md5(local_path, self.image_md5)
+
+    def get_frame(self, fields=None):
+        """
+        Get the frame of the Image. Because images only have one frame, this is
+        the same as :meth:`MediaType.get_frame_by_index` with index `0`.
+        """
+        return self.get_frame_by_index(0, fields=fields)
