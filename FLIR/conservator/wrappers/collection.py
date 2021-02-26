@@ -102,7 +102,7 @@ class Collection(QueryableType, FileLockerType):
             )
         except InvalidRemotePathException:
             root = Collection.create_root(
-                conservator, name=root_path, fields=temp_fields
+                conservator, name=split_path[0], fields=temp_fields
             )
 
         current = root
