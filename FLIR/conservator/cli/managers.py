@@ -9,6 +9,7 @@ from FLIR.conservator.managers import (
     MediaTypeManager,
     DatasetManager,
 )
+from FLIR.conservator.wrappers.collection import Collection, InvalidRemotePathException
 from FLIR.conservator.util import to_clean_string
 
 
@@ -97,6 +98,40 @@ def get_manager_command(type_manager, sgqlc_type, name):
             return num_found
 
     if issubclass(type_manager, CollectionManager):
+
+        @group.command(help="Create a new collection with the given path.")
+        @click.argument("collection_path")
+        @click.option(
+            "-p",
+            "--parents",
+            is_flag=True,
+            help="Create all missing parent path components",
+        )
+        def create_path(collection_path, parents):
+            cpath = collection_path
+            if not cpath.startswith("/"):
+                cpath = "/" + collection_path
+            split_path = cpath.split("/")[1:]
+            manager = get_instance()
+            if len(split_path) > 1 and not parents:
+                # Path is not a project.
+                base_path = "/" + "/".join(split_path[:-1])
+                # Unless parents is set, a missing base path is an error.
+                try:
+                    manager.from_remote_path(base_path)
+                except InvalidRemotePathException:
+                    click.echo(f"Base path {base_path} doesn't exist.")
+                    click.echo("Specify '-p' to create all path components.")
+                    return False
+            try:
+                collection = manager.from_remote_path(cpath)
+                if collection:
+                    click.echo(f"Path {cpath} already exists.")
+                    return True
+            except InvalidRemotePathException:
+                pass
+            Collection.create_from_remote_path(manager._conservator, cpath)
+            return True
 
         @group.command(
             help="Download a Collection to the current directory, or the specified path."
