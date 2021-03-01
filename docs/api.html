@@ -366,26 +366,7 @@ fault.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.fields_manager.FieldsManager">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.fields_manager.</span></code><code class="sig-name descname"><span class="pre">FieldsManager</span></code><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores a map of problematic fields for each SGQLC type. These
-are used during queries to avoid errors.</p>
-<dl class="py method">
-<dt id="FLIR.conservator.fields_manager.FieldsManager.add_problematic_path">
-<code class="sig-name descname"><span class="pre">add_problematic_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.add_problematic_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a problematic field path for a given SGQLC <cite>type</cite></p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.fields_manager.FieldsManager.get_problematic_paths">
-<code class="sig-name descname"><span class="pre">get_problematic_paths</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.get_problematic_paths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get problematic field paths for a given SGQLC <cite>type</cite></p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.fields_manager.FieldsManager.graphql_to_python">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">graphql_to_python</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.graphql_to_python" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a GraphQL name to python in the same way as SGQLC codegen.</p>
-</dd></dl>
-
+<dd><p>Defines default fields for each SGQLC type.</p>
 <dl class="py method">
 <dt id="FLIR.conservator.fields_manager.FieldsManager.select_default_fields">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">select_default_fields</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.select_default_fields" title="Permalink to this definition">¶</a></dt>
