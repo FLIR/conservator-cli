@@ -1,6 +1,3 @@
-import re
-import keyword
-
 import sgqlc.types
 from FLIR.conservator.generated import schema
 
@@ -201,20 +198,3 @@ class FieldsManager:
             selector.flagged_frames()
             selector.full_res_mp4_url()
             selector.full_res_mp4_status()
-
-    re_camel_case_words = re.compile("([^A-Z]+|[A-Z]+[^A-Z]*)")
-
-    @staticmethod
-    def graphql_to_python(name):
-        """
-        Converts a GraphQL name to python in the same way as SGQLC codegen.
-        """
-        # This code copied from SGQLC codegen
-        # TODO: I got this code moved into the main SGQLC module, we can import it once next version is released.
-        s = []
-        for w in FieldsManager.re_camel_case_words.findall(name):
-            s.append(w.lower())
-        name = "_".join(s)
-        if keyword.iskeyword(name):
-            return name + "_"
-        return name
