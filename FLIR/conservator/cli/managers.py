@@ -133,6 +133,34 @@ def get_manager_command(type_manager, sgqlc_type, name):
             Collection.create_from_remote_path(manager._conservator, cpath)
             return True
 
+        @group.command(help="List media files contained in a given collection.")
+        @click.argument("identifier")
+        @click.option(
+            "-r",
+            "--recursive",
+            is_flag=True,
+            help="Include child collections recursively",
+        )
+        def list_media(identifier, recursive):
+            manager = get_instance()
+            collection_fields = FieldsRequest.create(("id", "name", "path"))
+            top_collection = manager.from_string(identifier, collection_fields)
+            media_fields = FieldsRequest.create(("id", "name"))
+            if recursive:
+                collection_paths = top_collection.recursively_get_children(
+                    include_self=True, fields=collection_fields
+                )
+            else:
+                collection_paths = [top_collection]
+            no_results = True
+            for coll in collection_paths:
+                for media_file in coll.get_media(media_fields):
+                    click.echo(f"{coll.path}/{media_file.name}")
+                    no_results = False
+            if no_results:
+                click.echo(f"No media found in collection {identifier}")
+            return True
+
         @group.command(
             help="Download a Collection to the current directory, or the specified path."
         )
