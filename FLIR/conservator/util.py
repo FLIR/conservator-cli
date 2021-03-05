@@ -57,10 +57,17 @@ def download_file(path, name, url, remote_md5="", silent=False, no_meter=False):
             return True
 
     logger.debug(f"Downloading {name} from {url}")
-    r = requests.get(url, stream=True, allow_redirects=True)
-    if r.status_code != 200:
+    try:
+        r = requests.get(url, stream=True, allow_redirects=True)
+        if r.status_code != 200:
+            if not silent:
+                raise FileDownloadException(url)
+            else:
+                logger.warning(f"Skipped silent FileDownloadException for url: {url}")
+                return False
+    except requests.exceptions.ConnectionError as e:
         if not silent:
-            raise FileDownloadException(url)
+            raise FileDownloadException(url) from e
         else:
             logger.warning(f"Skipped silent FileDownloadException for url: {url}")
             return False
