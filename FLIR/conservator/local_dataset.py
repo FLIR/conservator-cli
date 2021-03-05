@@ -10,9 +10,8 @@ import pkg_resources
 import time
 
 import jsonschema
-from PIL import Image
 import tqdm
-
+from PIL import Image
 from FLIR.conservator.util import md5sum_file, download_file
 
 logger = logging.getLogger(__name__)
