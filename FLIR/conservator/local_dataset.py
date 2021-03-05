@@ -445,18 +445,27 @@ class LocalDataset:
         logger.info(f"  Unique hashes: {len(hashes_required)}")
         logger.info(f"  Already downloaded: {cache_hits}")
         logger.info(f"  Missing: {len(assets)}")
-        logger.info(f"Going to download {len(assets)} new frames using {process_count} processes.")
+        logger.info(
+            f"Going to download {len(assets)} new frames using {process_count} processes."
+        )
         if process_count == 10:  # default
             yellow = "\x1b[33;21m"
             cyan = "\x1b[36;21m"
             reset = "\x1b[0m"
-            logger.info(f"{yellow}If you're running from {cyan}cvc download{yellow} and have a fast connection, you "
-                        f"might be able to speed this up by rerunning with the -p (--process_count) option.{reset}")
+            logger.info(
+                f"{yellow}If you're running from {cyan}cvc download{yellow} and have a fast connection, you "
+                f"might be able to speed this up by rerunning with the -p (--process_count) option.{reset}"
+            )
             logger.info(f"{yellow}For instance: {cyan}cvc download -p 50{reset}")
         with multiprocessing.Pool(process_count) as pool:
-            iterator = pool.imap(LocalDataset._download_and_link, assets)
-            progress = tqdm.tqdm(iterable=iterator, desc="Downloading new frames", total=len(assets), disable=no_meter)
-            results = list(progress)  # We need to consume the results as they're output to update the progress bar.
+            progress = tqdm.tqdm(
+                iterable=pool.imap(LocalDataset._download_and_link, assets),
+                desc="Downloading new frames",
+                total=len(assets),
+                disable=no_meter,
+            )
+            # We need to consume the results as they're output to update the progress bar, we use list.
+            results = list(progress)
 
         # we double check everything downloaded
         failures = 0
