@@ -27,8 +27,8 @@ pipeline {
       steps {
         echo "Running unit tests..."
         sh "mkdir /tmp/unit-tests"
-        dir("/tmp/unit-tests/") {
-          sh "pytest ${WORKSPACE}"
+        dir("/tmp/unit-tests") {
+          sh "pytest $WORKSPACE"
         }
       }
     }
