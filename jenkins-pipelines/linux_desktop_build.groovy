@@ -3,6 +3,7 @@ pipeline {
     dockerfile {
         dir "test"
         label "docker"
+        args "-u root --privileged"
     }
   }
   stages {
