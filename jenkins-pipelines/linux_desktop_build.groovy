@@ -9,7 +9,7 @@ pipeline {
     stage('Install') {
       steps {
         echo "Setting up..."
-        sh "pip install ."
+        sh "pip install --user ."
       }
     }
     stage('Formatting Test') {
