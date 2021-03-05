@@ -10,7 +10,7 @@ pipeline {
     stage('Install') {
       steps {
         echo "Setting up..."
-        sh "pip install --no-cache-dir --user ."
+        sh "pip install --no-cache-dir ."
       }
     }
     stage('Formatting Test') {
