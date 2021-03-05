@@ -1,8 +1,8 @@
 pipeline {
   agent {
-    label "ubuntu && desktop && docker"
     docker {
         image "python:3.8-slim"
+        label "docker"
     }
   }
   stages {
