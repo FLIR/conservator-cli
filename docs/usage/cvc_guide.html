@@ -136,11 +136,8 @@ used to using <code class="docutils literal notranslate"><span class="pre">cvc</
 <p>By default, Conservator-CLI uses <code class="docutils literal notranslate"><span class="pre">.cvc/cache</span></code> to store downloaded frames. In some
 cases, it can be useful to use a single cache shared across many dataset downloads.
 Duplicate frames will not be downloaded twice. To use a global cache, set the <cite>CVC Cache Path</cite>
-to an absolute path. This can be done when initially configuring Conservator, or by deleting
-and recreating your config:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config  # print current config
-$ conservator config --delete
-$ conservator config  # set config, be sure to change the CVC Cache Path.
+to an absolute path. This can be done when initially configuring Conservator, or by editing your config:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config edit
 </pre></div>
 </div>
 <p>Be careful, using a global config makes it difficult to clean up downloaded frames from a
@@ -375,7 +372,7 @@ must run <code class="docutils literal notranslate"><span class="pre">cvc</span>
       &copy;2021, FLIR Systems.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
