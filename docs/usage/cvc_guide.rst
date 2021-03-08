@@ -102,12 +102,9 @@ Global Cache
 By default, Conservator-CLI uses ``.cvc/cache`` to store downloaded frames. In some
 cases, it can be useful to use a single cache shared across many dataset downloads.
 Duplicate frames will not be downloaded twice. To use a global cache, set the `CVC Cache Path`
-to an absolute path. This can be done when initially configuring Conservator, or by deleting
-and recreating your config::
+to an absolute path. This can be done when initially configuring Conservator, or by editing your config::
 
-    $ conservator config  # print current config
-    $ conservator config --delete
-    $ conservator config  # set config, be sure to change the CVC Cache Path.
+    $ conservator config edit
 
 Be careful, using a global config makes it difficult to clean up downloaded frames from a
 single dataset.
