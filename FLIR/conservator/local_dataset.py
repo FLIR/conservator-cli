@@ -10,6 +10,7 @@ import pkg_resources
 import time
 
 import jsonschema
+import tqdm
 from PIL import Image
 from FLIR.conservator.util import md5sum_file, download_file
 
@@ -329,8 +330,10 @@ class LocalDataset:
                 os.remove(file_path)
 
     @staticmethod
-    def _download_and_link(path, name, url, paths_to_link, use_symlink, no_meter):
-        result = download_file(path, name, url, silent=True, no_meter=no_meter)
+    def _download_and_link(asset):
+        # we use imap (istarmap doesn't exist) so we need to unpack arguments
+        path, name, url, paths_to_link, use_symlink = asset
+        result = download_file(path, name, url, silent=True, no_meter=True)
         downloaded_path = os.path.join(path, name)
         LocalDataset._add_links(downloaded_path, paths_to_link, use_symlink)
         return result
@@ -385,6 +388,7 @@ class LocalDataset:
         if include_analytics:
             os.makedirs(self.analytics_path, exist_ok=True)
 
+        logger.info(f"Getting frames from index.json...")
         frame_count = 0
         # Stores unique keys in order of insertion. This maps hash -> [links]
         # dict is unordered until Python version 3.7+ (we support 3.6)
@@ -420,23 +424,47 @@ class LocalDataset:
         # the data directory. Because we have the cache, we can just delete everything.
         self.clean_data_dir()
 
+        logger.info(f"Checking cache...")
         cache_hits = 0
-        assets = []  # (path, name, url, paths_to_link, use_symlink, no_meter)
+        assets = []  # (path, name, url, paths_to_link, use_symlink)
         for md5, paths_to_link in hashes_required.items():
             cache_path = self.get_cache_path(md5)
             if self.exists_in_cache(md5):
                 LocalDataset._add_links(cache_path, paths_to_link, use_symlink)
                 cache_hits += 1
-                logger.info(f"Skipping {md5}: already downloaded.")
+                logger.debug(f"Skipping {md5}: already downloaded.")
                 continue
             path, name = os.path.split(cache_path)
             url = self.conservator.get_dvc_hash_url(md5)
-            asset = (path, name, url, paths_to_link, use_symlink, no_meter)
+            asset = (path, name, url, paths_to_link, use_symlink)
             logger.debug(f"Going to download {md5}")
             assets.append(asset)
 
-        pool = multiprocessing.Pool(process_count)  # defaults to CPU count
-        results = pool.starmap(LocalDataset._download_and_link, assets)
+        logger.info(f"Total frames: {frame_count}")
+        logger.info(f"  Unique hashes: {len(hashes_required)}")
+        logger.info(f"  Already downloaded: {cache_hits}")
+        logger.info(f"  Missing: {len(assets)}")
+        logger.info(
+            f"Going to download {len(assets)} new frames using {process_count} processes."
+        )
+        if process_count == 10:  # default
+            yellow = "\x1b[33;21m"
+            cyan = "\x1b[36;21m"
+            reset = "\x1b[0m"
+            logger.info(
+                f"{yellow}If you're running from {cyan}cvc download{yellow} and have a fast connection, you "
+                f"might be able to speed this up by rerunning with the -p (--process_count) option.{reset}"
+            )
+            logger.info(f"{yellow}For instance: {cyan}cvc download -p 50{reset}")
+        with multiprocessing.Pool(process_count) as pool:
+            progress = tqdm.tqdm(
+                iterable=pool.imap(LocalDataset._download_and_link, assets),
+                desc="Downloading new frames",
+                total=len(assets),
+                disable=no_meter,
+            )
+            # We need to consume the results as they're output to update the progress bar, we use list.
+            results = list(progress)
 
         # we double check everything downloaded
         failures = 0
@@ -449,9 +477,6 @@ class LocalDataset:
                 failures += 1
         successes = len(assets) - failures
 
-        logger.info(f"Total frames: {frame_count}")
-        logger.info(f"  Unique hashes: {len(hashes_required)}")
-        logger.info(f"  Cache hits: {cache_hits}")
         logger.info(f"Downloads attempted: {len(assets)}")
         logger.info(f"  Reported {sum(results)} successes.")
         logger.info(f"  Successful downloads: {successes}")
