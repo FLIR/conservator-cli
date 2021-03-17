@@ -20,15 +20,23 @@ pipeline {
       }
     }
     stage('Unit Tests') {
-      environment {
-        CONSERVATOR_API_KEY = credentials('conservator-api-key')
-        CONSERVATOR_URL = 'https://staging.flirconservator.com/'
-      }
       steps {
         echo "Running unit tests..."
-        sh "mkdir unit-tests"
         dir("unit-tests") {
-          sh "pytest $WORKSPACE"
+          sh "pytest $WORKSPACE/test/unit"
+        }
+      }
+    }
+    stage('Prepare Local Conservator') {
+        steps {
+            sh 'git clone git@github.com:FLIR/flirconservator.git'
+        }
+    }
+    stage('Integration Tests') {
+      steps {
+        echo "Running integration tests..."
+        dir("integration-tests") {
+          sh "pytest $WORKSPACE/test/integration"
         }
       }
     }
