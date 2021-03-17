@@ -9,6 +9,7 @@ pipeline {
           dir "test"
           label "docker"
           args "-u root --privileged"
+          reuseNode true
         }
       }
       stages {
