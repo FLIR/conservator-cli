@@ -45,7 +45,10 @@ pipeline {
           steps {
             // Docker needs to run as root, unfortunately that creates some files in the workspace that
             // the agent wont be able to modify. While we're still root, we need to lower the permissions.
-            sh "chmod -R 777 docs/_build"
+            // But before we do that, we need to switch to the gh_pages branch (otherwise git gets spooked
+            // by the changes to file modes).
+            sh "git checkout gh_pages"
+            sh "chmod -R 777 ."
           }
         }
       }
@@ -59,7 +62,6 @@ pipeline {
       steps {
         echo "Deploying..."
         sh "mv docs/_build/html temp/"
-        sh "git checkout gh_pages"
         sh "rm -rf docs/"
         sh "mv temp/ docs/"
         sh "touch docs/.nojekyll"
