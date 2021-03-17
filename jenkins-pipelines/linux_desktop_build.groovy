@@ -41,14 +41,13 @@ pipeline {
             }
           }
         }
-        //stage('Cleanup') {
-          //steps {
+        stage('Cleanup') {
+          steps {
             // Docker needs to run as root, unfortunately that creates some files in the workspace that
-            // the agent can't remove. Not super sure why, but it means that while we're still root, we
-            // need to lower the permissions of everything in the workspace.
-            // sh "chmod -R 777 ."
-          //}
-        //}
+            // the agent wont be able to modify. While we're still root, we need to lower the permissions.
+            sh "chmod -R 777 docs/_build"
+          }
+        }
       }
     }
     // Outside of docker container:
