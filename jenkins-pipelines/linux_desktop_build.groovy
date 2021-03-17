@@ -41,10 +41,12 @@ pipeline {
           }
         }
         stage('Cleanup') {
-          // Docker needs to run as root, unfortunately that creates some files in the workspace that
-          // the agent can't remove. Not super sure why, but it means that while we're still root, we
-          // need to lower the permissions of everything in the workspace.
-          sh "chmod -R 777 ."
+          steps {
+            // Docker needs to run as root, unfortunately that creates some files in the workspace that
+            // the agent can't remove. Not super sure why, but it means that while we're still root, we
+            // need to lower the permissions of everything in the workspace.
+            sh "chmod -R 777 ."
+          }
         }
       }
     }
