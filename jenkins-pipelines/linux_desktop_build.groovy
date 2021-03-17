@@ -1,6 +1,5 @@
 pipeline {
   agent {
-    label "docker"
     dockerfile {
       dir "test"
       label "docker"
