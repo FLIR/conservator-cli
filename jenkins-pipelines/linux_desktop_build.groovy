@@ -54,10 +54,8 @@ pipeline {
     }
   }
   post {
-    always {
-      // Docker needs to run as root, unfortunately that creates some files in the workspace that
-      // the agent wont be able to modify. While we're still root, we need to lower the permissions.
-      sh "chmod -R 777 ."
+    cleanup {
+      cleanWs()
     }
   }
 }
