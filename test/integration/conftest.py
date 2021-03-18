@@ -44,13 +44,17 @@ def conservator(empty_db):
     # TODO: Initialize an organization, groups.
     organization_id = empty_db.organizations.find_one({})["_id"]
     api_key = secrets.token_urlsafe(16)
-    empty_db.users.insert_one({
-        "_id": Conservator.generate_id(),
-        "role": ADMIN_ROLE,
-        "name": "admin user",
-        "email": "admin@example.com",
-        "apiKey": api_key,
-        "organizationId": organization_id,
-    })
-    config = Config(CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL="http://localhost:3000")
+    empty_db.users.insert_one(
+        {
+            "_id": Conservator.generate_id(),
+            "role": ADMIN_ROLE,
+            "name": "admin user",
+            "email": "admin@example.com",
+            "apiKey": api_key,
+            "organizationId": organization_id,
+        }
+    )
+    config = Config(
+        CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL="http://localhost:3000"
+    )
     yield Conservator(config)

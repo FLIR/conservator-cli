@@ -17,4 +17,3 @@ def test_authenticated(conservator):
     # Querying current user is also how webapp checks if authenticated
     user = conservator.get_user()
     assert user is not None
-
