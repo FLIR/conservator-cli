@@ -39,6 +39,7 @@ INSTALL_REQUIRES = [
     "black",
     "Pillow",
     "jsonschema",
+    "pymongo",
 ]
 
 if sys.platform.startswith("win"):

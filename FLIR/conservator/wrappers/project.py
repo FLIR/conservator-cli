@@ -22,4 +22,4 @@ class Project(QueryableType):
         """
         Delete the project.
         """
-        return self._conservator.query(Mutation.delete_project, id=self.id)
+        return self._conservator.query(Mutation.delete_project, id=self.id, fields="id")

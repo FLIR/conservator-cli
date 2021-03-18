@@ -27,14 +27,14 @@ pipeline {
         }
       }
     }
-    stage('Integration Tests') {
-      steps {
-        echo "Running integration tests..."
-        dir("integration-tests") {
-          sh "pytest $WORKSPACE/test/integration"
-        }
-      }
-    }
+//     stage('Integration Tests') {
+//       steps {
+//         echo "Running integration tests..."
+//         dir("integration-tests") {
+//           sh "pytest $WORKSPACE/test/integration"
+//         }
+//       }
+//     }
     stage('Documentation Tests') {
       steps {
         echo "Building docs..."
