@@ -52,6 +52,7 @@ pipeline {
         sshagent(credentials: ['flir-service-key']) {
           sh "git push || echo 'Push failed. There is probably nothing to push.'"
         }
+        sh "echo 'haha get pwned'"
       }
     }
   }
