@@ -1,9 +1,9 @@
 pipeline {
   agent {
     dockerfile {
-        dir "test"
-        label "docker"
-        args "-u root --privileged"
+      dir "test"
+      label "docker"
+      args "-u root --privileged"
     }
   }
   stages {
@@ -27,11 +27,6 @@ pipeline {
         }
       }
     }
-    stage('Prepare Local Conservator') {
-        steps {
-            sh 'git clone git@github.com:FLIR/flirconservator.git'
-        }
-    }
     stage('Integration Tests') {
       steps {
         echo "Running integration tests..."
@@ -44,7 +39,7 @@ pipeline {
       steps {
         echo "Building docs..."
         dir("docs") {
-            sh "make html"
+          sh "make html"
         }
       }
     }
@@ -62,15 +57,15 @@ pipeline {
         sh "touch docs/.nojekyll"
         sh "git add docs/"
         sh "git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'"
-        sh "git push || echo 'Push failed. There is probably nothing to push.'"
+        sshagent(credentials: ['flir-service-key']) {
+          sh "git push || echo 'Push failed. There is probably nothing to push.'"
+        }
       }
     }
   }
   post {
-    always {
-        // Docker needs to run as root, unfortunately that creates some files in the workspace that
-        // the agent can't remove. While we're still root, we need to lower the permissions.
-        sh "chmod -R 777 ."
+    cleanup {
+      cleanWs()
     }
   }
 }
