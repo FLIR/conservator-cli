@@ -4,3 +4,5 @@ RUN apt-get update && apt-get install -y git make
 
 RUN git config --global user.name "FLIR QA SERVICE" \
     && git config --global user.email flir-qa-service@muncasterconsulting.com
+
+RUN ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
