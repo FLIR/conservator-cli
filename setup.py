@@ -34,7 +34,6 @@ INSTALL_REQUIRES = [
     "click",
     "tqdm",
     "pytest",
-    "pytest-docker",
     "requests",
     "black",
     "Pillow",
