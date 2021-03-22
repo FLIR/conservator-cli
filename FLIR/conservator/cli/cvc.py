@@ -14,7 +14,8 @@ from FLIR.conservator.local_dataset import LocalDataset
 def pass_valid_local_dataset(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        path = get_current_context().obj
+        ctx_obj = get_current_context().obj
+        path = ctx_obj["cvc_local_path"]
         conservator = Conservator.default()
         # raises InvalidLocalDatasetPath if the path does not point to a
         # valid LocalDataset (defined as a directory containing index.json).
@@ -45,7 +46,7 @@ def main(ctx, log, path):
         "CRITICAL": logging.CRITICAL,
     }
     logging.basicConfig(level=levels[log])
-    ctx.obj = path
+    ctx.obj = {"cvc_local_path": path}
 
 
 @main.command(help="Clone a dataset by id, path, or name (if unique)")
@@ -60,7 +61,8 @@ def main(ctx, log, path):
 @click.option(
     "-c", "--checkout", help="If specified, a commit hash to checkout after cloning"
 )
-def clone(identifier, path, checkout):
+@click.pass_context
+def clone(ctx, identifier, path, checkout):
     conservator = Conservator.default()
     dataset = conservator.datasets.from_string(identifier)
     cloned = LocalDataset.clone(dataset, path)
@@ -218,7 +220,9 @@ def cvc(ctx, path):
     # The conservator command handles logging, and would
     # result in confusing behavior if included twice.
     conservator = Conservator.default()
-    ctx.obj = path
+    if not ctx.obj:
+        ctx.obj = {}
+    ctx.obj["cvc_local_path"] = path
 
 
 # Hacky way to "add" commands to both groups
