@@ -52,16 +52,8 @@ def main(ctx, log, path, config):
         "CRITICAL": logging.CRITICAL,
     }
     logging.basicConfig(level=levels[log])
-    if config:
-        try:
-            conservator = Conservator(Config.from_name(config))
-        except AttributeError:
-            raise RuntimeError(
-                f"Unknown/Invalid Conservator config '{config}'"
-            ) from None
-    else:
-        conservator = Conservator.default()
 
+    conservator = Conservator.create(config_name=config)
     ctx.ensure_object(dict)
     ctx.obj["conservator"] = conservator
     ctx.obj["cvc_local_path"] = path

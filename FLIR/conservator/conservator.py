@@ -87,6 +87,24 @@ class Conservator(ConservatorConnection):
         """
         return Conservator(Config.default(save=save))
 
+    @staticmethod
+    def create(config_name=None, save=True):
+        """
+        Returns a :class:`Conservator` using named config if given, and otherwise
+        creates a default instance via `Conservator.default()`.
+        """
+        conservator = None
+        if config_name:
+            try:
+                conservator = Conservator(Config.from_name(config_name))
+            except AttributeError:
+                raise RuntimeError(
+                    f"Unknown/Invalid Conservator config '{config}'"
+                ) from None
+        else:
+            conservator = Conservator.default()
+        return conservator
+
     def get_media_instance_from_id(self, media_id, fields=None):
         """
         Returns a Video or Image object from an ID. These types are checked in

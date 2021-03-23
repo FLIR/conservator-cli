@@ -41,16 +41,7 @@ def main(log, config):
     }
     logging.basicConfig(level=levels[log])
 
-    if config:
-        try:
-            conservator = Conservator(Config.from_name(config))
-        except AttributeError:
-            raise RuntimeError(
-                f"Unknown/Invalid Conservator config '{config}'"
-            ) from None
-    else:
-        conservator = Conservator.default()
-
+    conservator = Conservator.create(config_name=config)
     ctx = click.get_current_context()
     ctx.ensure_object(dict)
     ctx.obj["conservator"] = conservator
