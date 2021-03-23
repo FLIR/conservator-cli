@@ -1,4 +1,6 @@
 import secrets
+import shutil
+import subprocess
 
 import pytest
 import pymongo
@@ -9,14 +11,53 @@ from FLIR.conservator.conservator import Conservator
 ADMIN_ROLE = "Conservator Administrator"
 
 
-@pytest.fixture()
-def db():
-    # TODO: Get these from docker inspect.
-    domain = "172.17.0.2"
-    port = 27017
-    database_name = "flir-conservator-development"
-    client = pymongo.MongoClient(host=[f"{domain}:{port}"])
-    return client.get_database(database_name)
+@pytest.fixture(scope="session")
+def using_kubernetes():
+    if shutil.which("kubectl") is None:
+        return False
+    proc = subprocess.run(
+        ["kubectl", "get", "services", "-o", "name"], stdout=subprocess.PIPE, text=True
+    )
+    if "conservator-webapp" in proc.stdout:
+        return True
+    return False
+
+
+def get_mongo_pod_name():
+    # When running in k8s, the full name of the pod running mongo
+    cmd = subprocess.run(
+        ["kubectl", "get", "pods", "-o", "name"], stdout=subprocess.PIPE, text=True
+    )
+    pod_names = cmd.stdout.splitlines(keepends=False)
+    for pod_name in pod_names:
+        if "conservator-mongo" in pod_name:
+            return pod_name
+    raise RuntimeError("Can't find mongo pod")
+
+
+@pytest.fixture(scope="session")
+def mongo_client(using_kubernetes):
+    if using_kubernetes:
+        mongo_pod_name = get_mongo_pod_name()
+        # Port forward 27030 in the background...
+        port_forward_proc = subprocess.Popen(
+            ["kubectl", "port-forward", mongo_pod_name, f"27030:27017"]
+        )
+        yield pymongo.MongoClient("mongodb://localhost:27030/")
+        port_forward_proc.terminate()
+    else:  # Using docker
+        # TODO: Get mongo container IP using docker inspect
+        domain = "172.17.0.2"
+        port = 27017
+        yield pymongo.MongoClient(host=[f"{domain}:{port}"])
+
+
+@pytest.fixture(scope="session")
+def db(mongo_client):
+    for name in mongo_client.list_database_names():
+        if name.startswith("flir-conservator"):
+            return mongo_client.get_database(name)
+    raise RuntimeError("Can't find database")
 
 
 @pytest.fixture()
@@ -54,6 +95,6 @@ def conservator(empty_db):
         }
     )
     config = Config(
-        CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL="http://localhost:3000"
+        CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL="http://localhost:8080"
     )
     yield Conservator(config)
