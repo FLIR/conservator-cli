@@ -7,6 +7,7 @@ import logging
 
 from click import get_current_context
 
+from FLIR.conservator.config import Config
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
 
@@ -14,8 +15,9 @@ from FLIR.conservator.local_dataset import LocalDataset
 def pass_valid_local_dataset(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        path = get_current_context().obj
-        conservator = Conservator.default()
+        ctx_obj = get_current_context().obj
+        path = ctx_obj["cvc_local_path"]
+        conservator = ctx_obj["conservator"]
         # raises InvalidLocalDatasetPath if the path does not point to a
         # valid LocalDataset (defined as a directory containing index.json).
         local_dataset = LocalDataset(conservator, path)
@@ -33,10 +35,15 @@ def pass_valid_local_dataset(func):
     help="Logging level, defaults to INFO",
 )
 @click.option(
+    "--config",
+    default=None,
+    help="Conservator config name, use default credentials if not specified",
+)
+@click.option(
     "-p", "--path", default=".", help="Path to dataset, defaults to current directory"
 )
 @click.pass_context
-def main(ctx, log, path):
+def main(ctx, log, path, config):
     levels = {
         "DEBUG": logging.DEBUG,
         "INFO": logging.INFO,
@@ -45,7 +52,11 @@ def main(ctx, log, path):
         "CRITICAL": logging.CRITICAL,
     }
     logging.basicConfig(level=levels[log])
-    ctx.obj = path
+
+    conservator = Conservator.create(config_name=config)
+    ctx.ensure_object(dict)
+    ctx.obj["conservator"] = conservator
+    ctx.obj["cvc_local_path"] = path
 
 
 @main.command(help="Clone a dataset by id, path, or name (if unique)")
@@ -60,8 +71,9 @@ def main(ctx, log, path):
 @click.option(
     "-c", "--checkout", help="If specified, a commit hash to checkout after cloning"
 )
-def clone(identifier, path, checkout):
-    conservator = Conservator.default()
+@click.pass_context
+def clone(ctx, identifier, path, checkout):
+    conservator = ctx.obj["conservator"]
     dataset = conservator.datasets.from_string(identifier)
     cloned = LocalDataset.clone(dataset, path)
     if checkout is not None:
@@ -214,11 +226,10 @@ def publish(local_dataset, message, skip_validation):
 @click.pass_context
 def cvc(ctx, path):
     # This command is added to conservator CLI.
-    # It is the same as main sans the log level stuff.
-    # The conservator command handles logging, and would
-    # result in confusing behavior if included twice.
-    conservator = Conservator.default()
-    ctx.obj = path
+    # It is the same as main() except it skips things that toplevel
+    # conservator command already handles (logging and conservator config,
+    # and would result in confusing behavior if included twice.
+    ctx.obj["cvc_local_path"] = path
 
 
 # Hacky way to "add" commands to both groups

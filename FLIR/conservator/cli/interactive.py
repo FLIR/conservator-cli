@@ -399,7 +399,8 @@ def run_shell_command(command):
 @click.command(help="An interactive shell for exploring conservator")
 def interactive():
     global conservator
-    conservator = Conservator.default()
+    ctx_obj = click.get_current_context().obj
+    conservator = ctx_obj["conservator"]
 
     click.secho(
         """This is an interactive conservator "shell" that simulates the directory\n"""

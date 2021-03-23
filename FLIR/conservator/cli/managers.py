@@ -43,7 +43,8 @@ def fields_request(func):
 
 def get_manager_command(type_manager, sgqlc_type, name):
     def get_instance():
-        conservator = Conservator.default()
+        ctx_obj = click.get_current_context().obj
+        conservator = ctx_obj["conservator"]
         return type_manager(conservator)
 
     @click.group(name=name, help=f"View or manage {name}")
@@ -403,7 +404,8 @@ def get_manager_command(type_manager, sgqlc_type, name):
             help="If given and a remote path is provided, collections will be created to reach the remote path",
         )
         def upload(localpath, remote_collection, remote_name, create_collections):
-            conservator = Conservator.default()
+            ctx_obj = click.get_current_context().obj
+            conservator = ctx_obj["conservator"]
             if create_collections:
                 collection = conservator.collections.from_remote_path(
                     path=remote_collection, make_if_no_exist=True, fields="id"
