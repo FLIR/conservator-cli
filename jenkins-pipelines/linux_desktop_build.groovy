@@ -77,12 +77,16 @@ pipeline {
           }
         }
         stage("Run integration tests") {
-          dir("integration-tests") {
-            sh "pytest $WORKSPACE/test/integration"
+          steps {
+            dir("integration-tests") {
+              sh "pytest $WORKSPACE/test/integration"
+            }
           }
         }
         stage("Destroy kind cluster") {
-          sh "kind destroy cluster"
+          steps {
+            sh "kind destroy cluster"
+          }
         }
       }
     }
