@@ -74,7 +74,6 @@ pipeline {
                     && yarn create-admin-user admin@example.com \
                     && yarn create-organization FLIR admin@example.com \
                     && yarn db:migrate-up'"
-            }
           }
         }
         stage("Run integration tests") {
