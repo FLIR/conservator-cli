@@ -46,8 +46,12 @@ def mongo_client(using_kubernetes):
         yield pymongo.MongoClient("mongodb://localhost:27030/")
         port_forward_proc.terminate()
     else:  # Using docker
-        # TODO: Get mongo container IP using docker inspect
-        domain = "172.17.0.2"
+        mongo_addr_proc = subprocess.run(
+            ["docker", "inspect", "conservator_mongo", "-f", "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}"],
+            stdout=subprocess.PIPE,
+            text=True
+        )
+        domain = mongo_addr_proc.stdout.strip()
         port = 27017
         yield pymongo.MongoClient(host=[f"{domain}:{port}"])
 
