@@ -84,11 +84,6 @@ pipeline {
             }
           }
         }
-        stage("Destroy kind cluster") {
-          steps {
-            sh "kind destroy cluster"
-          }
-        }
       }
     }
     stage("Documentation Tests") {
@@ -122,6 +117,7 @@ pipeline {
   post {
     cleanup {
       cleanWs()
+      sh "kind delete cluster"
     }
   }
 }
