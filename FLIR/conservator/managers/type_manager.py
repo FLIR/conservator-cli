@@ -1,3 +1,5 @@
+from FLIR.conservator.connection import ConservatorGraphQLServerError
+
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 
@@ -25,7 +27,7 @@ class TypeManager:
         instance = self.from_id(id_)
         try:
             instance.populate("id")
-        except InvalidIdException:
+        except (InvalidIdException, ConservatorGraphQLServerError):
             return False
         return True
 

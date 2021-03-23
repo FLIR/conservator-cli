@@ -23,10 +23,18 @@ pipeline {
       steps {
         echo "Running unit tests..."
         dir("unit-tests") {
-          sh "pytest $WORKSPACE"
+          sh "pytest $WORKSPACE/test/unit"
         }
       }
     }
+//     stage('Integration Tests') {
+//       steps {
+//         echo "Running integration tests..."
+//         dir("integration-tests") {
+//           sh "pytest $WORKSPACE/test/integration"
+//         }
+//       }
+//     }
     stage('Documentation Tests') {
       steps {
         echo "Building docs..."
