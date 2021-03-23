@@ -3,7 +3,7 @@ pipeline {
     dockerfile {
       dir "test"
       label "docker"
-      args "-u root --privileged"
+      args "-u root --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
   stages {
