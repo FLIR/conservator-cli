@@ -3,6 +3,7 @@ import click
 from FLIR.conservator.cli.config import config_
 from FLIR.conservator.cli.managers import get_manager_command
 from FLIR.conservator.cli.interactive import interactive
+from FLIR.conservator.config import Config
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated import schema
 from FLIR.conservator.managers import (
@@ -25,7 +26,12 @@ import logging
     default="INFO",
     help="Logging level, defaults to INFO",
 )
-def main(log):
+@click.option(
+    "--config",
+    default=None,
+    help="Conservator config name, use default credentials if not specified",
+)
+def main(log, config):
     levels = {
         "DEBUG": logging.DEBUG,
         "INFO": logging.INFO,
@@ -35,10 +41,25 @@ def main(log):
     }
     logging.basicConfig(level=levels[log])
 
+    if config:
+        try:
+            conservator = Conservator(Config.from_name(config))
+        except AttributeError:
+            raise RuntimeError(
+                f"Unknown/Invalid Conservator config '{config}'"
+            ) from None
+    else:
+        conservator = Conservator.default()
+
+    ctx = click.get_current_context()
+    ctx.ensure_object(dict)
+    ctx.obj["conservator"] = conservator
+
 
 @main.command(help="Print information on the current user")
 def whoami():
-    conservator = Conservator.default()
+    ctx_obj = click.get_current_context().obj
+    conservator = ctx_obj["conservator"]
     user = conservator.get_user()
     click.echo(to_clean_string(user))
 
