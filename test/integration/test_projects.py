@@ -1,3 +1,7 @@
+import pytest
+from FLIR.conservator.connection import ConservatorGraphQLServerError
+
+
 def test_create_project(conservator):
     PROJECT_NAME = "My Project!!!"
     project = conservator.projects.create(PROJECT_NAME)
@@ -28,24 +32,6 @@ def test_delete_project(conservator):
 
     project.delete()
     assert not conservator.projects.id_exists(project.id)
-
-
-def test_many_projects(conservator):
-    NUM_PROJECTS = 50
-    project_ids = set()
-    for i in range(NUM_PROJECTS):
-        project = conservator.projects.create(f"Project #{i}")
-        assert project is not None
-        assert project.id is not None
-        project_ids.add(project.id)
-    assert len(project_ids) == NUM_PROJECTS
-
-    assert conservator.projects.count_all() == NUM_PROJECTS
-    all_projects = list(conservator.projects.all())
-    fetched_ids = set(project.id for project in all_projects)
-
-    assert len(fetched_ids) == NUM_PROJECTS
-    assert project_ids == fetched_ids
 
 
 def test_search(conservator):
@@ -86,3 +72,36 @@ def test_by_exact_name(conservator):
     assert len(fetched) == 1
     assert fetched.first().id == project.id
 
+
+def test_duplicate_name(conservator):
+    conservator.projects.create("Project")
+    with pytest.raises(ConservatorGraphQLServerError):
+        conservator.projects.create("Project")
+
+
+def test_reuse_name(conservator):
+    project = conservator.projects.create("Project")
+    project.delete()
+
+    new_project = conservator.projects.create("Project")
+    assert new_project.id != project
+    with pytest.raises(ConservatorGraphQLServerError):
+        conservator.projects.create("Project")
+
+
+def test_many_projects(conservator):
+    NUM_PROJECTS = 50
+    project_ids = set()
+    for i in range(NUM_PROJECTS):
+        project = conservator.projects.create(f"Project #{i}")
+        assert project is not None
+        assert project.id is not None
+        project_ids.add(project.id)
+    assert len(project_ids) == NUM_PROJECTS
+
+    assert conservator.projects.count_all() == NUM_PROJECTS
+    all_projects = list(conservator.projects.all())
+    fetched_ids = set(project.id for project in all_projects)
+
+    assert len(fetched_ids) == NUM_PROJECTS
+    assert project_ids == fetched_ids
