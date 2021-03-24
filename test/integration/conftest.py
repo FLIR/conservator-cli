@@ -16,7 +16,7 @@ def using_kubernetes():
     if shutil.which("kubectl") is None:
         return False
     proc = subprocess.run(
-        ["kubectl", "get", "services", "-o", "name"], stdout=subprocess.PIPE, text=True
+        ["kubectl", "--insecure-skip-tls-verify", "get", "services", "-o", "name"], stdout=subprocess.PIPE, text=True
     )
     if "conservator-webapp" in proc.stdout:
         return True
@@ -26,7 +26,7 @@ def using_kubernetes():
 def get_mongo_pod_name():
     # When running in k8s, the full name of the pod running mongo
     cmd = subprocess.run(
-        ["kubectl", "get", "pods", "-o", "name"], stdout=subprocess.PIPE, text=True
+        ["kubectl", "--insecure-skip-tls-verify", "get", "pods", "-o", "name"], stdout=subprocess.PIPE, text=True
     )
     pod_names = cmd.stdout.splitlines(keepends=False)
     for pod_name in pod_names:
@@ -41,7 +41,7 @@ def mongo_client(using_kubernetes):
         mongo_pod_name = get_mongo_pod_name()
         # Port forward 27030 in the background...
         port_forward_proc = subprocess.Popen(
-            ["kubectl", "port-forward", mongo_pod_name, f"27030:27017"]
+            ["kubectl", "--insecure-skip-tls-verify", "port-forward", mongo_pod_name, f"27030:27017"]
         )
         yield pymongo.MongoClient("mongodb://localhost:27030/")
         port_forward_proc.terminate()
