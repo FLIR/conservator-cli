@@ -102,3 +102,15 @@ def conservator(empty_db):
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL="http://localhost:8080"
     )
     yield Conservator(config)
+
+
+@pytest.fixture()
+def default_conservator(conservator):
+    """
+    Set the default config to point to conservator, for use when
+    testing CLI commands.
+    """
+    config = conservator.config
+    config.save_to_default_config()
+    yield conservator
+    config.delete_saved_default_config()
