@@ -80,8 +80,9 @@ pipeline {
                     && yarn create-organization FLIR admin@example.com \
                     && yarn db:migrate-up'"
             // For whatever reason, we need to restart webapp container
+            sh "sleep 60"
             sh "kubectl --insecure-skip-tls-verify rollout restart deployment.apps/conservator-webapp"
-            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
+            sh "sleep 60"
           }
         }
         stage("Run integration tests") {
