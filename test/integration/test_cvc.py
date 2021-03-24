@@ -5,7 +5,6 @@ Tests must use the default_conservator fixture, which sets Config.default(),
 as used by the CLI commands.
 """
 import os
-import shutil
 import subprocess
 
 
@@ -13,7 +12,7 @@ def cvc(*args):
     return subprocess.run(["cvc", *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 
-def test_clone(default_conservator):
+def test_empty_clone(default_conservator, tmp_cwd):
     dataset = default_conservator.datasets.create("My dataset")
     assert dataset is not None
 
@@ -24,8 +23,4 @@ def test_clone(default_conservator):
     # We can check the right thing was downloaded by comparing the IDs
     cloned_dataset = default_conservator.datasets.from_local_path("My dataset")
     assert cloned_dataset.id == dataset.id
-
-    shutil.rmtree("My dataset")
-
-
 

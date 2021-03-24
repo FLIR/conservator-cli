@@ -1,3 +1,4 @@
+import os
 import secrets
 import shutil
 import subprocess
@@ -114,3 +115,16 @@ def default_conservator(conservator):
     config.save_to_default_config()
     yield conservator
     config.delete_saved_default_config()
+
+
+@pytest.fixture()
+def tmp_cwd(tmp_path):
+    """
+    Set the current working directory to a temporary path for the duration
+    of the test. Then restore the current working directory and delete the path.
+    """
+    cwd = os.getcwd()
+    os.chdir(tmp_path)
+    yield tmp_path
+    os.chdir(cwd)
+    shutil.rmtree(tmp_path)
