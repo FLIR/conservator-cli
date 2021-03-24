@@ -13,7 +13,11 @@ nodes:
     hostPort: 8080
     protocol: TCP
 networking:
-  apiServerAddress: "127.0.0.1"
+  # HACK! This lets the testing container talk to the kubectl running in the
+  # host container. But it requires modifying ~/.kube/config in the container,
+  # and passing --insecure-skip-tls-verify to all kubectl commands.
+  # There's probably a better way...
+  apiServerAddress: "0.0.0.0"
   # The port needs to be fixed so we can network between the testing docker
   # container and kind-control-pane
   apiServerPort: 46195
