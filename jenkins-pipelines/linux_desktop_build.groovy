@@ -45,9 +45,11 @@ pipeline {
           environment {
             AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
             AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
+            AWS_DOMAIN = credentials("docker-aws-domain-conservator")
           }
           steps {
-            sh "env aws ecr get-login --no-include-email --region us-east-1 | sh"
+            sh "env aws ecr get-login-password --region us-east-1 \
+                 | docker login --username AWS --password-stdin $AWS_DOMAIN"
             sh "docker pull $FC_DOCKER_IMAGE"
           }
         }
