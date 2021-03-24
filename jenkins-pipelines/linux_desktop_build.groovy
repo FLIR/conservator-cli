@@ -50,7 +50,7 @@ pipeline {
           steps {
             sh "env aws ecr get-login-password --region us-east-1 \
                  | docker login --username AWS --password-stdin $AWS_DOMAIN"
-            sh "docker pull $FC_DOCKER_IMAGE"
+            sh "docker pull $FC_DOCKER_IMAGE -q"
           }
         }
         stage("Load Conservator image into cluster") {
@@ -61,11 +61,11 @@ pipeline {
         stage("Apply configurations") {
           environment {
             // TODO: Use build artifacts instead.
+            // This is a path to the secret file contents
             ALL_FC_K8S_YAML = credentials("all-fc-k8s-yaml")
           }
           steps {
-            sh "echo $ALL_FC_K8S_YAML > all.yaml"
-            sh "kubectl apply -f all.yaml --insecure-skip-tls-verify"
+            sh "kubectl apply -f $ALL_FC_K8S_YAML --insecure-skip-tls-verify"
             sh "kubectl wait --for=condition=Ready pod --all --insecure-skip-tls-verify"
           }
         }
