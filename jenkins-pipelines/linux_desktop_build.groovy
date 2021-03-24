@@ -35,8 +35,10 @@ pipeline {
         stage("Create kind cluster") {
           steps {
             sh "kind create cluster --config=test/integration/kind.yaml"
-            sh "kubectl wait --for=condition=Ready service --all -A"
-            sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml"
+            // Modify kubectl to look through bridge connection.
+            // Requires --insecure-skip-tls-verify on kubectl command.
+            sh "sed -i 's/0.0.0.0/172.17.0.1/g' ~/.kube/config"
+            sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml --insecure-skip-tls-verify"
           }
         }
         stage("Pull Conservator Image") {
@@ -61,14 +63,14 @@ pipeline {
           }
           steps {
             sh "echo $ALL_FC_K8S_YAML > all.yaml"
-            sh "kubectl apply -f all.yaml"
-            sh "kubectl wait --for=condition=Ready pod --all"
+            sh "kubectl apply -f all.yaml --insecure-skip-tls-verify"
+            sh "kubectl wait --for=condition=Ready pod --all --insecure-skip-tls-verify"
           }
         }
         stage("Initialize Conservator") {
           steps {
-            sh "webapp_pod=`kubectl get pods -o name | grep 'conservator-webapp'` \
-                && kubectl exec -ti $webapp_pod -- \
+            sh "webapp_pod=`kubectl get pods -o name --insecure-skip-tls-verify | grep 'conservator-webapp'` \
+                && kubectl exec -ti $webapp_pod --insecure-skip-tls-verify -- \
                   /bin/bash -c 'cd /home/centos/flirmachinelearning \
                     && yarn run create-s3rver-bucket \
                     && yarn update-validators \
