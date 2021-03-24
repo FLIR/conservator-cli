@@ -71,9 +71,9 @@ pipeline {
         }
         stage("Initialize Conservator") {
           steps {
-            sh "webapp_pod=`kubectl get pods -o name --insecure-skip-tls-verify | grep 'conservator-webapp'` \
-                && kubectl exec -ti $webapp_pod --insecure-skip-tls-verify -- \
-                  /bin/bash -c 'cd /home/centos/flirmachinelearning \
+            sh "kubectl exec --insecure-skip-tls-verify -ti \
+                  `kubectl get pods -o name --insecure-skip-tls-verify | grep 'conservator-webapp'` \
+                  -- /bin/bash -c 'cd /home/centos/flirmachinelearning \
                     && yarn run create-s3rver-bucket \
                     && yarn update-validators \
                     && yarn create-admin-user admin@example.com \
