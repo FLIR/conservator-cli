@@ -66,7 +66,7 @@ pipeline {
           }
           steps {
             sh "kubectl apply -f $ALL_FC_K8S_YAML --insecure-skip-tls-verify"
-            sh "kubectl wait --for=condition=Ready pod --all --insecure-skip-tls-verify"
+            sh "kubectl wait --timeout=0 --for=condition=Ready pod --all --insecure-skip-tls-verify"
           }
         }
         stage("Initialize Conservator") {
