@@ -64,7 +64,8 @@ def test_by_exact_name(conservator):
     project = conservator.projects.create("Some project name")
     _ = conservator.projects.create("Similar project name")
 
-    fetched = conservator.projects.by_exact_name("Unknown project name")
+    # Not exact match
+    fetched = conservator.projects.by_exact_name("project name")
     assert len(fetched) == 0
     assert fetched.first() is None
 
@@ -84,7 +85,7 @@ def test_reuse_name(conservator):
     project.delete()
 
     new_project = conservator.projects.create("Project")
-    assert new_project.id != project
+    assert new_project.id != project.id
     with pytest.raises(ConservatorGraphQLServerError):
         conservator.projects.create("Project")
 
