@@ -66,7 +66,7 @@ pipeline {
           }
           steps {
             sh "kubectl apply -f $ALL_FC_K8S_YAML --insecure-skip-tls-verify"
-            sh "kubectl wait --timeout=-1s --for=condition=Available deployment/conservator-webapp --insecure-skip-tls-verify"
+            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
           }
         }
         stage("Initialize Conservator") {
@@ -79,6 +79,7 @@ pipeline {
                     && yarn create-admin-user admin@example.com \
                     && yarn create-organization FLIR admin@example.com \
                     && yarn db:migrate-up'"
+            sh "kubectl wait --timeout=-1s --for=condition=Available deployment/conservator-webapp --insecure-skip-tls-verify"
           }
         }
         stage("Run integration tests") {
