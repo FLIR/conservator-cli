@@ -9,7 +9,9 @@ import subprocess
 
 
 def cvc(*args):
-    return subprocess.run(["cvc", *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    return subprocess.run(
+        ["cvc", *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
 
 
 def test_empty_clone(default_conservator, tmp_cwd):
@@ -23,4 +25,3 @@ def test_empty_clone(default_conservator, tmp_cwd):
     # We can check the right thing was downloaded by comparing the IDs
     cloned_dataset = default_conservator.datasets.from_local_path("My dataset")
     assert cloned_dataset.id == dataset.id
-
