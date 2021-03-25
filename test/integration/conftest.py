@@ -141,3 +141,28 @@ def conservator(empty_db, conservator_domain):
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=f"http://{conservator_domain}:8080"
     )
     yield Conservator(config)
+
+
+@pytest.fixture()
+def default_conservator(conservator):
+    """
+    Set the default config to point to conservator, for use when
+    testing CLI commands.
+    """
+    config = conservator.config
+    config.save_to_default_config()
+    yield conservator
+    config.delete_saved_default_config()
+
+
+@pytest.fixture()
+def tmp_cwd(tmp_path):
+    """
+    Set the current working directory to a temporary path for the duration
+    of the test. Then restore the current working directory and delete the path.
+    """
+    cwd = os.getcwd()
+    os.chdir(tmp_path)
+    yield tmp_path
+    os.chdir(cwd)
+    shutil.rmtree(tmp_path)

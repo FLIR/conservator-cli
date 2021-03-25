@@ -209,7 +209,7 @@ class Config:
         """
         Delete the default saved config, if it exists.
         """
-        Config.delete_saved_named_config(Config.default_config_path())
+        Config.delete_saved_named_config(Config.DEFAULT_NAME)
 
     @staticmethod
     def delete_saved_named_config(name):
