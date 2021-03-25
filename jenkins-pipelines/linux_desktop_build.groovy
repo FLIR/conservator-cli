@@ -79,9 +79,7 @@ pipeline {
                     && yarn create-admin-user admin@example.com \
                     && yarn create-organization FLIR admin@example.com \
                     && yarn db:migrate-up'"
-            // For whatever reason, we need to restart webapp container
-            sh "sleep 60"
-            sh "kubectl --insecure-skip-tls-verify rollout restart deployment.apps/conservator-webapp"
+            // For whatever reason, we need to wait a while for webapp to initialize...
             sh "sleep 60"
           }
         }
