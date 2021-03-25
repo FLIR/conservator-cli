@@ -75,10 +75,23 @@ def mongo_client(using_kubernetes, conservator_domain):
                 f"27030:27017",
             ]
         )
+        # Because of the port forward process, mongo will be accessible on localhost
         yield pymongo.MongoClient(f"mongodb://localhost:27030/")
         port_forward_proc.terminate()
     else:  # Using docker
-        yield pymongo.MongoClient(host=[f"{conservator_domain}:{27017}"])
+        mongo_addr_proc = subprocess.run(
+            [
+                "docker",
+                "inspect",
+                "conservator_mongo",
+                "-f",
+                "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
+            ],
+            stdout=subprocess.PIPE,
+            text=True,
+        )
+        domain = mongo_addr_proc.stdout.strip()
+        yield pymongo.MongoClient(host=[f"{domain}:27017"])
 
 
 @pytest.fixture(scope="session")
