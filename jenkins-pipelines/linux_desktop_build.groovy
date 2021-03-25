@@ -79,6 +79,7 @@ pipeline {
                     && yarn create-admin-user admin@example.com \
                     && yarn create-organization FLIR admin@example.com \
                     && yarn db:migrate-up'"
+            sh "kubectl rollout restart deployment.apps/conservator-webapp  --insecure-skip-tls-verify"
             sh "kubectl wait --timeout=-1s --for=condition=Available deployment/conservator-webapp --insecure-skip-tls-verify"
           }
         }
