@@ -80,9 +80,15 @@ def mongo_client(using_kubernetes, conservator_domain):
         port_forward_proc.terminate()
     else:  # Using docker
         mongo_addr_proc = subprocess.run(
-            ["docker", "inspect", "conservator_mongo", "-f", "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}"],
+            [
+                "docker",
+                "inspect",
+                "conservator_mongo",
+                "-f",
+                "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
+            ],
             stdout=subprocess.PIPE,
-            text=True
+            text=True,
         )
         domain = mongo_addr_proc.stdout.strip()
         yield pymongo.MongoClient(host=[f"{domain}:27017"])
