@@ -35,18 +35,22 @@ pipeline {
         stage("Create kind cluster") {
           steps {
             sh "kind create cluster --config=test/integration/kind.yaml"
-            sh "kubectl wait --for=condition=Ready service --all -A"
-            sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml"
+            // Modify kubectl to look through bridge connection.
+            // Requires --insecure-skip-tls-verify on kubectl command.
+            sh "sed -i 's/0.0.0.0/172.17.0.1/g' ~/.kube/config"
+            sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml --insecure-skip-tls-verify"
           }
         }
         stage("Pull Conservator Image") {
           environment {
             AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
             AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
+            AWS_DOMAIN = credentials("docker-aws-domain-conservator")
           }
           steps {
-            sh "env aws ecr get-login --no-include-email --region us-east-1 | sh"
-            sh "docker pull $FC_DOCKER_IMAGE"
+            sh "env aws ecr get-login-password --region us-east-1 \
+                 | docker login --username AWS --password-stdin $AWS_DOMAIN"
+            sh "docker pull $FC_DOCKER_IMAGE -q"
           }
         }
         stage("Load Conservator image into cluster") {
@@ -57,24 +61,27 @@ pipeline {
         stage("Apply configurations") {
           environment {
             // TODO: Use build artifacts instead.
+            // This is a path to the secret file contents
             ALL_FC_K8S_YAML = credentials("all-fc-k8s-yaml")
           }
           steps {
-            sh "echo $ALL_FC_K8S_YAML > all.yaml"
-            sh "kubectl apply -f all.yaml"
-            sh "kubectl wait --for=condition=Ready pod --all"
+            sh "kubectl apply -f $ALL_FC_K8S_YAML --insecure-skip-tls-verify"
+            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
           }
         }
         stage("Initialize Conservator") {
           steps {
-            sh "webapp_pod=`kubectl get pods -o name | grep 'conservator-webapp'` \
-                && kubectl exec -ti $webapp_pod -- \
-                  /bin/bash -c 'cd /home/centos/flirmachinelearning \
+            sh "kubectl exec --insecure-skip-tls-verify \
+                  `kubectl get pods -o name --insecure-skip-tls-verify | grep 'conservator-webapp'` \
+                  -- /bin/bash -c 'cd /home/centos/flirmachinelearning \
                     && yarn run create-s3rver-bucket \
                     && yarn update-validators \
                     && yarn create-admin-user admin@example.com \
                     && yarn create-organization FLIR admin@example.com \
                     && yarn db:migrate-up'"
+            // For whatever reason, we need to restart webapp container and wait a while...
+            sh "kubectl --insecure-skip-tls-verify rollout restart deployment.apps/conservator-webapp"
+            sh "sleep 60"
           }
         }
         stage("Run integration tests") {
