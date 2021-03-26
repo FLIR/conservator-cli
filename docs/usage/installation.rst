@@ -62,6 +62,11 @@ Then create a virtual environment, and install the library::
 Now changes to the code will be immediately reflected in the CLI,
 examples, etc.
 
+There a few additional tools used by developers, such as `pytest`, `black`,
+etc. To install them, use `requirements.txt`::
+
+    $ pip install -r requirements.txt
+
 Before committing a change, be sure to run the linter::
 
     $ black .
@@ -77,7 +82,12 @@ linting and formatting tests.
 You can run tests manually::
 
     $ cd test
-    $ pytest
+    $ pytest test/unit
+    $ pytest test/integration
+
+.. note::
+    Integration tests require a local running instance of FLIR Conservator.
+    For more info, see the ``README`` in the test directory.
 
 You can also build the docs manually::
 
