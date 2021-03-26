@@ -44,7 +44,19 @@ def test_publish_image(default_conservator, tmp_cwd, test_data):
     assert p.returncode == 0
     p = cvc("publish", "My test commit")
     assert p.returncode == 0
-
     time.sleep(2)  # It takes a bit for the commit to be saved?
+
     latest_commit = dataset.get_commit_by_id("HEAD")
     assert latest_commit.short_message == "My test commit"
+
+    # Load new values
+    dataset.populate()
+    assert dataset.frame_count == 1
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 1
+
+    uploaded_frame = dataset_frames[0]
+    # Width, height from file
+    assert uploaded_frame.width == 500
+    assert uploaded_frame.height == 375
