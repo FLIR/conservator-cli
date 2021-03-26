@@ -11,7 +11,10 @@ import time
 
 def cvc(*args):
     return subprocess.run(
-        ["cvc", *map(str, args)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        ["cvc", *map(str, args)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
     )
 
 
