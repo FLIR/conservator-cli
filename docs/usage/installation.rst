@@ -53,26 +53,27 @@ the project::
     $ git clone git@github.com:FLIR/conservator-cli.git
     $ cd conservator-cli
 
+To manage test data, CLI uses ``git-lfs``. Install the custom hooks, and
+pull test data::
+
+    $ git config --local core.hooksPath .githooks
+    $ git pull
+
 Then create a virtual environment, and install the library::
 
     $ python -m venv venv
     $ source venv/bin/activate
     $ pip install -e .
 
-Now changes to the code will be immediately reflected in the CLI,
+Changes to the code will be immediately reflected in the CLI,
 examples, etc.
 
 Before committing a change, be sure to run the linter::
 
     $ black .
 
-To automatically run the linter before pushing changes, you
-can add the provided git hook::
-
-    $ git config --local core.hooksPath .githooks
-
-This will check that your changes will pass the Jenkins
-linting and formatting tests.
+If you installed the git hooks as above (not using ``git lfs install``), the
+linter will automatically run before you attempt to push any changes.
 
 You can run tests manually::
 
