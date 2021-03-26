@@ -1,3 +1,4 @@
+import pathlib
 import os
 import secrets
 import shutil
@@ -166,3 +167,15 @@ def tmp_cwd(tmp_path):
     yield tmp_path
     os.chdir(cwd)
     shutil.rmtree(tmp_path)
+
+
+@pytest.fixture(scope="session")
+def root_path():
+    root = pathlib.Path(__file__).parent.parent.parent
+    assert root.name == "conservator-cli", "Can't find repository root"
+    return root
+
+
+@pytest.fixture(scope="session")
+def test_data(root_path):
+    return root_path / "test" / "data"

@@ -77,13 +77,15 @@ class MediaTypeManager:
 
         if isinstance(collection, str):
             collection_id = collection
-        else:
+        elif collection is not None:
             collection_id = collection.id
+        else:
+            collection_id = None
 
         upload_request = MediaUploadRequest(
             file_path=file_path, collection_id=collection_id, remote_name=remote_name
         )
-        result = MediaType.upload(self, upload_request)
+        result = MediaType.upload(self._conservator, upload_request)
         return result.media_id
 
     def is_uploaded_media_id_processed(self, media_id):
