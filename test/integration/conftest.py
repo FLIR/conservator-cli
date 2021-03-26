@@ -171,8 +171,9 @@ def tmp_cwd(tmp_path):
 
 @pytest.fixture(scope="session")
 def root_path():
+    # __file__ should be conservator-cli/test/integration/conftest.py
+    # up three parents would be conservator-cli/
     root = pathlib.Path(__file__).parent.parent.parent
-    assert root.name == "conservator-cli", "Can't find repository root"
     return root
 
 
