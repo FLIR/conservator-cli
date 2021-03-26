@@ -50,16 +50,11 @@ def running_in_testing_docker():
 
 @pytest.fixture(scope="session")
 def conservator_domain(using_kubernetes):
-    # Regardless: if we are in a container, we connect to host.
+    # If we are in a container, we connect to host.
     if running_in_testing_docker():
         return "172.17.0.1"  # Host IP
-
     # Running on host
-    if using_kubernetes:
-        return "localhost"
-    else:
-        # TODO: Get mongo container IP using docker inspect
-        return "172.17.0.2"
+    return "localhost"
 
 
 @pytest.fixture(scope="session")
