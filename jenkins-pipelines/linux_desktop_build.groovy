@@ -101,10 +101,10 @@ pipeline {
       }
     }
     stage("Deploy Documentation") {
-//       when {
-//         branch "main"
-//         not { changeRequest() }
-//       }
+      when {
+        branch "main"
+        not { changeRequest() }
+      }
       steps {
         echo "Deploying..."
         sh "mv docs/_build/html temp/"
