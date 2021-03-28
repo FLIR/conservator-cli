@@ -102,9 +102,6 @@ pipeline {
       }
     }
     stage("Deploy Documentation") {
-      when {
-        branch "fix-docs-deploy"
-      }
       steps {
         echo "Deploying..."
         sh "mv docs/_build/html temp/"
