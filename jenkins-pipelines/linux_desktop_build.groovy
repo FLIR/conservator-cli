@@ -10,7 +10,6 @@ pipeline {
     stage("Install") {
       steps {
         echo "Setting up..."
-        sh "git config --local core.hooksPath .githooks"
         sh "pip install --no-cache-dir ."
       }
     }
@@ -105,6 +104,7 @@ pipeline {
       steps {
         echo "Deploying..."
         sh "mv docs/_build/html temp/"
+        sh "git reset --hard"
         sh "git checkout gh_pages"
         sh "rm -rf docs/"
         sh "mv temp/ docs/"
