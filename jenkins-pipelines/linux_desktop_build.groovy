@@ -104,7 +104,6 @@ pipeline {
     stage("Deploy Documentation") {
       when {
         branch "fix-docs-deploy"
-        not { changeRequest() }
       }
       steps {
         echo "Deploying..."
