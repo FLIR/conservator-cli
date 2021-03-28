@@ -103,7 +103,7 @@ pipeline {
     }
     stage("Deploy Documentation") {
       when {
-        branch "main"
+        branch "fix-docs-deploy"
         not { changeRequest() }
       }
       steps {
