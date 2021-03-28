@@ -10,6 +10,7 @@ pipeline {
     stage("Install") {
       steps {
         echo "Setting up..."
+        sh "git config --local core.hooksPath .githooks"
         sh "pip install --no-cache-dir ."
       }
     }
@@ -24,6 +25,14 @@ pipeline {
         echo "Running unit tests..."
         dir("unit-tests") {
           sh "pytest $WORKSPACE/test/unit"
+        }
+      }
+    }
+    stage("Documentation Tests") {
+      steps {
+        echo "Building docs..."
+        dir("docs") {
+          sh "make html"
         }
       }
     }
@@ -89,14 +98,6 @@ pipeline {
               sh "pytest $WORKSPACE/test/integration"
             }
           }
-        }
-      }
-    }
-    stage("Documentation Tests") {
-      steps {
-        echo "Building docs..."
-        dir("docs") {
-          sh "make html"
         }
       }
     }
