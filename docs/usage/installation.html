@@ -82,25 +82,26 @@ the project:</p>
 $ cd conservator-cli
 </pre></div>
 </div>
+<p>To manage test data, CLI uses <code class="docutils literal notranslate"><span class="pre">git-lfs</span></code>. Install the custom hooks, and
+pull test data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git config --local core.hooksPath .githooks
+$ git pull
+</pre></div>
+</div>
 <p>Then create a virtual environment, and install the library:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m venv venv
 $ source venv/bin/activate
 $ pip install -e .
 </pre></div>
 </div>
-<p>Now changes to the code will be immediately reflected in the CLI,
+<p>Changes to the code will be immediately reflected in the CLI,
 examples, etc.</p>
 <p>Before committing a change, be sure to run the linter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ black .
 </pre></div>
 </div>
-<p>To automatically run the linter before pushing changes, you
-can add the provided git hook:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git config --local core.hooksPath .githooks
-</pre></div>
-</div>
-<p>This will check that your changes will pass the Jenkins
-linting and formatting tests.</p>
+<p>If you installed the git hooks as above (not using <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">lfs</span> <span class="pre">install</span></code>), the
+linter will automatically run before you attempt to push any changes.</p>
 <p>You can run tests manually:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd test
 $ pytest
