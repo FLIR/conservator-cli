@@ -1,3 +1,4 @@
+import pathlib
 import os
 import secrets
 import shutil
@@ -49,16 +50,11 @@ def running_in_testing_docker():
 
 @pytest.fixture(scope="session")
 def conservator_domain(using_kubernetes):
-    # Regardless: if we are in a container, we connect to host.
+    # If we are in a container, we connect to host.
     if running_in_testing_docker():
         return "172.17.0.1"  # Host IP
-
     # Running on host
-    if using_kubernetes:
-        return "localhost"
-    else:
-        # TODO: Get mongo container IP using docker inspect
-        return "172.17.0.2"
+    return "localhost"
 
 
 @pytest.fixture(scope="session")
@@ -166,3 +162,16 @@ def tmp_cwd(tmp_path):
     yield tmp_path
     os.chdir(cwd)
     shutil.rmtree(tmp_path)
+
+
+@pytest.fixture(scope="session")
+def root_path():
+    # __file__ should be conservator-cli/test/integration/conftest.py
+    # up three parents would be conservator-cli/
+    root = pathlib.Path(__file__).parent.parent.parent
+    return root
+
+
+@pytest.fixture(scope="session")
+def test_data(root_path):
+    return root_path / "test" / "data"

@@ -89,7 +89,7 @@ class FieldsManager:
             selector.machine_annotation_count()
             selector.qa_status()
             selector.md5()
-            selector.decription()
+            selector.description()
             selector.dataset_frame_name()
             if issubclass(type_, schema.DatasetFrame):
                 selector.custom_metadata()
