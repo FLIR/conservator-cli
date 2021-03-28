@@ -217,7 +217,7 @@ class LocalDataset:
             next_index += 1
 
         with open(self.index_path, "w") as f:
-            json.dump(index, f, indent=4, sort_keys=True, separators=(",", ": "))
+            json.dump(index, f, indent=1, sort_keys=True, separators=(",", ": "))
         with open(self.staging_path, "w") as f:
             json.dump([], f)
 
