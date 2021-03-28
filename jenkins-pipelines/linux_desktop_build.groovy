@@ -19,19 +19,19 @@ pipeline {
         sh "black --check ."
       }
     }
-    stage("Unit Tests") {
-      steps {
-        echo "Running unit tests..."
-        dir("unit-tests") {
-          sh "pytest $WORKSPACE/test/unit"
-        }
-      }
-    }
     stage("Documentation Tests") {
       steps {
         echo "Building docs..."
         dir("docs") {
           sh "make html"
+        }
+      }
+    }
+    stage("Unit Tests") {
+      steps {
+        echo "Running unit tests..."
+        dir("unit-tests") {
+          sh "pytest $WORKSPACE/test/unit"
         }
       }
     }
@@ -68,7 +68,7 @@ pipeline {
         }
         stage("Apply configurations") {
           environment {
-            // TODO: Use build artifacts instead.
+            // TODO: Extract from docker image.
             // This is a path to the secret file contents
             ALL_FC_K8S_YAML = credentials("all-fc-k8s-yaml")
           }
@@ -101,10 +101,15 @@ pipeline {
       }
     }
     stage("Deploy Documentation") {
+//       when {
+//         branch "main"
+//         not { changeRequest() }
+//       }
       steps {
         echo "Deploying..."
         sh "mv docs/_build/html temp/"
         sh "git reset --hard"
+        sh "rm -rf .git/hooks/*"
         sh "git checkout gh_pages"
         sh "rm -rf docs/"
         sh "mv temp/ docs/"
