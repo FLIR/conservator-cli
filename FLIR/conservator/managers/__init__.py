@@ -6,6 +6,8 @@ import json
 import logging
 import os
 
+from FLIR.conservator.wrappers.collection import InvalidRemotePathException
+
 from FLIR.conservator.managers.media import MediaTypeManager
 from FLIR.conservator.managers.searchable import SearchableTypeManager
 from FLIR.conservator.managers.type_manager import AmbiguousIdentifierException
@@ -76,13 +78,23 @@ class CollectionManager(SearchableTypeManager):
         parent = self.from_id(parent_id)
         return parent.create_child(name, fields)
 
-    def create_from_path(self, path, fields=None):
+    def create_from_remote_path(self, path, fields=None):
         """
         Return a new collection at the specified `path`, with the given `fields`,
-        creating new collections as necessary.  Uses :func:`from_remote_path` with
-        `make_if_no_exist=True`.
+        creating new collections as necessary.
+
+        If the path already exists, raises :class:`RemotePathExistsException`.
         """
-        return self.from_remote_path(path, make_if_no_exist=True, fields=fields)
+        return self._underlying_type.create_from_remote_path(
+            self._conservator, path, fields=fields
+        )
+
+    def create_from_path(self, path, fields=None):
+        """
+        .. deprecated:: 1.1.0
+            Use :meth:`create_from_remote_path` instead.
+        """
+        return self.create_from_remote_path(path, fields=fields)
 
     def upload(
         self,

@@ -1,13 +1,13 @@
 import pytest
-from FLIR.conservator.connection import ConservatorGraphQLServerError
+from FLIR.conservator.wrappers.collection import RemotePathExistsException
 
 
 def test_create_project(conservator):
-    PROJECT_NAME = "My Project!!!"
-    project = conservator.projects.create(PROJECT_NAME)
+    # TODO: having an exclamation point in the name breaks search.
+    project = conservator.projects.create("My Project")
     assert project is not None
     assert project.id is not None
-    assert project.name == PROJECT_NAME
+    assert project.name == "My Project"
 
 
 def test_get_project(conservator):
@@ -76,17 +76,18 @@ def test_by_exact_name(conservator):
 
 def test_duplicate_name(conservator):
     conservator.projects.create("Project")
-    with pytest.raises(ConservatorGraphQLServerError):
+    with pytest.raises(RemotePathExistsException):
         conservator.projects.create("Project")
 
 
 def test_reuse_name(conservator):
     project = conservator.projects.create("Project")
     project.delete()
-
+    # Reuse is ok as long as deleted.
     new_project = conservator.projects.create("Project")
     assert new_project.id != project.id
-    with pytest.raises(ConservatorGraphQLServerError):
+    # Not deleted--not ok.
+    with pytest.raises(RemotePathExistsException):
         conservator.projects.create("Project")
 
 
