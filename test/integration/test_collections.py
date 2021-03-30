@@ -1,7 +1,10 @@
 import pytest
 from FLIR.conservator.connection import ConservatorGraphQLServerError
 
-from FLIR.conservator.wrappers.collection import RemotePathExistsException, InvalidRemotePathException
+from FLIR.conservator.wrappers.collection import (
+    RemotePathExistsException,
+    InvalidRemotePathException,
+)
 
 
 def test_create_child(conservator):
@@ -184,7 +187,9 @@ def test_recursively_get_children_broad(conservator):
     child_paths = [child.path for child in children]
     assert set(child_paths) == set(PATHS)
 
-    children_and_self = list(root_collection.recursively_get_children(fields="path", include_self=True))
+    children_and_self = list(
+        root_collection.recursively_get_children(fields="path", include_self=True)
+    )
     assert len(children_and_self) == len(PATHS) + 1
 
 
@@ -196,7 +201,9 @@ def test_recursively_get_children_deep(conservator):
     children = list(root_collection.recursively_get_children(fields="path"))
     assert len(children) == DEPTH
 
-    children_and_self = list(root_collection.recursively_get_children(fields="path", include_self=True))
+    children_and_self = list(
+        root_collection.recursively_get_children(fields="path", include_self=True)
+    )
     assert len(children_and_self) == DEPTH + 1
 
 
@@ -210,13 +217,17 @@ def test_delete_root(conservator):
 
 
 def test_delete_child(conservator):
-    collection = conservator.collections.create_from_remote_path("/My/Complicated/Collection/Path")
+    collection = conservator.collections.create_from_remote_path(
+        "/My/Complicated/Collection/Path"
+    )
     assert collection is not None
 
     collection.delete()
     assert not conservator.collections.id_exists(collection.id)
 
-    parent = conservator.collections.from_remote_path("/My/Complicated/Collection", fields="children.id")
+    parent = conservator.collections.from_remote_path(
+        "/My/Complicated/Collection", fields="children.id"
+    )
     assert parent is not None
     assert len(parent.children) == 0
 
