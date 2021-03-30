@@ -1,6 +1,7 @@
 import pytest
+from FLIR.conservator.connection import ConservatorGraphQLServerError
 
-from FLIR.conservator.wrappers.collection import RemotePathExistsException
+from FLIR.conservator.wrappers.collection import RemotePathExistsException, InvalidRemotePathException
 
 
 def test_create_child(conservator):
@@ -107,16 +108,129 @@ def test_create_from_remote_path_existing(conservator):
         conservator.collections.create_from_remote_path(PATH)
 
 
-def test_from_remote_path(conservator):
-    pass
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/Root Collection",
+        "/Long/Collection/Path",
+        "/Very/Long/Collection/Path/A/B/C/D/E/F/G/H/I/J",
+    ],
+)
+def test_from_remote_path(conservator, path):
+    collection = conservator.collections.create_from_remote_path(path)
+    assert collection is not None
+    assert collection.path == path
+
+    fetched_collection = conservator.collections.from_remote_path(path)
+    assert fetched_collection is not None
+    assert fetched_collection.id == collection.id
+    assert fetched_collection.path == path
 
 
-def test_from_remote_path_make_if_no_exist(conservator):
-    pass
+@pytest.mark.parametrize(
+    "path",
+    [
+        "Root Collection",
+        "Long/Collection/Path",
+        "Very/Long/Collection/Path/A/B/C/D/E/F/G/H/I/J",
+    ],
+)
+def test_from_remote_path_no_slash(conservator, path):
+    collection = conservator.collections.create_from_remote_path(path)
+    assert collection is not None
+    assert collection.path == "/" + path
+
+    fetched_collection = conservator.collections.from_remote_path(path)
+    assert fetched_collection is not None
+    assert fetched_collection.id == collection.id
+    assert fetched_collection.path == "/" + path
 
 
-def test_recursively_get_children(conservator):
-    pass
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/Root Collection",
+        "/Long/Collection/Path",
+        "/Very/Long/Collection/Path/A/B/C/D/E/F/G/H/I/J",
+    ],
+)
+def test_from_remote_path_make_if_no_exist(conservator, path):
+    collection = conservator.collections.from_remote_path(path, make_if_no_exist=True)
+    assert collection is not None
+    assert collection.id == collection.id
+
+    fetched_collection = conservator.collections.from_remote_path(path)
+    assert fetched_collection is not None
+    assert fetched_collection.id == collection.id
+    assert fetched_collection.path == path
+
+
+def test_recursively_get_children_broad(conservator):
+    PATHS = [
+        "/Root/Child",
+        "/Root/Sibling",
+        "/Root/Grand",
+        "/Root/Grand/Child",
+        "/Root/Grand/Grand",
+        "/Root/Grand/Grand/Child",
+        "/Root/Grand/Grand/Sibling",
+    ]
+    root_collection = conservator.collections.create_root("Root")
+    for path in PATHS:
+        conservator.collections.create_from_remote_path(path)
+
+    children = list(root_collection.recursively_get_children(fields="path"))
+    assert len(children) == len(PATHS)
+    child_paths = [child.path for child in children]
+    assert set(child_paths) == set(PATHS)
+
+    children_and_self = list(root_collection.recursively_get_children(fields="path", include_self=True))
+    assert len(children_and_self) == len(PATHS) + 1
+
+
+def test_recursively_get_children_deep(conservator):
+    DEPTH = 20
+    root_collection = conservator.collections.create_root("Root")
+    conservator.collections.create_from_remote_path("/Root" + "/Child" * DEPTH)
+
+    children = list(root_collection.recursively_get_children(fields="path"))
+    assert len(children) == DEPTH
+
+    children_and_self = list(root_collection.recursively_get_children(fields="path", include_self=True))
+    assert len(children_and_self) == DEPTH + 1
+
+
+def test_delete_root(conservator):
+    root_collection = conservator.collections.create_root("Root")
+    assert root_collection is not None
+
+    root_collection.delete()
+    assert not conservator.collections.id_exists(root_collection.id)
+    assert conservator.collections.count_all() == 0
+
+
+def test_delete_child(conservator):
+    collection = conservator.collections.create_from_remote_path("/My/Complicated/Collection/Path")
+    assert collection is not None
+
+    collection.delete()
+    assert not conservator.collections.id_exists(collection.id)
+
+    parent = conservator.collections.from_remote_path("/My/Complicated/Collection", fields="children.id")
+    assert parent is not None
+    assert len(parent.children) == 0
+
+    root = conservator.collections.from_remote_path("/My")
+    assert len(list(root.recursively_get_children())) == 2
+
+
+def test_delete_parent(conservator):
+    conservator.collections.create_from_remote_path("/My/Complicated/Collection/Path")
+
+    parent = conservator.collections.from_remote_path("/My/Complicated/Collection")
+    with pytest.raises(ConservatorGraphQLServerError):
+        # You can't delete a collection that has children
+        parent.delete()
 
 
 def test_get_images(conservator):
@@ -156,10 +270,6 @@ def test_get_datasets(conservator):
 
 def test_remove_media(conservator):
     # TODO once upload/download done
-    pass
-
-
-def test_delete(conservator):
     pass
 
 
