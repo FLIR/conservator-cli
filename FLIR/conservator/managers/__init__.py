@@ -139,12 +139,12 @@ class CollectionManager(SearchableTypeManager):
 
                 try:
                     media = self._conservator.get_media_instance_from_id(media_id)
+                    media.upload_metadata(file_path)
                 # oops importing real exception UnknownMediaIdException causes import loop
                 except:
                     logger.error(
                         "Skip metadata %s (media id=%s not found)", file_path, media_id
                     )
-                media.upload_metadata(file_path)
 
         if associated_files:
             logger.info("Uploading associated files to collection %s", collection.path)
