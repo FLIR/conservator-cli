@@ -72,9 +72,7 @@ class FieldsManager:
             selector.flagged_frames()
             selector.prediction_label_data()
             selector.annotation_label_data()
-        elif issubclass(type_, schema.DatasetFrame) or issubclass(
-            type_, schema.DatasetFrameOnly
-        ):
+        elif issubclass(type_, schema.DatasetFrame):
             selector.id()
             selector.frame_id()
             selector.video_id()
@@ -91,13 +89,10 @@ class FieldsManager:
             selector.md5()
             selector.description()
             selector.dataset_frame_name()
-            if issubclass(type_, schema.DatasetFrame):
-                selector.custom_metadata()
-                selector.location()
-                selector.spectrum()
-        elif issubclass(type_, schema.DatasetFrames) or issubclass(
-            type_, schema.DatasetFramesOnly
-        ):
+            selector.custom_metadata()
+            selector.location()
+            selector.spectrum()
+        elif issubclass(type_, schema.DatasetFrames):
             FieldsManager.select_default_fields(selector.dataset_frames)
             selector.total_count()
         elif issubclass(type_, schema.Frame):
