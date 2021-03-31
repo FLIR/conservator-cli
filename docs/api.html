@@ -697,6 +697,7 @@ with the specified <cite>fields</cite>.</p>
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">create_from_remote_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.create_from_remote_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new collection at the specified <cite>path</cite>, with the given <cite>fields</cite>,
 creating new collections as necessary.</p>
+<p>If the path already exists, raises <a class="reference internal" href="#FLIR.conservator.wrappers.collection.RemotePathExistsException" title="FLIR.conservator.wrappers.collection.RemotePathExistsException"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemotePathExistsException</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -844,6 +845,11 @@ fields must exist on both Image and Video types.</p>
 <dl class="py exception">
 <dt id="FLIR.conservator.wrappers.collection.InvalidRemotePathException">
 <em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></code><code class="sig-name descname"><span class="pre">InvalidRemotePathException</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.collection.InvalidRemotePathException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.wrappers.collection.RemotePathExistsException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></code><code class="sig-name descname"><span class="pre">RemotePathExistsException</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.collection.RemotePathExistsException" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -1195,9 +1201,17 @@ given <cite>parent_id</cite>, and return it with the given <cite>fields</cite>.<
 <dl class="py method">
 <dt id="FLIR.conservator.managers.CollectionManager.create_from_path">
 <code class="sig-name descname"><span class="pre">create_from_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.create_from_path" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.1.0: </span>Use <a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.create_from_remote_path" title="FLIR.conservator.managers.CollectionManager.create_from_remote_path"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_from_remote_path()</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.CollectionManager.create_from_remote_path">
+<code class="sig-name descname"><span class="pre">create_from_remote_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager.create_from_remote_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new collection at the specified <cite>path</cite>, with the given <cite>fields</cite>,
-creating new collections as necessary.  Uses <a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.from_remote_path" title="FLIR.conservator.managers.CollectionManager.from_remote_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_remote_path()</span></code></a> with
-<cite>make_if_no_exist=True</cite>.</p>
+creating new collections as necessary.</p>
+<p>If the path already exists, raises <code class="xref py py-class docutils literal notranslate"><span class="pre">RemotePathExistsException</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
