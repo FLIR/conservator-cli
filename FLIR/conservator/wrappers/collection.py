@@ -26,6 +26,10 @@ class InvalidRemotePathException(Exception):
     pass
 
 
+class RemotePathExistsException(Exception):
+    pass
+
+
 class Collection(QueryableType, FileLockerType):
     underlying_type = schema.Collection
     by_id_query = schema.Query.collection
@@ -89,13 +93,25 @@ class Collection(QueryableType, FileLockerType):
         """
         Return a new collection at the specified `path`, with the given `fields`,
         creating new collections as necessary.
+
+        If the path already exists, raises :class:`RemotePathExistsException`.
         """
         if not path.startswith("/"):
             path = "/" + path
 
+        try:
+            collection = Collection.from_remote_path(
+                conservator, path=path, make_if_no_exist=False, fields="id"
+            )
+            if collection is not None:
+                raise RemotePathExistsException(f"Path '{path}' already exists.")
+        except InvalidRemotePathException:
+            pass
+
         split_path = path.split("/")[1:]
         root_path = "/" + split_path[0]
         temp_fields = ["id", "path"]
+
         try:
             root = Collection.from_remote_path(
                 conservator, path=root_path, make_if_no_exist=False, fields=temp_fields

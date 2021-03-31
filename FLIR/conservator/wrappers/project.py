@@ -1,4 +1,5 @@
 from FLIR.conservator.generated.schema import Mutation
+from FLIR.conservator.wrappers.collection import RemotePathExistsException
 from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.generated import schema
 
@@ -16,6 +17,8 @@ class Project(QueryableType):
 
         Note that this requires the privilege to create projects.
         """
+        if len(conservator.projects.by_exact_name(name)) > 0:
+            raise RemotePathExistsException(f"A project already exists named '{name}'")
         return conservator.query(Mutation.create_project, name=name, fields=fields)
 
     def delete(self):
