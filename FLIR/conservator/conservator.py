@@ -36,7 +36,7 @@ class Conservator(ConservatorConnection):
     """
 
     def __init__(self, config):
-        super(ConservatorConnection).__init__(config)
+        super().__init__(config)
         self.files = ConservatorFileTransfers(self)
         self.collections = CollectionManager(self)
         self.datasets = DatasetManager(self)
