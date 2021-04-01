@@ -68,10 +68,10 @@ pipeline {
         stage("Apply configurations") {
           steps {
             sh """
-            id=$(docker create $AWS_DOMAIN/conservator_webapp:prod)
-            docker cp $id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
-            docker rm -v $id
-            """
+                id=\$(docker create $AWS_DOMAIN/conservator_webapp:prod)
+                docker cp \$id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
+                docker rm -v \$id
+               """
             sh "echo IMAGE=$AWS_DOMAIN/conservator_webapp:prod > testing.env"
             sh "kubetpl render kubernetes/config.yaml -i testing.env \
                  | kubectl apply -f - --insecure-skip-tls-verify"
