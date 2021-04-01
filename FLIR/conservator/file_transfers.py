@@ -18,6 +18,7 @@ class DownloadRequest:
     `expected_md5` is given, check the file doesn't already exist
     with the correct hash before downloading.
     """
+
     def __init__(self, url, local_path, expected_md5=None):
         self.url = url
         self.local_path = local_path
@@ -30,6 +31,7 @@ class UploadRequest:
 
     A request to upload `local_path` to `url`.
     """
+
     def __init__(self, url, local_path):
         self.url = url
         self.local_path = local_path
