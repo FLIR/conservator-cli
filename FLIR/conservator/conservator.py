@@ -5,6 +5,7 @@ import time
 
 from FLIR.conservator.config import Config
 from FLIR.conservator.connection import ConservatorConnection
+from FLIR.conservator.file_transfers import ConservatorFileTransfers
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.managers import (
     CollectionManager,
@@ -29,17 +30,14 @@ class Conservator(ConservatorConnection):
     <Conservator at https://flirconservator.com>
 
     You can create also create an instance by passing any :class:`~FLIR.conservator.config.Config`
-    object:
-
-    >>> config = Config(my_email, my_key, "https://localhost:3000")
-    >>> Conservator(config)
-    <Conservator at https://localhost:3000>
+    object.
 
     :param config: The :class:`~FLIR.conservator.config.Config` object to use for this connection.
     """
 
     def __init__(self, config):
-        super().__init__(config)
+        super(ConservatorConnection).__init__(config)
+        self.files = ConservatorFileTransfers(self)
         self.collections = CollectionManager(self)
         self.datasets = DatasetManager(self)
         self.projects = ProjectManager(self)
@@ -99,10 +97,10 @@ class Conservator(ConservatorConnection):
                 conservator = Conservator(Config.from_name(config_name))
             except AttributeError:
                 raise RuntimeError(
-                    f"Unknown/Invalid Conservator config '{config}'"
+                    f"Unknown/Invalid Conservator config '{config_name}'"
                 ) from None
         else:
-            conservator = Conservator.default()
+            conservator = Conservator.default(save=save)
         return conservator
 
     def get_media_instance_from_id(self, media_id, fields=None):

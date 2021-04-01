@@ -1,10 +1,9 @@
 import json
 import os
 
-from FLIR.conservator.generated.schema import Mutation
+from FLIR.conservator.file_transfers import FileUploadException
 from FLIR.conservator.wrappers import TypeProxy
 from FLIR.conservator.wrappers.type_proxy import requires_fields
-from FLIR.conservator.util import upload_file
 
 
 class MetadataUploadException(Exception):
@@ -84,10 +83,9 @@ class MetadataType(TypeProxy):
         if not content_type:
             content_type = self.default_file_type
         url = self._generate_metadata_url(file_path, content_type)
-        upload = upload_file(file_path, url)
-        if not upload.ok:
-            raise MetadataUploadException(
-                f"Upload failed ({upload.status_code}: {upload.reason})"
-            )
+        try:
+            self._conservator.files.upload(url=url, local_path=file_path)
+        except FileUploadException as e:
+            raise MetadataUploadException from e
         result = self._confirm_metadata_upload(url)
         return result

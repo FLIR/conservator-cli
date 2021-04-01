@@ -1,7 +1,7 @@
 import os
 
 from FLIR.conservator.conservator import Conservator
-from FLIR.conservator.util import download_files
+from FLIR.conservator.file_transfers import DownloadRequest
 
 conservator = Conservator.default()
 
@@ -27,14 +27,14 @@ for video in videos:
 """
 
 # but it is going to be faster to download multiple at once.
-# we use the utility function `download_files` to do so.
-# this takes a list of (dir_path, filename, url, md5) tuples.
+# we use Conservator.files.download_many to do so.
+# this takes a list of DownloadRequest named tuples.
 files = []
 for video in videos:
     print(video.filename)
-    file = (download_path, video.filename, video.url, video.md5)
+    path = os.path.join(download_path, video.filename)
+    file = DownloadRequest(url=video.url, local_path=path, expected_md5=video.md5)
     files.append(file)
 
-# 'resume' means don't re-download local files if md5sum already matches
-# md5sum of the corresponding remote file
-download_files(files, resume=True)
+# By providing expected md5s, files won't be re-downloaded if they exist at the path and match the hash.
+conservator.files.download_many(files)
