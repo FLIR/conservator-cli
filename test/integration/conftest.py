@@ -100,7 +100,7 @@ def db(mongo_client):
 
 @pytest.fixture()
 def empty_db(db):
-    PRESERVED_COLLECTIONS = ["groups", "organizations"]
+    PRESERVED_COLLECTIONS = ["groups", "organizations", "allowedDomains"]
     for name in db.list_collection_names():
         if name.startswith("system."):
             continue

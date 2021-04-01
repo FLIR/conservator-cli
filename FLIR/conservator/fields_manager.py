@@ -125,6 +125,7 @@ class FieldsManager:
             selector.id()
             selector.filename()
             selector.url()
+            selector.md5()
             selector.state()
             selector.metadata()
             selector.frames_count()
