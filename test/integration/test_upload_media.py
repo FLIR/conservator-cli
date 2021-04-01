@@ -21,7 +21,7 @@ def test_upload_image_collection(conservator, test_data):
     assert image is not None
     assert image.name == "cat_0.jpg"
     assert image.frames_count == 1
-    
+
     images = list(collection.get_images())
     assert len(images) == 1
     assert images[0].id == image.id
@@ -49,5 +49,3 @@ def test_upload_video(conservator, test_data):
     assert video is not None
     assert video.name == "tower_gimbal.mp4"
     assert video.frames_count == 212
-
-
