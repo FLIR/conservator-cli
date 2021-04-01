@@ -1,7 +1,7 @@
 # Tests
 
 Conservator CLI uses `pytest` for tests. It should have been installed if you 
-followed the [Installation](https://flir.github.io/conservator-cli/usage/installation.html) 
+followed the [Developer Installation](https://flir.github.io/conservator-cli/usage/installation.html#developers) 
 instructions.
 
 There are currently two test suites:

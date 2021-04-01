@@ -10,6 +10,7 @@ pipeline {
     stage("Install") {
       steps {
         echo "Setting up..."
+        sh "pip install --no-cache-dir -r requirements.txt"
         sh "pip install --no-cache-dir ."
       }
     }
