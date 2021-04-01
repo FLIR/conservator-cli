@@ -1,43 +1,56 @@
-"""
-
-"""
 import multiprocessing
 import os
 import logging
 
 import requests
 import tqdm
-from collections import namedtuple
 
 from FLIR.conservator.util import md5sum_file
 
 logger = logging.getLogger(__file__)
 
 
-DownloadRequest = namedtuple(
-    "DownloadRequest",
-    ["url", "local_path", "expected_md5"],
-)
-# Because we have to support < Python 3.7, we can't use default param.
-# This hack lets users not specify expected_md5
-DownloadRequest.__new__.__defaults__ = (None,)
+class DownloadRequest:
+    """
+    For use with :meth:`ConservatorFileTransfers.download_many`.
 
-UploadRequest = namedtuple(
-    "UploadRequest",
-    ["url", "local_path"],
-)
+    A request to download from `url` to `local_path`. If
+    `expected_md5` is given, check the file doesn't already exist
+    with the correct hash before downloading.
+    """
+    def __init__(self, url, local_path, expected_md5=None):
+        self.url = url
+        self.local_path = local_path
+        self.expected_md5 = expected_md5
+
+
+class UploadRequest:
+    """
+    For use with :meth:`ConservatorFileTransfers.upload_many`.
+
+    A request to upload `local_path` to `url`.
+    """
+    def __init__(self, url, local_path):
+        self.url = url
+        self.local_path = local_path
 
 
 class FileTransferException(Exception):
-    pass
+    """
+    Something went wrong when uploading or downloading a file.
+    """
 
 
 class FileDownloadException(FileTransferException):
-    pass
+    """
+    Something went wrong when downloading a file.
+    """
 
 
 class FileUploadException(FileTransferException):
-    pass
+    """
+    Something went wrong when uploading a file.
+    """
 
 
 class ConservatorFileTransfers:
@@ -75,6 +88,9 @@ class ConservatorFileTransfers:
         return self.download(url, local_path, no_meter=no_meter)
 
     def download(self, url, local_path, no_meter=False):
+        """
+        Download the file from Conservator `url` to the `local_path`.
+        """
         directory, file = os.path.split(local_path)
         os.makedirs(directory, exist_ok=True)
         full_url = self.full_url(url)
@@ -139,6 +155,9 @@ class ConservatorFileTransfers:
             return False
 
     def upload(self, url, local_path):
+        """
+        Upload the file at `local_path` to Conservator `url`.
+        """
         full_url = self.full_url(url)
         path = os.path.abspath(local_path)
         logger.info(f"Uploading '{path}'")
