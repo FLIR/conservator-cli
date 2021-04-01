@@ -37,7 +37,7 @@ pipeline {
     }
     stage("Integration Tests") {
       environment {
-        FC_DOCKER_IMAGE = credentials("docker-latest-fc")
+        AWS_DOMAIN = credentials("docker-aws-domain-conservator")
       }
       stages {
         stage("Create kind cluster") {
@@ -53,27 +53,49 @@ pipeline {
           environment {
             AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
             AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
-            AWS_DOMAIN = credentials("docker-aws-domain-conservator")
           }
           steps {
             sh "env aws ecr get-login-password --region us-east-1 \
                  | docker login --username AWS --password-stdin $AWS_DOMAIN"
-            sh "docker pull $FC_DOCKER_IMAGE -q"
+            sh "docker pull $AWS_DOMAIN/conservator_webapp:prod -q"
           }
         }
         stage("Load Conservator image into cluster") {
           steps {
-            sh "kind load docker-image $FC_DOCKER_IMAGE"
+            sh "kind load docker-image $AWS_DOMAIN/conservator_webapp:prod"
           }
         }
         stage("Apply configurations") {
-          environment {
-            // TODO: Extract from docker image.
-            // This is a path to the secret file contents
-            ALL_FC_K8S_YAML = credentials("all-fc-k8s-yaml")
-          }
           steps {
-            sh "kubectl apply -f $ALL_FC_K8S_YAML --insecure-skip-tls-verify"
+            sh """
+            id=$(docker create $AWS_DOMAIN/conservator_webapp:prod)
+            docker cp $id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
+            docker rm -v $id
+            """
+            sh "echo IMAGE=$AWS_DOMAIN/conservator_webapp:prod > testing.env"
+            sh "kubetpl render kubernetes/config.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
+            sh "kubetpl render kubernetes/pvc/*.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
+
+            sh "kubetpl render kubernetes/deployments/mongo.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
+            sh "kubetpl render kubernetes/deployments/rabbitmq.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
+            sh "kubetpl render kubernetes/deployments/s3rver.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
+            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
+
+            sh "kubetpl render kubernetes/deployments/git-server.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
+            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
+
+            sh "kubetpl render kubernetes/deployments/*.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
+            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
+
+            sh "kubetpl render kubernetes/ingress/ingress.yaml -i testing.env \
+                 | kubectl apply -f - --insecure-skip-tls-verify"
             sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
           }
         }
@@ -87,8 +109,6 @@ pipeline {
                     && yarn create-admin-user admin@example.com \
                     && yarn create-organization FLIR admin@example.com \
                     && yarn db:migrate-up'"
-            sh "kubectl rollout restart deployment.apps/conservator-webapp  --insecure-skip-tls-verify"
-            sh "kubectl wait --timeout=-1s --for=condition=Available deployment/conservator-webapp --insecure-skip-tls-verify"
           }
         }
         stage("Run integration tests") {
