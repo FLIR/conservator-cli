@@ -96,6 +96,11 @@ $ pip install -e .
 </div>
 <p>Changes to the code will be immediately reflected in the CLI,
 examples, etc.</p>
+<p>There a few additional tools used by developers, such as <cite>pytest</cite>, <cite>black</cite>,
+etc. To install them, use <cite>requirements.txt</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -r requirements.txt
+</pre></div>
+</div>
 <p>Before committing a change, be sure to run the linter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ black .
 </pre></div>
@@ -104,8 +109,14 @@ examples, etc.</p>
 linter will automatically run before you attempt to push any changes.</p>
 <p>You can run tests manually:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd test
-$ pytest
+$ pytest test/unit
+$ pytest test/integration
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Integration tests require a local running instance of FLIR Conservator.
+For more info, see the <code class="docutils literal notranslate"><span class="pre">README</span></code> in the test directory.</p>
 </div>
 <p>You can also build the docs manually:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd docs
