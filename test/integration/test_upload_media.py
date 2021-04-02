@@ -40,12 +40,12 @@ def test_upload_image_filename(conservator, test_data):
 
 
 def test_upload_video(conservator, test_data):
-    path = test_data / "mp4" / "tower_gimbal.mp4"
+    path = test_data / "mp4" / "adas_thermal.mp4"
     media_id = conservator.videos.upload(path)
 
     conservator.videos.wait_for_processing(media_id)
 
     video = conservator.get_media_instance_from_id(media_id)
     assert video is not None
-    assert video.name == "tower_gimbal.mp4"
-    assert video.frames_count == 212
+    assert video.name == "adas_thermal.mp4"
+    assert video.frames_count == 60
