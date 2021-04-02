@@ -6,7 +6,11 @@ import time
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.managers.type_manager import AmbiguousIdentifierException
-from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest, MediaUploadException
+from FLIR.conservator.wrappers.media import (
+    MediaType,
+    MediaUploadRequest,
+    MediaUploadException,
+)
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 logger = logging.getLogger(__name__)
