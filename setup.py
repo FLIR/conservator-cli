@@ -38,6 +38,7 @@ INSTALL_REQUIRES = [
     "requests",
     "Pillow",
     "jsonschema",
+    "dataclasses; python_version<'3.7'",
 ]
 
 if sys.platform.startswith("win"):
