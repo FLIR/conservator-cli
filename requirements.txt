@@ -9,4 +9,5 @@ requests
 black
 Pillow
 jsonschema
+dataclasses; python_version<'3.7'
 pymongo
