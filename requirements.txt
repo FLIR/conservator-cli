@@ -1,4 +1,4 @@
-# NOTE: add new requirements to setup.py 'install_requires' as well
+# NOTE: If a package is required for conservator-cli to run, also include it in setup.py
 wheel
 sphinx
 sgqlc

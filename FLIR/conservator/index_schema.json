@@ -159,6 +159,7 @@
         "videoId": {"$ref": "#/definitions/documentId"},
         "isEmpty": {"type": "boolean"},
         "isFlagged": {"type": "boolean"},
+        "isItar": {"type": "boolean"},
         "qaStatus": {
           "type":  ["string", "null"],
           "enum": ["approved", "changesRequested", null]
@@ -199,6 +200,7 @@
           "type": "array",
           "items": {"$ref": "#/components/frame"}
         },
+        "isItar": {"type": "boolean"},
         "isRemoved": {"type": "boolean"},
         "owner": {"$ref": "#/definitions/email"},
         "custom": {"$ref": "#/definitions/custom"}
@@ -241,6 +243,7 @@
         "spectrum": {"$ref": "#/definitions/noNull"},
         "description": {"$ref": "#/definitions/noNull"},
         "location": {"$ref": "#/definitions/noNull"},
+        "isItar": {"type": "boolean"},
         "custom": {"$ref": "#/definitions/custom"}
       },
       "additionalProperties": false
@@ -293,6 +296,8 @@
           "type": "array",
           "items": {"$ref": "#/components/datasetFrame"}
         },
+        "description": {"type": "string"},
+        "isItar": {"type": "boolean"},
         "custom": {"$ref": "#/definitions/custom"}
       },
       "additionalProperties": true

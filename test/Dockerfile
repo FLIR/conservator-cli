@@ -28,6 +28,11 @@ RUN curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.10.0/kind-linux-amd64 \
     && chmod +x ./kind \
     && mv ./kind /bin/kind
 
+# Install kubetpl
+RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-0.9.0-$( \
+      bash -c '[[ $OSTYPE == darwin* ]] && echo darwin || echo linux' \
+    )-amd64 -o kubetpl && chmod a+x kubetpl && mv kubetpl /usr/local/bin/
+
 # Install AWS CLI to pull docker images from ECR
 RUN apt-get update \
     && apt-get install unzip \

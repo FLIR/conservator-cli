@@ -27,22 +27,21 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
-# NOTE: add new requirements to requirements.txt as well
+# NOTE: These dependencies are necessary for CLI to function, and will be
+# installed when a user runs pip install.
+# Packages only used for developing (pytest, black, etc.) should be placed
+# in requirements.txt instead.
 INSTALL_REQUIRES = [
-    "sphinx",
     "sgqlc",
     "click",
     "tqdm",
-    "pytest",
     "requests",
-    "black",
     "Pillow",
     "jsonschema",
-    "pymongo",
 ]
 
 if sys.platform.startswith("win"):
-    # windows specific requirements (see issue #163)
+    # windows specific dependencies (see issue #163)
     INSTALL_REQUIRES.append("pyreadline")
 
 
