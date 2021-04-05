@@ -95,9 +95,9 @@ class ConservatorFileTransfers:
         """
         directory, file = os.path.split(local_path)
         os.makedirs(directory, exist_ok=True)
-        full_url = self.full_url(url)
+        url = self.full_url(url)
 
-        logger.debug(f"Downloading {file} from {full_url}")
+        logger.debug(f"Downloading {file} from {url}")
         try:
             response = requests.get(url, stream=True, allow_redirects=True)
             if not response.ok:
@@ -160,13 +160,13 @@ class ConservatorFileTransfers:
         """
         Upload the file at `local_path` to Conservator `url`.
         """
-        full_url = self.full_url(url)
+        url = self.full_url(url)
         path = os.path.abspath(local_path)
         logger.info(f"Uploading '{path}'")
         with open(path, "rb") as f:
-            response = requests.put(full_url, f)
+            response = requests.put(url, f)
         if not response.ok:
-            raise FileUploadException(full_url)
+            raise FileUploadException(url)
         logger.info(f"Completed upload of '{path}'")
         return response
 
