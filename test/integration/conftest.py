@@ -98,7 +98,7 @@ def db(mongo_client):
     raise RuntimeError("Can't find database")
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class")
 def empty_db(db):
     PRESERVED_COLLECTIONS = ["groups", "organizations", "allowedDomains"]
     for name in db.list_collection_names():
@@ -110,7 +110,7 @@ def empty_db(db):
     return db
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class")
 def conservator(empty_db, conservator_domain):
     """
     Provides a Conservator connection to be used for testing.
@@ -139,7 +139,7 @@ def conservator(empty_db, conservator_domain):
     yield Conservator(config)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class")
 def default_conservator(conservator):
     """
     Set the default config to point to conservator, for use when
@@ -175,3 +175,19 @@ def root_path():
 @pytest.fixture(scope="session")
 def test_data(root_path):
     return root_path / "test" / "data"
+
+
+def upload_media(conservator, media):
+    """
+    Utility method for uploading some media to conservator instance.
+
+    `media` takes the form ``[(local_path, remote_path, remote_name), ...]``
+    """
+    media_ids = []
+    for local_path, remote_path, remote_name in media:
+        collection = None
+        if remote_path is not None:
+            collection = conservator.collections.from_remote_path(remote_path, make_if_no_exist=True)
+        media_id = conservator.media.upload(local_path, collection=collection, remote_name=remote_name)
+        media_ids.append(media_id)
+    conservator.media.wait_for_processing(media_ids)

@@ -12,7 +12,7 @@ from FLIR.conservator.managers import (
     DatasetManager,
     ProjectManager,
     VideoManager,
-    ImageManager,
+    ImageManager, MediaTypeManager,
 )
 from FLIR.conservator.util import base_convert
 
@@ -43,6 +43,7 @@ class Conservator(ConservatorConnection):
         self.projects = ProjectManager(self)
         self.videos = VideoManager(self)
         self.images = ImageManager(self)
+        self.media = MediaTypeManager(self)
         logger.debug(f"Created new Conservator with config '{config}'")
 
     def __repr__(self):
