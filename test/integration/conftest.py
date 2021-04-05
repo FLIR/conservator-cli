@@ -187,7 +187,11 @@ def upload_media(conservator, media):
     for local_path, remote_path, remote_name in media:
         collection = None
         if remote_path is not None:
-            collection = conservator.collections.from_remote_path(remote_path, make_if_no_exist=True)
-        media_id = conservator.media.upload(local_path, collection=collection, remote_name=remote_name)
+            collection = conservator.collections.from_remote_path(
+                remote_path, make_if_no_exist=True
+            )
+        media_id = conservator.media.upload(
+            local_path, collection=collection, remote_name=remote_name
+        )
         media_ids.append(media_id)
     conservator.media.wait_for_processing(media_ids)

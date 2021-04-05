@@ -12,7 +12,8 @@ from FLIR.conservator.managers import (
     DatasetManager,
     ProjectManager,
     VideoManager,
-    ImageManager, MediaTypeManager,
+    ImageManager,
+    MediaTypeManager,
 )
 from FLIR.conservator.util import base_convert
 

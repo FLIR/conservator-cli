@@ -12,6 +12,7 @@ class TestDownloadMedia:
     Tests are executed in order of declaration. Any pytest fixtures with `autouse` will be executed
     once before the tests.
     """
+
     @pytest.fixture(scope="class", autouse=True)
     def init_media(self, conservator, test_data):
         MEDIA = [
@@ -33,4 +34,3 @@ class TestDownloadMedia:
         assert os.path.exists("Some/Path/My cat.jpg")
         assert os.path.isfile("Some/Path/My cat.jpg")
         assert md5sum_file("Some/Path/My cat.jpg") == image.md5
-
