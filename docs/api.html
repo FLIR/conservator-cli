@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>API Reference &#8212; Conservator CLI  documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
@@ -32,9 +33,9 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="api-reference">
+  <section id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-FLIR.conservator.config">
+<section id="module-FLIR.conservator.config">
 <span id="config"></span><h2>Config<a class="headerlink" href="#module-FLIR.conservator.config" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object is required connect to Conservator. There are
 a variety of ways to create an instance of config.</p>
@@ -177,8 +178,8 @@ this config can be loaded by <code class="xref py py-func docutils literal notra
 <em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.config.</span></code><code class="sig-name descname"><span class="pre">ConfigError</span></code><a class="headerlink" href="#FLIR.conservator.config.ConfigError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.conservator">
+</section>
+<section id="module-FLIR.conservator.conservator">
 <span id="conservator"></span><h2>Conservator<a class="headerlink" href="#module-FLIR.conservator.conservator" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="FLIR.conservator.conservator.Conservator">
@@ -192,12 +193,7 @@ starting point for all queries and operations.</p>
 </pre></div>
 </div>
 <p>You can create also create an instance by passing any <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>
-object:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">my_email</span><span class="p">,</span> <span class="n">my_key</span><span class="p">,</span> <span class="s2">&quot;https://localhost:3000&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Conservator</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="go">&lt;Conservator at https://localhost:3000&gt;</span>
-</pre></div>
-</div>
+object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>config</strong> – The <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object to use for this connection.</p>
@@ -248,8 +244,8 @@ returns <cite>True</cite>. If neither matches, an <a class="reference internal" 
 <p>Raised when a media ID cannot be resolved to a Video or Image.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.connection">
+</section>
+<section id="module-FLIR.conservator.connection">
 <span id="conservator-connection"></span><h2>Conservator Connection<a class="headerlink" href="#module-FLIR.conservator.connection" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="FLIR.conservator.connection.ConservatorConnection">
@@ -367,8 +363,112 @@ what the cause was.</p>
 fault.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.fields_manager">
+</section>
+<section id="module-FLIR.conservator.file_transfers">
+<span id="file-transfers"></span><h2>File Transfers<a class="headerlink" href="#module-FLIR.conservator.file_transfers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="FLIR.conservator.file_transfers.ConservatorFileTransfers">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></code><code class="sig-name descname"><span class="pre">ConservatorFileTransfers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bundles methods for uploading and downloading files to Conservator.</p>
+<p>These methods cannot be standalone utilities because in some deployments
+URLs will be relative to the base Conservator URL. Therefore, all download
+and upload operations need to have a reference to the Conservator instance.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.file_transfers.ConservatorFileTransfers.download">
+<code class="sig-name descname"><span class="pre">download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download the file from Conservator <cite>url</cite> to the <cite>local_path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.file_transfers.ConservatorFileTransfers.download_if_missing">
+<code class="sig-name descname"><span class="pre">download_if_missing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_md5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download_if_missing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that a file exists at <cite>local_path</cite> with the <cite>expected_md5</cite> hash. If it
+doesn’t, download it from <cite>url</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.file_transfers.ConservatorFileTransfers.download_many">
+<code class="sig-name descname"><span class="pre">download_many</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">downloads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a list of <cite>DownloadRequest</cite> in parallel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>downloads</strong> – The <cite>list</cite> of <cite>DownloadRequest</cite> to download.</p></li>
+<li><p><strong>process_count</strong> – The number of concurrent downloads. If <cite>None</cite>, uses
+<code class="docutils literal notranslate"><span class="pre">os.cpu_count()</span></code>.</p></li>
+<li><p><strong>no_meter</strong> – If <cite>True</cite>, hide the progress bar.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.file_transfers.ConservatorFileTransfers.full_url">
+<code class="sig-name descname"><span class="pre">full_url</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.full_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a <cite>url</cite> from Conservator into a full URL (protocol, domain, etc.)
+that can be used for uploading or downloading.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.file_transfers.ConservatorFileTransfers.upload">
+<code class="sig-name descname"><span class="pre">upload</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload the file at <cite>local_path</cite> to Conservator <cite>url</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.file_transfers.ConservatorFileTransfers.upload_many">
+<code class="sig-name descname"><span class="pre">upload_many</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uploads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a list of <cite>UploadRequest</cite> in parallel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uploads</strong> – The <cite>list</cite> of <cite>UploadRequest</cite> to download.</p></li>
+<li><p><strong>process_count</strong> – The number of concurrent uploads. If <cite>None</cite>, uses
+<code class="docutils literal notranslate"><span class="pre">os.cpu_count()</span></code>.</p></li>
+<li><p><strong>no_meter</strong> – If <cite>True</cite>, hide the progress bar.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="FLIR.conservator.file_transfers.DownloadRequest">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></code><code class="sig-name descname"><span class="pre">DownloadRequest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_md5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.DownloadRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>For use with <a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download_many" title="FLIR.conservator.file_transfers.ConservatorFileTransfers.download_many"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConservatorFileTransfers.download_many()</span></code></a>.</p>
+<p>A request to download from <cite>url</cite> to <cite>local_path</cite>. If
+<cite>expected_md5</cite> is given, check the file doesn’t already exist
+with the correct hash before downloading.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.file_transfers.FileDownloadException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></code><code class="sig-name descname"><span class="pre">FileDownloadException</span></code><a class="headerlink" href="#FLIR.conservator.file_transfers.FileDownloadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something went wrong when downloading a file.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.file_transfers.FileTransferException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></code><code class="sig-name descname"><span class="pre">FileTransferException</span></code><a class="headerlink" href="#FLIR.conservator.file_transfers.FileTransferException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something went wrong when uploading or downloading a file.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.file_transfers.FileUploadException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></code><code class="sig-name descname"><span class="pre">FileUploadException</span></code><a class="headerlink" href="#FLIR.conservator.file_transfers.FileUploadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something went wrong when uploading a file.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="FLIR.conservator.file_transfers.UploadRequest">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></code><code class="sig-name descname"><span class="pre">UploadRequest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.UploadRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>For use with <a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload_many" title="FLIR.conservator.file_transfers.ConservatorFileTransfers.upload_many"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConservatorFileTransfers.upload_many()</span></code></a>.</p>
+<p>A request to upload <cite>local_path</cite> to <cite>url</cite>.</p>
+</dd></dl>
+
+</section>
+<section id="module-FLIR.conservator.fields_manager">
 <span id="fields-manager"></span><h2>Fields Manager<a class="headerlink" href="#module-FLIR.conservator.fields_manager" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="FLIR.conservator.fields_manager.FieldsManager">
@@ -388,8 +488,8 @@ at any time.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.fields_request">
+</section>
+<section id="module-FLIR.conservator.fields_request">
 <span id="fields-request"></span><h2>Fields Request<a class="headerlink" href="#module-FLIR.conservator.fields_request" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="FLIR.conservator.fields_request.FieldsRequest">
@@ -495,8 +595,8 @@ should always be preferred to relying on defaults.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers">
+</section>
+<section id="module-FLIR.conservator.wrappers">
 <span id="wrappers-and-typeproxies"></span><h2>Wrappers and TypeProxies<a class="headerlink" href="#module-FLIR.conservator.wrappers" title="Permalink to this headline">¶</a></h2>
 <p>This modules contains types that wrap generated SGQLC types.</p>
 <p>These wrapped types all extend <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>, and contain
@@ -509,7 +609,7 @@ For instance, a <a class="reference internal" href="#FLIR.conservator.wrappers.c
 <a class="reference internal" href="#FLIR.conservator.wrappers.collection.Collection.get_datasets" title="FLIR.conservator.wrappers.collection.Collection.get_datasets"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_datasets()</span></code></a>,
 which runs the GraphQL query for a collection’s datasets, and returns
 them as proxied <a class="reference internal" href="#FLIR.conservator.wrappers.dataset.Dataset" title="FLIR.conservator.wrappers.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> objects.</p>
-<div class="section" id="module-FLIR.conservator.wrappers.type_proxy">
+<section id="module-FLIR.conservator.wrappers.type_proxy">
 <span id="typeproxy"></span><h3>TypeProxy<a class="headerlink" href="#module-FLIR.conservator.wrappers.type_proxy" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.type_proxy.ListTypeProxy">
@@ -644,8 +744,8 @@ subfields (such as “repository.master” on a Dataset).</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.queryable">
+</section>
+<section id="module-FLIR.conservator.wrappers.queryable">
 <span id="queryable"></span><h3>Queryable<a class="headerlink" href="#module-FLIR.conservator.wrappers.queryable" title="Permalink to this headline">¶</a></h3>
 <dl class="py exception">
 <dt id="FLIR.conservator.wrappers.queryable.InvalidIdException">
@@ -679,8 +779,8 @@ is equivalent to calling <a class="reference internal" href="#FLIR.conservator.w
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.collection">
+</section>
+<section id="module-FLIR.conservator.wrappers.collection">
 <span id="collection"></span><h3>Collection<a class="headerlink" href="#module-FLIR.conservator.wrappers.collection" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.collection.Collection">
@@ -852,8 +952,8 @@ fields must exist on both Image and Video types.</p>
 <em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></code><code class="sig-name descname"><span class="pre">RemotePathExistsException</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.collection.RemotePathExistsException" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.dataset">
+</section>
+<section id="module-FLIR.conservator.wrappers.dataset">
 <span id="dataset"></span><h3>Dataset<a class="headerlink" href="#module-FLIR.conservator.wrappers.dataset" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.dataset.Dataset">
@@ -997,8 +1097,8 @@ identifier like <code class="docutils literal notranslate"><span class="pre">HEA
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.image">
+</section>
+<section id="module-FLIR.conservator.wrappers.image">
 <span id="image"></span><h3>Image<a class="headerlink" href="#module-FLIR.conservator.wrappers.image" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.image.Image">
@@ -1030,8 +1130,8 @@ the same as <code class="xref py py-meth docutils literal notranslate"><span cla
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.project">
+</section>
+<section id="module-FLIR.conservator.wrappers.project">
 <span id="project"></span><h3>Project<a class="headerlink" href="#module-FLIR.conservator.wrappers.project" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.project.Project">
@@ -1058,8 +1158,8 @@ specified <cite>fields</cite>.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.video">
+</section>
+<section id="module-FLIR.conservator.wrappers.video">
 <span id="video"></span><h3>Video<a class="headerlink" href="#module-FLIR.conservator.wrappers.video" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.video.Video">
@@ -1090,8 +1190,8 @@ specified <cite>fields</cite>.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.frame">
+</section>
+<section id="module-FLIR.conservator.wrappers.frame">
 <span id="frame"></span><h3>Frame<a class="headerlink" href="#module-FLIR.conservator.wrappers.frame" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.frame.Frame">
@@ -1113,8 +1213,8 @@ specified <cite>fields</cite>.</p>
 
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.frame.Frame.download">
-<code class="sig-name descname"><span class="pre">download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Download image to <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+<code class="sig-name descname"><span class="pre">download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download media to <cite>path</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1125,8 +1225,8 @@ specified <cite>fields</cite>.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.dataset_frame">
+</section>
+<section id="module-FLIR.conservator.wrappers.dataset_frame">
 <span id="datasetframe"></span><h3>DatasetFrame<a class="headerlink" href="#module-FLIR.conservator.wrappers.dataset_frame" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame">
@@ -1182,9 +1282,9 @@ specified <cite>fields</cite>.</p>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-FLIR.conservator.managers">
+</section>
+</section>
+<section id="module-FLIR.conservator.managers">
 <span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this headline">¶</a></h2>
 <p>A Manager is simply a bundle of utilities for querying a specific type.</p>
 <dl class="py class">
@@ -1339,7 +1439,7 @@ any user-facing input.</p>
 
 </dd></dl>
 
-<div class="section" id="module-FLIR.conservator.managers.type_manager">
+<section id="module-FLIR.conservator.managers.type_manager">
 <span id="typemanager"></span><h3>TypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.type_manager" title="Permalink to this headline">¶</a></h3>
 <dl class="py exception">
 <dt id="FLIR.conservator.managers.type_manager.AmbiguousIdentifierException">
@@ -1400,8 +1500,8 @@ checking if the identifier is a path.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.managers.searchable">
+</section>
+<section id="module-FLIR.conservator.managers.searchable">
 <span id="searchabletypemanager"></span><h3>SearchableTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.searchable" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="FLIR.conservator.managers.searchable.SearchableTypeManager">
@@ -1444,8 +1544,8 @@ single match was found (or none, or many).</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.managers.media">
+</section>
+<section id="module-FLIR.conservator.managers.media">
 <span id="mediatypemanager"></span><h3>MediaTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.media" title="Permalink to this headline">¶</a></h3>
 <dl class="py exception">
 <dt id="FLIR.conservator.managers.media.ProcessingTimeoutError">
@@ -1455,9 +1555,9 @@ single match was found (or none, or many).</p>
 the requested timeout.</p>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-FLIR.conservator.paginated_query">
+</section>
+</section>
+<section id="module-FLIR.conservator.paginated_query">
 <span id="paginatedquery"></span><h2>PaginatedQuery<a class="headerlink" href="#module-FLIR.conservator.paginated_query" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="FLIR.conservator.paginated_query.ConcurrentQueryModificationException">
@@ -1580,8 +1680,8 @@ but individual requests may be large and slow.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-FLIR.conservator.local_dataset">
+</section>
+<section id="module-FLIR.conservator.local_dataset">
 <span id="localdataset"></span><h2>LocalDataset<a class="headerlink" href="#module-FLIR.conservator.local_dataset" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="FLIR.conservator.local_dataset.InvalidLocalDatasetPath">
@@ -1763,8 +1863,8 @@ JSON Schema.</p>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -1796,6 +1896,7 @@ JSON Schema.</p>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.file_transfers">File Transfers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a></li>
