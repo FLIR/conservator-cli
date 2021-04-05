@@ -6,8 +6,6 @@ import json
 import logging
 import os
 
-from FLIR.conservator.wrappers.collection import InvalidRemotePathException
-
 from FLIR.conservator.managers.media import MediaTypeManager
 from FLIR.conservator.managers.searchable import SearchableTypeManager
 from FLIR.conservator.managers.type_manager import AmbiguousIdentifierException
@@ -17,7 +15,6 @@ from FLIR.conservator.wrappers import (
     Project,
     Video,
     Image,
-    MediaType,
 )
 
 

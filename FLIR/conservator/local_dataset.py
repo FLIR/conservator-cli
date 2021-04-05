@@ -12,7 +12,7 @@ import time
 import jsonschema
 import tqdm
 from PIL import Image
-from FLIR.conservator.util import md5sum_file, download_file
+from FLIR.conservator.util import md5sum_file
 
 logger = logging.getLogger(__name__)
 
@@ -329,13 +329,13 @@ class LocalDataset:
             if os.path.islink(file_path) or os.stat(file_path).st_nlink > 1:
                 os.remove(file_path)
 
-    @staticmethod
-    def _download_and_link(asset):
+    def _download_and_link(self, asset):
         # we use imap (istarmap doesn't exist) so we need to unpack arguments
-        path, name, url, paths_to_link, use_symlink = asset
-        result = download_file(path, name, url, silent=True, no_meter=True)
-        downloaded_path = os.path.join(path, name)
-        LocalDataset._add_links(downloaded_path, paths_to_link, use_symlink)
+        download_path, url, paths_to_link, use_symlink = asset
+        result = self.conservator.files.download(
+            url=url, local_path=download_path, no_meter=True
+        )
+        LocalDataset._add_links(download_path, paths_to_link, use_symlink)
         return result
 
     @staticmethod

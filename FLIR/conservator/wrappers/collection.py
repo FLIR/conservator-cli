@@ -1,8 +1,8 @@
-import functools
 import logging
 import os
 
 from FLIR.conservator.fields_request import FieldsRequest
+from FLIR.conservator.file_transfers import DownloadRequest
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import (
     Query,
@@ -13,7 +13,6 @@ from FLIR.conservator.generated.schema import (
 )
 from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
-from FLIR.conservator.util import download_files
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.queryable import QueryableType
@@ -311,20 +310,28 @@ class Collection(QueryableType, FileLockerType):
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
         fields.include_field("filename", "url", "md5")
-        videos = self.get_videos(fields=fields)
-        assets = [(path, video.filename, video.url, video.md5) for video in videos]
-        download_files(assets, resume=True, no_meter=no_meter)
+        downloads = []
+        for video in self.get_videos(fields=fields):
+            local_path = os.path.join(path, video.filename)
+            download = DownloadRequest(
+                url=video.url, local_path=local_path, expected_md5=video.md5
+            )
+            downloads.append(download)
+        self._conservator.files.download_many(downloads, no_meter=no_meter)
 
     def download_images(self, path, no_meter=False):
         """Downloads images to given path."""
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
-        fields.include_field("filename", "url", "image_md5")
-        images = self.get_images(fields=fields)
-        assets = [
-            (path, image.filename, image.url, image.image_md5) for image in images
-        ]
-        download_files(assets, resume=True, no_meter=no_meter)
+        fields.include_field("filename", "url", "md5")
+        downloads = []
+        for image in self.get_images(fields=fields):
+            local_path = os.path.join(path, image.filename)
+            download = DownloadRequest(
+                url=image.url, local_path=local_path, expected_md5=image.md5
+            )
+            downloads.append(download)
+        self._conservator.files.download_many(downloads, no_meter=no_meter)
 
     def download_datasets(self, path, no_meter=False):
         """Clones and pulls all datasets in the collection."""

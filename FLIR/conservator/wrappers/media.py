@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated.schema import Mutation
-from FLIR.conservator.util import md5sum_file, download_file, upload_file
+from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
@@ -19,7 +19,7 @@ class MediaUploadException(Exception):
 
 
 class MediaCompare(enum.Enum):
-    """results of comparing local file and Conservator file"""
+    """Results of comparing local file and Conservator file"""
 
     MISMATCH = 0
     MATCH = 1
@@ -30,7 +30,7 @@ class MediaCompare(enum.Enum):
 
 @dataclass
 class MediaUploadRequest:
-    """tracks inputs and results of a media upload"""
+    """Tracks inputs and results of a media upload"""
 
     file_path: str
     collection_id: str = ""
@@ -197,12 +197,8 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             upload_id = media._initiate_upload(remote_name)
 
             url = media._generate_signed_upload_url(upload_id)
-            upload = upload_file(file_path, url)
-            if not upload.ok:
-                raise MediaUploadException(
-                    f"Upload failed ({upload.status_code}: {upload.reason})"
-                )
-            completion_tag = upload.headers["ETag"]
+            response = conservator.files.upload(url=url, local_path=file_path)
+            completion_tag = response.headers["ETag"]
 
             media._complete_upload(
                 remote_name, upload_id, completion_tags=[completion_tag]
@@ -225,12 +221,16 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
 
         return upload_request
 
-    @requires_fields("url", "filename")
+    @requires_fields("url", "filename", "md5")
     def download(self, path, no_meter=False):
-        """Download video to ``path``."""
-        # FIXME: fill in md5 when Conservator gets consistent fieldname for it
-        ## download_file(path, self.filename, self.url, remote_md5=self.md5, no_meter=no_meter)
-        download_file(path, self.filename, self.url, no_meter=no_meter)
+        """Download media to `path`."""
+        local_path = os.path.join(path, self.filename)
+        self._conservator.files.download_if_missing(
+            url=self.url,
+            local_path=local_path,
+            expected_md5=self.md5,
+            no_meter=no_meter,
+        )
 
     def remove(self):
         """

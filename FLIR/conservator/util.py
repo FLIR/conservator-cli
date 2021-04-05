@@ -1,9 +1,5 @@
 import hashlib
-import multiprocessing
-import os
 import logging
-import requests
-import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -38,91 +34,6 @@ def to_clean_string(o, first=True):
         s = s[1:]
 
     return s
-
-
-class FileDownloadException(Exception):
-    pass
-
-
-def download_file(path, name, url, remote_md5="", silent=False, no_meter=False):
-    path = os.path.abspath(path)
-    file_path = os.path.join(path, name)
-    os.makedirs(path, exist_ok=True)
-
-    if remote_md5 and os.path.exists(file_path):
-        logger.debug(f"Comparing {name} to {url}")
-        local_md5 = md5sum_file(file_path)
-        if local_md5 == remote_md5:
-            logger.info(f"Skip {name} (already downloaded)")
-            return True
-
-    logger.debug(f"Downloading {name} from {url}")
-    try:
-        r = requests.get(url, stream=True, allow_redirects=True)
-        if r.status_code != 200:
-            if not silent:
-                raise FileDownloadException(url)
-            else:
-                logger.warning(f"Skipped silent FileDownloadException for url: {url}")
-                return False
-    except requests.exceptions.ConnectionError as e:
-        if not silent:
-            raise FileDownloadException(url) from e
-        else:
-            logger.warning(f"Skipped silent FileDownloadException for url: {url}")
-            return False
-
-    size = int(r.headers.get("content-length", 0))
-    size_mb = int(size / 1024 / 1024)
-    progress = tqdm.tqdm(total=size, disable=no_meter)
-    progress.set_description(f"Downloading {name} ({size_mb:.2f} MB)")
-    chunk_size = 1024 * 1024
-
-    try:
-        with open(file_path, "wb") as fd:
-            for chunk in r.iter_content(chunk_size=chunk_size):
-                progress.update(len(chunk))
-                fd.write(chunk)
-    except BaseException as e:
-        # To avoid partial downloads:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-        if not silent:
-            raise FileDownloadException from e
-        logger.warning(f"Skipped silent FileDownloadException for url: {url}")
-        return False
-    finally:
-        progress.close()
-    return True
-
-
-def download_files(files, resume=False, process_count=None, no_meter=False):
-    # incoming files argument is a list of 3 or 4-tuples per requested file:
-    #   if resume is enabled, must supply expected md5sum to determine
-    #   whether any existing files are complete
-    #     files = [(path, name, url, remote_md5), ...]
-    #   otherwise md5 field does not need to be provided and will be
-    #   ignored if given
-    #     files = [(path, name, url), ...]
-    pool = multiprocessing.Pool(process_count)  # defaults to CPU count
-    if resume:
-        args = [(*file, True, no_meter) for i, file in enumerate(files)]
-    else:
-        # ignore any md5 values that may have been supplied
-        args = [(*file[0:3], "", True, no_meter) for i, file in enumerate(files)]
-    results = pool.starmap(download_file, args)
-    return results
-
-
-def upload_file(path, url):
-    path = os.path.abspath(path)
-    logger.info(f"Uploading '{path}'")
-    with open(path, "rb") as f:
-        response = requests.put(url, f)
-    assert response.ok
-    logger.info(f"Completed upload of '{path}'")
-    return response
 
 
 def md5sum_file(path, block_size=1024 * 1024):

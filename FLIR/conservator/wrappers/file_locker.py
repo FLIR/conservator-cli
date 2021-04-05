@@ -1,10 +1,8 @@
 import os
 
-from FLIR.conservator.generated.schema import Mutation
+from FLIR.conservator.file_transfers import DownloadRequest, FileUploadException
 from FLIR.conservator.wrappers import TypeProxy
 from FLIR.conservator.wrappers.type_proxy import requires_fields
-from FLIR.conservator.util import download_files
-from FLIR.conservator.util import upload_file
 
 
 class FileLockerUploadException(Exception):
@@ -60,8 +58,12 @@ class FileLockerType(TypeProxy):
         ``associated_files/``."""
         path = os.path.join(path, "associated_files")
         os.makedirs(path, exist_ok=True)
-        assets = [(path, file.name, file.url) for file in self.file_locker_files]
-        download_files(assets, no_meter=no_meter)
+        downloads = []
+        for file in self.file_locker_files:
+            local_path = os.path.join(path, file.name)
+            download = DownloadRequest(url=file.url, local_path=local_path)
+            downloads.append(download)
+        self._conservator.files.download_many(downloads, no_meter=no_meter)
 
     def upload_associated_file(self, file_path, content_type=None):
         """
@@ -71,11 +73,10 @@ class FileLockerType(TypeProxy):
         if not content_type:
             content_type = self.default_file_type
         url = self._generate_file_locker_url(file_path, content_type)
-        upload = upload_file(file_path, url)
-        if not upload.ok:
-            raise FileLockerUploadException(
-                f"Upload failed ({upload.status_code}: {upload.reason})"
-            )
+        try:
+            self._conservator.upload(url=url, local_path=file_path)
+        except FileUploadException as e:
+            raise FileLockerUploadException from e
         return True
 
     def remove_associated_file(self, filename):
