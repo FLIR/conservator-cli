@@ -1,3 +1,5 @@
+import os
+
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import (
     AnnotationCreate,
@@ -6,7 +8,6 @@ from FLIR.conservator.generated.schema import (
 )
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
-from FLIR.conservator.util import download_file
 
 
 class Frame(QueryableType):
@@ -17,10 +18,16 @@ class Frame(QueryableType):
     underlying_type = schema.Frame
     by_ids_query = schema.Query.frames_by_ids
 
-    @requires_fields("url", "filename")
-    def download(self, path):
-        """Download image to ``path``."""
-        download_file(path, self.filename, self.url)
+    @requires_fields("url", "filename", "md5")
+    def download(self, path, no_meter=False):
+        """Download media to `path`."""
+        local_path = os.path.join(path, self.filename)
+        self._conservator.files.download_if_missing(
+            url=self.url,
+            local_path=local_path,
+            expected_md5=self.md5,
+            no_meter=no_meter,
+        )
 
     def _populate(self, fields):
         ids = [self.id]

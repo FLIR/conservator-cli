@@ -20,6 +20,13 @@ Conservator Connection
 .. automodule:: FLIR.conservator.connection
     :members:
 
+File Transfers
+--------------
+
+.. automodule:: FLIR.conservator.file_transfers
+    :members:
+
+
 Fields Manager
 --------------
 

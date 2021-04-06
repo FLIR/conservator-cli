@@ -6,7 +6,11 @@ import time
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.managers.type_manager import AmbiguousIdentifierException
-from FLIR.conservator.wrappers.media import MediaType, MediaUploadRequest
+from FLIR.conservator.wrappers.media import (
+    MediaType,
+    MediaUploadRequest,
+    MediaUploadException,
+)
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 logger = logging.getLogger(__name__)
@@ -86,6 +90,9 @@ class MediaTypeManager:
             file_path=file_path, collection_id=collection_id, remote_name=remote_name
         )
         result = MediaType.upload(self._conservator, upload_request)
+        if not result.complete:
+            raise MediaUploadException(result.error_message)
+
         return result.media_id
 
     def is_uploaded_media_id_processed(self, media_id):
@@ -97,12 +104,9 @@ class MediaTypeManager:
         an image, requiring different queries. This method can be used to verify
         that an ID is done processing, and its type won't change in the future.
         """
-        try:
-            media = self._conservator.get_media_instance_from_id(media_id)
-            media.populate("state")
-            return media.state == "completed"
-        except InvalidIdException:
-            return False
+        media = self._conservator.get_media_instance_from_id(media_id)
+        media.populate("state")
+        return media.state == "completed"
 
     def _wait_for_single_processing(self, media_id, check_frequency_seconds):
         while not self.is_uploaded_media_id_processed(media_id):

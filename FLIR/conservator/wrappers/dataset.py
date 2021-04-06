@@ -10,7 +10,6 @@ from FLIR.conservator.generated.schema import (
     DeleteDatasetInput,
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
-from FLIR.conservator.util import download_file
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.queryable import QueryableType
@@ -220,9 +219,9 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             raise FileExistsError("Blob download path must not exist")
 
         url = self.get_blob_url_by_id(blob_id)
-        parent, name = os.path.split(path)
+        parent, _ = os.path.split(path)
         os.makedirs(parent, exist_ok=True)
-        download_file(parent, name, url)
+        self._conservator.files.download(url=url, local_path=path)
 
     def download_latest_index(self, path):
         """
