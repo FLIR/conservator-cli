@@ -1,3 +1,6 @@
+import json
+import os
+
 import pytest
 from FLIR.conservator.connection import ConservatorGraphQLServerError
 
@@ -5,6 +8,7 @@ from FLIR.conservator.wrappers.collection import (
     RemotePathExistsException,
     InvalidRemotePathException,
 )
+from conftest import upload_media
 
 
 def test_create_child(conservator):
@@ -130,6 +134,11 @@ def test_from_remote_path(conservator, path):
     assert fetched_collection.path == path
 
 
+def test_from_invalid_remote_raises_exception(conservator):
+    with pytest.raises(InvalidRemotePathException):
+        conservator.collections.from_remote_path("/Some/non-existent/Path")
+
+
 @pytest.mark.parametrize(
     "path",
     [
@@ -244,66 +253,174 @@ def test_delete_parent(conservator):
         parent.delete()
 
 
-def test_get_images(conservator):
-    # TODO once upload/download done
-    pass
+def test_remove_media(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
+    local_path = test_data / "jpg" / "surfers_0.jpg"
+    media_id = conservator.media.upload(local_path, collection=collection)
+    conservator.media.wait_for_processing(media_id)
+    assert len(list(collection.get_media())) == 1
+
+    collection.remove_media(media_id)
+
+    assert len(list(collection.get_media())) == 0
 
 
-def test_recursively_get_images(conservator):
-    # TODO once upload/download done
-    pass
+def test_create_dataset(conservator):
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
 
+    dataset = collection.create_dataset("My dataset")
 
-def test_get_videos(conservator):
-    # TODO once upload/download done
-    pass
-
-
-def test_recursively_get_videos(conservator):
-    # TODO once upload/download done
-    pass
-
-
-def test_get_media(conservator):
-    # TODO once upload/download done
-    pass
-
-
-def test_recursively_get_media(conservator):
-    # TODO once upload/download done
-    pass
+    assert conservator.datasets.id_exists(dataset.id)
+    dataset.populate("collections")  # a list of Collection IDs
+    assert len(dataset.collections) == 1
+    assert dataset.collections[0] == collection.id
 
 
 def test_get_datasets(conservator):
-    # TODO once upload/download done
-    pass
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
+    dataset_1 = collection.create_dataset("My first dataset")
+    dataset_2 = collection.create_dataset("My second dataset")
+
+    datasets = collection.get_datasets()
+
+    assert len(datasets) == 2
+    dataset_ids = [dataset.id for dataset in datasets]
+    assert dataset_1.id in dataset_ids
+    assert dataset_2.id in dataset_ids
 
 
-def test_remove_media(conservator):
-    # TODO once upload/download done
-    pass
+def test_download_datasets(conservator, tmp_cwd):
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
+    dataset_1 = collection.create_dataset("My first dataset")
+
+    collection.download_datasets(".")
+
+    assert os.path.exists("My first dataset")
+    assert os.path.isdir("My first dataset")
+    local_dataset = conservator.datasets.from_local_path("My first dataset")
+    assert local_dataset.id == dataset_1.id
 
 
-def test_download_metadata(conservator):
-    # TODO once upload/download done
-    pass
+class TestCollectionsWithMedia:
+    @pytest.fixture(scope="class", autouse=True)
+    def init_media(self, conservator, test_data):
+        MEDIA = [
+            # local_path, remote_path, remote_name
+            (test_data / "jpg" / "cat_0.jpg", "/Cats", None),
+            (test_data / "jpg" / "cat_1.jpg", "/Cats", None),
+            (test_data / "jpg" / "cat_2.jpg", "/Cats", "Named cat pic.jpg"),
+            (test_data / "jpg" / "cat_0.jpg", "/Animals/Cats", None),
+            (test_data / "jpg" / "cat_1.jpg", "/Animals/Cats", None),
+            (test_data / "jpg" / "cat_2.jpg", "/Animals/Cats", "Named cat pic.jpg"),
+            (test_data / "jpg" / "dog_0.jpg", "/Animals/Dogs", None),
+            (test_data / "jpg" / "dog_1.jpg", "/Animals/Dogs", None),
+            (test_data / "jpg" / "dog_2.jpg", "/Animals/Dogs", "Named dog pic.jpg"),
+            (test_data / "jpg" / "bird_0.jpg", "/Animals/Birds", None),
+            (test_data / "jpg" / "aerial_0.jpg", "/Flight", None),
+            (test_data / "jpg" / "drone_0.jpg", "/Flight", None),
+            (test_data / "mp4" / "adas_thermal.mp4", "/Flight/Thermal", None),
+            (
+                test_data / "mp4" / "adas_thermal.mp4",
+                "/Flight/Thermal",
+                "Same video but named.mp4",
+            ),
+        ]
+        upload_media(conservator, MEDIA)
 
+    def test_get_images(self, conservator):
+        collection = conservator.collections.from_remote_path("/Cats")
+        images = collection.get_images()
+        assert len(images) == 3
 
-def test_download_media(conservator):
-    # TODO once upload/download done
-    pass
+    def test_recursively_get_images(self, conservator):
+        collection = conservator.collections.from_remote_path("/Animals")
+        images = list(collection.recursively_get_images())
+        assert len(images) == 7
 
+    def test_recursively_get_images_includes_self(self, conservator):
+        collection = conservator.collections.from_remote_path("/Animals/Dogs")
+        images = list(collection.recursively_get_images())
+        assert len(images) == 3
 
-def test_download_videos(conservator):
-    # TODO once upload/download done
-    pass
+    def test_get_videos(self, conservator):
+        collection = conservator.collections.from_remote_path("/Flight/Thermal")
+        videos = collection.get_videos()
+        assert len(videos) == 2
 
+    def test_recursively_get_videos(self, conservator):
+        collection = conservator.collections.from_remote_path("/Flight")
+        videos = list(collection.recursively_get_videos())
+        assert len(videos) == 2
 
-def test_download_images(conservator):
-    # TODO once upload/download done
-    pass
+    def test_get_media(self, conservator):
+        collection = conservator.collections.from_remote_path("/Flight")
+        media = list(collection.get_media())
+        assert len(media) == 2  # only two media directly in /Flight
 
+    def test_recursively_get_media(self, conservator):
+        collection = conservator.collections.from_remote_path("/Flight")
+        media = list(collection.recursively_get_media())
+        assert len(media) == 4  # 2 images, 2 videos
 
-def test_download_datasets(conservator):
-    # TODO once upload/download done
-    pass
+    def test_download_metadata(self, conservator, tmp_cwd):
+        collection = conservator.collections.from_remote_path("/Cats")
+        collection.download_metadata("./cats")
+        assert os.path.exists("./cats/media_metadata")
+        files = os.listdir("./cats/media_metadata")
+        assert len(files) == 3
+        assert "cat_0.json" in files
+        assert "cat_1.json" in files
+        assert "Named cat pic.json" in files
+        # Sanity check that we actually downloaded JSON, with correct ID
+        with open("cats/media_metadata/Named cat pic.json") as o:
+            data = json.load(o)
+            media_id = data["videos"][0]["id"]
+            assert conservator.images.id_exists(media_id)
+            media = conservator.images.from_id(media_id)
+            media.populate()
+            assert media.name == "Named cat pic.jpg"
+
+    def test_download_images(self, conservator, tmp_cwd):
+        collection = conservator.collections.from_remote_path("/Cats")
+        collection.download_images("./images/")
+
+        assert len(os.listdir("images")) == 3
+        assert os.path.exists("images/cat_0.jpg")
+        assert os.path.exists("images/cat_1.jpg")
+        assert os.path.exists("images/Named cat pic.jpg")
+
+    def test_download_videos(self, conservator, tmp_cwd):
+        collection = conservator.collections.from_remote_path("/Flight/Thermal")
+        collection.download_videos("./videos/")
+
+        assert len(os.listdir("videos")) == 2
+        assert os.path.exists("videos/adas_thermal.mp4")
+        assert os.path.exists("videos/Same video but named.mp4")
+
+    def test_download_media(self, conservator, tmp_cwd):
+        collection = conservator.collections.from_remote_path("/Flight")
+        collection.download_media("./media/")
+
+        assert len(os.listdir("media")) == 2
+        assert os.path.exists("media/aerial_0.jpg")
+        assert os.path.exists("media/drone_0.jpg")
+
+    def test_download_recursively(self, conservator, tmp_cwd):
+        collection = conservator.collections.from_remote_path("/Animals")
+
+        collection.download(
+            include_media=True,
+            recursive=True,
+        )
+
+        assert len(os.listdir("Animals/")) == 3
+        assert len(os.listdir("Animals/Cats/")) == 3
+        assert os.path.exists("Animals/Cats/cat_0.jpg")
+        assert os.path.exists("Animals/Cats/cat_1.jpg")
+        assert os.path.exists("Animals/Cats/Named cat pic.jpg")
+        assert len(os.listdir("Animals/Dogs/")) == 3
+        assert os.path.exists("Animals/Dogs/dog_0.jpg")
+        assert os.path.exists("Animals/Dogs/dog_1.jpg")
+        assert os.path.exists("Animals/Dogs/Named dog pic.jpg")
+        assert len(os.listdir("Animals/Birds")) == 1
+        assert os.path.exists("Animals/Birds/bird_0.jpg")

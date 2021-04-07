@@ -229,6 +229,11 @@ class Collection(QueryableType, FileLockerType):
         )
         return datasets
 
+    def create_dataset(self, name, fields=None):
+        return self._conservator.datasets.create(
+            name, collections=[self], fields=fields
+        )
+
     def remove_media(self, media_id):
         """
         Remove given media from this collection.
@@ -254,15 +259,21 @@ class Collection(QueryableType, FileLockerType):
     @requires_fields("name", "file_locker_files", "child_ids")
     def download(
         self,
-        path,
+        path=None,
         include_datasets=False,
         include_metadata=False,
         include_associated_files=False,
         include_media=False,
         recursive=False,
     ):
-        """Downloads this collection to the `path` specified,
-        with the specified assets included."""
+        """
+        Downloads this collection to the `path` specified, with the specified assets
+        included. If `path` is `None` or not given, downloaded to a directory with
+        the name of the collection.
+        """
+        if path is None:
+            path = self.name
+
         os.makedirs(path, exist_ok=True)
 
         if include_metadata:

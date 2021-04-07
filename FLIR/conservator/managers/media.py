@@ -104,9 +104,13 @@ class MediaTypeManager:
         an image, requiring different queries. This method can be used to verify
         that an ID is done processing, and its type won't change in the future.
         """
-        media = self._conservator.get_media_instance_from_id(media_id)
-        media.populate("state")
-        return media.state == "completed"
+        try:
+            media = self._conservator.get_media_instance_from_id(media_id)
+            media.populate("state")
+            return media.state == "completed"
+        except InvalidIdException:
+            # If media changes types between get_instance() and populate()
+            return False
 
     def _wait_for_single_processing(self, media_id, check_frequency_seconds):
         while not self.is_uploaded_media_id_processed(media_id):

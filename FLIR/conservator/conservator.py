@@ -16,6 +16,7 @@ from FLIR.conservator.managers import (
     MediaTypeManager,
 )
 from FLIR.conservator.util import base_convert
+from FLIR.conservator.wrappers.queryable import InvalidIdException
 
 logger = logging.getLogger(__name__)
 
@@ -111,10 +112,15 @@ class Conservator(ConservatorConnection):
         this order, until :meth:`~FLIR.conservator.managers.type_manager.id_exists`
         returns `True`. If neither matches, an :class:`UnknownMediaIdException` is raised.
         """
-        if self.videos.id_exists(media_id):
-            media = self.videos.from_id(media_id)
-            media.populate(fields)
-            return media
+        try:
+            if self.videos.id_exists(media_id):
+                media = self.videos.from_id(media_id)
+                media.populate(fields)
+                return media
+        except InvalidIdException:
+            # If media changes to Image between id_exists() and populate()
+            # Luckily other direction isn't possible.
+            pass
 
         if self.images.id_exists(media_id):
             media = self.images.from_id(media_id)

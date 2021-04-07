@@ -129,7 +129,7 @@ class ConservatorFileTransfers:
 
     def _do_download_request(self, download_request):
         try:
-            if download_request.existing_md5 is not None:
+            if download_request.expected_md5 is not None:
                 return self.download_if_missing(
                     url=download_request.url,
                     local_path=download_request.local_path,
