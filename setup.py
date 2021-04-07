@@ -56,7 +56,7 @@ setuptools.setup(
     url="https://github.com/FLIR/conservator-cli",
     packages=find_namespace_packages(include=["FLIR.*"], exclude=["*.test.*"]),
     package_data={
-        "FLIR.conservator": ["index_schema.json", "configs/*.json"],
+        "FLIR.conservator": ["configs/*.json"],
     },
     entry_points="""
         [console_scripts]
