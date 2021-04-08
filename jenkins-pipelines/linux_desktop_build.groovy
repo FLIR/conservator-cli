@@ -2,7 +2,7 @@ pipeline {
   agent {
     dockerfile {
       dir "test"
-      label "docker"
+      label "wip"
       args "-u root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
