@@ -44,6 +44,7 @@ pipeline {
         stage("Create kind cluster") {
           steps {
             sh "kind create cluster --config=test/integration/kind.yaml"
+            sh "cat ~/.kube/config"
             // Modify kubectl to look through bridge connection.
             // Requires --insecure-skip-tls-verify on kubectl command.
             sh """
@@ -153,7 +154,7 @@ pipeline {
       // by the Jenkins worker. We need to lower permissions before asking to clean up.
       sh "chmod -R 777 ."
       cleanWs()
-      sh "kind delete cluster"
+//      sh "kind delete cluster"
     }
   }
 }
