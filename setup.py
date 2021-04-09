@@ -33,7 +33,7 @@ with open("README.md", "r") as fh:
 # in requirements.txt instead.
 INSTALL_REQUIRES = [
     "sgqlc",
-    "click",
+    "click >= 7",
     "tqdm",
     "requests",
     "Pillow",
