@@ -2,7 +2,7 @@ FROM python:3.8-slim
 
 # Install standalone apt dependencies
 RUN apt-get update \
-    && apt-get install -y git make curl
+    && apt-get install -y git make curl iproute2
 
 # Configure git
 RUN git config --global user.name "FLIR QA SERVICE" \

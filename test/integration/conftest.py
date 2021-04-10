@@ -52,7 +52,10 @@ def running_in_testing_docker():
 def conservator_domain(using_kubernetes):
     # If we are in a container, we connect to host.
     if running_in_testing_docker():
-        return "172.17.0.1"  # Host IP
+        host_ip = subprocess.getoutput(
+            "ip route list default | sed 's/.*via //; s/ .*//' "
+        )
+        return host_ip  # Host IP
     # Running on host
     return "localhost"
 
