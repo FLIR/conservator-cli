@@ -1,0 +1,204 @@
+import os
+
+import pytest
+
+from FLIR.conservator.conservator import UnknownMediaIdException
+from FLIR.conservator.util import md5sum_file
+from FLIR.conservator.wrappers import Image, Video
+from FLIR.conservator.wrappers.media import MediaCompare
+from conftest import upload_media
+
+
+def test_upload_image(conservator, test_data):
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+
+    image = conservator.get_media_instance_from_id(media_id)
+    assert image is not None
+    assert image.id == media_id
+    assert image.name == "cat_0.jpg"
+    assert image.frames_count == 1
+
+
+def test_upload_image_collection(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/CatPics")
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path, collection)
+
+    conservator.media.wait_for_processing(media_id)
+
+    image = conservator.get_media_instance_from_id(media_id)
+    assert image is not None
+    assert image.id == media_id
+    assert image.name == "cat_0.jpg"
+    assert image.frames_count == 1
+
+    images = list(collection.get_images())
+    assert len(images) == 1
+    assert images[0].id == image.id
+
+
+def test_upload_image_filename(conservator, test_data):
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path, remote_name="My cat photo")
+
+    conservator.media.wait_for_processing(media_id)
+
+    image = conservator.get_media_instance_from_id(media_id)
+    assert image is not None
+    assert image.id == media_id
+    assert image.name == "My cat photo"
+    assert image.frames_count == 1
+
+
+def test_upload_video(conservator, test_data):
+    path = test_data / "mp4" / "adas_thermal.mp4"
+    media_id = conservator.media.upload(path)
+
+    conservator.media.wait_for_processing(media_id)
+
+    video = conservator.get_media_instance_from_id(media_id)
+    assert video is not None
+    assert video.id == media_id
+    assert video.name == "adas_thermal.mp4"
+    assert video.frames_count == 60
+
+
+def test_remove_image(conservator, test_data):
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.get_media_instance_from_id(media_id)
+    assert image is not None
+    assert isinstance(image, Image)
+
+    image.remove()
+
+    with pytest.raises(UnknownMediaIdException):
+        conservator.get_media_instance_from_id(image.id)
+
+
+def test_remove_video(conservator, test_data):
+    path = test_data / "mp4" / "adas_thermal.mp4"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    video = conservator.get_media_instance_from_id(media_id)
+    assert video is not None
+    assert isinstance(video, Video)
+
+    video.remove()
+
+    with pytest.raises(UnknownMediaIdException):
+        conservator.get_media_instance_from_id(video.id)
+
+
+def test_get_frame_by_index(conservator, test_data):
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.get_media_instance_from_id(media_id)
+    assert image is not None
+    assert isinstance(image, Image)
+
+    frame_0 = image.get_frame_by_index(0)
+    assert frame_0 is not None
+    assert frame_0.video_id == image.id
+    assert frame_0.video_name == image.name
+    assert frame_0.height == 375
+    assert frame_0.width == 500
+
+    with pytest.raises(IndexError):
+        image.get_frame_by_index(-1)
+
+    with pytest.raises(IndexError):
+        image.get_frame_by_index(1)
+
+
+def test_image_get_frame(conservator, test_data):
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.get_media_instance_from_id(media_id)
+    assert image is not None
+    assert isinstance(image, Image)
+
+    frame = image.get_frame()
+    assert frame is not None
+    assert frame.video_id == image.id
+    assert frame.video_name == image.name
+    assert frame.height == image.height
+    assert frame.width == image.width
+
+
+def test_get_all_frames_paginated(conservator, test_data):
+    path = test_data / "mp4" / "adas_thermal.mp4"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    video = conservator.get_media_instance_from_id(media_id)
+    assert video is not None
+    assert isinstance(video, Video)
+
+    paginated_frames = video.get_all_frames_paginated()
+    frames = list(paginated_frames)
+    assert len(frames) == video.frames_count
+    for i, frame in enumerate(frames):
+        assert frame.frame_index == i
+        assert frame.video_id == video.id
+        assert frame.video_name == video.name
+        assert frame.width == video.width
+        assert frame.height == video.height
+
+
+def test_compare_media(conservator, test_data):
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.get_media_instance_from_id(media_id)
+
+    assert image.compare(path) == MediaCompare.MATCH
+    assert image.compare(path).ok()
+
+    wrong_path = test_data / "jpg" / "cat_1.jpg"
+    assert image.compare(wrong_path) == MediaCompare.MISMATCH
+    assert not image.compare(wrong_path).ok()
+
+
+def test_get_annotations_empty(conservator, test_data):
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.get_media_instance_from_id(media_id)
+
+    annotations = image.get_annotations()
+    assert len(annotations) == 0
+
+
+def test_get_annotations(conservator, test_data):
+    # TODO: Test once we have a way to add annotations
+    pass
+
+
+class TestDownloadMedia:
+    @pytest.fixture(scope="class", autouse=True)
+    def init_media(self, conservator, test_data):
+        MEDIA = [
+            # local_path, remote_path, remote_name
+            (test_data / "jpg" / "cat_2.jpg", "/Cats", "My cat.jpg"),
+        ]
+        upload_media(conservator, MEDIA)
+
+    def test_download(self, conservator, tmp_cwd):
+        image = conservator.images.by_exact_name("My cat.jpg").first()
+        image.download(".")
+        assert os.path.exists("My cat.jpg")
+        assert os.path.isfile("My cat.jpg")
+        assert md5sum_file("My cat.jpg") == image.md5
+
+    def test_download_path(self, conservator, tmp_cwd):
+        image = conservator.images.by_exact_name("My cat.jpg").first()
+        image.download("Some/Path")
+        assert os.path.exists("Some/Path/My cat.jpg")
+        assert os.path.isfile("Some/Path/My cat.jpg")
+        assert md5sum_file("Some/Path/My cat.jpg") == image.md5
