@@ -6,7 +6,6 @@ import json
 import shutil
 import requests
 import logging
-import pkg_resources
 import time
 import functools
 
@@ -15,6 +14,7 @@ import tqdm
 from PIL import Image
 
 from FLIR.conservator.file_transfers import FileDownloadException
+from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.util import md5sum_file
 
 logger = logging.getLogger(__name__)
@@ -562,11 +562,8 @@ class LocalDataset:
     def validate_index(self):
         """Validates that ``index.json`` matches the expected
         JSON Schema."""
-        schema_path = pkg_resources.resource_filename(
-            "FLIR.conservator", "index_schema.json"
-        )
-        with open(schema_path) as o:
-            schema = json.load(o)
+        schema_json = self.conservator.query(Query.validation_schema)
+        schema = json.loads(schema_json)
 
         try:
             with open(self.index_path) as index:
