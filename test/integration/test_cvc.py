@@ -6,7 +6,7 @@ as used by the CLI commands.
 """
 import os
 import subprocess
-import time
+from time import sleep
 
 
 def cvc(*args):
@@ -44,7 +44,7 @@ def test_publish_image(default_conservator, tmp_cwd, test_data):
     assert p.returncode == 0
     p = cvc("publish", "My test commit")
     assert p.returncode == 0
-    time.sleep(2)  # It takes a bit for the commit to be saved?
+    sleep(2)  # It takes a bit for the commit to be saved?
 
     latest_commit = dataset.get_commit_by_id("HEAD")
     assert latest_commit.short_message == "My test commit"
@@ -60,3 +60,27 @@ def test_publish_image(default_conservator, tmp_cwd, test_data):
     # Width, height from file
     assert uploaded_frame.width == 500
     assert uploaded_frame.height == 375
+
+
+def test_cvc_clone_download(default_conservator, tmp_cwd, test_data):
+    dataset = default_conservator.datasets.create("My dataset")
+    media_id = default_conservator.media.upload(test_data / "mp4" / "adas_thermal.mp4")
+    default_conservator.media.wait_for_processing(media_id)
+    video = default_conservator.get_media_instance_from_id(media_id)
+    video.populate("frames")
+    dataset.add_frames(video.frames)
+    dataset.commit("Add video frames to dataset")
+    sleep(2)
+
+    cvc("clone", dataset.id)
+    os.chdir("My dataset")
+
+    p = cvc("download")
+    assert p.returncode == 0
+
+    assert os.path.exists("data")
+    assert os.path.isdir("data")
+    files = os.listdir("data")
+    assert len(files) == len(video.frames)
+
+
