@@ -82,5 +82,3 @@ def test_cvc_clone_download(default_conservator, tmp_cwd, test_data):
     assert os.path.isdir("data")
     files = os.listdir("data")
     assert len(files) == len(video.frames)
-
-
