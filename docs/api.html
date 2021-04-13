@@ -779,6 +779,34 @@ is equivalent to calling <a class="reference internal" href="#FLIR.conservator.w
 </dd></dl>
 
 </div>
+<div class="section" id="module-FLIR.conservator.wrappers.project">
+<span id="project"></span><h3>Project<a class="headerlink" href="#module-FLIR.conservator.wrappers.project" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.project.Project">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.project.</span></code><code class="sig-name descname"><span class="pre">Project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="FLIR.conservator.wrappers.project.Project.create">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new project with the given <cite>name</cite>, and returns it with the
+specified <cite>fields</cite>.</p>
+<p>Note that this requires the privilege to create projects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.project.Project.delete">
+<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the project.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="FLIR.conservator.wrappers.project.Project.underlying_type">
+<code class="sig-name descname"><span class="pre">underlying_type</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.underlying_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Project</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-FLIR.conservator.wrappers.collection">
 <span id="collection"></span><h3>Collection<a class="headerlink" href="#module-FLIR.conservator.wrappers.collection" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
@@ -1098,6 +1126,105 @@ identifier like <code class="docutils literal notranslate"><span class="pre">HEA
 </dd></dl>
 
 </div>
+<div class="section" id="module-FLIR.conservator.wrappers.media">
+<span id="media"></span><h3>Media<a class="headerlink" href="#module-FLIR.conservator.wrappers.media" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.media.MediaCompare">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></code><code class="sig-name descname"><span class="pre">MediaCompare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaCompare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Results of comparing local file and Conservator file</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.media.MediaType">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></code><code class="sig-name descname"><span class="pre">MediaType</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType" title="Permalink to this definition">¶</a></dt>
+<dd><p>A media type is an image or a video. It can be uploaded (using
+<a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager.upload" title="FLIR.conservator.managers.media.MediaTypeManager.upload"><code class="xref py py-meth docutils literal notranslate"><span class="pre">upload()</span></code></a>)
+or downloaded.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.compare">
+<code class="sig-name descname"><span class="pre">compare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use md5 checksums to compare media contents to local file</p>
+<p>Returns result as MediaCompare object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_path</strong> – Path to local copy of file for comparison with remote.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.download">
+<code class="sig-name descname"><span class="pre">download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download media to <cite>path</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.get_all_frames_paginated">
+<code class="sig-name descname"><span class="pre">get_all_frames_paginated</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.get_all_frames_paginated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields all frames in the video, 15 at a time, using
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_paginated_frames()</span></code>.</p>
+<p>This is only useful if you’re dealing with very long videos
+and want to paginate frames yourself. If the video is short,
+you could just use <code class="docutils literal notranslate"><span class="pre">populate(&quot;frames&quot;)</span></code> to get all frames.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.get_annotations">
+<code class="sig-name descname"><span class="pre">get_annotations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.get_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of the media’s annotations with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.get_frame_by_index">
+<code class="sig-name descname"><span class="pre">get_frame_by_index</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.get_frame_by_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a single frame at a specific <cite>index</cite> in the video.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.remove">
+<code class="sig-name descname"><span class="pre">remove</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a video or image from conservator. Note that this is a permanent action that will
+remove it from <strong>all</strong> collections.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.upload">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">upload</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a new media object based on info in <a class="reference internal" href="#FLIR.conservator.wrappers.media.MediaUploadRequest" title="FLIR.conservator.wrappers.media.MediaUploadRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">MediaUploadRequest</span></code></a> object:
+* from a local <cite>file_path</cite>
+* to conservator name <cite>remote_name</cite>
+* as member of <cite>collection</cite> if given, otherwise added to no collection (orphan)</p>
+<p>Conservator Images have separate queries than Videos, but they do not get
+their own mutations, e.g. they are treated as “Videos” in the upload process.
+In fact, an uploaded media file is treated by Conservator server as a video
+until file processing has finished; if it turned out to be an image type
+(e.g. jpeg) then it will disappear from Videos and appear under Images.</p>
+<p>Returns updated MediaUploadRequest, which contains ID of the created media object (may be a
+Video ID or an Image ID) or else an error message if something went wrong.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.media.MediaType.verify_md5">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">verify_md5</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_md5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.verify_md5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper for Video and Image md5sum comparisons, each of which
+track md5sum in Conservator but not in the same field</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.wrappers.media.MediaUploadException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></code><code class="sig-name descname"><span class="pre">MediaUploadException</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaUploadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised if an exception occurs during a media upload</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.media.MediaUploadRequest">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></code><code class="sig-name descname"><span class="pre">MediaUploadRequest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaUploadRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks inputs and results of a media upload</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-FLIR.conservator.wrappers.image">
 <span id="image"></span><h3>Image<a class="headerlink" href="#module-FLIR.conservator.wrappers.image" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
@@ -1114,34 +1241,6 @@ the same as <code class="xref py py-meth docutils literal notranslate"><span cla
 <dt id="FLIR.conservator.wrappers.image.Image.underlying_type">
 <code class="sig-name descname"><span class="pre">underlying_type</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.underlying_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Image</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-FLIR.conservator.wrappers.project">
-<span id="project"></span><h3>Project<a class="headerlink" href="#module-FLIR.conservator.wrappers.project" title="Permalink to this headline">¶</a></h3>
-<dl class="py class">
-<dt id="FLIR.conservator.wrappers.project.Project">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.project.</span></code><code class="sig-name descname"><span class="pre">Project</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt id="FLIR.conservator.wrappers.project.Project.create">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.create" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new project with the given <cite>name</cite>, and returns it with the
-specified <cite>fields</cite>.</p>
-<p>Note that this requires the privilege to create projects.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.wrappers.project.Project.delete">
-<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the project.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="FLIR.conservator.wrappers.project.Project.underlying_type">
-<code class="sig-name descname"><span class="pre">underlying_type</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.underlying_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Project</span></code></p>
 </dd></dl>
 
 </dd></dl>
@@ -1253,6 +1352,100 @@ specified <cite>fields</cite>.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-FLIR.conservator.wrappers.metadata">
+<span id="metadata"></span><h3>Metadata<a class="headerlink" href="#module-FLIR.conservator.wrappers.metadata" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.metadata.MetadataType">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.metadata.</span></code><code class="sig-name descname"><span class="pre">MetadataType</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds <a class="reference internal" href="#FLIR.conservator.wrappers.metadata.MetadataType.download_metadata" title="FLIR.conservator.wrappers.metadata.MetadataType.download_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">download_metadata()</span></code></a> and <a class="reference internal" href="#FLIR.conservator.wrappers.metadata.MetadataType.upload_metadata" title="FLIR.conservator.wrappers.metadata.MetadataType.upload_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">upload_metadata()</span></code></a></p>
+<p>Every Metadata file belongs to a parent, and the relevant mutations to
+create such a file depend on parent type. The parent object’s
+class is responsible for specifying the mutation as ‘metadata_gen_url’
+and ‘metadata_confirm’ members, and also an ‘id_type’ member that names
+the id arg for those mutations (e.g. “dataset_id” or “video_id”).</p>
+<dl class="simple">
+<dt>Arguments and return values for the Metadata mutations:</dt><dd><p>create
+- args = parent_id, filename, and content_type
+- return = string signed_url, string url
+confirm
+- args = parent_id, signed_url
+- return = boolean success</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.metadata.MetadataType.download_metadata">
+<code class="sig-name descname"><span class="pre">download_metadata</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataType.download_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the <cite>metadata</cite> field to <cite>path/filename.json</cite>,
+where <cite>filename</cite> is the media’s filename.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.metadata.MetadataType.upload_metadata">
+<code class="sig-name descname"><span class="pre">upload_metadata</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataType.upload_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads file to Conservator as associated file of this Metadata’s
+parent object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.wrappers.metadata.MetadataUploadException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.metadata.</span></code><code class="sig-name descname"><span class="pre">MetadataUploadException</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataUploadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised if an exception occurs during a metadata upload</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-FLIR.conservator.wrappers.file_locker">
+<span id="filelocker"></span><h3>FileLocker<a class="headerlink" href="#module-FLIR.conservator.wrappers.file_locker" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.wrappers.file_locker.FileLockerType">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.file_locker.</span></code><code class="sig-name descname"><span class="pre">FileLockerType</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds <a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.download_associated_files" title="FLIR.conservator.wrappers.file_locker.FileLockerType.download_associated_files"><code class="xref py py-func docutils literal notranslate"><span class="pre">download_associated_files()</span></code></a>, <a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.upload_associated_file" title="FLIR.conservator.wrappers.file_locker.FileLockerType.upload_associated_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">upload_associated_file()</span></code></a>, <a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.remove_associated_file" title="FLIR.conservator.wrappers.file_locker.FileLockerType.remove_associated_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_associated_file()</span></code></a></p>
+<p>Every FileLocker file is associated with a Conservator object, and the
+relevant mutations to create or remove such a file depend on object type.
+The subclass is responsible for specifying those mutations as
+‘file_locker_gen_url’ and ‘file_locker_remove’ members, and also an
+‘id_type’ member that names the id arg for those mutations (e.g.
+“dataset_id” or “video_id”).</p>
+<dl class="simple">
+<dt>Arguments and return values for the FileLocker mutations:</dt><dd><p>create
+- args = parent_id, filename, and content_type
+- return = string signed_url, string url
+remove
+- args = parent_id, filename
+- return = instance of parent object type</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.file_locker.FileLockerType.download_associated_files">
+<code class="sig-name descname"><span class="pre">download_associated_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.download_associated_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads associated files (from file locker) to
+<code class="docutils literal notranslate"><span class="pre">associated_files/</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.file_locker.FileLockerType.remove_associated_file">
+<code class="sig-name descname"><span class="pre">remove_associated_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.remove_associated_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes named file from set of associated files for this FileLocker’s
+parent object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.wrappers.file_locker.FileLockerType.upload_associated_file">
+<code class="sig-name descname"><span class="pre">upload_associated_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.upload_associated_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads file to Conservator as associated file of this FileLocker’s
+parent object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="FLIR.conservator.wrappers.file_locker.FileLockerUploadException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.file_locker.</span></code><code class="sig-name descname"><span class="pre">FileLockerUploadException</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerUploadException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised if an exception occurs during a file-locker upload</p>
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="module-FLIR.conservator.managers">
 <span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this headline">¶</a></h2>
@@ -1357,7 +1550,7 @@ any user-facing input.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.managers.ImageManager">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></code><code class="sig-name descname"><span class="pre">ImageManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImageManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager" title="FLIR.conservator.managers.media.MediaTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></a></p>
 <dl class="py method">
 <dt id="FLIR.conservator.managers.ImageManager.from_string">
 <code class="sig-name descname"><span class="pre">from_string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'id'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImageManager.from_string" title="Permalink to this definition">¶</a></dt>
@@ -1391,7 +1584,7 @@ it with the specified <cite>fields</cite>.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.managers.VideoManager">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></code><code class="sig-name descname"><span class="pre">VideoManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager" title="FLIR.conservator.managers.media.MediaTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></a></p>
 <dl class="py method">
 <dt id="FLIR.conservator.managers.VideoManager.from_string">
 <code class="sig-name descname"><span class="pre">from_string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'id'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager.from_string" title="Permalink to this definition">¶</a></dt>
@@ -1517,6 +1710,85 @@ single match was found (or none, or many).</p>
 </div>
 <div class="section" id="module-FLIR.conservator.managers.media">
 <span id="mediatypemanager"></span><h3>MediaTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.media" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="FLIR.conservator.managers.media.MediaTypeManager">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.media.</span></code><code class="sig-name descname"><span class="pre">MediaTypeManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.media.MediaTypeManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for media type managers.</p>
+<dl class="py method">
+<dt id="FLIR.conservator.managers.media.MediaTypeManager.is_uploaded_media_id_processed">
+<code class="sig-name descname"><span class="pre">is_uploaded_media_id_processed</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.media.MediaTypeManager.is_uploaded_media_id_processed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <cite>True</cite> if an ID returned by <a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager.upload" title="FLIR.conservator.managers.media.MediaTypeManager.upload"><code class="xref py py-meth docutils literal notranslate"><span class="pre">upload()</span></code></a> has
+been processed, and <cite>False</cite> otherwise.</p>
+<p>When media is uploaded, it begins processing as a video. It may turn into
+an image, requiring different queries. This method can be used to verify
+that an ID is done processing, and its type won’t change in the future.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.media.MediaTypeManager.upload">
+<code class="sig-name descname"><span class="pre">upload</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.media.MediaTypeManager.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a new media object from a local <cite>file_path</cite>, with the specified
+<cite>remote_name</cite>. It is added to <cite>collection</cite> if given, otherwise it is
+added to no collection (orphan).</p>
+<p>Conservator Images have separate queries than Videos, but they do not get
+their own mutations, e.g. they are treated as “Videos” in the upload process.
+In fact, an uploaded media file is treated by Conservator server as a video
+until file processing has finished; if it turned out to be an image type
+(e.g. jpeg) then it will disappear from Videos and appear under Images.</p>
+<p>Returns the ID of the created media object. Note, that it may be a Video ID
+or an Image ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – The local file path to upload.</p></li>
+<li><p><strong>collection</strong> – If specified, the Collection object, or <cite>str</cite> Collection ID to
+upload the media to. If not specified, the media is not uploaded to any
+specific collection (orphan).</p></li>
+<li><p><strong>remote_name</strong> – If given, the remote name of the media. Otherwise, the local file
+name is used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.media.MediaTypeManager.upload_many_to_collection">
+<code class="sig-name descname"><span class="pre">upload_many_to_collection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.media.MediaTypeManager.upload_many_to_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload many files in parallel. Returns a list of the uploaded media IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_paths</strong> – A list of <cite>str</cite> file paths to upload to <cite>collection</cite>. Alternatively,
+a list of <cite>(str, str)</cite> tuples holding pairs of <cite>local_path</cite>, <cite>remote_name</cite>. If <cite>remote_name</cite>
+is <cite>None</cite>, the local filename will be used.</p></li>
+<li><p><strong>collection</strong> – The collection to upload media files to.</p></li>
+<li><p><strong>process_count</strong> – Number of concurrent upload processes. Passing <cite>None</cite>
+will use <cite>os.cpu_count()</cite>.</p></li>
+<li><p><strong>resume</strong> – Whether to check first if file was previously uploaded.</p></li>
+<li><p><strong>max_retries</strong> – max number of upload retries per file in case of network errors.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="FLIR.conservator.managers.media.MediaTypeManager.wait_for_processing">
+<code class="sig-name descname"><span class="pre">wait_for_processing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">media_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_frequency_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.media.MediaTypeManager.wait_for_processing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for an id, or list of ids, to complete processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>media_ids</strong> – A single <cite>str</cite> media ID, or a list of media ID to test.</p></li>
+<li><p><strong>timeout_seconds</strong> – A maximum amount of time to wait.</p></li>
+<li><p><strong>check_frequency_seconds</strong> – How long to wait between checks.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py exception">
 <dt id="FLIR.conservator.managers.media.ProcessingTimeoutError">
 <em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.media.</span></code><code class="sig-name descname"><span class="pre">ProcessingTimeoutError</span></code><a class="headerlink" href="#FLIR.conservator.managers.media.ProcessingTimeoutError" title="Permalink to this definition">¶</a></dt>
