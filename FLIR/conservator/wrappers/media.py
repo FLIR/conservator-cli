@@ -4,7 +4,7 @@ import traceback
 from dataclasses import dataclass
 
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.generated.schema import Mutation
+from FLIR.conservator.generated.schema import Mutation, Query
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.file_locker import FileLockerType
@@ -79,6 +79,25 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         if local_md5 == expected_md5:
             return MediaCompare.MATCH
         return MediaCompare.MISMATCH
+
+    @requires_fields("md5")
+    def compare(self, local_path):
+        """
+        Use md5 checksums to compare media contents to local file
+
+        Returns result as MediaCompare object
+
+        :param local_path: Path to local copy of file for comparison with remote.
+        """
+        return MediaType.verify_md5(local_path, self.md5)
+
+    def get_annotations(self, fields=None):
+        """
+        Returns a list of the media's annotations with the specified `fields`.
+        """
+        return self._conservator.query(
+            Query.annotations_by_video_id, fields=fields, id=self.id
+        )
 
     def _trigger_processing(
         self,
@@ -246,7 +265,10 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         Returns a single frame at a specific `index` in the video.
         """
-        return self._query_frames(frame_index=index, fields=fields)[0]
+        frames = self._query_frames(frame_index=index, fields=fields)
+        if len(frames) != 1:
+            raise IndexError(f"Invalid frame index: {index}")
+        return frames[0]
 
     def get_all_frames_paginated(self, fields=None):
         """
