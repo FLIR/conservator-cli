@@ -45,4 +45,3 @@ def test_list_to_json(conservator):
     root.populate("children")
 
     assert root.children.to_json() == []
-

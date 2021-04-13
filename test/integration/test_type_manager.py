@@ -38,5 +38,3 @@ def test_from_json(conservator):
     assert instance.id == project.id
     assert instance.name == project.name
     assert instance.to_json() == json
-
-
