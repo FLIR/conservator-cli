@@ -3,7 +3,7 @@ pipeline {
     dockerfile {
       dir "test"
       label "docker"
-      args "-u root --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "-u root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
   stages {
@@ -46,7 +46,11 @@ pipeline {
             sh "kind create cluster --config=test/integration/kind.yaml"
             // Modify kubectl to look through bridge connection.
             // Requires --insecure-skip-tls-verify on kubectl command.
-            sh "sed -i 's/0.0.0.0/172.17.0.1/g' ~/.kube/config"
+            sh """
+                GW=\$(ip route list default | sed 's/.*via //; s/ .*//')
+                echo "using \$GW as bridge ip"
+                sed -i "s/0.0.0.0/\$GW/g" ~/.kube/config
+            """
             sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml --insecure-skip-tls-verify"
           }
         }

@@ -6,12 +6,15 @@ import json
 import shutil
 import requests
 import logging
-import pkg_resources
 import time
+import functools
 
 import jsonschema
 import tqdm
 from PIL import Image
+
+from FLIR.conservator.file_transfers import FileDownloadException
+from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.util import md5sum_file
 
 logger = logging.getLogger(__name__)
@@ -331,12 +334,15 @@ class LocalDataset:
 
     def _download_and_link(self, asset):
         # we use imap (istarmap doesn't exist) so we need to unpack arguments
-        download_path, url, paths_to_link, use_symlink = asset
-        result = self.conservator.files.download(
-            url=url, local_path=download_path, no_meter=True
-        )
-        LocalDataset._add_links(download_path, paths_to_link, use_symlink)
-        return result
+        try:
+            download_path, url, paths_to_link, use_symlink = asset
+            result = self.conservator.files.download(
+                url=url, local_path=download_path, no_meter=True
+            )
+            LocalDataset._add_links(download_path, paths_to_link, use_symlink)
+            return result is not None and result.ok
+        except FileDownloadException:
+            return False
 
     @staticmethod
     def _add_links(path, paths_to_link, use_symlink):
@@ -434,9 +440,8 @@ class LocalDataset:
                 cache_hits += 1
                 logger.debug(f"Skipping {md5}: already downloaded.")
                 continue
-            path, name = os.path.split(cache_path)
             url = self.conservator.get_dvc_hash_url(md5)
-            asset = (path, name, url, paths_to_link, use_symlink)
+            asset = (cache_path, url, paths_to_link, use_symlink)
             logger.debug(f"Going to download {md5}")
             assets.append(asset)
 
@@ -457,8 +462,9 @@ class LocalDataset:
             )
             logger.info(f"{yellow}For instance: {cyan}cvc download -p 50{reset}")
         with multiprocessing.Pool(process_count) as pool:
+            download_method = functools.partial(LocalDataset._download_and_link, self)
             progress = tqdm.tqdm(
-                iterable=pool.imap(LocalDataset._download_and_link, assets),
+                iterable=pool.imap(download_method, assets),
                 desc="Downloading new frames",
                 total=len(assets),
                 disable=no_meter,
@@ -468,11 +474,10 @@ class LocalDataset:
 
         # we double check everything downloaded
         failures = 0
-        for path, name, *_ in assets:
-            full_path = os.path.join(path, name)
-            if not os.path.exists(full_path) or os.path.getsize(full_path) == 0:
+        for path, *_ in assets:
+            if not os.path.exists(path) or os.path.getsize(path) == 0:
                 logger.error(
-                    f"Download to {full_path} seems to have failed. Try rerunning or submit an issue."
+                    f"Download to {path} seems to have failed. Try rerunning or submit an issue."
                 )
                 failures += 1
         successes = len(assets) - failures
@@ -557,11 +562,8 @@ class LocalDataset:
     def validate_index(self):
         """Validates that ``index.json`` matches the expected
         JSON Schema."""
-        schema_path = pkg_resources.resource_filename(
-            "FLIR.conservator", "index_schema.json"
-        )
-        with open(schema_path) as o:
-            schema = json.load(o)
+        schema_json = self.conservator.query(Query.validation_schema)
+        schema = json.loads(schema_json)
 
         try:
             with open(self.index_path) as index:
