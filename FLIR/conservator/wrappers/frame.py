@@ -18,10 +18,15 @@ class Frame(QueryableType):
     underlying_type = schema.Frame
     by_ids_query = schema.Query.frames_by_ids
 
-    @requires_fields("url", "filename", "md5")
+    @requires_fields("url", "video_name", "frame_index", "md5")
     def download(self, path, no_meter=False):
-        """Download media to `path`."""
-        local_path = os.path.join(path, self.filename)
+        """
+        Download media under the directory `path`. The filename will be ``[media id]-[frame index].jpg``,
+        where `media id` is the id of the media this frame is a part of, and `frame index` is zero
+        padded to 6 digits.
+        """
+        name = f"{self.video_id}-{self.frame_index:06d}.jpg"
+        local_path = os.path.join(path, name)
         self._conservator.files.download_if_missing(
             url=self.url,
             local_path=local_path,
