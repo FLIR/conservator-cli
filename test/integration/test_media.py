@@ -231,7 +231,7 @@ def test_from_string_video_path(conservator, test_data):
     media_id = conservator.media.upload(path, collection)
     conservator.media.wait_for_processing(media_id)
 
-    video = conservator.images.from_string("/My/Videos/adas_thermal.mp4")
+    video = conservator.videos.from_string("/My/Videos/adas_thermal.mp4")
     assert video is not None
     assert video.id == media_id
 
@@ -242,7 +242,7 @@ def test_from_string_video_id(conservator, test_data):
     media_id = conservator.media.upload(path, collection)
     conservator.media.wait_for_processing(media_id)
 
-    video = conservator.images.from_string(media_id)
+    video = conservator.videos.from_string(media_id)
     assert video is not None
     assert video.id == media_id
 
@@ -253,7 +253,7 @@ def test_from_string_video_name(conservator, test_data):
     media_id = conservator.media.upload(path, collection, remote_name="unique.mp4")
     conservator.media.wait_for_processing(media_id)
 
-    video = conservator.images.from_string("unique.jpg")
+    video = conservator.videos.from_string("unique.mp4")
     assert video is not None
     assert video.id == media_id
 
