@@ -488,7 +488,7 @@ class LocalDataset:
         logger.info(f"  Failed downloads: {failures}")
 
     @staticmethod
-    def clone(dataset, clone_path=None, verbose=True, max_retries=2, timeout=5):
+    def clone(dataset, clone_path=None, verbose=True, max_retries=5, timeout=5):
         """Clone a `dataset` to a local path, returning a :class:`LocalDatasetOperations`.
 
         :param dataset: The dataset to clone. It must have a repository registered
