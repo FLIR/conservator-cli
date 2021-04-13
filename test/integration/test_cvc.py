@@ -70,7 +70,7 @@ def test_cvc_clone_download(default_conservator, tmp_cwd, test_data):
     video.populate("frames")
     dataset.add_frames(video.frames)
     dataset.commit("Add video frames to dataset")
-    sleep(2)
+    sleep(5)
 
     cvc("clone", dataset.id)
     os.chdir("My dataset")
