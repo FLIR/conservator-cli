@@ -3,6 +3,7 @@ import os
 import pytest
 
 from FLIR.conservator.conservator import UnknownMediaIdException
+from FLIR.conservator.generated.schema import AnnotationCreate
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import Image, Video
 from FLIR.conservator.wrappers.media import MediaCompare
@@ -175,10 +176,21 @@ def test_get_annotations_empty(conservator, test_data):
     assert len(annotations) == 0
 
 
-@pytest.mark.skip()
 def test_get_annotations(conservator, test_data):
-    # Test once we have a way to add annotations
-    pass
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.images.all().first()
+
+    frame = image.get_frame()
+    annotation = AnnotationCreate(
+        labels=["cat"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+    )
+    added = frame.add_annotation(annotation)
+
+    annotations = image.get_annotations()
+    assert len(annotations) == 1
+    assert annotations[0].to_json() == added.to_json()
 
 
 def test_from_path(conservator, test_data):
