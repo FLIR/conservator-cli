@@ -2,7 +2,7 @@ import os
 
 import pytest as pytest
 
-from FLIR.conservator.generated.schema import AnnotationCreate
+from FLIR.conservator.generated.schema import AnnotationCreate, PredictionCreate, Query
 from FLIR.conservator.util import md5sum_file
 
 
@@ -34,11 +34,37 @@ def test_add_annotation(conservator, test_data):
     assert annotation.source.type == "human"
 
 
-@pytest.mark.skip()
 def test_add_prediction(conservator, test_data):
-    # There are no classifiers, so this isn't trivial to test.
-    # Skipping until someone actually uses it and/or finds a bug.
-    pass
+    path = test_data / "jpg" / "bottle_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.images.all().first()
+    frame = image.get_frame()
+
+    frame.populate(["annotations", "machine_annotations_count"])
+    assert len(frame.annotations) == 0
+    assert frame.machine_annotations_count == 0
+
+    classifiers = conservator.query(Query.classifiers)
+    assert len(classifiers) > 0
+    classifier_id = classifiers[0].id
+
+    prediction_create = PredictionCreate(
+        labels=["boo", "far"], bounding_box={"x": 6, "y": 5, "w": 4, "h": 3},
+        classifier_id=classifier_id
+    )
+    frame.add_prediction(prediction_create)
+
+    frame.populate(["annotations", "machine_annotations_count"])
+    assert len(frame.annotations) == 1
+    assert frame.machine_annotations_count == 1
+    annotation = frame.annotations[0]
+    assert annotation.bounding_box.x == 6
+    assert annotation.bounding_box.y == 5
+    assert annotation.bounding_box.w == 4
+    assert annotation.bounding_box.h == 3
+    assert annotation.labels == ["boo", "far"]
+    assert annotation.source.type == "machine"
 
 
 def test_download(conservator, test_data, tmp_cwd):
