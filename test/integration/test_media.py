@@ -66,6 +66,25 @@ def test_upload_video(conservator, test_data):
     assert video.frames_count == 60
 
 
+def test_upload_many_in_parallel(conservator, test_data):
+    NUM_COPIES = 10
+    path = test_data / "jpg" / "peds_0.jpg"
+    upload_tuples = [(path, f"upload_many_test_{i}") for i in range(NUM_COPIES)]
+    collection = conservator.collections.create_from_remote_path("/Many/Videos")
+
+    media_ids = conservator.videos.upload_many_to_collection(
+        upload_tuples, collection=collection, process_count=10
+    )
+    assert len(media_ids) == NUM_COPIES
+
+    conservator.videos.wait_for_processing(media_ids)
+
+    for i, media_id in enumerate(media_ids):
+        media = conservator.get_media_instance_from_id(media_id, fields="name")
+        assert media is not None
+        assert media.name == f"upload_many_test_{i}"
+
+
 def test_remove_image(conservator, test_data):
     path = test_data / "jpg" / "cat_0.jpg"
     media_id = conservator.media.upload(path)
