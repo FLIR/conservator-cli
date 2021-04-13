@@ -13,7 +13,7 @@ class FileLockerUploadException(Exception):
 
 class FileLockerType(TypeProxy):
     """
-    Adds :func:``download_associated_files``, :func:``upload_associated_file``, :func:``remove_associated_file``
+    Adds :func:`download_associated_files`, :func:`upload_associated_file`, :func:`remove_associated_file`
 
     Every FileLocker file is associated with a Conservator object, and the
     relevant mutations to create or remove such a file depend on object type.

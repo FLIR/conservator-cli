@@ -14,7 +14,7 @@ class MetadataUploadException(Exception):
 
 class MetadataType(TypeProxy):
     """
-    Adds :func:``download_metadata`` and :func:``upload_metadata``
+    Adds :func:`download_metadata` and :func:`upload_metadata`
 
     Every Metadata file belongs to a parent, and the relevant mutations to
     create such a file depend on parent type. The parent object's
