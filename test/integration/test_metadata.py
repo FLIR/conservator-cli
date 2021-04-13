@@ -17,10 +17,12 @@ def test_metadata_download_upload_for_media(conservator, test_data, tmp_cwd):
     local_path = test_data / "jpg" / "bicycle_0.jpg"
     media_id = conservator.media.upload(local_path, collection=collection)
     conservator.media.wait_for_processing(media_id)
-    
+
     image = conservator.images.all().first()
     frame = image.get_frame()
-    annotation = AnnotationCreate(labels=["abc", "def"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4})
+    annotation = AnnotationCreate(
+        labels=["abc", "def"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+    )
     frame.add_annotation(annotation)
 
     # First download
@@ -50,4 +52,3 @@ def test_metadata_download_upload_for_dataset(conservator, test_data, tmp_cwd):
     # TODO: download_metadata does not work on Dataset: no field metadata
     # Can switch to using generateMetadata, or remove.
     pass
-
