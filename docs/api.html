@@ -1104,18 +1104,6 @@ identifier like <code class="docutils literal notranslate"><span class="pre">HEA
 <dt id="FLIR.conservator.wrappers.image.Image">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.image.</span></code><code class="sig-name descname"><span class="pre">Image</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
-<dt id="FLIR.conservator.wrappers.image.Image.compare">
-<code class="sig-name descname"><span class="pre">compare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.compare" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use md5 checksums to compare image contents to local file</p>
-<p>Returns result as MediaCompare object</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>local_path</strong> – Path to local copy of file for comparison with remote.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="FLIR.conservator.wrappers.image.Image.get_frame">
 <code class="sig-name descname"><span class="pre">get_frame</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.get_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the frame of the Image. Because images only have one frame, this is
@@ -1164,25 +1152,7 @@ specified <cite>fields</cite>.</p>
 <dl class="py class">
 <dt id="FLIR.conservator.wrappers.video.Video">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.video.</span></code><code class="sig-name descname"><span class="pre">Video</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt id="FLIR.conservator.wrappers.video.Video.compare">
-<code class="sig-name descname"><span class="pre">compare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.compare" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use md5 checksums to compare video contents to local file</p>
-<p>Returns result as MediaCompare object</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>local_path</strong> – Path to local copy of file for comparison with remote.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="FLIR.conservator.wrappers.video.Video.get_annotations">
-<code class="sig-name descname"><span class="pre">get_annotations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.get_annotations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the video’s annotations with the specified <cite>fields</cite>.</p>
-</dd></dl>
-
-<dl class="py attribute">
+<dd><dl class="py attribute">
 <dt id="FLIR.conservator.wrappers.video.Video.underlying_type">
 <code class="sig-name descname"><span class="pre">underlying_type</span></code><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.underlying_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.generated.schema.Video</span></code></p>
