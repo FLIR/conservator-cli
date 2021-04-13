@@ -50,8 +50,9 @@ def test_add_prediction(conservator, test_data):
     classifier_id = classifiers[0].id
 
     prediction_create = PredictionCreate(
-        labels=["boo", "far"], bounding_box={"x": 6, "y": 5, "w": 4, "h": 3},
-        classifier_id=classifier_id
+        labels=["boo", "far"],
+        bounding_box={"x": 6, "y": 5, "w": 4, "h": 3},
+        classifier_id=classifier_id,
     )
     frame.add_prediction(prediction_create)
 
