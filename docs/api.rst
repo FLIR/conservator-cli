@@ -57,6 +57,12 @@ Queryable
 .. automodule:: FLIR.conservator.wrappers.queryable
     :members:
 
+Project
+^^^^^^^
+
+.. automodule:: FLIR.conservator.wrappers.project
+    :members:
+
 Collection
 ^^^^^^^^^^
 
@@ -69,16 +75,16 @@ Dataset
 .. automodule:: FLIR.conservator.wrappers.dataset
     :members:
 
+Media
+^^^^^
+
+.. automodule:: FLIR.conservator.wrappers.media
+    :members:
+
 Image
 ^^^^^
 
 .. automodule:: FLIR.conservator.wrappers.image
-    :members:
-
-Project
-^^^^^^^
-
-.. automodule:: FLIR.conservator.wrappers.project
     :members:
 
 Video
@@ -100,6 +106,19 @@ DatasetFrame
 .. automodule:: FLIR.conservator.wrappers.dataset_frame
     :members:
 
+
+Metadata
+^^^^^^^^
+
+.. automodule:: FLIR.conservator.wrappers.metadata
+    :members:
+
+
+FileLocker
+^^^^^^^^^^
+
+.. automodule:: FLIR.conservator.wrappers.file_locker
+    :members:
 
 
 Managers

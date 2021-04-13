@@ -54,7 +54,7 @@ class MediaUploadRequest:
 class MediaType(QueryableType, FileLockerType, MetadataType):
     """
     A media type is an image or a video. It can be uploaded (using
-    :meth:``FLIR.conservator.managers.media.MediaTypeManager.upload``)
+    :meth:`~FLIR.conservator.managers.media.MediaTypeManager.upload`)
     or downloaded.
     """
 

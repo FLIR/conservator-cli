@@ -26,6 +26,10 @@ class ProcessingTimeoutError(TimeoutError):
 
 
 class MediaTypeManager:
+    """
+    Base class for media type managers.
+    """
+
     def __init__(self, conservator):
         self._conservator = conservator
 
