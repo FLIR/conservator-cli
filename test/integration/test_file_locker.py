@@ -74,7 +74,7 @@ def test_dataset_file_locker(conservator, test_data, tmp_cwd):
     assert len(dataset.file_locker_files) == 0
 
 
-def test_dataset_file_locker(conservator, test_data, tmp_cwd):
+def test_collection_file_locker(conservator, test_data, tmp_cwd):
     conservator.collections.create_from_remote_path("/Test")
 
     collection = conservator.collections.all().first()
