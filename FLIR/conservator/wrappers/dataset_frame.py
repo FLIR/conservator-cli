@@ -82,7 +82,7 @@ class DatasetFrame(QueryableType):
         Unset the QA status of the dataset frame.
         """
         return self._conservator.query(
-            Mutation.unset_qa_status_frame,
+            Mutation.unset_qa_status_dataset_frame,
             fields="id",
             id=self.id,
         )
