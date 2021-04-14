@@ -68,6 +68,19 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             dataset_id=self.id,
         )
 
+    @requires_fields("name")
+    def download_metadata(self, path):
+        """
+        Downloads metadata to `path/name.json`,
+        where `name` is the dataset's name.
+        """
+        metadata = self.generate_metadata()
+        json_data = json.loads(metadata)
+        json_file = f"{self.name}.json"
+        json_path = os.path.join(path, json_file)
+        with open(json_path, "w") as file:
+            json.dump(json_data, file, indent=4, separators=(",", ": "))
+
     def get_frames(self, search_text="", fields=None):
         """
         Returns a paginated query for dataset frames within this dataset, filtering

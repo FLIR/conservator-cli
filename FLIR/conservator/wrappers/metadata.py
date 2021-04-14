@@ -50,7 +50,7 @@ class MetadataType(TypeProxy):
             "content_type": content_type,
         }
         result = self._conservator.query(self.metadata_gen_url, **mutation_args)
-        return result.signed_url
+        return result
 
     def _confirm_metadata_upload(self, url):
         """
@@ -84,8 +84,8 @@ class MetadataType(TypeProxy):
             content_type = self.default_file_type
         url = self._generate_metadata_url(file_path, content_type)
         try:
-            self._conservator.files.upload(url=url, local_path=file_path)
+            self._conservator.files.upload(url=url.signed_url, local_path=file_path)
         except FileUploadException as e:
             raise MetadataUploadException from e
-        result = self._confirm_metadata_upload(url)
+        result = self._confirm_metadata_upload(url.url)
         return result
