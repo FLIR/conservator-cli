@@ -1283,7 +1283,9 @@ the same as <code class="xref py py-meth docutils literal notranslate"><span cla
 <dl class="py method">
 <dt id="FLIR.conservator.wrappers.frame.Frame.download">
 <code class="sig-name descname"><span class="pre">download</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Download media to <cite>path</cite>.</p>
+<dd><p>Download media under the directory <cite>path</cite>. The filename will be <code class="docutils literal notranslate"><span class="pre">[media</span> <span class="pre">id]-[frame</span> <span class="pre">index].jpg</span></code>,
+where <cite>media id</cite> is the id of the media this frame is a part of, and <cite>frame index</cite> is zero
+padded to 6 digits.</p>
 </dd></dl>
 
 <dl class="py attribute">
