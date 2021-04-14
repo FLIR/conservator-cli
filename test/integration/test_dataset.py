@@ -1,5 +1,12 @@
 def test_create(conservator):
-    pass
+    dataset = conservator.datasets.create("My Dataset")
+    assert dataset is not None
+    assert dataset.name == "My Dataset"
+
+    fetched_dataset = conservator.datasets.all().first()
+    assert fetched_dataset is not None
+    assert fetched_dataset.id == dataset.id
+    assert fetched_dataset.name == "My Dataset"
 
 
 def test_delete(conservator):
@@ -22,9 +29,16 @@ def test_commit(conservator):
     pass
 
 
+def test_from_string_id(conservator):
+    pass
+
+
+def test_from_string_name(conservator):
+    pass
+
+
 class TestDataset:
-    # These tests don't modify anything, so we can reuse
-    # the same dataset.
+    # These tests don't modify anything, so we can reuse the same dataset.
 
     def test_get_git_url(self, conservator):
         pass
@@ -58,5 +72,3 @@ class TestDataset:
 
     def test_from_local_path(self, conservator, tmp_cwd):
         pass
-
-
