@@ -3,6 +3,7 @@ import os
 import pytest
 
 from FLIR.conservator.conservator import UnknownMediaIdException
+from FLIR.conservator.generated.schema import AnnotationCreate
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import Image, Video
 from FLIR.conservator.wrappers.media import MediaCompare
@@ -176,8 +177,97 @@ def test_get_annotations_empty(conservator, test_data):
 
 
 def test_get_annotations(conservator, test_data):
-    # TODO: Test once we have a way to add annotations
-    pass
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.images.all().first()
+
+    frame = image.get_frame()
+    annotation = AnnotationCreate(
+        labels=["cat"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+    )
+    added = frame.add_annotation(annotation)
+
+    annotations = image.get_annotations()
+    assert len(annotations) == 1
+    assert annotations[0].to_json() == added.to_json()
+
+
+def test_from_path(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/CatPics")
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path, collection)
+    conservator.media.wait_for_processing(media_id)
+
+    image = conservator.media.from_path("/My/CatPics/cat_0.jpg")
+    assert image is not None
+    assert image.id == media_id
+
+
+def test_from_string_image_path(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/CatPics")
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path, collection)
+    conservator.media.wait_for_processing(media_id)
+
+    image = conservator.images.from_string("/My/CatPics/cat_0.jpg")
+    assert image is not None
+    assert image.id == media_id
+
+
+def test_from_string_image_id(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/CatPics")
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path, collection)
+    conservator.media.wait_for_processing(media_id)
+
+    image = conservator.images.from_string(media_id)
+    assert image is not None
+    assert image.id == media_id
+
+
+def test_from_string_image_name(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/CatPics")
+    path = test_data / "jpg" / "cat_0.jpg"
+    media_id = conservator.media.upload(path, collection, remote_name="unique.jpg")
+    conservator.media.wait_for_processing(media_id)
+
+    image = conservator.images.from_string("unique.jpg")
+    assert image is not None
+    assert image.id == media_id
+
+
+def test_from_string_video_path(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/Videos")
+    path = test_data / "mp4" / "adas_thermal.mp4"
+    media_id = conservator.media.upload(path, collection)
+    conservator.media.wait_for_processing(media_id)
+
+    video = conservator.videos.from_string("/My/Videos/adas_thermal.mp4")
+    assert video is not None
+    assert video.id == media_id
+
+
+def test_from_string_video_id(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/Videos")
+    path = test_data / "mp4" / "adas_thermal.mp4"
+    media_id = conservator.media.upload(path, collection)
+    conservator.media.wait_for_processing(media_id)
+
+    video = conservator.videos.from_string(media_id)
+    assert video is not None
+    assert video.id == media_id
+
+
+def test_from_string_video_name(conservator, test_data):
+    collection = conservator.collections.create_from_remote_path("/My/Videos")
+    path = test_data / "mp4" / "adas_thermal.mp4"
+    media_id = conservator.media.upload(path, collection, remote_name="unique.mp4")
+    conservator.media.wait_for_processing(media_id)
+
+    video = conservator.videos.from_string("unique.mp4")
+    assert video is not None
+    assert video.id == media_id
 
 
 class TestDownloadMedia:
