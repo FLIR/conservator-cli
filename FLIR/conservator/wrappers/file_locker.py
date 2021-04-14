@@ -59,6 +59,11 @@ class FileLockerType(TypeProxy):
         path = os.path.join(path, "associated_files")
         os.makedirs(path, exist_ok=True)
         downloads = []
+
+        if self.file_locker_files is None:
+            # Sometimes it can be null?
+            return
+
         for file in self.file_locker_files:
             local_path = os.path.join(path, file.name)
             download = DownloadRequest(url=file.url, local_path=local_path)
@@ -74,7 +79,7 @@ class FileLockerType(TypeProxy):
             content_type = self.default_file_type
         url = self._generate_file_locker_url(file_path, content_type)
         try:
-            self._conservator.upload(url=url, local_path=file_path)
+            self._conservator.files.upload(url=url, local_path=file_path)
         except FileUploadException as e:
             raise FileLockerUploadException from e
         return True
