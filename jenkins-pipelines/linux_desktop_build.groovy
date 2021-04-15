@@ -148,9 +148,7 @@ pipeline {
     }
     stage("Release on Test PyPI") {
       when {
-        tag "test-v*"
-        branch "test-release-*"
-        // not { changeRequest() }
+        buildingTag()
       }
       environment {
         TWINE_REPOSITORY = "testpypi"
