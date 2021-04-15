@@ -97,7 +97,7 @@ def get_git_version(abbrev=7):
     # First try to get the current version using “git describe”.
 
     version = call_git_describe(abbrev)
-    if is_dirty():
+    if is_dirty() and version is not None:
         version += "-dirty"
 
     # If that doesn't work, fall back on the value that's in

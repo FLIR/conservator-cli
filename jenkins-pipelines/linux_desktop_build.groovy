@@ -146,6 +146,24 @@ pipeline {
         }
       }
     }
+    stage("Release on Test PyPI") {
+      when {
+        tag "test-v*"
+        branch "test-release-*"
+        // not { changeRequest() }
+      }
+      environment {
+        TWINE_REPOSITORY = "testpypi"
+        TWINE_USERNAME = "__token__"
+        TWINE_PASSWORD = credentials("test-pypi-conservator-cli")
+      }
+      steps {
+        sh "python setup.py --version"
+        sh "pip install build twine"
+        sh "python -m build"
+        sh "python -m twine upload dist/*"
+      }
+    }
   }
   post {
     cleanup {
