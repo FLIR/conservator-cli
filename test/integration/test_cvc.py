@@ -14,7 +14,6 @@ def cvc(*args):
         ["cvc", *map(str, args)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        text=True,
     )
 
 
