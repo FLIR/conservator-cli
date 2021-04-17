@@ -17,24 +17,20 @@ ADMIN_ROLE = "Conservator Administrator"
 def using_kubernetes():
     if shutil.which("kubectl") is None:
         return False
-    proc = subprocess.run(
-        ["kubectl", "--insecure-skip-tls-verify", "get", "services", "-o", "name"],
-        stdout=subprocess.PIPE,
-        text=True,
+    kube_services = subprocess.getoutput(
+        "kubectl --insecure-skip-tls-verify get services -o name"
     )
-    if "conservator-webapp" in proc.stdout:
+    if "conservator-webapp" in kube_services:
         return True
     return False
 
 
 def get_mongo_pod_name():
     # When running in k8s, the full name of the pod running mongo
-    cmd = subprocess.run(
-        ["kubectl", "--insecure-skip-tls-verify", "get", "pods", "-o", "name"],
-        stdout=subprocess.PIPE,
-        text=True,
+    kube_pods = subprocess.getoutput(
+        "kubectl --insecure-skip-tls-verify get pods -o name"
     )
-    pod_names = cmd.stdout.splitlines(keepends=False)
+    pod_names = kube_pods.splitlines(keepends=False)
     for pod_name in pod_names:
         if "conservator-mongo" in pod_name:
             return pod_name
@@ -78,18 +74,9 @@ def mongo_client(using_kubernetes, conservator_domain):
         yield pymongo.MongoClient(f"mongodb://localhost:27030/")
         port_forward_proc.terminate()
     else:  # Using docker
-        mongo_addr_proc = subprocess.run(
-            [
-                "docker",
-                "inspect",
-                "conservator_mongo",
-                "-f",
-                "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
-            ],
-            stdout=subprocess.PIPE,
-            text=True,
-        )
-        domain = mongo_addr_proc.stdout.strip()
+        domain = subprocess.getoutput(
+            "docker inspect conservator_mongo -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
+        ).strip()
         yield pymongo.MongoClient(host=[f"{domain}:27017"])
 
 
@@ -139,6 +126,7 @@ def conservator(empty_db, conservator_domain):
     config = Config(
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=f"http://{conservator_domain}:8080"
     )
+    print(f"Using key={api_key}, url=http://{conservator_domain}:8080")
     yield Conservator(config)
 
 
