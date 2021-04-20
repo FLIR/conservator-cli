@@ -7,16 +7,6 @@ pipeline {
     }
   }
   stages {
-    stage("Set Version") {
-      when {
-        buildingTag()
-      }
-      steps {
-        // When Jenkins builds from a tag, BRANCH_NAME is set to the tag.
-        // We add it to RELEASE-VERSION so version.py finds it.
-        sh "echo $BRANCH_NAME > RELEASE-VERSION"
-      }
-    }
     stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
