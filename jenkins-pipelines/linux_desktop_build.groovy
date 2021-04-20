@@ -156,6 +156,9 @@ pipeline {
         TWINE_PASSWORD = credentials("test-pypi-conservator-cli")
       }
       steps {
+        // When Jenkins builds from a tag, BRANCH_NAME is set to the tag.
+        // We add it to RELEASE-VERSION so version.py finds it.
+        sh "echo $BRANCH_NAME > RELEASE-VERSION"
         sh "python setup.py --version"
         sh "pip install build twine"
         sh "python -m build"
