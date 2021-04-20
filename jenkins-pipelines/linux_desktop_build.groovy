@@ -146,14 +146,14 @@ pipeline {
         }
       }
     }
-    stage("Release on Test PyPI") {
+    stage("Release on PyPI") {
       when {
         buildingTag()
       }
       environment {
-        TWINE_REPOSITORY = "testpypi"
+        TWINE_REPOSITORY = "pypi"
         TWINE_USERNAME = "__token__"
-        TWINE_PASSWORD = credentials("test-pypi-conservator-cli")
+        TWINE_PASSWORD = credentials("pypi-conservator-cli")
       }
       steps {
         sh "python setup.py --version"
