@@ -7,10 +7,20 @@ pipeline {
     }
   }
   stages {
+    stage("Set Version") {
+      when {
+        buildingTag()
+      }
+      steps {
+        // When Jenkins builds from a tag, BRANCH_NAME is set to the tag.
+        // We add it to RELEASE-VERSION so version.py finds it.
+        sh "echo $BRANCH_NAME > RELEASE-VERSION"
+      }
+    }
     stage("Install") {
       steps {
-        echo "Setting up..."
         sh "pip install --no-cache-dir -r requirements.txt"
+        sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
       }
     }
@@ -156,9 +166,6 @@ pipeline {
         TWINE_PASSWORD = credentials("test-pypi-conservator-cli")
       }
       steps {
-        // When Jenkins builds from a tag, BRANCH_NAME is set to the tag.
-        // We add it to RELEASE-VERSION so version.py finds it.
-        sh "echo $BRANCH_NAME > RELEASE-VERSION"
         sh "python setup.py --version"
         sh "pip install build twine"
         sh "python -m build"
