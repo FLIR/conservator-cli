@@ -4,9 +4,9 @@ Installation
 Basic Install
 -------------
 
-The easiest way to install Conservator CLI is with ``pip`` over ssh::
+The easiest way to install Conservator CLI is with ``pip``::
 
-    $ pip install git+https://github.com/FLIR/conservator-cli@main#egg=conservator-cli
+    $ pip install conservator-cli
 
 This will add the ``FLIR.conservator`` package and ``conservator`` command to
 your current Python Environment.
@@ -32,17 +32,6 @@ If you want to change credentials, you can edit your config by running::
 For developers working with multiple conservator instances, you can add
 multiple configs. See ``conservator config --help`` for more info.
 
-Dependency
-----------
-
-If you're developing a project that uses Conservator CLI, you can include
-the library in your ``requirements.txt`` by adding the line::
-
-    ...
-    git+https://github.com/FLIR/conservator-cli@main#egg=conservator-cli
-    ...
-
-You may want to specify a specific commit or tag to avoid unwanted changes.
 
 Developers
 ----------
