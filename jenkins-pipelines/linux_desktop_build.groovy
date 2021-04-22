@@ -9,8 +9,8 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        echo "Setting up..."
         sh "pip install --no-cache-dir -r requirements.txt"
+        sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
       }
     }
@@ -144,6 +144,22 @@ pipeline {
         sshagent(credentials: ["flir-service-key"]) {
           sh "git push || echo 'Push failed. There is probably nothing to push.'"
         }
+      }
+    }
+    stage("Release on PyPI") {
+      when {
+        buildingTag()
+      }
+      environment {
+        TWINE_REPOSITORY = "pypi"
+        TWINE_USERNAME = "__token__"
+        TWINE_PASSWORD = credentials("pypi-conservator-cli")
+      }
+      steps {
+        sh "python setup.py --version"
+        sh "pip install build twine"
+        sh "python -m build"
+        sh "python -m twine upload dist/*"
       }
     }
   }

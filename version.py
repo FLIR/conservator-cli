@@ -56,18 +56,6 @@ def call_git_describe(abbrev):
         return None
 
 
-def is_dirty():
-    try:
-        p = Popen(
-            ["git", "diff-index", "--name-only", "HEAD"], stdout=PIPE, stderr=PIPE
-        )
-        p.stderr.close()
-        lines = p.stdout.readlines()
-        return len(lines) > 0
-    except:
-        return False
-
-
 def read_release_version():
     try:
         f = open("RELEASE-VERSION", "r")
@@ -97,8 +85,6 @@ def get_git_version(abbrev=7):
     # First try to get the current version using “git describe”.
 
     version = call_git_describe(abbrev)
-    if is_dirty():
-        version += "-dirty"
 
     # If that doesn't work, fall back on the value that's in
     # RELEASE-VERSION.
