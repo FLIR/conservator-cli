@@ -10,11 +10,9 @@ There are currently two test suites:
    tests do not use any remote Conservator instances, and are thus fairly limited
    in scope and quantity.
  - Integration tests, for checking that CLI works with a Conservator instance.
-   This assumes a local, standard, docker installation of Conservator is running.
-   Tests will fail if this isn't the case.
+   This requires that a local instance of Conservator is running, via docker or k8s.
 
-Jenkins only runs the first. Soon it will also run the second against the latest 
-conservator image.
+Jenkins runs both. For the second, we use the latest production image.
 
 To run tests manually, from the root directory:
 
