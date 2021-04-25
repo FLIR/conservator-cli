@@ -109,7 +109,8 @@ def test_from_string_path(conservator):
     collection = conservator.collections.create_from_remote_path("/My/Collection")
     dataset = conservator.datasets.create("My Dataset", collections=[collection])
 
-    dataset_from_string = conservator.datasets.from_string("/My/Collection/My Dataset", fields=None)
+    dataset_from_string = conservator.datasets.from_string(
+        "/My/Collection/My Dataset", fields=None
+    )
     assert dataset_from_string.id == dataset.id
     assert dataset_from_string.name == dataset.name
-
