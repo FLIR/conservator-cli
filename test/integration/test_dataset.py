@@ -1,3 +1,8 @@
+import json
+import pytest
+import time
+
+
 def test_create(conservator):
     dataset = conservator.datasets.create("My Dataset")
     assert dataset is not None
@@ -9,66 +14,102 @@ def test_create(conservator):
     assert fetched_dataset.name == "My Dataset"
 
 
+def test_create_in_collection(conservator):
+    collection = conservator.collections.create_from_remote_path("/My/Collection")
+    dataset = conservator.datasets.create("My Dataset", collections=[collection])
+
+    datasets = list(collection.get_datasets())
+    assert len(datasets) == 1
+    assert datasets[0].id == dataset.id
+    assert datasets[0].name == dataset.name
+
+
+def test_populate(conservator):
+    dataset = conservator.datasets.create("My Dataset")
+
+    dataset_from_id = conservator.datasets.from_id(dataset.id)
+    dataset_from_id.populate("name")
+    assert dataset_from_id.name == dataset.name
+
+
 def test_delete(conservator):
-    pass
+    dataset = conservator.datasets.create("My dataset")
+    assert conservator.datasets.count() == 1
+
+    dataset.delete()
+    assert conservator.datasets.count() == 0
 
 
 def test_generate_metadata(conservator):
-    pass
+    dataset = conservator.datasets.create("My dataset")
+
+    # check that we get metadata that can be parsed into JSON
+    metadata = dataset.generate_metadata()
+    json.loads(metadata)
 
 
-def test_get_frames(conservator):
-    pass
+def test_add_get_frames(conservator, test_data):
+    local_path = test_data / "png" / "flight_0.png"
+    media_id = conservator.media.upload(local_path)
+    conservator.media.wait_for_processing(media_id)
+    image = conservator.images.all().first()
+    frame = image.get_frame()
+
+    dataset = conservator.datasets.create("Test dataset")
+    dataset.add_frames([frame])
+
+    dataset.populate("frame_count")
+    assert dataset.frame_count == 1
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 1
+    assert dataset_frames[0].frame_id == frame.id
 
 
-def test_add_frames(conservator):
-    pass
+def test_commit_and_history(conservator, test_data):
+    local_path = test_data / "png" / "flight_0.png"
+    media_id = conservator.media.upload(local_path)
+    conservator.media.wait_for_processing(media_id)
+    image = conservator.images.all().first()
+    frame = image.get_frame()
 
+    dataset = conservator.datasets.create("Test dataset")
+    time.sleep(15)
+    dataset.populate("repository")
+    assert dataset.repository.master is not None
+    # All datasets start with two commits.
+    assert len(dataset.get_commit_history()) == 2
 
-def test_commit(conservator):
-    pass
+    dataset.add_frames([frame])
+    dataset.commit("My commit message")
+    time.sleep(3)
+
+    commits = dataset.get_commit_history()
+    assert len(commits) == 3
+    assert commits[0].short_message == "My commit message"
 
 
 def test_from_string_id(conservator):
-    pass
+    dataset = conservator.datasets.create("My Dataset")
+
+    dataset_from_string = conservator.datasets.from_string(dataset.id, fields=None)
+    assert dataset_from_string.id == dataset.id
+    assert dataset_from_string.name == dataset.name
 
 
 def test_from_string_name(conservator):
-    pass
+    dataset = conservator.datasets.create("My Dataset")
+
+    dataset_from_string = conservator.datasets.from_string("My Dataset", fields=None)
+    assert dataset_from_string.id == dataset.id
+    assert dataset_from_string.name == dataset.name
 
 
-class TestDataset:
-    # These tests don't modify anything, so we can reuse the same dataset.
+def test_from_string_path(conservator):
+    collection = conservator.collections.create_from_remote_path("/My/Collection")
+    dataset = conservator.datasets.create("My Dataset", collections=[collection])
 
-    def test_get_git_url(self, conservator):
-        pass
+    dataset_from_string = conservator.datasets.from_string("/My/Collection/My Dataset", fields=None)
+    assert dataset_from_string.id == dataset.id
+    assert dataset_from_string.name == dataset.name
 
-    def test_get_commit_history(self, conservator):
-        pass
-
-    def test_get_commit_by_id(self, conservator):
-        pass
-
-    def test_get_root_tree_id(self, conservator):
-        pass
-
-    def test_get_tree_by_id(self, conservator):
-        pass
-
-    def test_get_blob_url_by_id(self, conservator):
-        pass
-
-    def test_get_blob_id_by_name(self, conservator):
-        pass
-
-    def test_download_blob_by_name(self, conservator, tmp_cwd):
-        pass
-
-    def test_download_blob(self, conservator, tmp_cwd):
-        pass
-
-    def test_download_latest_index(self, conservator, tmp_cwd):
-        pass
-
-    def test_from_local_path(self, conservator, tmp_cwd):
-        pass

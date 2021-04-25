@@ -57,6 +57,7 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         self._conservator.query(
             Mutation.delete_dataset,
             input=input_,
+            fields="id",
         )
 
     def generate_metadata(self):
