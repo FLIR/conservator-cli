@@ -3,6 +3,7 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     FlagDatasetFrameInput,
     UnflagDatasetFrameInput,
+    UpdateDatasetQaStatusNoteInput,
 )
 from FLIR.conservator.wrappers import QueryableType
 
@@ -85,4 +86,13 @@ class DatasetFrame(QueryableType):
             Mutation.unset_qa_status_dataset_frame,
             fields="id",
             id=self.id,
+        )
+
+    def update_qa_status_note(self, qa_status_note: str):
+        """
+        Change the QA status note for a dataset frame.
+        """
+        note = UpdateDatasetQaStatusNoteInput(id=self.id, qa_status_note=qa_status_note)
+        return self._conservator.query(
+            Mutation.update_dataset_qa_status_note, input=note
         )
