@@ -7,7 +7,7 @@ import tqdm
 
 from FLIR.conservator.util import md5sum_file
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 class DownloadRequest:
