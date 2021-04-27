@@ -43,9 +43,12 @@ def test_delete(conservator):
 def test_generate_metadata(conservator):
     dataset = conservator.datasets.create("My dataset")
 
-    # check that we get metadata that can be parsed into JSON
     metadata = dataset.generate_metadata()
-    json.loads(metadata)
+    # check that we got metadata that can be parsed into JSON
+    try:
+        json.loads(metadata)
+    except Exception as e:
+        assert False, "Exception when parsing metadata as JSON"
 
 
 def test_add_get_frames(conservator, test_data):
