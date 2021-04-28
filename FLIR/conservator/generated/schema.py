@@ -1272,6 +1272,7 @@ class Dataset(sgqlc.types.Type):
         "has_admin_access",
         "is_itar",
         "description",
+        "video_ids",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     user_id = sgqlc.types.Field(ID, graphql_name="userId")
@@ -1425,6 +1426,9 @@ class Dataset(sgqlc.types.Type):
     )
     is_itar = sgqlc.types.Field(Boolean, graphql_name="isItar")
     description = sgqlc.types.Field(String, graphql_name="description")
+    video_ids = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(ID)), graphql_name="videoIds"
+    )
 
 
 class DatasetAnnotation(sgqlc.types.Type):
