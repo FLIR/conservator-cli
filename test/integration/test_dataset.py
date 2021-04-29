@@ -77,7 +77,7 @@ def test_commit_and_history(conservator, test_data):
     frame = image.get_frame()
 
     dataset = conservator.datasets.create("Test dataset")
-    time.sleep(15)
+    time.sleep(20)
     dataset.populate("repository")
     assert dataset.repository.master is not None
     # All datasets start with two commits.
@@ -85,7 +85,7 @@ def test_commit_and_history(conservator, test_data):
 
     dataset.add_frames([frame])
     dataset.commit("My commit message")
-    time.sleep(3)
+    time.sleep(20)
 
     commits = dataset.get_commit_history()
     assert len(commits) == 3
