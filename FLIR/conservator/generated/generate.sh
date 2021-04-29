@@ -13,7 +13,7 @@ python3 -m sgqlc.introspection \
   ${url} \
   schema.json
 
-sgqlc-codegen schema.json schema.py
+sgqlc-codegen schema schema.json schema.py
 
 # HACK!!!
 # The built in sgqlc Date type doesn't work with Conservator.

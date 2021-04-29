@@ -1272,6 +1272,7 @@ class Dataset(sgqlc.types.Type):
         "has_admin_access",
         "is_itar",
         "description",
+        "video_ids",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     user_id = sgqlc.types.Field(ID, graphql_name="userId")
@@ -1425,6 +1426,9 @@ class Dataset(sgqlc.types.Type):
     )
     is_itar = sgqlc.types.Field(Boolean, graphql_name="isItar")
     description = sgqlc.types.Field(String, graphql_name="description")
+    video_ids = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(ID)), graphql_name="videoIds"
+    )
 
 
 class DatasetAnnotation(sgqlc.types.Type):
@@ -1520,6 +1524,7 @@ class DatasetFrame(sgqlc.types.Type):
         "dataset_frame_name",
         "attributes",
         "is_itar",
+        "dataset_name",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     owner = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="owner")
@@ -1604,6 +1609,9 @@ class DatasetFrame(sgqlc.types.Type):
         sgqlc.types.list_of(Attribute), graphql_name="attributes"
     )
     is_itar = sgqlc.types.Field(Boolean, graphql_name="isItar")
+    dataset_name = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="datasetName"
+    )
 
 
 class DatasetFrameCount(sgqlc.types.Type):
@@ -1905,6 +1913,7 @@ class Frame(sgqlc.types.Type):
         "attributes",
         "is_flagged",
         "is_itar",
+        "dataset_frames",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     video_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="videoId")
@@ -1988,6 +1997,9 @@ class Frame(sgqlc.types.Type):
         sgqlc.types.non_null(Boolean), graphql_name="isFlagged"
     )
     is_itar = sgqlc.types.Field(Boolean, graphql_name="isItar")
+    dataset_frames = sgqlc.types.Field(
+        sgqlc.types.list_of(DatasetFrame), graphql_name="datasetFrames"
+    )
 
 
 class Frames(sgqlc.types.Type):
