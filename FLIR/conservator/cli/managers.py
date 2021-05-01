@@ -183,6 +183,12 @@ def get_manager_command(type_manager, sgqlc_type, name):
             "-m", "--media", is_flag=True, help="Include media (videos and images)"
         )
         @click.option(
+            "-p",
+            "--preview_videos",
+            is_flag=True,
+            help="Download preview videos in place of full videos",
+        )
+        @click.option(
             "-r",
             "--recursive",
             is_flag=True,
@@ -195,12 +201,19 @@ def get_manager_command(type_manager, sgqlc_type, name):
             video_metadata,
             associated_files,
             media,
+            preview_videos,
             recursive,
         ):
             manager = get_instance()
             collection = manager.from_string(identifier)
             collection.download(
-                localpath, datasets, video_metadata, associated_files, media, recursive
+                localpath,
+                datasets,
+                video_metadata,
+                associated_files,
+                media,
+                preview_videos,
+                recursive,
             )
             return True
 
