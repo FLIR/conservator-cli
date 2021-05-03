@@ -264,6 +264,7 @@ class Collection(QueryableType, FileLockerType):
         include_metadata=False,
         include_associated_files=False,
         include_media=False,
+        preview_videos=False,
         recursive=False,
     ):
         """
@@ -281,7 +282,7 @@ class Collection(QueryableType, FileLockerType):
         if include_associated_files:
             self.download_associated_files(path)
         if include_media:
-            self.download_media(path)
+            self.download_media(path, preview_videos=preview_videos)
         if include_datasets:
             self.download_datasets(path)
         if recursive:
@@ -311,21 +312,36 @@ class Collection(QueryableType, FileLockerType):
         for image in images:
             image.download_metadata(path)
 
-    def download_media(self, path, no_meter=False):
-        """Downloads videos and images."""
-        self.download_videos(path, no_meter=no_meter)
+    def download_media(self, path, preview_videos=False, no_meter=False):
+        """
+        Downloads videos and images.  If `preview_videos` is set, download
+        preview videos in place of full videos.
+        """
+        self.download_videos(path, preview_videos=preview_videos, no_meter=no_meter)
         self.download_images(path, no_meter=no_meter)
 
-    def download_videos(self, path, no_meter=False):
-        """Downloads videos to given path."""
+    def download_videos(self, path, preview_videos=False, no_meter=False):
+        """
+        Downloads videos to given path.  If `preview_videos` is set, download
+        preview videos in place of full videos.
+        """
         os.makedirs(path, exist_ok=True)
         fields = FieldsRequest()
-        fields.include_field("filename", "url", "md5")
+        fields.include_field("filename", "preview_video_url", "url", "md5")
         downloads = []
         for video in self.get_videos(fields=fields):
+            video_url = video.url
+            if preview_videos:
+                if video.preview_video_url:
+                    video_url = video.preview_video_url
+                else:
+                    logger.warning(
+                        "No preview available for '%s`, downloading full video",
+                        video.filename,
+                    )
             local_path = os.path.join(path, video.filename)
             download = DownloadRequest(
-                url=video.url, local_path=local_path, expected_md5=video.md5
+                url=video_url, local_path=local_path, expected_md5=video.md5
             )
             downloads.append(download)
         self._conservator.files.download_many(downloads, no_meter=no_meter)
