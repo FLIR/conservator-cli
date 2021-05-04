@@ -89,6 +89,20 @@ class TestDatasetFrame:
         frame.populate("qa_status")
         assert frame.qa_status == "changesRequested"
 
+    def test_qa_status_note(self, conservator):
+        dataset = conservator.datasets.all().first()
+        frames = dataset.get_frames()
+        assert len(frames) == 1
+        frame = frames.first()
+
+        change_note = "Test QA status note"
+        frame.request_changes()
+        frame.update_qa_status_note(change_note)
+
+        frame.populate(["qa_status", "qa_status_note"])
+        assert frame.qa_status == "changesRequested"
+        assert frame.qa_status_note == change_note
+
     def test_unset_qa_status(self, conservator):
         dataset = conservator.datasets.all().first()
         frames = dataset.get_frames()
