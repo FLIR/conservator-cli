@@ -400,7 +400,7 @@ def run_shell_command(command):
 def interactive():
     global conservator
     ctx_obj = click.get_current_context().obj
-    conservator = ctx_obj["conservator"]
+    conservator = Conservator.create(ctx_obj["config_name"])
 
     click.secho(
         """This is an interactive conservator "shell" that simulates the directory\n"""
