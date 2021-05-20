@@ -7,7 +7,7 @@ class FieldsRequest:
     API calls will require specifying a list of fields using a :class:`FieldsRequest`.
     """
 
-    def __init__(self, paths: {str: object} = None):
+    def __init__(self, paths=None):
         if paths is None:
             paths = {}
         self.paths = paths
