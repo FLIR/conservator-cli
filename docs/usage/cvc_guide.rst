@@ -69,7 +69,7 @@ will commit and push the changes to ``index.json``
 
 .. note::
    Uploading will also copy staged images alongside other downloaded dataset frames
-    in ``data/``. Pass ``--skip-copy`` to not copy frames.
+   in ``data/``. Pass ``--skip-copy`` to not copy frames.
 
 Additional Reference
 --------------------
@@ -130,6 +130,30 @@ the ``--checkout`` option::
 
 You can then use ``cvc checkout HEAD`` to return to the most recent commit.
 
+Clone Timeout Workaround
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+For larger datasets, you may experience timeouts when trying to clone a dataset.
+While Conservator continues to optimize datasets, there is a workaround for some
+use cases. Datasets downloaded in this fashion **will not have version control**
+and therefore **will not support push and pull** commands. But it can be useful
+for downloading frames and annotation data.
+
+First, create a directory to hold your dataset, and enter it::
+
+    $ mkdir my_dataset
+    $ cd my_dataset
+
+Then, download the dataset's latest ``index.json`` file::
+
+    $ conservator datasets download-index [dataset id]
+
+The download may take some time (and a few attempts), but should be successful
+far more often than a full clone.
+
+There are some limitations with datasets cloned with this method, as they are not
+full git repositories. In general, the only command that will work without error is
+``cvc download``.
 
 Downloading Frames
 ^^^^^^^^^^^^^^^^^^
@@ -147,7 +171,7 @@ You can also include analytic data::
 
 This will be downloaded to ``analyticsData/``.
 
-By default, this performs 10 downloads in parallel at a time. For faster connections,
+By default, CVC performs 10 downloads in parallel at a time. For faster connections,
 you can increase this number by passing ``--pool-size`` (``-p`` for short)::
 
     $ cvc download --pool-size 50  # download 50 frames at a time

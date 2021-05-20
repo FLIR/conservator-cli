@@ -177,6 +177,15 @@ def status(local_dataset):
 )
 @pass_valid_local_dataset
 def download(local_dataset, include_analytics, pool_size, symlink):
+    if pool_size == 10:  # default
+        yellow = "\x1b[33;21m"
+        cyan = "\x1b[36;21m"
+        reset = "\x1b[0m"
+        click.echo(
+            f"{yellow}If you have a fast connection, you might be able to speed "
+            f"this up by rerunning with the -p (--process_count) option. "
+            f"For instance: {cyan}cvc download -p 50{reset}"
+        )
     local_dataset.download(
         include_analytics=include_analytics,
         include_eight_bit=True,

@@ -452,15 +452,6 @@ class LocalDataset:
         logger.info(
             f"Going to download {len(assets)} new frames using {process_count} processes."
         )
-        if process_count == 10:  # default
-            yellow = "\x1b[33;21m"
-            cyan = "\x1b[36;21m"
-            reset = "\x1b[0m"
-            logger.info(
-                f"{yellow}If you're running from {cyan}cvc download{yellow} and have a fast connection, you "
-                f"might be able to speed this up by rerunning with the -p (--process_count) option.{reset}"
-            )
-            logger.info(f"{yellow}For instance: {cyan}cvc download -p 50{reset}")
         with multiprocessing.Pool(process_count) as pool:
             download_method = functools.partial(LocalDataset._download_and_link, self)
             progress = tqdm.tqdm(
