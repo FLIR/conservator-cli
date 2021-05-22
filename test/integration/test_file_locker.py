@@ -1,8 +1,6 @@
 import os
-import pytest as pytest
 
 from FLIR.conservator.util import md5sum_file
-from conftest import upload_media
 
 
 def test_media_file_locker(conservator, test_data, tmp_cwd):
@@ -12,11 +10,7 @@ def test_media_file_locker(conservator, test_data, tmp_cwd):
 
     image = conservator.images.all().first()
     image.populate("file_locker_files")
-    # For some reason, it starts as null.
-    # This behavior is unique to Image/Video.
-    # JIRA Ticket CON-1472 is tracking this discrepancy.
-    assert image.file_locker_files is None
-    # assert len(image.file_locker_files) == 0
+    assert len(image.file_locker_files) == 0
 
     image.download_associated_files(".")
     assert os.path.exists("associated_files")
