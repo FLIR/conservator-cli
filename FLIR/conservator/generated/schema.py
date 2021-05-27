@@ -27,11 +27,6 @@ class ArrayUpdateMode(sgqlc.types.Enum):
     __choices__ = ("add", "remove", "replace")
 
 
-class AssetType(sgqlc.types.Enum):
-    __schema__ = schema
-    __choices__ = ("RGB", "Thermal", "Other", "Mixed", "Unknown")
-
-
 class AttributePrototypeType(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = ("radio", "checklist", "dropdown", "text")
@@ -599,7 +594,7 @@ class MetadataInput(sgqlc.types.Input):
         "location",
         "tags",
         "collections",
-        "asset_type",
+        "spectrum",
         "is_itar",
     )
     owner = sgqlc.types.Field(ID, graphql_name="owner")
@@ -613,7 +608,7 @@ class MetadataInput(sgqlc.types.Input):
     collections = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(ID)), graphql_name="collections"
     )
-    asset_type = sgqlc.types.Field(AssetType, graphql_name="assetType")
+    spectrum = sgqlc.types.Field(Spectrum, graphql_name="spectrum")
     is_itar = sgqlc.types.Field(Boolean, graphql_name="isItar")
 
 
@@ -2176,7 +2171,7 @@ class Image(sgqlc.types.Type):
         "file_size",
         "object_detect_batches_total",
         "object_detect_batches_done",
-        "asset_type",
+        "spectrum",
         "object_detect_details",
         "inherited_acl",
         "readme",
@@ -2279,7 +2274,7 @@ class Image(sgqlc.types.Type):
     object_detect_batches_done = sgqlc.types.Field(
         Int, graphql_name="objectDetectBatchesDone"
     )
-    asset_type = sgqlc.types.Field(String, graphql_name="assetType")
+    spectrum = sgqlc.types.Field(String, graphql_name="spectrum")
     object_detect_details = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of("ObjectDetectDetails")),
         graphql_name="objectDetectDetails",
@@ -2403,13 +2398,13 @@ class Mutation(sgqlc.types.Type):
         "generate_signed_dataset_file_locker_upload_url",
         "remove_dataset_file_locker_file",
         "copy_dataset_annotations_to_video",
-        "delete_frames_by_search_query",
         "generate_dataset_metadata",
         "update_dataset_custom_metadata",
         "delete_all_dataset_annotations",
         "delete_all_dataset_predictions",
         "copy_dataset_to_dataset",
         "restore_dataset",
+        "commit_all_collection_datasets",
         "create_dataset_annotation",
         "accept_dataset_annotations",
         "update_dataset_annotation",
@@ -2431,6 +2426,7 @@ class Mutation(sgqlc.types.Type):
         "remove_dataset_annotation_attribute",
         "modify_dataset_annotation_attribute",
         "copy_dataset_annotations",
+        "delete_dataset_frames_by_search",
         "create_datasheet",
         "update_datasheet_job_state",
         "complete_datasheet_job_success",
@@ -2521,6 +2517,7 @@ class Mutation(sgqlc.types.Type):
         "delete_all_video_annotations",
         "delete_all_video_predictions",
         "generate_full_res_video",
+        "generate_annotated_preview",
         "add_domain",
         "update_domain",
         "remove_domain",
@@ -3397,28 +3394,6 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    delete_frames_by_search_query = sgqlc.types.Field(
-        sgqlc.types.non_null(Dataset),
-        graphql_name="deleteFramesBySearchQuery",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "dataset_id",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(ID), graphql_name="datasetId", default=None
-                    ),
-                ),
-                (
-                    "search_text",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(String),
-                        graphql_name="searchText",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
     generate_dataset_metadata = sgqlc.types.Field(
         sgqlc.types.non_null(String),
         graphql_name="generateDatasetMetadata",
@@ -3516,6 +3491,30 @@ class Mutation(sgqlc.types.Type):
                     "id",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    commit_all_collection_datasets = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean),
+        graphql_name="commitAllCollectionDatasets",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "collection_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="collectionId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "commit_message",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="commitMessage",
+                        default=None,
                     ),
                 ),
             )
@@ -3953,6 +3952,28 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(ID),
                         graphql_name="destinationFrameId",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_dataset_frames_by_search = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean),
+        graphql_name="deleteDatasetFramesBySearch",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="datasetId", default=None
+                    ),
+                ),
+                (
+                    "search_text",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="searchText",
                         default=None,
                     ),
                 ),
@@ -5773,6 +5794,20 @@ class Mutation(sgqlc.types.Type):
     generate_full_res_video = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean),
         graphql_name="generateFullResVideo",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "video_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="videoId", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    generate_annotated_preview = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean),
+        graphql_name="generateAnnotatedPreview",
         args=sgqlc.types.ArgDict(
             (
                 (
@@ -7605,7 +7640,7 @@ class Video(sgqlc.types.Type):
         "file_size",
         "object_detect_batches_total",
         "object_detect_batches_done",
-        "asset_type",
+        "spectrum",
         "is_favorite",
         "favorite_count",
         "object_detect_details",
@@ -7635,6 +7670,7 @@ class Video(sgqlc.types.Type):
         "labelbox_update_state",
         "full_res_mp4_url",
         "full_res_mp4_status",
+        "preview_generation_status",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     filename = sgqlc.types.Field(String, graphql_name="filename")
@@ -7724,7 +7760,7 @@ class Video(sgqlc.types.Type):
     object_detect_batches_done = sgqlc.types.Field(
         Int, graphql_name="objectDetectBatchesDone"
     )
-    asset_type = sgqlc.types.Field(String, graphql_name="assetType")
+    spectrum = sgqlc.types.Field(String, graphql_name="spectrum")
     is_favorite = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean), graphql_name="isFavorite"
     )
@@ -7785,6 +7821,9 @@ class Video(sgqlc.types.Type):
     )
     full_res_mp4_url = sgqlc.types.Field(String, graphql_name="fullResMp4Url")
     full_res_mp4_status = sgqlc.types.Field(String, graphql_name="fullResMp4Status")
+    preview_generation_status = sgqlc.types.Field(
+        String, graphql_name="previewGenerationStatus"
+    )
 
 
 class VideoStats(sgqlc.types.Type):
