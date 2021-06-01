@@ -39,12 +39,8 @@ INSTALL_REQUIRES = [
     "Pillow",
     "jsonschema",
     "dataclasses; python_version<'3.7'",
+    "pyreadline; platform_system=='Windows'",
 ]
-
-if sys.platform.startswith("win"):
-    # windows specific dependencies (see issue #163)
-    INSTALL_REQUIRES.append("pyreadline")
-
 
 setuptools.setup(
     name="conservator-cli",
