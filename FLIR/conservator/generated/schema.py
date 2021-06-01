@@ -595,6 +595,7 @@ class MetadataInput(sgqlc.types.Input):
         "tags",
         "collections",
         "spectrum",
+        "asset_type",
         "is_itar",
     )
     owner = sgqlc.types.Field(ID, graphql_name="owner")
@@ -609,6 +610,7 @@ class MetadataInput(sgqlc.types.Input):
         sgqlc.types.list_of(sgqlc.types.non_null(ID)), graphql_name="collections"
     )
     spectrum = sgqlc.types.Field(Spectrum, graphql_name="spectrum")
+    asset_type = sgqlc.types.Field(Spectrum, graphql_name="assetType")
     is_itar = sgqlc.types.Field(Boolean, graphql_name="isItar")
 
 
@@ -6226,6 +6228,7 @@ class Query(sgqlc.types.Type):
         "datasets",
         "datasets_query_count",
         "labelbox_frontends",
+        "frames_exist_in_dataset",
         "dataset_videos",
         "dataset_frame",
         "dataset_frames",
@@ -6593,6 +6596,32 @@ class Query(sgqlc.types.Type):
     labelbox_frontends = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of("labelboxFrontend")),
         graphql_name="labelboxFrontends",
+    )
+    frames_exist_in_dataset = sgqlc.types.Field(
+        sgqlc.types.non_null(Int),
+        graphql_name="framesExistInDataset",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "current_dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID),
+                        graphql_name="currentDatasetId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "selected_video_frame_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(
+                            sgqlc.types.list_of(sgqlc.types.non_null(ID))
+                        ),
+                        graphql_name="selectedVideoFrameIds",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
     )
     dataset_videos = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(DatasetVideo)),
