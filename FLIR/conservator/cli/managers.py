@@ -1,6 +1,7 @@
 import click
 import functools
 
+from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.managers import (
     SearchableTypeManager,
@@ -43,7 +44,7 @@ def fields_request(func):
 def get_manager_command(type_manager, sgqlc_type, name):
     def get_instance():
         ctx_obj = click.get_current_context().obj
-        conservator = ctx_obj["conservator"]
+        conservator = Conservator.create(ctx_obj["config_name"])
         return type_manager(conservator)
 
     @click.group(name=name, help=f"View or manage {name}")
@@ -417,7 +418,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
         )
         def upload(localpath, remote_collection, remote_name, create_collections):
             ctx_obj = click.get_current_context().obj
-            conservator = ctx_obj["conservator"]
+            conservator = Conservator.create(ctx_obj["config_name"])
             if create_collections:
                 collection = conservator.collections.from_remote_path(
                     path=remote_collection, make_if_no_exist=True, fields="id"

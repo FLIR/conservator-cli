@@ -15,7 +15,7 @@ def pass_valid_local_dataset(func):
     def wrapper(*args, **kwargs):
         ctx_obj = get_current_context().obj
         path = ctx_obj["cvc_local_path"]
-        conservator = ctx_obj["conservator"]
+        conservator = Conservator.create(ctx_obj["config_name"])
         # raises InvalidLocalDatasetPath if the path does not point to a
         # valid LocalDataset (defined as a directory containing index.json).
         local_dataset = LocalDataset(conservator, path)
@@ -34,7 +34,7 @@ def pass_valid_local_dataset(func):
 )
 @click.option(
     "--config",
-    default=None,
+    default="default",
     help="Conservator config name, use default credentials if not specified",
 )
 @click.option(
@@ -52,9 +52,8 @@ def main(ctx, log, path, config):
     }
     logging.basicConfig(level=levels[log])
 
-    conservator = Conservator.create(config_name=config)
     ctx.ensure_object(dict)
-    ctx.obj["conservator"] = conservator
+    ctx.obj["config_name"] = config
     ctx.obj["cvc_local_path"] = path
 
 
@@ -72,7 +71,7 @@ def main(ctx, log, path, config):
 )
 @click.pass_context
 def clone(ctx, identifier, path, checkout):
-    conservator = ctx.obj["conservator"]
+    conservator = Conservator.create(ctx.obj["config_name"])
     dataset = conservator.datasets.from_string(identifier)
     cloned = LocalDataset.clone(dataset, path)
     if checkout is not None:

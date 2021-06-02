@@ -27,7 +27,7 @@ import logging
 )
 @click.option(
     "--config",
-    default=None,
+    default="default",
     help="Conservator config name, use default credentials if not specified",
 )
 @click.version_option(prog_name="conservator-cli")
@@ -41,16 +41,15 @@ def main(log, config):
     }
     logging.basicConfig(level=levels[log])
 
-    conservator = Conservator.create(config_name=config)
     ctx = click.get_current_context()
     ctx.ensure_object(dict)
-    ctx.obj["conservator"] = conservator
+    ctx.obj["config_name"] = config
 
 
 @main.command(help="Print information on the current user")
 def whoami():
     ctx_obj = click.get_current_context().obj
-    conservator = ctx_obj["conservator"]
+    conservator = Conservator.create(ctx_obj["config_name"])
     user = conservator.get_user()
     click.echo(to_clean_string(user))
 
