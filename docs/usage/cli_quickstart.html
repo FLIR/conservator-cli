@@ -4,11 +4,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>CLI Quickstart &#8212; Conservator CLI  documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -33,13 +34,13 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="cli-quickstart">
+  <section id="cli-quickstart">
 <h1>CLI Quickstart<a class="headerlink" href="#cli-quickstart" title="Permalink to this headline">¶</a></h1>
 <p>This page assumes you already have Conservator CLI installed and configured.  If you do not,
 follow the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> instructions first.</p>
 <p>This guide will show you how to perform basic operations using the CLI.
 Please see the <a class="reference internal" href="api_quickstart.html"><span class="doc">Python API Quickstart</span></a> to get started using the Python API.</p>
-<div class="section" id="basic-queries">
+<section id="basic-queries">
 <h2>Basic Queries<a class="headerlink" href="#basic-queries" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
 <dt>There are four queryable types</dt><dd><ul class="simple">
@@ -86,8 +87,8 @@ Search syntax):</p>
 </div>
 <p>Be careful with large queries (like listing all collections), they will
 take a long time.</p>
-</div>
-<div class="section" id="downloading-datasets">
+</section>
+<section id="downloading-datasets">
 <h2>Downloading Datasets<a class="headerlink" href="#downloading-datasets" title="Permalink to this headline">¶</a></h2>
 <p>The process for downloading a Dataset mirrors CVC.  To see the available commands:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator cvc --help
@@ -104,8 +105,8 @@ take a long time.</p>
 <p>Once cloned, you can download media with <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code> from within the dataset
 directory.</p>
 <p>Please see the <a class="reference internal" href="cvc_guide.html"><span class="doc">CVC Guide</span></a> for more details.</p>
-</div>
-<div class="section" id="downloading-collections">
+</section>
+<section id="downloading-collections">
 <h2>Downloading Collections<a class="headerlink" href="#downloading-collections" title="Permalink to this headline">¶</a></h2>
 <p>First, find the ID of a collection you want to download using
 the website, search, etc.
@@ -116,8 +117,8 @@ directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator collections download ID -r -d -v -f -m
 </pre></div>
 </div>
-</div>
-<div class="section" id="downloading-media">
+</section>
+<section id="downloading-media">
 <h2>Downloading Media<a class="headerlink" href="#downloading-media" title="Permalink to this headline">¶</a></h2>
 <p>First, find the ID of a video or image you want to download using
 the website, search, etc.</p>
@@ -136,8 +137,8 @@ the website, search, etc.</p>
 </div>
 <p>The same commands also work for images (just replace <code class="docutils literal notranslate"><span class="pre">videos</span></code> with
 <code class="docutils literal notranslate"><span class="pre">images</span></code>).</p>
-</div>
-<div class="section" id="uploading-media">
+</section>
+<section id="uploading-media">
 <h2>Uploading Media<a class="headerlink" href="#uploading-media" title="Permalink to this headline">¶</a></h2>
 <p>Media can be uploaded using the <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">collections</span> <span class="pre">upload</span></code> command. This
 command takes a remote collection, and a local path. Its the preferred method of
@@ -175,8 +176,8 @@ using <code class="docutils literal notranslate"><span class="pre">--create-coll
 </pre></div>
 </div>
 <p>Again, you can use these commands for uploading both videos or images.</p>
-</div>
-<div class="section" id="interactive-mode">
+</section>
+<section id="interactive-mode">
 <h2>Interactive Mode<a class="headerlink" href="#interactive-mode" title="Permalink to this headline">¶</a></h2>
 <p>Conservator CLI also has a powerful and useful interactive mode:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator interactive
@@ -205,8 +206,8 @@ Commands:
 download and upload files, edit metadata and tags, and
 move media around.  Use <cite>–help</cite> for more information
 about any specific command within the shell.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -280,7 +281,7 @@ about any specific command within the shell.</p>
       &copy;2021, FLIR Systems.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
