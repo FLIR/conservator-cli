@@ -60,10 +60,6 @@ class FileLockerType(TypeProxy):
         os.makedirs(path, exist_ok=True)
         downloads = []
 
-        if self.file_locker_files is None:
-            # Sometimes it can be null?
-            return
-
         for file in self.file_locker_files:
             local_path = os.path.join(path, file.name)
             download = DownloadRequest(url=file.url, local_path=local_path)
