@@ -3,7 +3,6 @@ import click
 from FLIR.conservator.cli.config import config_
 from FLIR.conservator.cli.managers import get_manager_command
 from FLIR.conservator.cli.interactive import interactive
-from FLIR.conservator.config import Config
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated import schema
 from FLIR.conservator.managers import (
@@ -31,6 +30,7 @@ import logging
     default=None,
     help="Conservator config name, use default credentials if not specified",
 )
+@click.version_option(prog_name="conservator-cli")
 def main(log, config):
     levels = {
         "DEBUG": logging.DEBUG,

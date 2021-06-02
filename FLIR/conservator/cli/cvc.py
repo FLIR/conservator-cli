@@ -1,5 +1,4 @@
 import functools
-import os
 import subprocess
 
 import click
@@ -7,7 +6,6 @@ import logging
 
 from click import get_current_context
 
-from FLIR.conservator.config import Config
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
 
@@ -42,6 +40,7 @@ def pass_valid_local_dataset(func):
 @click.option(
     "-p", "--path", default=".", help="Path to dataset, defaults to current directory"
 )
+@click.version_option(prog_name="conservator-cli")
 @click.pass_context
 def main(ctx, log, path, config):
     levels = {
