@@ -40,7 +40,7 @@ def pass_valid_local_dataset(func):
 @click.option(
     "-p", "--path", default=".", help="Path to dataset, defaults to current directory"
 )
-@click.version_option(prog_name="conservator-cli")
+@click.version_option(prog_name="conservator-cli", package_name="conservator-cli")
 @click.pass_context
 def main(ctx, log, path, config):
     levels = {
