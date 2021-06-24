@@ -42,78 +42,12 @@ pipeline {
       }
       stages {
         stage("Create kind cluster") {
-          steps {
-            sh "kind create cluster --config=test/integration/kind.yaml"
-            // Modify kubectl to look through bridge connection.
-            // Requires --insecure-skip-tls-verify on kubectl command.
-            sh """
-                GW=\$(ip route list default | sed 's/.*via //; s/ .*//')
-                echo "using \$GW as bridge ip"
-                sed -i "s/0.0.0.0/\$GW/g" ~/.kube/config
-            """
-          }
-        }
-        stage("Pull Conservator Image") {
           environment {
             AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
             AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
           }
           steps {
-            sh "env aws ecr get-login-password --region us-east-1 \
-                 | docker login --username AWS --password-stdin $AWS_DOMAIN"
-            sh "docker pull $AWS_DOMAIN/conservator_webapp:prod -q"
-          }
-        }
-        stage("Load Conservator image into cluster") {
-          steps {
-            sh "kind load docker-image $AWS_DOMAIN/conservator_webapp:prod"
-          }
-        }
-        stage("Apply configurations") {
-          steps {
-            sh """
-                id=\$(docker create $AWS_DOMAIN/conservator_webapp:prod)
-                docker cp \$id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
-                docker rm -v \$id
-               """
-            sh "echo IMAGE=$AWS_DOMAIN/conservator_webapp:prod > testing.env"
-            sh "kubectl apply -f kubernetes/kind/deploy-ingress-nginx.yaml --insecure-skip-tls-verify"
-            sh "kubetpl render kubernetes/config.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-            sh "kubetpl render kubernetes/pvc/*.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-
-            sh "kubetpl render kubernetes/deployments/mongo.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-            sh "kubetpl render kubernetes/deployments/rabbitmq.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-            sh "kubetpl render kubernetes/deployments/s3rver.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
-
-            sh "kubetpl render kubernetes/deployments/git-server.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
-
-            sh "kubetpl render kubernetes/deployments/*.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
-
-            sh "kubetpl render kubernetes/ingress/ingress.yaml -i testing.env \
-                 | kubectl apply -f - --insecure-skip-tls-verify"
-            sh "kubectl wait --timeout=-1s --for=condition=Ready pod --all --insecure-skip-tls-verify"
-          }
-        }
-        stage("Initialize Conservator") {
-          steps {
-            sh "kubectl exec --insecure-skip-tls-verify \
-                  `kubectl get pods -o name --insecure-skip-tls-verify | grep 'conservator-webapp'` \
-                  -- /bin/bash -c 'cd /home/centos/flirmachinelearning \
-                    && yarn run create-s3rver-bucket \
-                    && yarn update-validators \
-                    && yarn create-admin-user admin@example.com \
-                    && yarn create-organization FLIR admin@example.com \
-                    && yarn db:migrate-up'"
+            sh "cd $WORKSPACE/test/integration/cluster && ./start-cluster.sh"
           }
         }
         stage("Run integration tests") {
