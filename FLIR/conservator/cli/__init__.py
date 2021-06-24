@@ -1,4 +1,5 @@
 import click
+import subprocess
 
 from FLIR.conservator.cli.config import config_
 from FLIR.conservator.cli.managers import get_manager_command
@@ -15,6 +16,9 @@ from FLIR.conservator.managers import (
 from FLIR.conservator.util import to_clean_string
 from FLIR.conservator.cli.cvc import cvc
 import logging
+import requests
+import json
+import pip
 
 
 @click.group()
@@ -52,6 +56,24 @@ def whoami():
     conservator = Conservator.create(ctx_obj["config_name"])
     user = conservator.get_user()
     click.echo(to_clean_string(user))
+
+
+@main.command(help="Print whether or not an update is available")
+def checkUpdate():
+    url = "https://pypi.org/pypi/conservator-cli/json"
+    response = requests.get(url).text
+    current_version = json.loads(response)["info"]["version"]
+    data = json.loads(subprocess.check_output(["pip", "list", "--format", "json"]))
+    local_version = [
+        package for package in data if package["name"] == "conservator-cli"
+    ][0]["version"]
+    print("local_version:", local_version)
+    print("current_version:", current_version)
+    # compare local and remote versions
+    if local_version != current_version:
+        click.echo("Newer version of conservator-cli available")
+    else:
+        click.echo("No update for conservator-cli available")
 
 
 main.add_command(config_)
