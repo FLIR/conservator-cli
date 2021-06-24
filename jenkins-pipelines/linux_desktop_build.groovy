@@ -51,7 +51,6 @@ pipeline {
                 echo "using \$GW as bridge ip"
                 sed -i "s/0.0.0.0/\$GW/g" ~/.kube/config
             """
-            sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml --insecure-skip-tls-verify"
           }
         }
         stage("Pull Conservator Image") {
@@ -78,6 +77,7 @@ pipeline {
                 docker rm -v \$id
                """
             sh "echo IMAGE=$AWS_DOMAIN/conservator_webapp:prod > testing.env"
+            sh "kubectl apply -f kubernetes/kind/deploy-ingress-nginx.yaml --insecure-skip-tls-verify"
             sh "kubetpl render kubernetes/config.yaml -i testing.env \
                  | kubectl apply -f - --insecure-skip-tls-verify"
             sh "kubetpl render kubernetes/pvc/*.yaml -i testing.env \
