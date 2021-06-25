@@ -2,7 +2,7 @@
 wheel
 sphinx
 sgqlc
-click >= 7
+click >= 8
 tqdm
 pytest
 requests
