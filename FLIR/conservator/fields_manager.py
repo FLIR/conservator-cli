@@ -135,7 +135,7 @@ class FieldsManager:
             selector.height()
             selector.tags()
             selector.file_size()
-            selector.asset_type()
+            selector.spectrum()
             selector.image_md5()
         elif issubclass(type_, schema.LabelSet):
             selector.id()
@@ -179,7 +179,7 @@ class FieldsManager:
             selector.prediction_label_data()
             selector.annotation_label_data()
             selector.file_size()
-            selector.asset_type()
+            selector.spectrum()
             selector.annotated_frames()
             selector.empty_frames()
             selector.un_annotated_frames()

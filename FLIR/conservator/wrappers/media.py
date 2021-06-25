@@ -211,6 +211,7 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         if remote_name is None:
             remote_name = os.path.split(file_path)[-1]
 
+        media = None
         try:
             media = MediaType._create(conservator, remote_name, collection_id)
             upload_id = media._initiate_upload(remote_name)
