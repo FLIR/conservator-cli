@@ -148,7 +148,7 @@ class LocalDataset:
                 raise RuntimeError("Failed to push changes to index.json")
         self.pull(verbose)
 
-    def push_staged_images(self, copy_to_data=True):
+    def push_staged_images(self, copy_to_data=True, tries=5):
         """
         Push the staged images.
 
@@ -158,6 +158,7 @@ class LocalDataset:
         :param copy_to_data: If `True`, copy the staged images to the cache and
             link with the data directory. This produces the same result as
             downloading the images back from conservator (but without downloading).
+        :param tries: Specify a retry limit when recovering from HTTP 502 errors.
         """
         image_paths = self.get_staged_images()
         if len(image_paths) == 0:
@@ -174,7 +175,7 @@ class LocalDataset:
 
             md5 = image_info["md5"]
             if not self.conservator.dvc_hash_exists(md5):
-                self.upload_image(path, md5)
+                self.upload_image(path, md5, tries=tries)
             else:
                 logger.debug(f"File '{path}' already exists on conservator, skipping")
 
@@ -224,7 +225,7 @@ class LocalDataset:
         with open(self.staging_path, "w") as f:
             json.dump([], f)
 
-    def upload_image(self, path, md5):
+    def upload_image(self, path, md5, tries=5):
         url = self.conservator.get_dvc_hash_url(md5)
         filename = os.path.split(path)[1]
         headers = {
@@ -232,8 +233,18 @@ class LocalDataset:
             "x-amz-meta-originalfilename": filename,
         }
         logger.info(f"Uploading '{path}'.")
-        with open(path, "rb") as data:
-            r = requests.put(url, data, headers=headers)
+        retry_count = 0
+        while retry_count < tries:
+            with open(path, "rb") as data:
+                r = requests.put(url, data, headers=headers)
+            if r.status_code == 502:
+                retry_count += 1
+                if retry_count < tries:
+                    logger.info(f"Bad Gateway error, retrying {filename} ..")
+                    time.sleep(retry_count)  # Timeout increases per retry.
+                    continue
+            else:
+                break
         assert r.status_code == 200
         assert r.headers["ETag"] == f'"{md5}"'
 
@@ -332,12 +343,15 @@ class LocalDataset:
             if os.path.islink(file_path) or os.stat(file_path).st_nlink > 1:
                 os.remove(file_path)
 
-    def _download_and_link(self, asset):
+    def _download_and_link(self, asset, max_retries=5):
         # we use imap (istarmap doesn't exist) so we need to unpack arguments
         try:
             download_path, url, paths_to_link, use_symlink = asset
             result = self.conservator.files.download(
-                url=url, local_path=download_path, no_meter=True
+                url=url,
+                local_path=download_path,
+                no_meter=True,
+                max_retries=max_retries,
             )
             LocalDataset._add_links(download_path, paths_to_link, use_symlink)
             return result is not None and result.ok
@@ -376,6 +390,7 @@ class LocalDataset:
         process_count=10,
         use_symlink=False,
         no_meter=False,
+        tries=5,
     ):
         """
         Downloads the files listed in ``index.json`` of the local dataset.
@@ -386,7 +401,8 @@ class LocalDataset:
             will use `os.cpu_count()`.
         :param use_symlink: If `True`, use symbolic links instead of hardlinks when linking the
             cache and data.
-        :param no_meter: If 'True', don't display file download progress meters
+        :param no_meter: If 'True', don't display file download progress meters.
+        :param tries: Specify a retry limit when recovering from HTTP 502 errors.
         """
         if include_eight_bit:
             os.makedirs(self.data_path, exist_ok=True)
@@ -453,7 +469,9 @@ class LocalDataset:
             f"Going to download {len(assets)} new frames using {process_count} processes."
         )
         with multiprocessing.Pool(process_count) as pool:
-            download_method = functools.partial(LocalDataset._download_and_link, self)
+            download_method = functools.partial(
+                LocalDataset._download_and_link, self, max_retries=tries
+            )
             progress = tqdm.tqdm(
                 iterable=pool.imap(download_method, assets),
                 desc="Downloading new frames",
