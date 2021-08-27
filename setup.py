@@ -3,9 +3,6 @@ import sys
 import setuptools
 import re
 
-import version
-
-
 try:
     from setuptools import find_namespace_packages
 except ImportError:
@@ -20,8 +17,17 @@ except ImportError:
 
     find_namespace_packages = fix_PEP420PackageFinder_find
 
-git_version = version.get_git_version()
-print("VERSION: ", git_version)
+# if this is run from git repo, create updated version file,
+# otherwise there should be a previously created version file
+try:
+    import version
+
+    version = version.get_git_version()
+    print("GIT VERSION: ", version)
+    with open("FLIR/conservator/version.py", "w") as fp:
+        fp.write(f'version = "{version}"\n')
+except:
+    from FLIR.conservator.version import version
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -44,7 +50,7 @@ INSTALL_REQUIRES = [
 
 setuptools.setup(
     name="conservator-cli",
-    version=git_version,
+    version=version,
     author="FLIR Systems, INC",
     description="A library for using the FLIR Conservator API, with a nice command line interface.",
     long_description=long_description,
