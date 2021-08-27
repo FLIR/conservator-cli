@@ -375,7 +375,7 @@ URLs will be relative to the base Conservator URL. Therefore, all download
 and upload operations need to have a reference to the Conservator instance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.ConservatorFileTransfers.download">
-<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Download the file from Conservator <cite>url</cite> to the <cite>local_path</cite>.</p>
 </dd></dl>
 
@@ -411,7 +411,7 @@ that can be used for uploading or downloading.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.ConservatorFileTransfers.upload">
-<span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload the file at <cite>local_path</cite> to Conservator <cite>url</cite>.</p>
 </dd></dl>
 
@@ -2026,7 +2026,7 @@ immediately available.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.download">
-<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_analytics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_eight_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_symlink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_analytics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_eight_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_symlink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> of the local dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2037,7 +2037,8 @@ immediately available.</p></li>
 will use <cite>os.cpu_count()</cite>.</p></li>
 <li><p><strong>use_symlink</strong> – If <cite>True</cite>, use symbolic links instead of hardlinks when linking the
 cache and data.</p></li>
-<li><p><strong>no_meter</strong> – If ‘True’, don’t display file download progress meters</p></li>
+<li><p><strong>no_meter</strong> – If ‘True’, don’t display file download progress meters.</p></li>
+<li><p><strong>tries</strong> – Specify a retry limit when recovering from HTTP 502 errors.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2095,15 +2096,18 @@ and get the dimensions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.push_staged_images">
-<span class="sig-name descname"><span class="pre">push_staged_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy_to_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">push_staged_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy_to_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Push the staged images.</p>
 <p>This reads the staged image paths, uploads them, adds metadata
 to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>, and deletes the staged image paths.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>copy_to_data</strong> – If <cite>True</cite>, copy the staged images to the cache and
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>copy_to_data</strong> – If <cite>True</cite>, copy the staged images to the cache and
 link with the data directory. This produces the same result as
-downloading the images back from conservator (but without downloading).</p>
+downloading the images back from conservator (but without downloading).</p></li>
+<li><p><strong>tries</strong> – Specify a retry limit when recovering from HTTP 502 errors.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
