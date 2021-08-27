@@ -142,3 +142,4 @@ cython_debug/
 
 # version.py
 RELEASE-VERSION
+FLIR/conservator/version.py
