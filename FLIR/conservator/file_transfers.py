@@ -1,6 +1,7 @@
 import multiprocessing
 import os
 import logging
+import time
 
 import requests
 import tqdm
@@ -89,7 +90,7 @@ class ConservatorFileTransfers:
                 return True
         return self.download(url, local_path, no_meter=no_meter)
 
-    def download(self, url, local_path, no_meter=False):
+    def download(self, url, local_path, no_meter=False, max_retries=5):
         """
         Download the file from Conservator `url` to the `local_path`.
         """
@@ -98,9 +99,19 @@ class ConservatorFileTransfers:
         url = self.full_url(url)
 
         logger.debug(f"Downloading {file} from {url}")
+        response = None
         try:
-            response = requests.get(url, stream=True, allow_redirects=True)
-            if not response.ok:
+            retries = 0
+            while retries < max_retries:
+                response = requests.get(url, stream=True, allow_redirects=True)
+                if response.ok:
+                    break
+                if response.status_code == 502:
+                    retries += 1
+                    if retries < max_retries:
+                        logger.info(f"Bad Gateway error, retrying {file} ..")
+                        time.sleep(retries)  # Timeout increases per retry.
+                        continue
                 raise FileDownloadException(url)
         except requests.exceptions.ConnectionError as e:
             raise FileDownloadException(url) from e
@@ -156,16 +167,28 @@ class ConservatorFileTransfers:
             logger.warning(f"Encountered FileUploadException with {upload_request}")
             return False
 
-    def upload(self, url, local_path):
+    def upload(self, url, local_path, max_retries=5):
         """
         Upload the file at `local_path` to Conservator `url`.
         """
         url = self.full_url(url)
         path = os.path.abspath(local_path)
         logger.info(f"Uploading '{path}'")
-        with open(path, "rb") as f:
-            response = requests.put(url, f)
-        if not response.ok:
+        response = None
+        retries = 0
+        while retries < max_retries:
+            with open(path, "rb") as f:
+                response = requests.put(url, f)
+            if response.ok:
+                break
+            if response.status_code == 502:
+                retries += 1
+                if retries < max_retries:
+                    logger.info(
+                        f"Bad Gateway error, retrying {os.path.basename(path)} .."
+                    )
+                    time.sleep(retries)  # Timeout increases per retry.
+                    continue
             raise FileUploadException(url)
         logger.info(f"Completed upload of '{path}'")
         return response

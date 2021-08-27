@@ -165,6 +165,7 @@ def status(local_dataset):
     "--pool-size",
     type=int,
     default=10,
+    show_default=True,
     help="Number of concurrent processes to use when downloading.",
 )
 @click.option(
@@ -173,8 +174,16 @@ def status(local_dataset):
     is_flag=True,
     help="If passed, use symlinks instead of hardlinks when linking cache and data.",
 )
+@click.option(
+    "-t",
+    "--tries",
+    type=int,
+    default=5,
+    show_default=True,
+    help="Number of tries to recover from spurious server errors.",
+)
 @pass_valid_local_dataset
-def download(local_dataset, include_analytics, pool_size, symlink):
+def download(local_dataset, include_analytics, pool_size, symlink, tries):
     if pool_size == 10:  # default
         yellow = "\x1b[33;21m"
         cyan = "\x1b[36;21m"
@@ -189,6 +198,7 @@ def download(local_dataset, include_analytics, pool_size, symlink):
         include_eight_bit=True,
         process_count=pool_size,
         use_symlink=symlink,
+        tries=tries,
     )
 
 
@@ -207,9 +217,17 @@ def validate(local_dataset):
     is_flag=True,
     help="If provided, skip copying images to the cache and /data directory",
 )
+@click.option(
+    "-t",
+    "--tries",
+    type=int,
+    default=5,
+    show_default=True,
+    help="Number of tries to recover from spurious server errors.",
+)
 @pass_valid_local_dataset
-def upload(local_dataset, skip_copy):
-    local_dataset.push_staged_images(copy_to_data=not skip_copy)
+def upload(local_dataset, skip_copy, tries):
+    local_dataset.push_staged_images(copy_to_data=not skip_copy, tries=tries)
 
 
 @main.command(
@@ -218,9 +236,17 @@ def upload(local_dataset, skip_copy):
 )
 @click.argument("message")
 @click.option("--skip-validation", is_flag=True, help="Skip index.json validation.")
+@click.option(
+    "-t",
+    "--tries",
+    type=int,
+    default=5,
+    show_default=True,
+    help="Number of tries to recover from spurious server errors.",
+)
 @pass_valid_local_dataset
-def publish(local_dataset, message, skip_validation):
-    local_dataset.push_staged_images()
+def publish(local_dataset, message, skip_validation, tries):
+    local_dataset.push_staged_images(tries=tries)
     local_dataset.add_local_changes(skip_validation=skip_validation)
     local_dataset.commit(message)
     local_dataset.push_commits()
