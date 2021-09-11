@@ -27,7 +27,7 @@ import logging
 )
 @click.option(
     "--config",
-    default="default",
+    default=None,
     help="Conservator config name, use default credentials if not specified",
 )
 @click.version_option(prog_name="conservator-cli", package_name="conservator-cli")

@@ -34,7 +34,7 @@ def pass_valid_local_dataset(func):
 )
 @click.option(
     "--config",
-    default="default",
+    default=None,
     help="Conservator config name, use default credentials if not specified",
 )
 @click.option(
