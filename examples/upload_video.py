@@ -18,7 +18,9 @@ remote_path = f"/CLI Examples/Upload Video"
 remote_name = f"upload_video_example"
 
 # Your local path here:
-local_path = osp.abspath(osp.join(osp.dirname(__file__), '../test/data/mp4/adas_thermal.mp4'))
+local_path = osp.abspath(
+    osp.join(osp.dirname(__file__), "../test/data/mp4/adas_thermal.mp4")
+)
 
 # Get collection:
 print("Getting collection")
