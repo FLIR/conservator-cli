@@ -254,34 +254,11 @@ def test_delete_parent(conservator):
         parent.delete()
 
 
-@pytest.mark.xfail(
-    reason="FIXME: A bug in flirconservator returns an error when removing a media file from a "
-    "collection that specified the collection's ID when it was created",
-    strict=True,
-)
 def test_remove_media(conservator, test_data):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     local_path = test_data / "jpg" / "surfers_0.jpg"
     media_id = conservator.media.upload(local_path, collection=collection)
     conservator.media.wait_for_processing(media_id)
-    assert len(list(collection.get_media())) == 1
-
-    collection.remove_media(media_id)
-
-    assert len(list(collection.get_media())) == 0
-
-
-def test_remove_media_workaround(conservator, test_data):
-    """Alternative test to avoid provoking a known flirconservator bug."""
-    collection = conservator.collections.create_from_remote_path("/Some/Collection")
-    local_path = test_data / "jpg" / "surfers_0.jpg"
-    media_id = conservator.media.upload(local_path)
-    conservator.media.wait_for_processing(media_id)
-
-    metadata = MetadataInput(mode="add", collections=[collection.id])
-    conservator.query(
-        Mutation.update_video, id=media_id, metadata=metadata, fields="id"
-    )
     assert len(list(collection.get_media())) == 1
 
     collection.remove_media(media_id)
