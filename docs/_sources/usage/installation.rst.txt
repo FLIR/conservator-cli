@@ -30,7 +30,9 @@ If you want to change credentials, you can edit your config by running::
     $ conservator config edit
 
 For developers working with multiple conservator instances, you can add
-multiple configs. See ``conservator config --help`` for more info.
+multiple configs. Conservator CLI stores its configurations as json files in ``~/.config/conservator-cli``.
+For example, the default configuration will located at ``~/.config/conservator-cli/default.json``.
+See ``conservator config --help`` for more info.
 
 
 Developers
