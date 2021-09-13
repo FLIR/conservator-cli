@@ -179,3 +179,64 @@ Use these commands to easily navigate around conservator,
 download and upload files, edit metadata and tags, and
 move media around.  Use `--help` for more information
 about any specific command within the shell.
+
+Multiple Configurations
+-----------------------
+
+Most users will only need a single Conservator config file called ``default``,
+which is covered in the :doc:`installation` instructions. However, users who need to
+use more than one Conservator configuration have a couple of different mechanisms available
+for switching among them:
+
+    - Additional config files
+    - Environment variables
+
+Additional Config Files
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Additional configurations can be created in the same manner as the default config,
+by just supplying a different name. For example, to create a new config file
+called ``testing`` for a test account::
+
+    $ conservator config create testing
+
+Non-default configurations can be selected in any conservator operation by adding the
+``--config`` option with the name of the config *before* the action (ordering of options
+in the commandline matters).
+
+For example, to use a previously created ``testing`` configuration, to see how
+many projects are visible to that test account::
+
+    $ conservator --config testing projects count
+
+Environment variables
+~~~~~~~~~~~~~~~~~~~~~
+
+If the following environment variables are exported before running
+Conservator CLI, it will use them in place of the default config file
+
+     - ``CONSERVATOR_API_KEY``
+     - ``CONSERVATOR_URL`` (default: https://flirconservator.com/)
+     - ``CONSERVATOR_MAX_RETRIES`` (default: 5)
+     - ``CONSERVATOR_CVC_CACHE_PATH`` (default: .cvc/cache)
+
+Note that ``CONSERVATOR_API_KEY`` must be set in order to use the environment
+rather than the default config file, while the others are all optional (shown
+defaults used if not explicitly set). If ``CONSERVATOR_API_KEY`` is not set,
+Conservator CLI will ignore the optional variables and simply use the
+default config file.
+
+Also, if the ``--config`` option is used to select a non-default config file,
+that config file will take precedence over the environmant variables.
+The ``--config`` option must be omitted in order to make use of environment
+variables.
+
+For example, to temporarily use a different account to see how many projects
+are visible to that account::
+
+    $ CONSERVATOR_API_KEY=<key for account> conservator projects count
+
+However, this would use the settings from the ``testing`` config, and ignore the
+``CONSERVATOR_API_KEY`` variable::
+
+    $ CONSERVATOR_API_KEY=<key for account> conservator --config testing projects count
