@@ -207,6 +207,68 @@ download and upload files, edit metadata and tags, and
 move media around.  Use <cite>–help</cite> for more information
 about any specific command within the shell.</p>
 </section>
+<section id="multiple-configurations">
+<h2>Multiple Configurations<a class="headerlink" href="#multiple-configurations" title="Permalink to this headline">¶</a></h2>
+<p>Most users will only need a single Conservator config file called <code class="docutils literal notranslate"><span class="pre">default</span></code>,
+which is covered in the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> instructions. However, users who need to
+use more than one Conservator configuration have a couple of different mechanisms available
+for switching among them:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Additional config files</p></li>
+<li><p>Environment variables</p></li>
+</ul>
+</div></blockquote>
+<section id="additional-config-files">
+<h3>Additional Config Files<a class="headerlink" href="#additional-config-files" title="Permalink to this headline">¶</a></h3>
+<p>Additional configurations can be created in the same manner as the default config,
+by just supplying a different name. For example, to create a new config file
+called <code class="docutils literal notranslate"><span class="pre">testing</span></code> for a test account:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config create testing
+</pre></div>
+</div>
+<p>Non-default configurations can be selected in any conservator operation by adding the
+<code class="docutils literal notranslate"><span class="pre">--config</span></code> option with the name of the config <em>before</em> the action (ordering of options
+in the commandline matters).</p>
+<p>For example, to use a previously created <code class="docutils literal notranslate"><span class="pre">testing</span></code> configuration, to see how
+many projects are visible to that test account:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator --config testing projects count
+</pre></div>
+</div>
+</section>
+<section id="environment-variables">
+<h3>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h3>
+<p>If the following environment variables are exported before running
+Conservator CLI, it will use them in place of the default config file</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL</span></code> (default: <a class="reference external" href="https://flirconservator.com/">https://flirconservator.com/</a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_MAX_RETRIES</span></code> (default: 5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_CVC_CACHE_PATH</span></code> (default: .cvc/cache)</p></li>
+</ul>
+</div></blockquote>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code> must be set in order to use the environment
+rather than the default config file, while the others are all optional (shown
+defaults used if not explicitly set). If <code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code> is not set,
+Conservator CLI will ignore the optional variables and simply use the
+default config file.</p>
+<p>Also, if the <code class="docutils literal notranslate"><span class="pre">--config</span></code> option is used to select a non-default config file,
+that config file will take precedence over the environmant variables.
+The <code class="docutils literal notranslate"><span class="pre">--config</span></code> option must be omitted in order to make use of environment
+variables.</p>
+<p>For example, to temporarily use a different account to see how many projects
+are visible to that account:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CONSERVATOR_API_KEY=&lt;key for account&gt; conservator projects count
+</pre></div>
+</div>
+<p>However, this would use the settings from the <code class="docutils literal notranslate"><span class="pre">testing</span></code> config, and ignore the
+<code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code> variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CONSERVATOR_API_KEY=&lt;key for account&gt; conservator --config testing projects count
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
@@ -238,6 +300,7 @@ about any specific command within the shell.</p>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-media">Downloading Media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#uploading-media">Uploading Media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactive-mode">Interactive Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiple-configurations">Multiple Configurations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>
