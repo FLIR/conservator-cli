@@ -116,6 +116,7 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             metadata_url=metadata_url,
             should_notify=should_notify,
             should_object_detect=should_object_detect,
+            new_upload=True,
         )
 
     def _generate_signed_upload_url(self, upload_id, part_number=1):

@@ -427,7 +427,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 collection = conservator.collections.from_string(
                     remote_collection, fields="id"
                 )
-            conservator.upload(
+            conservator.media.upload(
                 localpath, collection=collection, remote_name=remote_name
             )
             return True
