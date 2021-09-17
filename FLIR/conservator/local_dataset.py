@@ -402,7 +402,7 @@ class LocalDataset:
         :param use_symlink: If `True`, use symbolic links instead of hardlinks when linking the
             cache and data.
         :param no_meter: If 'True', don't display file download progress meters.
-        :param tries: Specify a retry limit when recovering from HTTP 502 errors.
+        :param tries: Specify a retry limit when recovering from connection errors.
         """
         if include_eight_bit:
             os.makedirs(self.data_path, exist_ok=True)
@@ -468,33 +468,57 @@ class LocalDataset:
         logger.info(
             f"Going to download {len(assets)} new frames using {process_count} processes."
         )
-        with multiprocessing.Pool(process_count) as pool:
-            download_method = functools.partial(
-                LocalDataset._download_and_link, self, max_retries=tries
-            )
-            progress = tqdm.tqdm(
-                iterable=pool.imap(download_method, assets),
-                desc="Downloading new frames",
-                total=len(assets),
-                disable=no_meter,
-            )
-            # We need to consume the results as they're output to update the progress bar, we use list.
-            results = list(progress)
-
-        # we double check everything downloaded
+        current_assets = list(assets)
         failures = 0
-        for path, *_ in assets:
-            if not os.path.exists(path) or os.path.getsize(path) == 0:
-                logger.error(
-                    f"Download to {path} seems to have failed. Try rerunning or submit an issue."
+        results = []
+        progress_msg = "Downloading new frames"
+        for attempt in range(tries):
+            with multiprocessing.Pool(process_count) as pool:
+                download_method = functools.partial(
+                    LocalDataset._download_and_link, self, max_retries=tries
                 )
-                failures += 1
+                progress = tqdm.tqdm(
+                    iterable=pool.imap(download_method, current_assets),
+                    desc=progress_msg,
+                    total=len(current_assets),
+                    disable=no_meter,
+                )
+                # We need to consume the results as they're output to update
+                # the progress bar, we use list.
+                results += list(progress)
+
+            # We double check everything downloaded, and retry failures.
+            failures = 0
+            retry_assets = []
+            for entry in current_assets:
+                if not os.path.exists(entry[0]) or os.path.getsize(entry[0]) == 0:
+                    if attempt < tries - 1:
+                        logger.warning(
+                            f"Download to {entry[0]} seems to have failed. Retrying .."
+                        )
+                    else:
+                        logger.error(
+                            f"Download to {entry[0]} seems to have failed. Try again, or submit an issue."
+                        )
+                    failures += 1
+                    retry_assets.append(entry)
+            if failures >= len(assets):
+                logger.error("All downloads failed!")
+                break
+            elif failures:
+                current_assets = retry_assets
+                progress_msg = "Retrying missing frames"
+            else:
+                break
+
         successes = len(assets) - failures
 
         logger.info(f"Downloads attempted: {len(assets)}")
         logger.info(f"  Reported {sum(results)} successes.")
         logger.info(f"  Successful downloads: {successes}")
         logger.info(f"  Failed downloads: {failures}")
+
+        return failures == 0
 
     @staticmethod
     def clone(dataset, clone_path=None, verbose=True, max_retries=5, timeout=5):

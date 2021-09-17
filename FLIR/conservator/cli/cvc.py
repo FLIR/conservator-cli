@@ -1,5 +1,6 @@
 import functools
 import subprocess
+import sys
 
 import click
 import logging
@@ -193,13 +194,15 @@ def download(local_dataset, include_analytics, pool_size, symlink, tries):
             f"this up by rerunning with the -p (--process_count) option. "
             f"For instance: {cyan}cvc download -p 50{reset}"
         )
-    local_dataset.download(
+    status = local_dataset.download(
         include_analytics=include_analytics,
         include_eight_bit=True,
         process_count=pool_size,
         use_symlink=symlink,
         tries=tries,
     )
+    if not status:
+        sys.exit(1)
 
 
 @main.command(help="Validate index.json format")
