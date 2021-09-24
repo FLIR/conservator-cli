@@ -104,6 +104,34 @@ def test_associate_frames(conservator, test_data):
     assert dataset_frames[0].associated_frames[0].spectrum == "Thermal"
 
 
+def test_add_with_associated_frames(conservator, test_data):
+    local_path1 = test_data / "png" / "flight_0.png"
+    local_path2 = test_data / "png" / "flight_1.png"
+    media_ids = [conservator.media.upload(local_path1)]
+    media_ids.append(conservator.media.upload(local_path2))
+    for media_id in media_ids:
+        conservator.media.wait_for_processing(media_id)
+    images = list(conservator.images.all())
+    frames = [image.get_frame() for image in images]
+
+    dataset = conservator.datasets.create("Test dataset")
+
+    associate_frame_input = AddAssociatedFrameInput(
+        frame_id=frames[1].id, spectrum="Thermal"
+    )
+    association_table = {frames[0].id: [associate_frame_input]}
+    dataset.add_frames_with_associations([frames[0]], association_table)
+
+    dataset_frames = list(
+        dataset.get_frames(
+            fields=["dataset_frames.id", "dataset_frames.associated_frames"]
+        )
+    )
+    assert len(dataset_frames) == 1
+    assert len(dataset_frames[0].associated_frames) == 1
+    assert dataset_frames[0].associated_frames[0].spectrum == "Thermal"
+
+
 def test_commit_and_history(conservator, test_data):
     local_path = test_data / "png" / "flight_0.png"
     media_id = conservator.media.upload(local_path)
