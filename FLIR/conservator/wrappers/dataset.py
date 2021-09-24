@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 from FLIR.conservator.generated import schema
@@ -14,6 +15,8 @@ from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
+
+logger = logging.getLogger(__name__)
 
 
 class Dataset(QueryableType, FileLockerType, MetadataType):
@@ -96,6 +99,22 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             search_text=search_text,
         )
 
+    def get_frames_reversed(self, search_text="", fields=None):
+        """
+        Returns a paginated query for dataset frames within this dataset, filtering
+        with `search_text` in reverse order.
+        """
+        return PaginatedQuery(
+            self._conservator,
+            query=Query.dataset_frames_only,
+            unpack_field="dataset_frames",
+            fields=fields,
+            reverse=True,
+            total_unpack_field="total_count",
+            id=self.id,
+            search_text=search_text,
+        )
+
     def add_frames(self, frames, fields=None, overwrite=False):
         """
         Given a list of `frames`, add them to the dataset.  If overwrite
@@ -111,6 +130,63 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             fields=fields,
             input=_input,
         )
+
+    def associate_frame(self, dataset_frame_id, associated_frame_input):
+        """
+        Associate the given dataset frame ID with another frame specified in
+        `associated_frame_input`.
+
+        :param dataset_frame_id: The ID of a dataset frame to associate with
+            another frame.
+        :param associated_frame_input: An `AddAssociatedFrameInput` object,
+            which references either another dataset frame ID or a video frame
+            ID, but not both.
+        """
+        self._conservator.query(
+            Mutation.add_associated_frame_to_dataset_frame,
+            dataset_frame_id=dataset_frame_id,
+            input=associated_frame_input,
+        )
+
+    def add_frames_with_associations(
+        self, frames, associated_frame_table, fields=None, overwrite=False
+    ):
+        """
+        Given a list of `frames`, add them to the dataset and associate them
+        with the frames found in `associated_frame_table`.  If overwrite is
+        True and the frame was already in the dataset, the dataset frame
+        attributes will be replaced with the source frame attributes.
+
+        :param frames: A list of Frame objects to be added to the dataset.
+        :param associated_frame_table: A dictionary mapping source video frame
+            IDs to a list of `AddAssociatedFrameInput` objects.
+            Each `AddAssociatedFrameInput` object can refer to either a video
+            frame ID or a dataset frame ID, but not both at once.
+        """
+        self.add_frames(frames, fields, overwrite)
+        frame_ids = [frame.id for frame in frames]
+        # Map input video frame IDs to their corresponding dataset frame IDs.
+        dset_frame_id_map = {}
+        for new_frame in self.get_frames_reversed(
+            fields=["dataset_frames.id", "dataset_frames.frame_id"]
+        ):
+            if new_frame.frame_id in frame_ids:
+                dset_frame_id_map[new_frame.frame_id] = new_frame.id
+            if len(dset_frame_id_map) >= len(frame_ids):
+                break
+        if len(dset_frame_id_map) < len(frame_ids):
+            logger.warning("One or more new dataset frame IDs were not found!")
+        # Add associations between frames.
+        for frame_id in frame_ids:
+            if frame_id in associated_frame_table:
+                if frame_id not in dset_frame_id_map:
+                    logger.warning(
+                        f"Missing dataset frame ID for frame ID {frame_id}, cannot associate frame"
+                    )
+                    continue
+                dset_frame = dset_frame_id_map[frame_id]
+                for assoc_frame_input in associated_frame_table[frame_id]:
+                    self.associate_frame(dset_frame, assoc_frame_input)
 
     def get_git_url(self):
         """Returns the Git URL used for cloning this Dataset."""
