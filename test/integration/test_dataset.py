@@ -71,6 +71,32 @@ def test_add_get_frames(conservator, test_data):
     assert dataset_frames[0].frame_id == frame.id
 
 
+def test_add_get_frames_reversed(conservator, test_data):
+    local_path1 = test_data / "png" / "flight_0.png"
+    local_path2 = test_data / "png" / "flight_1.png"
+    media_ids = [conservator.media.upload(local_path1)]
+    media_ids.append(conservator.media.upload(local_path2))
+    for media_id in media_ids:
+        conservator.media.wait_for_processing(media_id)
+    images = list(conservator.images.all())
+    frames = [image.get_frame() for image in images]
+
+    dataset = conservator.datasets.create("Test dataset")
+    dataset.add_frames(frames)
+
+    dataset.populate("frame_count")
+    assert dataset.frame_count == 2
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 2
+    reversed_frames = list(dataset.get_frames_reversed(fields=["dataset_frames.id"]))
+    assert len(reversed_frames) == 2
+
+    frame_ids = [frm.id for frm in dataset_frames]
+    compare_frame_ids = [frm.id for frm in reversed(reversed_frames)]
+    assert compare_frame_ids == frame_ids
+
+
 def test_associate_frames(conservator, test_data):
     local_path1 = test_data / "png" / "flight_0.png"
     local_path2 = test_data / "png" / "flight_1.png"
