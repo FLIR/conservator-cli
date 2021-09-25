@@ -2,6 +2,8 @@ import json
 import pytest
 import time
 
+from FLIR.conservator.generated.schema import AddAssociatedFrameInput
+
 
 def test_create(conservator):
     dataset = conservator.datasets.create("My Dataset")
@@ -67,6 +69,93 @@ def test_add_get_frames(conservator, test_data):
     dataset_frames = list(dataset.get_frames())
     assert len(dataset_frames) == 1
     assert dataset_frames[0].frame_id == frame.id
+
+
+def test_add_get_frames_reversed(conservator, test_data):
+    local_path1 = test_data / "png" / "flight_0.png"
+    local_path2 = test_data / "png" / "flight_1.png"
+    media_ids = [conservator.media.upload(local_path1)]
+    media_ids.append(conservator.media.upload(local_path2))
+    for media_id in media_ids:
+        conservator.media.wait_for_processing(media_id)
+    images = list(conservator.images.all())
+    frames = [image.get_frame() for image in images]
+
+    dataset = conservator.datasets.create("Test dataset")
+    dataset.add_frames(frames)
+
+    dataset.populate("frame_count")
+    assert dataset.frame_count == 2
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 2
+    reversed_frames = list(dataset.get_frames_reversed(fields=["dataset_frames.id"]))
+    assert len(reversed_frames) == 2
+
+    frame_ids = [frm.id for frm in dataset_frames]
+    compare_frame_ids = [frm.id for frm in reversed(reversed_frames)]
+    assert compare_frame_ids == frame_ids
+
+
+def test_associate_frames(conservator, test_data):
+    local_path1 = test_data / "png" / "flight_0.png"
+    local_path2 = test_data / "png" / "flight_1.png"
+    media_ids = [conservator.media.upload(local_path1)]
+    media_ids.append(conservator.media.upload(local_path2))
+    for media_id in media_ids:
+        conservator.media.wait_for_processing(media_id)
+    images = list(conservator.images.all())
+    frames = [image.get_frame() for image in images]
+
+    dataset1 = conservator.datasets.create("Test dataset1")
+    dataset1.add_frames([frames[0]])
+    dataset2 = conservator.datasets.create("Test dataset2")
+    dataset2.add_frames([frames[1]])
+
+    dset1_frames = list(dataset1.get_frames(fields="dataset_frames.id"))
+    dset2_frames = list(dataset2.get_frames(fields="dataset_frames.id"))
+
+    associate_frame_input = AddAssociatedFrameInput(
+        dataset_frame_id=dset2_frames[0].id, spectrum="Thermal"
+    )
+    dataset1.associate_frame(dset1_frames[0].id, associate_frame_input)
+
+    dataset_frames = list(
+        dataset1.get_frames(
+            fields=["dataset_frames.id", "dataset_frames.associated_frames"]
+        )
+    )
+    assert len(dataset_frames) == 1
+    assert len(dataset_frames[0].associated_frames) == 1
+    assert dataset_frames[0].associated_frames[0].spectrum == "Thermal"
+
+
+def test_add_with_associated_frames(conservator, test_data):
+    local_path1 = test_data / "png" / "flight_0.png"
+    local_path2 = test_data / "png" / "flight_1.png"
+    media_ids = [conservator.media.upload(local_path1)]
+    media_ids.append(conservator.media.upload(local_path2))
+    for media_id in media_ids:
+        conservator.media.wait_for_processing(media_id)
+    images = list(conservator.images.all())
+    frames = [image.get_frame() for image in images]
+
+    dataset = conservator.datasets.create("Test dataset")
+
+    associate_frame_input = AddAssociatedFrameInput(
+        frame_id=frames[1].id, spectrum="Thermal"
+    )
+    association_table = {frames[0].id: [associate_frame_input]}
+    dataset.add_frames_with_associations([frames[0]], association_table)
+
+    dataset_frames = list(
+        dataset.get_frames(
+            fields=["dataset_frames.id", "dataset_frames.associated_frames"]
+        )
+    )
+    assert len(dataset_frames) == 1
+    assert len(dataset_frames[0].associated_frames) == 1
+    assert dataset_frames[0].associated_frames[0].spectrum == "Thermal"
 
 
 def test_commit_and_history(conservator, test_data):

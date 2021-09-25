@@ -25,6 +25,14 @@ class PaginatedQuery:
         returns the specified field. For instance, the query ``Query.dataset_frames_only`` is paginated, but
         returns a non-iteratable ``DatasetFrames`` object. The list of ``DatasetFrame`` is stored under the
         "dataset_frames" field. So if querying this, we'd want to set `unpack_field` to "dataset_frames".
+    :param reverse: If True, query for results in reverse order.  Intended for
+        certain API calls that return results in a fixed order, e.g. dataset
+        frames.  The capability to grab frames in reverse order may make the
+        collection of the newest items much more efficient.  Requires the
+        `total_unpack_field` to be set.
+    :param total_unpack_field: If `reverse` is true, the query fields need to
+        include a field containing the total number of entries.  Supply the
+        field name to this parameter.
     """
 
     def __init__(
@@ -36,7 +44,9 @@ class PaginatedQuery:
         fields=None,
         page_size=25,
         unpack_field=None,
-        **kwargs
+        reverse=False,
+        total_unpack_field=None,
+        **kwargs,
     ):
         # Unfortunately, query is a required arg, but for backwards-compatibility reasons can't be made required.
         assert query is not None
@@ -47,6 +57,38 @@ class PaginatedQuery:
         self._limit = page_size
         self.unpack_field = unpack_field
         self.results = []
+        self.reverse = reverse
+        self._total_items = 0
+        if reverse:
+            if not total_unpack_field:
+                raise KeyError(
+                    f"total_unpack_field must be supplied if reverse is True"
+                )
+            self.fields.include_field(total_unpack_field)
+            # Perform a single-entry query to collect the total count of items.
+            try:
+                results = self._conservator.query(
+                    query=self._query, fields=self.fields, page=1, limit=1, **kwargs
+                )
+            except AttributeError as exc:
+                if str(exc).endswith(total_unpack_field):
+                    raise KeyError(total_unpack_field)
+                raise
+            self._total_items = getattr(results, total_unpack_field)
+            if self._limit > self._total_items:
+                self._limit = self._total_items
+                # Don't confuse the API.
+                if self._limit == 0:
+                    self._limit = 1
+            # Set the page number to the last page of results.
+            if self._total_items > self._limit:
+                self._page = self._total_items // self._limit
+                if self._total_items % self._limit:
+                    # Count any partial page.
+                    self._page += 1
+                # Page numbers are 0-based.
+                self._page -= 1
+
         self.kwargs = kwargs
         self.started = False
         self.done = False
@@ -167,12 +209,17 @@ class PaginatedQuery:
     def _next_page(self):
         self.started = True
         results = self._do_query(self._page, self._limit)
-        self._page += 1
+        if not self.reverse:
+            self._page += 1
+        else:
+            self._page -= 1
 
         if results is None:
             return []
         if self.unpack_field is not None:
             results = getattr(results, self.unpack_field)
+        if self.reverse and results:
+            results = list(reversed(results))
         return results
 
     def _passes_filters(self, instance):
@@ -188,7 +235,10 @@ class PaginatedQuery:
                 if self._passes_filters(item):
                     self.results.append(item)
                     yield item
-            if len(next_page) < self._limit:
+            if self.reverse and self._page < 0:
+                self.done = True
+                return
+            if not self.reverse and len(next_page) < self._limit:
                 self.done = True
                 return
 
