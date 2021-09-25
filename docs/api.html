@@ -998,6 +998,44 @@ attributes will be replaced with the source frame attributes.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.add_frames_with_associations">
+<span class="sig-name descname"><span class="pre">add_frames_with_associations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">associated_frame_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.add_frames_with_associations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of <cite>frames</cite>, add them to the dataset and associate them
+with the frames found in <cite>associated_frame_table</cite>.  If overwrite is
+True and the frame was already in the dataset, the dataset frame
+attributes will be replaced with the source frame attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frames</strong> – A list of Frame objects to be added to the dataset.</p></li>
+<li><p><strong>associated_frame_table</strong> – A dictionary mapping source video frame
+IDs to a list of <cite>AddAssociatedFrameInput</cite> objects.
+Each <cite>AddAssociatedFrameInput</cite> object can refer to either a video
+frame ID or a dataset frame ID, but not both at once.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.associate_frame">
+<span class="sig-name descname"><span class="pre">associate_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_frame_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">associated_frame_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.associate_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Associate the given dataset frame ID with another frame specified in
+<cite>associated_frame_input</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_frame_id</strong> – The ID of a dataset frame to associate with
+another frame.</p></li>
+<li><p><strong>associated_frame_input</strong> – An <cite>AddAssociatedFrameInput</cite> object,
+which references either another dataset frame ID or a video frame
+ID, but not both.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.commit">
 <span class="sig-name descname"><span class="pre">commit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Commits changes to the dataset made outside of CVC/Git system (for instance,
@@ -1104,6 +1142,13 @@ method to fail.</p>
 <span class="sig-name descname"><span class="pre">get_frames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_frames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a paginated query for dataset frames within this dataset, filtering
 with <cite>search_text</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.get_frames_reversed">
+<span class="sig-name descname"><span class="pre">get_frames_reversed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.get_frames_reversed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a paginated query for dataset frames within this dataset, filtering
+with <cite>search_text</cite> in reverse order.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1828,7 +1873,7 @@ of its execution.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.paginated_query.PaginatedQuery">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.paginated_query.</span></span><span class="sig-name descname"><span class="pre">PaginatedQuery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapping_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.paginated_query.</span></span><span class="sig-name descname"><span class="pre">PaginatedQuery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapping_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_unpack_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enables pagination of any query with <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> arguments.</p>
 <p>Assume you want to iterate through all the Projects in a project search
 query. You could do something like the following:</p>
@@ -1851,6 +1896,14 @@ query. You could do something like the following:</p>
 returns the specified field. For instance, the query <code class="docutils literal notranslate"><span class="pre">Query.dataset_frames_only</span></code> is paginated, but
 returns a non-iteratable <code class="docutils literal notranslate"><span class="pre">DatasetFrames</span></code> object. The list of <code class="docutils literal notranslate"><span class="pre">DatasetFrame</span></code> is stored under the
 “dataset_frames” field. So if querying this, we’d want to set <cite>unpack_field</cite> to “dataset_frames”.</p></li>
+<li><p><strong>reverse</strong> – If True, query for results in reverse order.  Intended for
+certain API calls that return results in a fixed order, e.g. dataset
+frames.  The capability to grab frames in reverse order may make the
+collection of the newest items much more efficient.  Requires the
+<cite>total_unpack_field</cite> to be set.</p></li>
+<li><p><strong>total_unpack_field</strong> – If <cite>reverse</cite> is true, the query fields need to
+include a field containing the total number of entries.  Supply the
+field name to this parameter.</p></li>
 </ul>
 </dd>
 </dl>
