@@ -22,7 +22,7 @@ def test_metadata_download_upload_for_media(conservator, test_data, tmp_cwd):
     annotation = AnnotationCreate(
         labels=["abc", "def"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
-    frame.add_annotation(annotation)
+    frame.add_annotations([annotation])
 
     # First download
     image.download_metadata(".")
