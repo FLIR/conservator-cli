@@ -502,7 +502,7 @@ class LocalDataset:
                         )
                     failures += 1
                     retry_assets.append(entry)
-            if failures >= len(assets):
+            if assets and failures >= len(assets):
                 logger.error("All downloads failed!")
                 break
             elif failures:
