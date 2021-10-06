@@ -2,7 +2,6 @@ import os
 
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import (
-    AnnotationCreate,
     Mutation,
     PredictionCreate,
 )
@@ -38,19 +37,23 @@ class Frame(QueryableType):
         ids = [self.id]
         return self._conservator.query(Frame.by_ids_query, fields=fields, ids=ids)[0]
 
-    def add_annotation(self, annotation_create, fields=None):
+    def add_annotations(self, annotation_create_list, fields=None):
         """
-        Adds an annotation using the specified `annotation_create` object.
+        Adds annotations using the specified list of `AnnotationCreate`
+        objects.
 
-        Returns the added annotation with the specified `fields`.
+        Returns a list of the added annotations, each with the specified
+        `fields`.
         """
-        assert isinstance(annotation_create, AnnotationCreate)
-        return self._conservator.query(
-            Mutation.create_annotation,
-            fields=fields,
-            frame_id=self.id,
-            annotation=annotation_create,
-        )
+        if annotation_create_list:
+            return self._conservator.query(
+                Mutation.create_annotations,
+                fields=fields,
+                frame_id=self.id,
+                annotations=annotation_create_list,
+            )
+        # If supplied an empty list, return the same.
+        return []
 
     def add_prediction(self, prediction_create, fields=None):
         """

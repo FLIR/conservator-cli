@@ -6,7 +6,7 @@ from FLIR.conservator.generated.schema import AnnotationCreate, PredictionCreate
 from FLIR.conservator.util import md5sum_file
 
 
-def test_add_annotation(conservator, test_data):
+def test_add_annotations(conservator, test_data):
     path = test_data / "jpg" / "bottle_0.jpg"
     media_id = conservator.media.upload(path)
     conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
@@ -20,7 +20,7 @@ def test_add_annotation(conservator, test_data):
     annotation_create = AnnotationCreate(
         labels=["bottle", "cat"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
-    frame.add_annotation(annotation_create)
+    frame.add_annotations([annotation_create])
 
     frame.populate(["annotations", "annotations_count"])
     assert len(frame.annotations) == 1
