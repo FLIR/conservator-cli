@@ -205,11 +205,11 @@ def test_get_annotations(conservator, test_data):
     annotation = AnnotationCreate(
         labels=["cat"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
-    added = frame.add_annotation(annotation)
+    added = frame.add_annotations([annotation])
 
     annotations = image.get_annotations()
     assert len(annotations) == 1
-    assert annotations[0].to_json() == added.to_json()
+    assert annotations.to_json() == added.to_json()
 
 
 def test_from_path(conservator, test_data):
