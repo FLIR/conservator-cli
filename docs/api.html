@@ -1322,10 +1322,12 @@ the same as <code class="xref py py-meth docutils literal notranslate"><span cla
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.frame.</span></span><span class="sig-name descname"><span class="pre">Frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A frame within a media object (image or video).</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="FLIR.conservator.wrappers.frame.Frame.add_annotation">
-<span class="sig-name descname"><span class="pre">add_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_create</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.add_annotation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds an annotation using the specified <cite>annotation_create</cite> object.</p>
-<p>Returns the added annotation with the specified <cite>fields</cite>.</p>
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.frame.Frame.add_annotations">
+<span class="sig-name descname"><span class="pre">add_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_create_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.add_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds annotations using the specified list of <cite>AnnotationCreate</cite>
+objects.</p>
+<p>Returns a list of the added annotations, each with the specified
+<cite>fields</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
