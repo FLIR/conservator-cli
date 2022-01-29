@@ -5,9 +5,9 @@ from FLIR.conservator.wrappers import Video
 conservator = Conservator.default()
 
 # For a given location (collection) search for videos with a specific name
-# the search text support all standard search logic, but we're showing an example where we search by filename
-conservator_location = '/ADAS'
-search_filename = 'driving.mp4'
+# the search text support all standard search logic, but we're showing an example where we search by the video name
+conservator_location = '/ADAS/003 Animals'
+search_filename = 'Namibia'
 search_text = f'name:"{search_filename}"'
 
 try:
