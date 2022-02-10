@@ -11,6 +11,12 @@ The easiest way to install Conservator CLI is with ``pip``::
 This will add the ``FLIR.conservator`` package and ``conservator`` command to
 your current Python Environment.
 
+.. note::
+    if running on Linux and the ``conservator`` command is not found after
+    running above install command, you may also need to ``source ~/.profile``
+    on any currently open shells in order to fix your PATH
+    https://github.com/FLIR/conservator-cli/issues/281
+
 Before you can use the command, you need to tell Conservator-CLI your API key and
 other settings. Log in to your conservator instance, and find your API key. Then run::
 

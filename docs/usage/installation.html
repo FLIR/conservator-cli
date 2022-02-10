@@ -44,6 +44,13 @@
 </div>
 <p>This will add the <code class="docutils literal notranslate"><span class="pre">FLIR.conservator</span></code> package and <code class="docutils literal notranslate"><span class="pre">conservator</span></code> command to
 your current Python Environment.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>if running on Linux and the <code class="docutils literal notranslate"><span class="pre">conservator</span></code> command is not found after
+running above install command, you may also need to <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">~/.profile</span></code>
+on any currently open shells in order to fix your PATH
+<a class="reference external" href="https://github.com/FLIR/conservator-cli/issues/281">https://github.com/FLIR/conservator-cli/issues/281</a></p>
+</div>
 <p>Before you can use the command, you need to tell Conservator-CLI your API key and
 other settings. Log in to your conservator instance, and find your API key. Then run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config create default
