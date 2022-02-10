@@ -42,7 +42,7 @@ a variety of ways to create an instance of config.</p>
 <p>In general, use <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contains a user’s API Key (token) and other settings, to be used when authenticating
 operations on an instance of <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
 at a certain URL.</p>
@@ -64,7 +64,7 @@ an error is raised.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.default">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.default" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.default" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the default config.
 This works by iterating through the various credential sources, and returning
 the first one that works. Sources are queried in this order:</p>
@@ -85,38 +85,38 @@ This means a user won’t need to type them again.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.default_config_path">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">default_config_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.default_config_path" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_config_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.default_config_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>The default config is saved in <code class="docutils literal notranslate"><span class="pre">~/.config/conservator-cli/default.json</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.delete_saved_default_config">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">delete_saved_default_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.delete_saved_default_config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_saved_default_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.delete_saved_default_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the default saved config, if it exists.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.delete_saved_named_config">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">delete_saved_named_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.delete_saved_named_config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_saved_named_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.delete_saved_named_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the config named <cite>name</cite>, if it exists.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.from_default_config_file">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_default_config_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_default_config_file" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_default_config_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_default_config_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from the JSON config file
 at the <a class="reference internal" href="#FLIR.conservator.config.Config.default_config_path" title="FLIR.conservator.config.Config.default_config_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default_config_path()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.from_environ">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_environ</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_environ" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_environ</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_environ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from environment variables.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.from_file">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_file" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from a JSON config file.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -131,13 +131,13 @@ at the <a class="reference internal" href="#FLIR.conservator.config.Config.defau
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.from_input">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_input</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_input" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_input</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.from_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object from standard input.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config.named_config_path">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">named_config_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.named_config_path" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">named_config_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config.named_config_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Configs are saved in <code class="docutils literal notranslate"><span class="pre">~/.config/conservator-cli/</span></code> as <code class="docutils literal notranslate"><span class="pre">name.json</span></code>.</p>
 </dd></dl>
 
@@ -175,7 +175,7 @@ this config can be loaded by <code class="xref py py-func docutils literal notra
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.config.ConfigError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.config.</span></span><span class="sig-name descname"><span class="pre">ConfigError</span></span><a class="headerlink" href="#FLIR.conservator.config.ConfigError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.config.</span></span><span class="sig-name descname"><span class="pre">ConfigError</span></span><a class="headerlink" href="#FLIR.conservator.config.ConfigError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -183,7 +183,7 @@ this config can be loaded by <code class="xref py py-func docutils literal notra
 <span id="conservator"></span><h2>Conservator<a class="headerlink" href="#module-FLIR.conservator.conservator" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.conservator.Conservator">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.conservator.</span></span><span class="sig-name descname"><span class="pre">Conservator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.conservator.</span></span><span class="sig-name descname"><span class="pre">Conservator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection" title="FLIR.conservator.connection.ConservatorConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.connection.ConservatorConnection</span></code></a></p>
 <p><a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> is the highest level class of this library. It will likely be the
 starting point for all queries and operations.</p>
@@ -201,20 +201,20 @@ object.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.conservator.Conservator.create">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.create" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using named config if given, and otherwise
 creates a default instance via <cite>Conservator.default()</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.conservator.Conservator.default">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.default" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a> using <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.conservator.Conservator.generate_id">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">generate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.generate_id" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.conservator.Conservator.generate_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a new ID.</p>
 <p>The ID consists of <code class="docutils literal notranslate"><span class="pre">ID_LENGTH</span></code> characters from the <code class="docutils literal notranslate"><span class="pre">ID_CHARSET</span></code>.
 The beginning of the ID is based on the current time, and the remaining
@@ -239,7 +239,7 @@ returns <cite>True</cite>. If neither matches, an <a class="reference internal" 
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.conservator.UnknownMediaIdException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.conservator.</span></span><span class="sig-name descname"><span class="pre">UnknownMediaIdException</span></span><a class="headerlink" href="#FLIR.conservator.conservator.UnknownMediaIdException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.conservator.</span></span><span class="sig-name descname"><span class="pre">UnknownMediaIdException</span></span><a class="headerlink" href="#FLIR.conservator.conservator.UnknownMediaIdException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Raised when a media ID cannot be resolved to a Video or Image.</p>
 </dd></dl>
@@ -249,7 +249,7 @@ returns <cite>True</cite>. If neither matches, an <a class="reference internal" 
 <span id="conservator-connection"></span><h2>Conservator Connection<a class="headerlink" href="#module-FLIR.conservator.connection" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.connection.ConservatorConnection">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.connection.</span></span><span class="sig-name descname"><span class="pre">ConservatorConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.connection.</span></span><span class="sig-name descname"><span class="pre">ConservatorConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acts as an intermediary between SGQLC and a remote Conservator instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -343,7 +343,7 @@ the response, if there were no errors.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.connection.ConservatorGraphQLServerError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.connection.</span></span><span class="sig-name descname"><span class="pre">ConservatorGraphQLServerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorGraphQLServerError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.connection.</span></span><span class="sig-name descname"><span class="pre">ConservatorGraphQLServerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorGraphQLServerError" title="Permalink to this definition">¶</a></dt>
 <dd><p>There was a problem with a GraphQL query, and it’s unclear
 what the cause was.</p>
 <dl class="field-list simple">
@@ -358,7 +358,7 @@ what the cause was.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.connection.ConservatorMalformedQueryException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.connection.</span></span><span class="sig-name descname"><span class="pre">ConservatorMalformedQueryException</span></span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorMalformedQueryException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.connection.</span></span><span class="sig-name descname"><span class="pre">ConservatorMalformedQueryException</span></span><a class="headerlink" href="#FLIR.conservator.connection.ConservatorMalformedQueryException" title="Permalink to this definition">¶</a></dt>
 <dd><p>There was a problem with a GraphQL query, and it’s the client’s
 fault.</p>
 </dd></dl>
@@ -368,7 +368,7 @@ fault.</p>
 <span id="file-transfers"></span><h2>File Transfers<a class="headerlink" href="#module-FLIR.conservator.file_transfers" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.ConservatorFileTransfers">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">ConservatorFileTransfers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">ConservatorFileTransfers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bundles methods for uploading and downloading files to Conservator.</p>
 <p>These methods cannot be standalone utilities because in some deployments
 URLs will be relative to the base Conservator URL. Therefore, all download
@@ -435,7 +435,7 @@ that can be used for uploading or downloading.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.DownloadRequest">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">DownloadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_md5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.DownloadRequest" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">DownloadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_md5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.DownloadRequest" title="Permalink to this definition">¶</a></dt>
 <dd><p>For use with <a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download_many" title="FLIR.conservator.file_transfers.ConservatorFileTransfers.download_many"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConservatorFileTransfers.download_many()</span></code></a>.</p>
 <p>A request to download from <cite>url</cite> to <cite>local_path</cite>. If
 <cite>expected_md5</cite> is given, check the file doesn’t already exist
@@ -444,25 +444,25 @@ with the correct hash before downloading.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.FileDownloadException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">FileDownloadException</span></span><a class="headerlink" href="#FLIR.conservator.file_transfers.FileDownloadException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">FileDownloadException</span></span><a class="headerlink" href="#FLIR.conservator.file_transfers.FileDownloadException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Something went wrong when downloading a file.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.FileTransferException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">FileTransferException</span></span><a class="headerlink" href="#FLIR.conservator.file_transfers.FileTransferException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">FileTransferException</span></span><a class="headerlink" href="#FLIR.conservator.file_transfers.FileTransferException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Something went wrong when uploading or downloading a file.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.FileUploadException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">FileUploadException</span></span><a class="headerlink" href="#FLIR.conservator.file_transfers.FileUploadException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">FileUploadException</span></span><a class="headerlink" href="#FLIR.conservator.file_transfers.FileUploadException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Something went wrong when uploading a file.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.file_transfers.UploadRequest">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">UploadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.UploadRequest" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.file_transfers.</span></span><span class="sig-name descname"><span class="pre">UploadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.file_transfers.UploadRequest" title="Permalink to this definition">¶</a></dt>
 <dd><p>For use with <a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload_many" title="FLIR.conservator.file_transfers.ConservatorFileTransfers.upload_many"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConservatorFileTransfers.upload_many()</span></code></a>.</p>
 <p>A request to upload <cite>local_path</cite> to <cite>url</cite>.</p>
 </dd></dl>
@@ -472,11 +472,11 @@ with the correct hash before downloading.</p>
 <span id="fields-manager"></span><h2>Fields Manager<a class="headerlink" href="#module-FLIR.conservator.fields_manager" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.fields_manager.FieldsManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.fields_manager.</span></span><span class="sig-name descname"><span class="pre">FieldsManager</span></span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.fields_manager.</span></span><span class="sig-name descname"><span class="pre">FieldsManager</span></span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines default fields for each SGQLC type.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.fields_manager.FieldsManager.select_default_fields">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">select_default_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.select_default_fields" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">select_default_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_manager.FieldsManager.select_default_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds the default fields to the selector based on its type.</p>
 <p>For basic types with only scalars, all fields are included.
 For more complicated types, “useful” scalars are retained,
@@ -493,12 +493,12 @@ at any time.</p>
 <span id="fields-request"></span><h2>Fields Request<a class="headerlink" href="#module-FLIR.conservator.fields_request" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.fields_request.FieldsRequest">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.fields_request.</span></span><span class="sig-name descname"><span class="pre">FieldsRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.fields_request.</span></span><span class="sig-name descname"><span class="pre">FieldsRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest" title="Permalink to this definition">¶</a></dt>
 <dd><p>A collection of fields to include in a query. Many different
 API calls will require specifying a list of fields using a <a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest" title="FLIR.conservator.fields_request.FieldsRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldsRequest</span></code></a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.fields_request.FieldsRequest.create">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.create" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a <cite>FieldsRequest</cite>. Any function that accepts <cite>fields</cite> will
 eventually use this method to convert <cite>fields</cite> to a valid <cite>FieldsRequest</cite>.</p>
 <p>This accepts a variety of types:</p>
@@ -613,7 +613,7 @@ them as proxied <a class="reference internal" href="#FLIR.conservator.wrappers.d
 <span id="typeproxy"></span><h3>TypeProxy<a class="headerlink" href="#module-FLIR.conservator.wrappers.type_proxy" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.ListTypeProxy">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></span><span class="sig-name descname"><span class="pre">ListTypeProxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></span><span class="sig-name descname"><span class="pre">ListTypeProxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identical to built-in <cite>list</cite>, except it provides <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json" title="FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>. This ensures all types
 returned by queries have a <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json" title="FLIR.conservator.wrappers.type_proxy.ListTypeProxy.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>.</p>
 <dl class="py method">
@@ -626,14 +626,14 @@ returned by queries have a <a class="reference internal" href="#FLIR.conservator
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.MissingFieldException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></span><span class="sig-name descname"><span class="pre">MissingFieldException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.MissingFieldException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></span><span class="sig-name descname"><span class="pre">MissingFieldException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.MissingFieldException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised when a field can’t be populated, but is required for an
 operation.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.TypeProxy">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></span><span class="sig-name descname"><span class="pre">TypeProxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.type_proxy.</span></span><span class="sig-name descname"><span class="pre">TypeProxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wraps an SGQLC object. Fields of the underlying instance can be accessed on this
 instance. Subclasses can add class and instance methods to add functionality.</p>
 <p>When you attempt to access a field, we first check that it exists on the
@@ -657,7 +657,7 @@ that created the underlying instance.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.TypeProxy.from_id">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.from_id" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.from_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a wrapped instance from an ID. The underlying type
 of the class should match the type of the ID.</p>
 <p>This does not populate any fields besides <code class="docutils literal notranslate"><span class="pre">id</span></code>. You must call
@@ -673,7 +673,7 @@ be thrown on later operations.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.TypeProxy.from_json">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.from_json" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a wrapped instance from a dictionary (usually produced by calling
 <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.to_json" title="FLIR.conservator.wrappers.type_proxy.TypeProxy.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>). The ID should be included for the returned
 instance to be useful.</p>
@@ -681,7 +681,7 @@ instance to be useful.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.TypeProxy.get_wrapping_type">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">get_wrapping_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.get_wrapping_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_wrapping_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.get_wrapping_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> subclass with an <cite>underlying_type</cite>
 related to <cite>type_</cite>. If one doesn’t exist, returns generic <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>.</p>
 <p>This checks the base type. For instance, it will match <code class="docutils literal notranslate"><span class="pre">[Video]!</span></code> with <code class="docutils literal notranslate"><span class="pre">Video</span></code>.</p>
@@ -689,7 +689,7 @@ related to <cite>type_</cite>. If one doesn’t exist, returns generic <a class=
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.TypeProxy.has_base_type">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">has_base_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.has_base_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_base_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.has_base_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns <cite>True</cite> if <cite>type_</cite> extends <cite>base_type</cite> in the SGQLC type hierarchy.</p>
 <p>For instance, a <code class="docutils literal notranslate"><span class="pre">[Collection]</span></code> has base type <code class="docutils literal notranslate"><span class="pre">Collection</span></code>.</p>
 </dd></dl>
@@ -711,7 +711,7 @@ into JSON.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a> instance of the appropriate subclass, or a generic
 if no subclass exists for the type. Scalar types, such as <cite>None</cite>, <cite>str</cite>, <cite>bool</cite>, etc.,
 are not wrapped and returned as-is.</p>
@@ -749,13 +749,13 @@ subfields (such as “repository.master” on a Dataset).</p>
 <span id="queryable"></span><h3>Queryable<a class="headerlink" href="#module-FLIR.conservator.wrappers.queryable" title="Permalink to this headline">¶</a></h3>
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.queryable.InvalidIdException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.queryable.</span></span><span class="sig-name descname"><span class="pre">InvalidIdException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.InvalidIdException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.queryable.</span></span><span class="sig-name descname"><span class="pre">InvalidIdException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.InvalidIdException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised when a query fails due to an invalid ID.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.queryable.QueryableType">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.queryable.</span></span><span class="sig-name descname"><span class="pre">QueryableType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.QueryableType" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.queryable.</span></span><span class="sig-name descname"><span class="pre">QueryableType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.queryable.QueryableType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds <a class="reference internal" href="#FLIR.conservator.wrappers.queryable.QueryableType.populate" title="FLIR.conservator.wrappers.queryable.QueryableType.populate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">populate()</span></code></a> for querying and populating additional fields.</p>
 <p>Subclasses must define <code class="docutils literal notranslate"><span class="pre">by_id_query</span></code> to be a query that can
 return more fields of the type given an id. Alternatively, they may define
@@ -784,10 +784,10 @@ is equivalent to calling <a class="reference internal" href="#FLIR.conservator.w
 <span id="project"></span><h3>Project<a class="headerlink" href="#module-FLIR.conservator.wrappers.project" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.project.Project">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.project.</span></span><span class="sig-name descname"><span class="pre">Project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.project.</span></span><span class="sig-name descname"><span class="pre">Project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.project.Project.create">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.create" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.project.Project.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new project with the given <cite>name</cite>, and returns it with the
 specified <cite>fields</cite>.</p>
 <p>Note that this requires the privilege to create projects.</p>
@@ -812,7 +812,7 @@ specified <cite>fields</cite>.</p>
 <span id="collection"></span><h3>Collection<a class="headerlink" href="#module-FLIR.conservator.wrappers.collection" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.collection.Collection">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></span><span class="sig-name descname"><span class="pre">Collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></span><span class="sig-name descname"><span class="pre">Collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.collection.Collection.create_child">
 <span class="sig-name descname"><span class="pre">create_child</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.create_child" title="Permalink to this definition">¶</a></dt>
@@ -822,7 +822,7 @@ with the specified <cite>fields</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.collection.Collection.create_from_remote_path">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">create_from_remote_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.create_from_remote_path" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_from_remote_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.create_from_remote_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new collection at the specified <cite>path</cite>, with the given <cite>fields</cite>,
 creating new collections as necessary.</p>
 <p>If the path already exists, raises <a class="reference internal" href="#FLIR.conservator.wrappers.collection.RemotePathExistsException" title="FLIR.conservator.wrappers.collection.RemotePathExistsException"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemotePathExistsException</span></code></a>.</p>
@@ -830,7 +830,7 @@ creating new collections as necessary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.collection.Collection.create_root">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">create_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.create_root" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.create_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new root collection with the specified <cite>name</cite> and
 return it with the specified <cite>fields</cite>.</p>
 <p>This requires your account to have privilege to create new projects.</p>
@@ -884,7 +884,7 @@ preview videos in place of full videos.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.collection.Collection.from_remote_path">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_remote_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_if_no_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.from_remote_path" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_remote_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_if_no_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.Collection.from_remote_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a collection at the specified <cite>path</cite>, with the specified <cite>fields</cite>.
 If <cite>make_if_no_exist</cite> is <cite>True</cite>, then collection(s) will be created to
 reach that path if it doesn’t exist.</p>
@@ -975,12 +975,12 @@ fields must exist on both Image and Video types.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.collection.InvalidRemotePathException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></span><span class="sig-name descname"><span class="pre">InvalidRemotePathException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.InvalidRemotePathException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></span><span class="sig-name descname"><span class="pre">InvalidRemotePathException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.InvalidRemotePathException" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.collection.RemotePathExistsException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></span><span class="sig-name descname"><span class="pre">RemotePathExistsException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.RemotePathExistsException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.collection.</span></span><span class="sig-name descname"><span class="pre">RemotePathExistsException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.collection.RemotePathExistsException" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -988,7 +988,7 @@ fields must exist on both Image and Video types.</p>
 <span id="dataset"></span><h3>Dataset<a class="headerlink" href="#module-FLIR.conservator.wrappers.dataset" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.add_frames">
 <span class="sig-name descname"><span class="pre">add_frames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.add_frames" title="Permalink to this definition">¶</a></dt>
@@ -1050,7 +1050,7 @@ be the author of the commit.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.create">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.create" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a dataset with the given <cite>name</cite>, including the given <cite>collections</cite>, if specified.
 The dataset is returned with the requested <cite>fields</cite>.</p>
 </dd></dl>
@@ -1096,7 +1096,7 @@ where <cite>name</cite> is the dataset’s name.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.from_local_path">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_local_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.from_local_path" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_local_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.from_local_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new Dataset instance using the ID found in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>
 at the provided <cite>path</cite></p>
 </dd></dl>
@@ -1185,13 +1185,13 @@ identifier like <code class="docutils literal notranslate"><span class="pre">HEA
 <span id="media"></span><h3>Media<a class="headerlink" href="#module-FLIR.conservator.wrappers.media" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.media.MediaCompare">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaCompare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaCompare" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaCompare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaCompare" title="Permalink to this definition">¶</a></dt>
 <dd><p>Results of comparing local file and Conservator file</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.media.MediaType">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType" title="Permalink to this definition">¶</a></dt>
 <dd><p>A media type is an image or a video. It can be uploaded (using
 <a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager.upload" title="FLIR.conservator.managers.media.MediaTypeManager.upload"><code class="xref py py-meth docutils literal notranslate"><span class="pre">upload()</span></code></a>)
 or downloaded.</p>
@@ -1244,7 +1244,7 @@ remove it from <strong>all</strong> collections.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.media.MediaType.upload">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.upload" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.upload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upload a new media object based on info in <a class="reference internal" href="#FLIR.conservator.wrappers.media.MediaUploadRequest" title="FLIR.conservator.wrappers.media.MediaUploadRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">MediaUploadRequest</span></code></a> object:
 * from a local <cite>file_path</cite>
 * to conservator name <cite>remote_name</cite>
@@ -1260,7 +1260,7 @@ Video ID or an Image ID) or else an error message if something went wrong.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.media.MediaType.verify_md5">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">verify_md5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_md5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.verify_md5" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_md5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_md5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaType.verify_md5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper for Video and Image md5sum comparisons, each of which
 track md5sum in Conservator but not in the same field</p>
 </dd></dl>
@@ -1269,13 +1269,13 @@ track md5sum in Conservator but not in the same field</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.media.MediaUploadException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaUploadException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaUploadException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaUploadException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaUploadException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised if an exception occurs during a media upload</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.media.MediaUploadRequest">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaUploadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaUploadRequest" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.media.</span></span><span class="sig-name descname"><span class="pre">MediaUploadRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.media.MediaUploadRequest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tracks inputs and results of a media upload</p>
 </dd></dl>
 
@@ -1284,7 +1284,7 @@ track md5sum in Conservator but not in the same field</p>
 <span id="image"></span><h3>Image<a class="headerlink" href="#module-FLIR.conservator.wrappers.image" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.image.Image">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.image.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.image.</span></span><span class="sig-name descname"><span class="pre">Image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.image.Image.get_frame">
 <span class="sig-name descname"><span class="pre">get_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.image.Image.get_frame" title="Permalink to this definition">¶</a></dt>
@@ -1305,7 +1305,7 @@ the same as <code class="xref py py-meth docutils literal notranslate"><span cla
 <span id="video"></span><h3>Video<a class="headerlink" href="#module-FLIR.conservator.wrappers.video" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.video.Video">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.video.</span></span><span class="sig-name descname"><span class="pre">Video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.video.</span></span><span class="sig-name descname"><span class="pre">Video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py attribute">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.video.Video.underlying_type">
 <span class="sig-name descname"><span class="pre">underlying_type</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.video.Video.underlying_type" title="Permalink to this definition">¶</a></dt>
@@ -1319,7 +1319,7 @@ the same as <code class="xref py py-meth docutils literal notranslate"><span cla
 <span id="frame"></span><h3>Frame<a class="headerlink" href="#module-FLIR.conservator.wrappers.frame" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.frame.Frame">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.frame.</span></span><span class="sig-name descname"><span class="pre">Frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.frame.</span></span><span class="sig-name descname"><span class="pre">Frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A frame within a media object (image or video).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.frame.Frame.add_annotations">
@@ -1358,7 +1358,7 @@ padded to 6 digits.</p>
 <span id="datasetframe"></span><h3>DatasetFrame<a class="headerlink" href="#module-FLIR.conservator.wrappers.dataset_frame" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.dataset_frame.</span></span><span class="sig-name descname"><span class="pre">DatasetFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.dataset_frame.</span></span><span class="sig-name descname"><span class="pre">DatasetFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A frame within a dataset.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.approve">
@@ -1410,7 +1410,7 @@ padded to 6 digits.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_qa_status_note">
-<span class="sig-name descname"><span class="pre">update_qa_status_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qa_status_note</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_qa_status_note" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_qa_status_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qa_status_note</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_qa_status_note" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change the QA status note for a dataset frame.</p>
 </dd></dl>
 
@@ -1421,7 +1421,7 @@ padded to 6 digits.</p>
 <span id="metadata"></span><h3>Metadata<a class="headerlink" href="#module-FLIR.conservator.wrappers.metadata" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.metadata.MetadataType">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.metadata.</span></span><span class="sig-name descname"><span class="pre">MetadataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataType" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.metadata.</span></span><span class="sig-name descname"><span class="pre">MetadataType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds <a class="reference internal" href="#FLIR.conservator.wrappers.metadata.MetadataType.download_metadata" title="FLIR.conservator.wrappers.metadata.MetadataType.download_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">download_metadata()</span></code></a> and <a class="reference internal" href="#FLIR.conservator.wrappers.metadata.MetadataType.upload_metadata" title="FLIR.conservator.wrappers.metadata.MetadataType.upload_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">upload_metadata()</span></code></a></p>
 <p>Every Metadata file belongs to a parent, and the relevant mutations to
 create such a file depend on parent type. The parent object’s
@@ -1455,7 +1455,7 @@ parent object</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.metadata.MetadataUploadException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.metadata.</span></span><span class="sig-name descname"><span class="pre">MetadataUploadException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataUploadException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.metadata.</span></span><span class="sig-name descname"><span class="pre">MetadataUploadException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.metadata.MetadataUploadException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised if an exception occurs during a metadata upload</p>
 </dd></dl>
 
@@ -1464,7 +1464,7 @@ parent object</p>
 <span id="filelocker"></span><h3>FileLocker<a class="headerlink" href="#module-FLIR.conservator.wrappers.file_locker" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.file_locker.FileLockerType">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.file_locker.</span></span><span class="sig-name descname"><span class="pre">FileLockerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerType" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.file_locker.</span></span><span class="sig-name descname"><span class="pre">FileLockerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds <a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.download_associated_files" title="FLIR.conservator.wrappers.file_locker.FileLockerType.download_associated_files"><code class="xref py py-func docutils literal notranslate"><span class="pre">download_associated_files()</span></code></a>, <a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.upload_associated_file" title="FLIR.conservator.wrappers.file_locker.FileLockerType.upload_associated_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">upload_associated_file()</span></code></a>, <a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerType.remove_associated_file" title="FLIR.conservator.wrappers.file_locker.FileLockerType.remove_associated_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_associated_file()</span></code></a></p>
 <p>Every FileLocker file is associated with a Conservator object, and the
 relevant mutations to create or remove such a file depend on object type.
@@ -1506,7 +1506,7 @@ parent object</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.file_locker.FileLockerUploadException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.file_locker.</span></span><span class="sig-name descname"><span class="pre">FileLockerUploadException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerUploadException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.file_locker.</span></span><span class="sig-name descname"><span class="pre">FileLockerUploadException</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.file_locker.FileLockerUploadException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised if an exception occurs during a file-locker upload</p>
 </dd></dl>
 
@@ -1517,7 +1517,7 @@ parent object</p>
 <p>A Manager is simply a bundle of utilities for querying a specific type.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.CollectionManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">CollectionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">CollectionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.CollectionManager.create_from_parent_id">
@@ -1579,7 +1579,7 @@ to media files (other types of files are usually small enough not to need them).
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.DatasetManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">DatasetManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">DatasetManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.DatasetManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.DatasetManager.create">
@@ -1614,7 +1614,7 @@ any user-facing input.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.ImageManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">ImageManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImageManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">ImageManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ImageManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager" title="FLIR.conservator.managers.media.MediaTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.ImageManager.from_string">
@@ -1635,7 +1635,7 @@ any user-facing input.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.ProjectManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">ProjectManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ProjectManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">ProjectManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.ProjectManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.ProjectManager.create">
@@ -1648,7 +1648,7 @@ it with the specified <cite>fields</cite>.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.VideoManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">VideoManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">VideoManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.VideoManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.searchable.SearchableTypeManager</span></code></a>, <a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager" title="FLIR.conservator.managers.media.MediaTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.media.MediaTypeManager</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.VideoManager.from_string">
@@ -1671,12 +1671,12 @@ any user-facing input.</p>
 <span id="typemanager"></span><h3>TypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.type_manager" title="Permalink to this headline">¶</a></h3>
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.type_manager.AmbiguousIdentifierException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.type_manager.</span></span><span class="sig-name descname"><span class="pre">AmbiguousIdentifierException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.AmbiguousIdentifierException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.type_manager.</span></span><span class="sig-name descname"><span class="pre">AmbiguousIdentifierException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.AmbiguousIdentifierException" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.type_manager.TypeManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.type_manager.</span></span><span class="sig-name descname"><span class="pre">TypeManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underlying_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.type_manager.</span></span><span class="sig-name descname"><span class="pre">TypeManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underlying_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.type_manager.TypeManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base Manger class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1733,7 +1733,7 @@ checking if the identifier is a path.</p>
 <span id="searchabletypemanager"></span><h3>SearchableTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.searchable" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.searchable.SearchableTypeManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.searchable.</span></span><span class="sig-name descname"><span class="pre">SearchableTypeManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underlying_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.searchable.</span></span><span class="sig-name descname"><span class="pre">SearchableTypeManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">underlying_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.type_manager.TypeManager" title="FLIR.conservator.managers.type_manager.TypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLIR.conservator.managers.type_manager.TypeManager</span></code></a></p>
 <p>Adds the ability to search using Conservator’s Advanced Search.</p>
 <p>The underlying type must specify a <code class="docutils literal notranslate"><span class="pre">search_query</span></code>.</p>
@@ -1777,7 +1777,7 @@ single match was found (or none, or many).</p>
 <span id="mediatypemanager"></span><h3>MediaTypeManager<a class="headerlink" href="#module-FLIR.conservator.managers.media" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.media.MediaTypeManager">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.media.</span></span><span class="sig-name descname"><span class="pre">MediaTypeManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.media.MediaTypeManager" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.media.</span></span><span class="sig-name descname"><span class="pre">MediaTypeManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.media.MediaTypeManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for media type managers.</p>
 <dl class="py method">
@@ -1856,7 +1856,7 @@ will use <cite>os.cpu_count()</cite>.</p></li>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.media.ProcessingTimeoutError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.media.</span></span><span class="sig-name descname"><span class="pre">ProcessingTimeoutError</span></span><a class="headerlink" href="#FLIR.conservator.managers.media.ProcessingTimeoutError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.media.</span></span><span class="sig-name descname"><span class="pre">ProcessingTimeoutError</span></span><a class="headerlink" href="#FLIR.conservator.managers.media.ProcessingTimeoutError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></p>
 <p>Raised when the amount of time spent waiting for media to process exceeds
 the requested timeout.</p>
@@ -1868,14 +1868,14 @@ the requested timeout.</p>
 <span id="paginatedquery"></span><h2>PaginatedQuery<a class="headerlink" href="#module-FLIR.conservator.paginated_query" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.paginated_query.ConcurrentQueryModificationException">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.paginated_query.</span></span><span class="sig-name descname"><span class="pre">ConcurrentQueryModificationException</span></span><a class="headerlink" href="#FLIR.conservator.paginated_query.ConcurrentQueryModificationException" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.paginated_query.</span></span><span class="sig-name descname"><span class="pre">ConcurrentQueryModificationException</span></span><a class="headerlink" href="#FLIR.conservator.paginated_query.ConcurrentQueryModificationException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised when a paginated query is modified in the middle
 of its execution.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.paginated_query.PaginatedQuery">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.paginated_query.</span></span><span class="sig-name descname"><span class="pre">PaginatedQuery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapping_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_unpack_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.paginated_query.</span></span><span class="sig-name descname"><span class="pre">PaginatedQuery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapping_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_unpack_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enables pagination of any query with <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> arguments.</p>
 <p>Assume you want to iterate through all the Projects in a project search
 query. You could do something like the following:</p>
@@ -1931,7 +1931,7 @@ field name to this parameter.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.paginated_query.PaginatedQuery.filtered_by">
-<span class="sig-name descname"><span class="pre">filtered_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">func=&lt;built-in</span> <span class="pre">function</span> <span class="pre">eq&gt;</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.filtered_by" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">filtered_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func=&lt;built-in</span> <span class="pre">function</span> <span class="pre">eq&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.paginated_query.PaginatedQuery.filtered_by" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter results by field value.</p>
 <p>For example, to verify that</p>
 <dl class="field-list simple">
@@ -2000,12 +2000,12 @@ but individual requests may be large and slow.</p>
 <span id="localdataset"></span><h2>LocalDataset<a class="headerlink" href="#module-FLIR.conservator.local_dataset" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.InvalidLocalDatasetPath">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.local_dataset.</span></span><span class="sig-name descname"><span class="pre">InvalidLocalDatasetPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.InvalidLocalDatasetPath" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.local_dataset.</span></span><span class="sig-name descname"><span class="pre">InvalidLocalDatasetPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.InvalidLocalDatasetPath" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.local_dataset.</span></span><span class="sig-name descname"><span class="pre">LocalDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.local_dataset.</span></span><span class="sig-name descname"><span class="pre">LocalDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides utilities for managing local datasets.</p>
 <p>This replicates the functionality of CVC, and should now be the
 preferred method of working with local datasets.</p>
@@ -2047,7 +2047,7 @@ or <code class="docutils literal notranslate"><span class="pre">associated_files
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.clone">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clone_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.clone" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clone_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clone a <cite>dataset</cite> to a local path, returning a <code class="xref py py-class docutils literal notranslate"><span class="pre">LocalDatasetOperations</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2101,7 +2101,7 @@ cache and data.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.get_image_info">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">get_image_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_image_info" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_image_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_image_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns image info to be added to a Dataset’s <code class="docutils literal notranslate"><span class="pre">index.json</span></code>, or <cite>None</cite>
 if there was an error.</p>
 <p>This opens the <cite>path</cite> using PIL to verify it is a JPEG image,
@@ -2116,7 +2116,7 @@ and get the dimensions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">get_max_frame_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_max_frame_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the maximum frame index in a dataset’s <cite>index</cite>.</p>
 <p>This only checks “loose” frames, that aren’t a part of a specific video.</p>
 </dd></dl>
@@ -2260,7 +2260,7 @@ JSON Schema.</p>
       &copy;2021, FLIR Systems.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
