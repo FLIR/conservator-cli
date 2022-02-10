@@ -36,29 +36,29 @@ pipeline {
         }
       }
     }
-    stage("Integration Tests") {
-      environment {
-        AWS_DOMAIN = credentials("docker-aws-domain-conservator")
-      }
-      stages {
-        stage("Create kind cluster") {
-          environment {
-            AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
-            AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
-          }
-          steps {
-            sh "cd $WORKSPACE/test/integration/cluster && ./start-cluster.sh"
-          }
-        }
-        stage("Run integration tests") {
-          steps {
-            dir("integration-tests") {
-              sh "pytest $WORKSPACE/test/integration"
-            }
-          }
-        }
-      }
-    }
+//    stage("Integration Tests") {
+//      environment {
+//        AWS_DOMAIN = credentials("docker-aws-domain-conservator")
+//      }
+//      stages {
+//        stage("Create kind cluster") {
+//          environment {
+//            AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
+//            AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
+//          }
+//          steps {
+//            sh "cd $WORKSPACE/test/integration/cluster && ./start-cluster.sh"
+//          }
+//        }
+//        stage("Run integration tests") {
+//          steps {
+//            dir("integration-tests") {
+//              sh "pytest $WORKSPACE/test/integration"
+//            }
+//          }
+//        }
+//      }
+//    }
     stage("Deploy Documentation") {
       when {
         branch "main"
