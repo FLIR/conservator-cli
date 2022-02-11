@@ -7,10 +7,14 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     Query,
     AddFramesToDatasetInput,
+    RemoveFramesFromDatasetInput,
+    RemoveFramesFromDatasetByIdsInput,
     CreateDatasetInput,
     DeleteDatasetInput,
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
+from FLIR.conservator.wrappers.frame import Frame
+from FLIR.conservator.wrappers.dataset_frame import DatasetFrame
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.queryable import QueryableType
@@ -130,6 +134,36 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             fields=fields,
             input=_input,
         )
+
+    def remove_frames(self, frames, fields=None):
+        """
+        Given a list of `frames` remove them from the dataset.
+        Detects whether list contains video Frames or DatasetFrames,
+        but will fail if you mix both types together in the same list.
+        """
+        frame_ids = [frame.id for frame in frames]
+        if isinstance(frames[0], Frame):
+            _input = RemoveFramesFromDatasetInput(
+                dataset_id=self.id, frame_ids=frame_ids
+            )
+            result = self._conservator.query(
+                Mutation.remove_frames_from_dataset,
+                fields=fields,
+                input=_input,
+            )
+        elif isinstance(frames[0], DatasetFrame):
+            _input = RemoveFramesFromDatasetByIdsInput(
+                dataset_id=self.id, ids=frame_ids
+            )
+            result = self._conservator.query(
+                Mutation.remove_frames_from_dataset_by_ids,
+                fields=fields,
+                input=_input,
+            )
+        else:
+            raise TypeError("Expected list of Frame or DatasetFrame")
+
+        return result
 
     def associate_frame(self, dataset_frame_id, associated_frame_input):
         """
