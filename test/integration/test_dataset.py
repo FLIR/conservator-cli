@@ -158,6 +158,37 @@ def test_add_with_associated_frames(conservator, test_data):
     assert dataset_frames[0].associated_frames[0].spectrum == "Thermal"
 
 
+def test_remove_frames(conservator, test_data):
+    local_path = test_data / "png" / "flight_0.png"
+    media_id = conservator.media.upload(local_path)
+    conservator.media.wait_for_processing(media_id)
+    image = conservator.images.all().first()
+    frame = image.get_frame()
+    dataset = conservator.datasets.create("Test dataset")
+
+    # test deleting by dataset frame id
+    dataset.add_frames([frame])
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 1
+
+    dataset.remove_frames(dataset_frames)
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 0
+
+    # test deleting by video frame id
+    dataset.add_frames([frame])
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 1
+
+    dataset.remove_frames([frame])
+
+    dataset_frames = list(dataset.get_frames())
+    assert len(dataset_frames) == 0
+
+
 def test_commit_and_history(conservator, test_data):
     local_path = test_data / "png" / "flight_0.png"
     media_id = conservator.media.upload(local_path)

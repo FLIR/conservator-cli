@@ -60,18 +60,21 @@ def conservator_domain(using_kubernetes):
 def mongo_client(using_kubernetes, conservator_domain):
     if using_kubernetes:
         mongo_pod_name = get_mongo_pod_name()
-        # Port forward 27030 in the background...
+        # Port forward 27017 in the background...
+        # note that it should be the standard mongo port,
+        # anything else causes problems if mongodb server
+        # has been configured with replica set
         port_forward_proc = subprocess.Popen(
             [
                 "kubectl",
                 "--insecure-skip-tls-verify",
                 "port-forward",
-                mongo_pod_name,
-                f"27030:27017",
+                "service/conservator-mongo",
+                f"27017:27017",
             ]
         )
         # Because of the port forward process, mongo will be accessible on localhost
-        yield pymongo.MongoClient(f"mongodb://localhost:27030/")
+        yield pymongo.MongoClient(f"mongodb://localhost:27017/")
         port_forward_proc.terminate()
     else:  # Using docker
         domain = subprocess.getoutput(
