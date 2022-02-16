@@ -70,7 +70,8 @@ def test_upload_video(conservator, test_data):
 def test_upload_many_in_parallel(conservator, test_data):
     NUM_COPIES = 10
     path = test_data / "jpg" / "peds_0.jpg"
-    upload_tuples = [(path, f"upload_many_test_{i}") for i in range(NUM_COPIES)]
+    new_filenames = [f"upload_many_test_{i}" for i in range(NUM_COPIES)]
+    upload_tuples = [(path, filename) for filename in new_filenames]
     collection = conservator.collections.create_from_remote_path("/Many/Videos")
 
     media_ids = conservator.videos.upload_many_to_collection(
@@ -80,10 +81,13 @@ def test_upload_many_in_parallel(conservator, test_data):
 
     conservator.videos.wait_for_processing(media_ids)
 
-    for i, media_id in enumerate(media_ids):
+    uploaded_filenames = []
+    for media_id in media_ids:
         media = conservator.get_media_instance_from_id(media_id, fields="name")
         assert media is not None
-        assert media.name == f"upload_many_test_{i}"
+        uploaded_filenames.append(media.name)
+    # check that all submitted filenames came back as uploaded
+    assert(new_filenames.sort() == uploaded_filenames.sort())
 
 
 def test_remove_image(conservator, test_data):
