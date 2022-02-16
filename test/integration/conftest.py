@@ -60,18 +60,21 @@ def conservator_domain(using_kubernetes):
 def mongo_client(using_kubernetes, conservator_domain):
     if using_kubernetes:
         mongo_pod_name = get_mongo_pod_name()
-        # Port forward 27030 in the background...
+        # Port forward 27017 in the background...
+        # note that it should be the standard mongo port,
+        # anything else causes problems if mongodb server
+        # has been configured with replica set
         port_forward_proc = subprocess.Popen(
             [
                 "kubectl",
                 "--insecure-skip-tls-verify",
                 "port-forward",
-                mongo_pod_name,
-                f"27030:27017",
+                "service/conservator-mongo",
+                f"27017:27017",
             ]
         )
         # Because of the port forward process, mongo will be accessible on localhost
-        yield pymongo.MongoClient(f"mongodb://localhost:27030/")
+        yield pymongo.MongoClient(f"mongodb://localhost:27017/")
         port_forward_proc.terminate()
     else:  # Using docker
         domain = subprocess.getoutput(
@@ -112,13 +115,21 @@ def conservator(empty_db, conservator_domain):
     # TODO: Initialize an organization, groups.
     organization = empty_db.organizations.find_one({})
     assert organization is not None, "Make sure conservator is initialized"
-    api_key = secrets.token_urlsafe(16)
+    if "TEST_API_KEY" in os.environ:
+        api_key = os.environ["TEST_API_KEY"]
+    else:
+        api_key = secrets.token_urlsafe(16)
+    if "TEST_ADMIN_EMAIL" in os.environ:
+        admin_email = os.environ["TEST_ADMIN_EMAIL"]
+    else:
+        admin_email = "admin@example.com"
+
     empty_db.users.insert_one(
         {
             "_id": Conservator.generate_id(),
             "role": ADMIN_ROLE,
             "name": "admin user",
-            "email": "admin@example.com",
+            "email": admin_email,
             "apiKey": api_key,
             "organizationId": organization["_id"],
         }
@@ -126,7 +137,9 @@ def conservator(empty_db, conservator_domain):
     config = Config(
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=f"http://{conservator_domain}:8080"
     )
-    print(f"Using key={api_key}, url=http://{conservator_domain}:8080")
+    print(
+        f"Using key={api_key}, email={admin_email} url=http://{conservator_domain}:8080"
+    )
     yield Conservator(config)
 
 

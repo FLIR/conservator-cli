@@ -36,9 +36,13 @@ pipeline {
         }
       }
     }
+
+
     stage("Integration Tests") {
       environment {
         AWS_DOMAIN = credentials("docker-aws-domain-conservator")
+        // version of conservator known to have working KInD config
+        KIND_GIT_HASH = "47c589dca2456ecadc68c70fe8f577aadffaa7e8"
       }
       stages {
         stage("Create kind cluster") {
@@ -47,7 +51,11 @@ pipeline {
             AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
           }
           steps {
-            sh "cd $WORKSPACE/test/integration/cluster && ./start-cluster.sh"
+            sshagent(credentials: ["flir-service-key"]) {
+              sh "git clone ssh://git@github.com/FLIR/flirconservator fc"
+            }
+            sh "cd fc && git checkout $KIND_GIT_HASH"
+            sh "cd $WORKSPACE/test/integration/cluster && ./start-cluster.sh $WORKSPACE/fc/docker/kubernetes"
           }
         }
         stage("Run integration tests") {

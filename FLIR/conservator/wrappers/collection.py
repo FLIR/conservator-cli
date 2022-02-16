@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.file_transfers import DownloadRequest
@@ -9,7 +10,7 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     CreateCollectionInput,
     DeleteCollectionInput,
-    MetadataInput,
+    MoveAssetInput,
 )
 from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
@@ -136,17 +137,23 @@ class Collection(QueryableType, FileLockerType):
         If `make_if_no_exist` is `True`, then collection(s) will be created to
         reach that path if it doesn't exist.
         """
+        # Remove repeated '/' characters.
+        clean_path = re.sub("/+", "/", path)
+
         if not path.startswith("/"):
-            path = "/" + path
+            clean_path = "/" + path
+
+        if clean_path.endswith("/"):
+            clean_path = clean_path[:-1]
 
         collection = conservator.query(
-            Query.collection_by_path, path=path, fields=fields
+            Query.collection_by_path, path=clean_path, fields=fields
         )
         if collection is None:
             if make_if_no_exist:
-                return cls.create_from_remote_path(conservator, path, fields)
+                return cls.create_from_remote_path(conservator, clean_path, fields)
             else:
-                raise InvalidRemotePathException(path)
+                raise InvalidRemotePathException(clean_path)
         return collection
 
     def recursively_get_children(self, include_self=False, fields=None):
@@ -238,12 +245,10 @@ class Collection(QueryableType, FileLockerType):
         """
         Remove given media from this collection.
         """
-        metadata = MetadataInput(mode="remove", collections=[self.id])
+        input_ = MoveAssetInput(asset_id=media_id, from_collection=self.id)
         return self._conservator.query(
-            Mutation.update_video,
-            id=media_id,
-            metadata=metadata,
-            fields="id",
+            Mutation.move_video,
+            input=input_,
         )
 
     def delete(self):
