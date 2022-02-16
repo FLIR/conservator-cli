@@ -16,6 +16,15 @@ if [ -z "$AWS_DOMAIN" -o -z "$AWS_ACCESS_KEY_ID" -o -z "$AWS_SECRET_ACCESS_KEY" 
   exit 1
 fi
 
+if ! grep conservator-mongo /etc/hosts ; then
+  cat <<EOF >> /etc/hosts  || { echo "ERROR: missing conservator-mongo entry in /etc/hosts" ; exit 1; }
+# conservator-cli integration tests run against port-forward of mongo server,
+# and the mongo replica set config requires that this hostname map to localhost
+# in order to find that forwarded port
+127.0.0.1 conservator-mongo
+EOF
+fi
+
 export AWS_DOMAIN AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 
 # IMAGE is used in kubernetes templates as well as loading the image, must be literal
