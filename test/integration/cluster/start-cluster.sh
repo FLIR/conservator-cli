@@ -36,6 +36,6 @@ else
   docker cp $id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
   docker rm -v $id
 fi
-#cp override-kind-run.sh kubernetes/kind/run.sh #@@@@@@ FIXME just until updated run.sh gets into prod
+
 cd kubernetes
 ./kind/run.sh ../kind-init.env
