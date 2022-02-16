@@ -137,7 +137,9 @@ def conservator(empty_db, conservator_domain):
     config = Config(
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=f"http://{conservator_domain}:8080"
     )
-    print(f"Using key={api_key}, email={admin_email} url=http://{conservator_domain}:8080")
+    print(
+        f"Using key={api_key}, email={admin_email} url=http://{conservator_domain}:8080"
+    )
     yield Conservator(config)
 
 

@@ -87,7 +87,7 @@ def test_upload_many_in_parallel(conservator, test_data):
         assert media is not None
         uploaded_filenames.append(media.name)
     # check that all submitted filenames came back as uploaded
-    assert(new_filenames.sort() == uploaded_filenames.sort())
+    assert new_filenames.sort() == uploaded_filenames.sort()
 
 
 def test_remove_image(conservator, test_data):
