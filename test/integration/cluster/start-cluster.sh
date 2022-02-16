@@ -26,9 +26,16 @@ env aws ecr get-login-password --region us-east-1 \
                | docker login --username AWS --password-stdin $AWS_DOMAIN
 docker pull $AWS_DOMAIN/conservator_webapp:prod -q
 echo "** Create Conservator Cluster"
-id=$(docker create $AWS_DOMAIN/conservator_webapp:prod)
-docker cp $id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
-docker rm -v $id
-cp override-kind-run.sh kubernetes/kind/run.sh #@@@@@@ FIXME just until updated run.sh gets into prod
+rm -rf ./kubernetes
+if [ -d "$1" ] ; then
+  echo "-- Copy external kubernetes configs from '$1'"
+  cp -r $1 kubernetes
+else
+  echo "-- Copy kubernetes configs from docker image"
+  id=$(docker create $AWS_DOMAIN/conservator_webapp:prod)
+  docker cp $id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
+  docker rm -v $id
+fi
+#cp override-kind-run.sh kubernetes/kind/run.sh #@@@@@@ FIXME just until updated run.sh gets into prod
 cd kubernetes
 ./kind/run.sh ../kind-init.env
