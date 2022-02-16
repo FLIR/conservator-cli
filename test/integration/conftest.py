@@ -115,13 +115,21 @@ def conservator(empty_db, conservator_domain):
     # TODO: Initialize an organization, groups.
     organization = empty_db.organizations.find_one({})
     assert organization is not None, "Make sure conservator is initialized"
-    api_key = secrets.token_urlsafe(16)
+    if "TEST_API_KEY" in os.environ:
+        api_key = os.environ["TEST_API_KEY"]
+    else:
+        api_key = secrets.token_urlsafe(16)
+    if "TEST_ADMIN_EMAIL" in os.environ:
+        admin_email = os.environ["TEST_ADMIN_EMAIL"]
+    else:
+        admin_email = "admin@example.com"
+
     empty_db.users.insert_one(
         {
             "_id": Conservator.generate_id(),
             "role": ADMIN_ROLE,
             "name": "admin user",
-            "email": "admin@example.com",
+            "email": admin_email,
             "apiKey": api_key,
             "organizationId": organization["_id"],
         }
@@ -129,7 +137,9 @@ def conservator(empty_db, conservator_domain):
     config = Config(
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=f"http://{conservator_domain}:8080"
     )
-    print(f"Using key={api_key}, url=http://{conservator_domain}:8080")
+    print(
+        f"Using key={api_key}, email={admin_email} url=http://{conservator_domain}:8080"
+    )
     yield Conservator(config)
 
 
