@@ -6,6 +6,8 @@ import json
 import shutil
 import requests
 import logging
+import sys
+import tempfile
 import time
 import functools
 
@@ -16,6 +18,7 @@ from PIL import Image
 from FLIR.conservator.file_transfers import FileDownloadException
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.util import md5sum_file
+from FLIR.conservator.jsonl_to_index_json import jsonl_to_json
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +38,11 @@ class LocalDataset:
     :param conservator: A :class:`~FLIR.conservator.conservator.Conservator`
         instance to use for uploading new images.
     :param path: The path to the local dataset. This should point to the root
-        directory (containing ``index.json``).
+        directory (containing ``index.json`` and JSONL files).
     """
+
+    TRACKED_FILES = ("index.json", "dataset.jsonl", "frames.jsonl", "videos.jsonl")
+    WRITABLE_TRACKED_FILES = ("index.json", "dataset.jsonl", "frames.jsonl")
 
     def __init__(self, conservator, path):
         self.conservator = conservator
@@ -44,6 +50,12 @@ class LocalDataset:
         self.index_path = os.path.join(self.path, "index.json")
         if not os.path.exists(self.index_path):
             raise InvalidLocalDatasetPath(self.path)
+        # The following three paths may not exist depending on how long ago the
+        # last dataset commit happened.  "frames.jsonl" and "videos.jsonl"
+        # won't exist if there are no frames in the dataset.
+        self.frames_path = os.path.join(self.path, "frames.jsonl")
+        self.videos_path = os.path.join(self.path, "videos.jsonl")
+        self.dataset_info_path = os.path.join(self.path, "dataset.jsonl")
         self.data_path = os.path.join(self.path, "data")
         self.analytics_path = os.path.join(self.path, "analyticsData")
         self.cvc_path = os.path.join(self.path, ".cvc")
@@ -63,7 +75,7 @@ class LocalDataset:
 
     def pull(self, verbose=True):
         """
-        Pulls the latest ``index.json``.
+        Pulls the latest repository state.
 
         :param verbose: If False, run git commands with the `-q` option.
         """
@@ -78,8 +90,8 @@ class LocalDataset:
 
     def checkout(self, commit_hash, verbose=True):
         """
-        Checks out a specific commit. This will delete any local changes in ``index.json``
-        or ``associated_files``.
+        Checks out a specific commit. This will delete any local changes in
+        `index.json` or `associated_files`.
 
         :param verbose: If False, run git commands with the `-q` option.
         """
@@ -88,28 +100,225 @@ class LocalDataset:
             checkout_cmd.append("-q")
         return subprocess.call(checkout_cmd + [commit_hash], cwd=self.path)
 
+    def validate_jsonl(self):
+        """
+        Convert the contents of the .jsonl files into `index.json` format and
+        validate the result.
+        """
+        jsonl_valid = True
+        with tempfile.NamedTemporaryFile(suffix=".json") as tmp_index:
+            jsonl_to_json(self.path, tmp_index.name)
+            jsonl_valid = self.validate_index(tmp_index.name)
+        return jsonl_valid
+
+    @staticmethod
+    def get_jsonl_data(jsonl_file):
+        """
+        Create a single JSON list object from a JSONL source file.
+        """
+        data_array = []
+        with open(jsonl_file, "r") as jsonl_f:
+            for jsonl_line in jsonl_f:
+                data_array.append(json.loads(jsonl_line))
+        return data_array
+
+    def write_frames_to_jsonl(self, frames_list):
+        """
+        Rewrite `frames.jsonl` with the contents of `frames_list`.
+        """
+        if not os.path.exists(self.dataset_info_path):
+            logger.info("Skip write to frames.jsonl: Repository missing dataset.jsonl")
+            return
+        with open(self.frames_path, "w") as f:
+            for frame in frames_list:
+                f.write(f"{json.dumps(frame, separators=(',', ':'))}\n")
+
+    def git_branch(self):
+        """
+        Return the git branch name for the dataset repository, if any.
+        """
+        branch_args = ["git", "branch"]
+        branch_proc = subprocess.run(
+            branch_args,
+            cwd=self.path,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+        )
+        if branch_proc.returncode != 0:
+            logger.error("'%s' failed:\n%s", " ".join(branch_args), branch_proc.stdout)
+            raise RuntimeError(f"`git branch` failed for {self.path}")
+
+        branch_name = ""
+        for bline in branch_proc.stdout.splitlines():
+            if bline.startswith("*"):
+                branch_name = bline[2:].rstrip()
+        return branch_name
+
+    def git_status(self):
+        """
+        Parse the git branch and status for the dataset repository.
+
+        Returned table format:
+
+        added -- contains a dictionary:
+
+            * "staged" contains a list of new files that have been staged.
+            * "working" contains a list of untracked files in the working
+                directory.
+
+        modified -- contains a dictionary:
+
+            * "staged" contains a list of modified files that have been staged.
+            * "working" contains a list of modified files in the working
+                directory.
+
+        other -- contains a list of dictionaries; for each dictionary in the
+            list:
+
+            * "index" contains the index status character (e.g. 'A', 'D', etc).
+            * "working" contains the working directory status character.
+            * "source" contains the file name associated with the status.
+            * A rename or copy status will also contain a "dest" key.
+        """
+        status_table = {}
+        status_args = ["git", "status", "--porcelain=v1"]
+        status_proc = subprocess.run(
+            status_args,
+            cwd=self.path,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+        )
+        if status_proc.returncode != 0:
+            logger.error("'%s' failed:\n%s", " ".join(status_args), status_proc.stderr)
+            raise RuntimeError(f"`git status` failed for {self.path}")
+
+        status_table["added"] = {"staged": [], "working": []}
+        status_table["modified"] = {"staged": [], "working": []}
+        status_table["other"] = []
+        for status_line in status_proc.stdout.splitlines():
+            index_stat = status_line[0]
+            wdir_stat = status_line[1]
+            if index_stat == "M":
+                status_table["modified"]["staged"].append(status_line[3:])
+            elif index_stat == "A":
+                status_table["added"]["staged"].append(status_line[3:])
+            if wdir_stat == "M":
+                status_table["modified"]["working"].append(status_line[3:])
+            elif wdir_stat == "?":
+                status_table["added"]["working"].append(status_line[3:])
+            if index_stat not in ("M", "A") and wdir_stat not in ("M", "?"):
+                other_entry = {}
+                if index_stat != " ":
+                    other_entry["index"] = index_stat
+                if wdir_stat != " ":
+                    other_entry["working"] = wdir_stat
+                operation = status_line[3:]
+                if " -> " in operation:
+                    entries = operation.split(" -> ")
+                    other_entry["source"] = entries[0].strip()
+                    other_entry["dest"] = entries[1].strip()
+                else:
+                    other_entry["source"] = operation
+                status_table["other"].append(other_entry)
+        return status_table
+
     def add_local_changes(self, skip_validation=False):
         """
-        Stages changes to ``index.json`` and ``associated_files`` for the next commit.
+        Stages changes to `index.json` or `*.jsonl` files and `associated_files` for the next commit.
 
-        :param skip_validation: By default, ``index.json`` is validated against a schema.
-            If the schema is incorrect and you're sure your ``index.json`` is valid, you can
+        :param skip_validation: By default, `index.json` or `*.jsonl` are validated against a schema.
+            If the schema is incorrect and you're sure your source files are valid, you can
             pass `True` to skip the check. In this case, please also submit a PR so we can
             update the schema.
         """
         if skip_validation:
             logger.warning(
-                "Skipping index.json check. Please submit a PR if the schema should be changed."
+                "Skipping validation. Please submit a PR if the schema should be changed."
             )
-        elif not self.validate_index():
-            logger.error("Not adding changes to index.json. Doesn't match schema.")
+
+        branch_name = self.git_branch()
+        if branch_name != "master":
+            logger.warning(
+                "Only the 'master' branch will accept changes.  Switch branches with "
+                + "`git checkout master`."
+            )
+            return None
+
+        repo_status = self.git_status()
+        stage_files = []
+        # Stage only files known to Conservator, or files in associated_files/.
+        for modded in repo_status["modified"]["working"]:
+            if modded == "videos.jsonl":
+                logger.warning("Will not stage changes to read-only file '%s'.", modded)
+            elif modded in self.WRITABLE_TRACKED_FILES:
+                stage_files.append(modded)
+            if os.path.dirname(modded) == "associated_files" and os.path.isfile(modded):
+                stage_files.append(modded)
+        jsonl_warning_printed = False
+        for added in repo_status["added"]["working"]:
+            if os.path.dirname(added) == "associated_files" and os.path.isfile(added):
+                stage_files.append(added)
+            if added.endswith(".jsonl") and added in self.WRITABLE_TRACKED_FILES:
+                if added == "videos.jsonl":
+                    logger.warning(
+                        "Will not stage changes to read-only file '%s'.", added
+                    )
+                elif not os.path.exists(self.dataset_info_path):
+                    if not jsonl_warning_printed:
+                        logger.warning(
+                            "'%s' cannot be added to a repository.  Move it aside, commit the current "
+                            + "repository state from the Conservator web site and pull the new commit to "
+                            + "get this file into the repository.",
+                            added,
+                        )
+                    jsonl_warning_printed = True
+                else:
+                    stage_files.append(added)
+        if not stage_files:
+            logger.info(
+                "No changes to be staged: no writable tracked files (%s) were modified, "
+                + "and no new files were found in 'associated_files'.",
+                ", ".join([f"'{afile}'" for afile in self.WRITABLE_TRACKED_FILES]),
+            )
+            return None
+
+        jsonl_change = False
+        for filename in stage_files:
+            if not os.path.dirname(filename) and filename.endswith(".jsonl"):
+                jsonl_change = True
+                break
+        if jsonl_change and "index.json" in stage_files:
             logger.error(
-                "You may be able to skip this check with '--skip-validation' if you're sure your file conforms."
+                "Cannot commit changes to index.json along with changes to any file ending in '.jsonl'"
             )
-            exit(-1)
-        return subprocess.call(
-            ["git", "add", "index.json", "associated_files"], cwd=self.path
-        )
+            logger.error(
+                "Move JSONL and/or index.json files aside and recover the original versions using "
+                + "`git restore <filename>`, then commit the conflicting changes separately."
+            )
+            sys.exit(-1)
+
+        if not skip_validation:
+            val_error = False
+            val_files = [
+                valf for valf in stage_files if valf in self.WRITABLE_TRACKED_FILES
+            ]
+            if jsonl_change:
+                val_ok = self.validate_jsonl()
+            else:
+                val_ok = self.validate_index()
+            if not val_ok:
+                logger.error(
+                    "Not adding changes to %s. Doesn't match schema.",
+                    ", ".join(val_files),
+                )
+                logger.error(
+                    "You may be able to skip this check with '--skip-validation' if you're sure your file conforms."
+                )
+                sys.exit(-1)
+
+        return subprocess.call(["git", "add"] + stage_files, cwd=self.path)
 
     def commit(self, message, verbose=True):
         """
@@ -117,6 +326,11 @@ class LocalDataset:
 
         :param verbose: If False, run git commands with the `-q` option.
         """
+        repo_status = self.git_status()
+        # Verify whether there are any changes to the index.
+        if not repo_status["modified"]["staged"] and not repo_status["added"]["staged"]:
+            logger.warning("No changes staged, nothing to commit.")
+            return None
         commit_cmd = ["git", "commit"]
         if not verbose:
             commit_cmd.append("-q")
@@ -153,7 +367,8 @@ class LocalDataset:
         Push the staged images.
 
         This reads the staged image paths, uploads them, adds metadata
-        to ``index.json``, and deletes the staged image paths.
+        to `index.json` (or `frames.jsonl` if it exists), and deletes the
+        staged image paths.
 
         :param copy_to_data: If `True`, copy the staged images to the cache and
             link with the data directory. This produces the same result as
@@ -165,8 +380,27 @@ class LocalDataset:
             logger.info("No files to push.")
             return
 
-        index = self.get_index()
-        next_index = LocalDataset.get_max_frame_index(index) + 1
+        branch_name = self.git_branch()
+        if branch_name != "master":
+            logger.warning(
+                "Only the 'master' branch will accept image uploads.  Switch branches with "
+                + "`git checkout master`."
+            )
+            return
+
+        # Editing the `frames.jsonl` file is the preferred method.  For
+        # datasets committed prior to JSONL support, fall back to editing
+        # the `index.json` file.
+        jsonl_update = True
+        index = None
+        dataset_info = self.get_dataset_info()
+        if os.path.exists(self.dataset_info_path):
+            dataset_frames = self.get_frames()
+        else:
+            jsonl_update = False
+            index = self.get_index()
+            dataset_frames = index.get("frames", [])
+        next_index = LocalDataset.get_max_frame_index(dataset_frames) + 1
         for path in image_paths:
             image_info = LocalDataset.get_image_info(path)
             if image_info is None:
@@ -180,9 +414,8 @@ class LocalDataset:
                 logger.debug(f"File '{path}' already exists on conservator, skipping")
 
             # Dataset frames uploaded in this manner do not have a video.
-            # They are considered "loose" frames and use the dataset's ID
-            # as the video ID.
-            video_id = index["datasetId"]
+            # They use the dataset's ID in place of a video ID.
+            video_id = dataset_info["datasetId"]
             frame_id = self.conservator.generate_id()
 
             del image_info["filename"]
@@ -199,7 +432,7 @@ class LocalDataset:
                     "frameIndex": next_index,
                 },
             }
-            index["frames"].append(new_frame)
+            dataset_frames.append(new_frame)
             logger.debug(f"Added new DatasetFrame with id {frame_id}")
 
             if copy_to_data:
@@ -220,8 +453,11 @@ class LocalDataset:
 
             next_index += 1
 
-        with open(self.index_path, "w") as f:
-            json.dump(index, f, indent=1, sort_keys=True, separators=(",", ": "))
+        if jsonl_update:
+            self.write_frames_to_jsonl(dataset_frames)
+        else:
+            with open(self.index_path, "w") as f:
+                json.dump(index, f, indent=1, sort_keys=True, separators=(",", ": "))
         with open(self.staging_path, "w") as f:
             json.dump([], f)
 
@@ -254,6 +490,61 @@ class LocalDataset:
         """
         with open(self.index_path, "r") as f:
             return json.load(f)
+
+    def get_frames(self):
+        """
+        Get the frames array for the dataset.
+
+        Collect the data from `frames.jsonl` if present, else fall back to
+        using the `index.json` file.
+        """
+        dataset_frames = []
+        if os.path.exists(self.dataset_info_path):
+            # An empty dataset won't have "frames.jsonl".
+            if os.path.exists(self.frames_path):
+                dataset_frames = LocalDataset.get_jsonl_data(self.frames_path)
+        else:
+            index = self.get_index()
+            dataset_frames = index.get("frames", [])
+        return dataset_frames
+
+    def get_dataset_info(self):
+        """
+        Get the dataset's top-level info.
+
+        Collect the data from `dataset.jsonl` if present, else fall back to
+        using the `index.json` file.
+        """
+        dataset_info = {}
+        if os.path.exists(self.dataset_info_path):
+            with open(self.dataset_info_path) as ds_f:
+                dataset_info = json.load(ds_f)
+        else:
+            index = self.get_index()
+            for info_field in (
+                "datasetId",
+                "datasetName",
+                "owner",
+                "version",
+                "overwrite",
+            ):
+                dataset_info[info_field] = index[info_field]
+        return dataset_info
+
+    def get_videos(self):
+        """
+        Get the videos array for the dataset.
+
+        Collect the data from `videos.jsonl` if present, else fall back to
+        using the `index.json` file.
+        """
+        videos = []
+        if os.path.exists(self.videos_path):
+            videos = LocalDataset.get_jsonl_data(self.videos_path)
+        else:
+            index = self.get_index()
+            videos = index.get("videos", [])
+        return videos
 
     def get_staged_images(self):
         """
@@ -316,14 +607,14 @@ class LocalDataset:
         return info
 
     @staticmethod
-    def get_max_frame_index(index):
+    def get_max_frame_index(dataset_frames):
         """
-        Returns the maximum frame index in a dataset's `index`.
+        Returns the maximum frame index in a dataset's frames.
 
-        This only checks "loose" frames, that aren't a part of a specific video.
+        This only counts frames uploaded directly to the dataset.
         """
         max_index = 0
-        for f in index.get("frames", []):
+        for f in dataset_frames:
             if f["datasetFrameId"] == f["videoMetadata"]["frameId"]:
                 frame_index = f["videoMetadata"]["frameIndex"]
                 max_index = max(max_index, frame_index)
@@ -331,11 +622,6 @@ class LocalDataset:
 
     def get_cache_path(self, md5):
         return os.path.join(self.cache_path, md5[:2], md5[2:])
-
-    def get_frames(self):
-        with open(self.index_path) as f:
-            data = json.load(f)
-        return data.get("frames", [])
 
     def clean_data_dir(self):
         for file in os.listdir(self.data_path):
@@ -393,16 +679,21 @@ class LocalDataset:
         tries=5,
     ):
         """
-        Downloads the files listed in ``index.json`` of the local dataset.
+        Downloads the files listed in `frames.jsonl` or `index.json` of the
+        local dataset.
 
-        :param include_analytics: If `True`, download analytic data to ``analyticsData/``.
-        :param include_eight_bit: If `True`, download eight-bit images to ``data/``.
-        :param process_count: Number of concurrent download processes. Passing `None`
-            will use `os.cpu_count()`.
-        :param use_symlink: If `True`, use symbolic links instead of hardlinks when linking the
-            cache and data.
-        :param no_meter: If 'True', don't display file download progress meters.
-        :param tries: Specify a retry limit when recovering from connection errors.
+        :param include_analytics: If `True`, download analytic data to
+            `analyticsData/`.
+        :param include_eight_bit: If `True`, download eight-bit images to
+            `data/`.
+        :param process_count: Number of concurrent download processes. Passing
+            `None` will use `os.cpu_count()`.
+        :param use_symlink: If `True`, use symbolic links instead of hardlinks
+            when linking the cache and data.
+        :param no_meter: If 'True', don't display file download progress
+            meters.
+        :param tries: Specify a retry limit when recovering from connection
+            errors.
         """
         if include_eight_bit:
             os.makedirs(self.data_path, exist_ok=True)
@@ -410,7 +701,7 @@ class LocalDataset:
         if include_analytics:
             os.makedirs(self.analytics_path, exist_ok=True)
 
-        logger.info(f"Getting frames from index.json...")
+        logger.info(f"Getting frames from frames.jsonl / index.json...")
         frame_count = 0
         # Stores unique keys in order of insertion. This maps hash -> [links]
         # dict is unordered until Python version 3.7+ (we support 3.6)
@@ -442,8 +733,9 @@ class LocalDataset:
                 hash_links.append(path)
                 frame_count += 1
 
-        # If frames were deleted from index.json, we need to clear them out of
-        # the data directory. Because we have the cache, we can just delete everything.
+        # If frames were deleted from frames.jsonl or index.json, we need to
+        # clear them out of the data directory. Because we have the cache, we
+        # can just delete everything.
         self.clean_data_dir()
 
         logger.info(f"Checking cache...")
@@ -592,14 +884,17 @@ class LocalDataset:
 
         return LocalDataset(dataset._conservator, clone_path)
 
-    def validate_index(self):
-        """Validates that ``index.json`` matches the expected
-        JSON Schema."""
+    def validate_index(self, index_location=None):
+        """
+        Validates that the given ``index.json`` matches the expected JSON
+        Schema.
+        """
         schema_json = self.conservator.query(Query.validation_schema)
         schema = json.loads(schema_json)
 
+        idx_location = index_location if index_location else self.index_path
         try:
-            with open(self.index_path) as index:
+            with open(idx_location) as index:
                 index_data = json.load(index)
             jsonschema.validate(index_data, schema)
             return True
