@@ -40,6 +40,7 @@ class LocalDataset:
     :param path: The path to the local dataset. This should point to the root
         directory (containing ``index.json`` and JSONL files).
     """
+
     TRACKED_FILES = ("index.json", "dataset.jsonl", "frames.jsonl", "videos.jsonl")
     WRITABLE_TRACKED_FILES = ("index.json", "dataset.jsonl", "frames.jsonl")
 
@@ -50,7 +51,8 @@ class LocalDataset:
         if not os.path.exists(self.index_path):
             raise InvalidLocalDatasetPath(self.path)
         # The following three paths may not exist depending on how long ago the
-        # last dataset commit happened.
+        # last dataset commit happened.  "frames.jsonl" and "videos.jsonl"
+        # won't exist if there are no frames in the dataset.
         self.frames_path = os.path.join(self.path, "frames.jsonl")
         self.videos_path = os.path.join(self.path, "videos.jsonl")
         self.dataset_info_path = os.path.join(self.path, "dataset.jsonl")
@@ -124,8 +126,8 @@ class LocalDataset:
         """
         Rewrite `frames.jsonl` with the contents of `frames_list`.
         """
-        if not os.path.exists(self.frames_path):
-            logger.info("Skip write to frames.jsonl: File not found")
+        if not os.path.exists(self.dataset_info_path):
+            logger.info("Skip write to frames.jsonl: Repository missing dataset.jsonl")
             return
         with open(self.frames_path, "w") as f:
             for frame in frames_list:
@@ -224,22 +226,24 @@ class LocalDataset:
 
     def add_local_changes(self, skip_validation=False):
         """
-        Stages changes to ``index.json`` and ``associated_files`` for the next commit.
+        Stages changes to `index.json` or `*.jsonl` files and `associated_files` for the next commit.
 
-        :param skip_validation: By default, ``index.json`` is validated against a schema.
-            If the schema is incorrect and you're sure your ``index.json`` is valid, you can
+        :param skip_validation: By default, `index.json` or `*.jsonl` are validated against a schema.
+            If the schema is incorrect and you're sure your source files are valid, you can
             pass `True` to skip the check. In this case, please also submit a PR so we can
             update the schema.
         """
         if skip_validation:
             logger.warning(
-                "Skipping index.json check. Please submit a PR if the schema should be changed."
+                "Skipping validation. Please submit a PR if the schema should be changed."
             )
 
         branch_name = self.git_branch()
         if branch_name != "master":
-            logger.warning("Only the 'master' branch will accept changes.  Switch branches with " +
-                           "`git checkout master`.")
+            logger.warning(
+                "Only the 'master' branch will accept changes.  Switch branches with "
+                + "`git checkout master`."
+            )
             return None
 
         repo_status = self.git_status()
@@ -256,16 +260,28 @@ class LocalDataset:
         for added in repo_status["added"]["working"]:
             if os.path.dirname(added) == "associated_files" and os.path.isfile(added):
                 stage_files.append(added)
-            if not os.path.dirname(added) and added.endswith(".jsonl") and added in self.TRACKED_FILES:
-                if not jsonl_warning_printed:
-                    logger.warning("'%s' cannot be added to a repository.  Move it aside, commit the current " +
-                                   "repository state from the Conservator web site and pull the new commit to get " +
-                                   "this file into the repository.", added)
+            if added.endswith(".jsonl") and added in self.WRITABLE_TRACKED_FILES:
+                if added == "videos.jsonl":
+                    logger.warning(
+                        "Will not stage changes to read-only file '%s'.", added
+                    )
+                elif not os.path.exists(self.dataset_info_path):
+                    if not jsonl_warning_printed:
+                        logger.warning(
+                            "'%s' cannot be added to a repository.  Move it aside, commit the current "
+                            + "repository state from the Conservator web site and pull the new commit to "
+                            + "get this file into the repository.",
+                            added,
+                        )
                     jsonl_warning_printed = True
+                else:
+                    stage_files.append(added)
         if not stage_files:
-            logger.info("No changes to be staged: no writable tracked files (%s) were modified, " +
-                        "and no new files were found in 'associated_files'.",
-                        ", ".join([f"'{afile}'" for afile in self.WRITABLE_TRACKED_FILES]))
+            logger.info(
+                "No changes to be staged: no writable tracked files (%s) were modified, "
+                + "and no new files were found in 'associated_files'.",
+                ", ".join([f"'{afile}'" for afile in self.WRITABLE_TRACKED_FILES]),
+            )
             return None
 
         jsonl_change = False
@@ -274,28 +290,35 @@ class LocalDataset:
                 jsonl_change = True
                 break
         if jsonl_change and "index.json" in stage_files:
-            logger.error("Cannot commit changes to index.json along with changes to any file ending in '.jsonl'")
-            logger.error("Move JSONL and/or index.json files aside and recover the original versions using " +
-                         "`git restore <filename>`, then commit the conflicting changes separately.")
+            logger.error(
+                "Cannot commit changes to index.json along with changes to any file ending in '.jsonl'"
+            )
+            logger.error(
+                "Move JSONL and/or index.json files aside and recover the original versions using "
+                + "`git restore <filename>`, then commit the conflicting changes separately."
+            )
             sys.exit(-1)
 
         if not skip_validation:
             val_error = False
-            val_files = [valf for valf in stage_files if valf in self.WRITABLE_TRACKED_FILES]
+            val_files = [
+                valf for valf in stage_files if valf in self.WRITABLE_TRACKED_FILES
+            ]
             if jsonl_change:
                 val_ok = self.validate_jsonl()
             else:
                 val_ok = self.validate_index()
             if not val_ok:
-                logger.error("Not adding changes to %s. Doesn't match schema.", ", ".join(val_files))
+                logger.error(
+                    "Not adding changes to %s. Doesn't match schema.",
+                    ", ".join(val_files),
+                )
                 logger.error(
                     "You may be able to skip this check with '--skip-validation' if you're sure your file conforms."
                 )
                 sys.exit(-1)
 
-        return subprocess.call(
-            ["git", "add"] + stage_files, cwd=self.path
-        )
+        return subprocess.call(["git", "add"] + stage_files, cwd=self.path)
 
     def commit(self, message, verbose=True):
         """
@@ -359,8 +382,10 @@ class LocalDataset:
 
         branch_name = self.git_branch()
         if branch_name != "master":
-            logger.warning("Only the 'master' branch will accept image uploads.  Switch branches with " +
-                           "`git checkout master`.")
+            logger.warning(
+                "Only the 'master' branch will accept image uploads.  Switch branches with "
+                + "`git checkout master`."
+            )
             return
 
         # Editing the `frames.jsonl` file is the preferred method.  For
@@ -369,7 +394,7 @@ class LocalDataset:
         jsonl_update = True
         index = None
         dataset_info = self.get_dataset_info()
-        if os.path.exists(self.frames_path):
+        if os.path.exists(self.dataset_info_path):
             dataset_frames = self.get_frames()
         else:
             jsonl_update = False
@@ -474,8 +499,10 @@ class LocalDataset:
         using the `index.json` file.
         """
         dataset_frames = []
-        if os.path.exists(self.frames_path):
-            dataset_frames = LocalDataset.get_jsonl_data(self.frames_path)
+        if os.path.exists(self.dataset_info_path):
+            # An empty dataset won't have "frames.jsonl".
+            if os.path.exists(self.frames_path):
+                dataset_frames = LocalDataset.get_jsonl_data(self.frames_path)
         else:
             index = self.get_index()
             dataset_frames = index.get("frames", [])
@@ -494,7 +521,13 @@ class LocalDataset:
                 dataset_info = json.load(ds_f)
         else:
             index = self.get_index()
-            for info_field in ("datasetId", "datasetName", "owner", "version", "overwrite"):
+            for info_field in (
+                "datasetId",
+                "datasetName",
+                "owner",
+                "version",
+                "overwrite",
+            ):
                 dataset_info[info_field] = index[info_field]
         return dataset_info
 
