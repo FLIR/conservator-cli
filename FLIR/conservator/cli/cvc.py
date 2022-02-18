@@ -2,7 +2,6 @@ import functools
 import os
 import subprocess
 import sys
-import tempfile
 
 import click
 import logging
@@ -11,7 +10,6 @@ from click import get_current_context
 
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
-from FLIR.conservator.jsonl_to_index_json import jsonl_to_json
 
 
 def pass_valid_local_dataset(func):
@@ -89,7 +87,9 @@ def checkout_(local_dataset, commit):
     local_dataset.checkout(commit)
 
 
-@main.command(help="Stage images for uploading and adding to frames.jsonl or index.json")
+@main.command(
+    help="Stage images for uploading and adding to frames.jsonl or index.json"
+)
 @click.argument("paths", type=click.Path(exists=True), nargs=-1)
 @pass_valid_local_dataset
 def add(local_dataset, paths):
@@ -101,7 +101,9 @@ def add(local_dataset, paths):
     help="Commit changes to JSONL or index.json and associated_files with the given message",
 )
 @click.argument("message")
-@click.option("--skip-validation", is_flag=True, help="Skip frames.jsonl / index.json validation.")
+@click.option(
+    "--skip-validation", is_flag=True, help="Skip frames.jsonl / index.json validation."
+)
 @pass_valid_local_dataset
 def commit_(local_dataset, message, skip_validation):
     local_dataset.add_local_changes(skip_validation=skip_validation)
@@ -122,11 +124,14 @@ def pull(local_dataset):
     click.echo("To download media, use cvc download.")
 
 
-@main.command(help="Show changes in JSONL, index.json and associated_files since last commit")
+@main.command(
+    help="Show changes in JSONL, index.json and associated_files since last commit"
+)
 @pass_valid_local_dataset
 def diff(local_dataset):
     subprocess.call(
-        ["git", "diff", "*.jsonl", "index.json", "associated_files"], cwd=local_dataset.path
+        ["git", "diff", "*.jsonl", "index.json", "associated_files"],
+        cwd=local_dataset.path,
     )
 
 
@@ -150,7 +155,8 @@ def show(local_dataset, hash):
 @pass_valid_local_dataset
 def status(local_dataset):
     subprocess.call(
-        ["git", "status", "*.jsonl", "index.json", "associated_files"], cwd=local_dataset.path
+        ["git", "status", "*.jsonl", "index.json", "associated_files"],
+        cwd=local_dataset.path,
     )
     images = local_dataset.get_staged_images()
     if len(images) == 0:
@@ -159,7 +165,9 @@ def status(local_dataset):
 
     for image_path in images:
         click.echo(f"Staged: {image_path}")
-    click.echo("Use 'cvc upload' to upload these images and add them to frames.jsonl or index.json")
+    click.echo(
+        "Use 'cvc upload' to upload these images and add them to frames.jsonl or index.json"
+    )
 
 
 @main.command(help="Download media files from frames.jsonl or index.json")
@@ -230,6 +238,7 @@ def validate(local_dataset, skip_index):
     elif skip_index:
         click.echo("No .jsonl files found.")
 
+
 @main.command(help="Upload staged images and add them to frames.jsonl or index.json")
 @click.option(
     "--skip-copy",
@@ -254,7 +263,9 @@ def upload(local_dataset, skip_copy, tries):
     "and associated_files with message and push"
 )
 @click.argument("message")
-@click.option("--skip-validation", is_flag=True, help="Skip JSONL / index.json validation.")
+@click.option(
+    "--skip-validation", is_flag=True, help="Skip JSONL / index.json validation."
+)
 @click.option(
     "-t",
     "--tries",
