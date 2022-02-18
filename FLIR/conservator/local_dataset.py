@@ -136,12 +136,8 @@ class LocalDataset:
     def git_branch(self):
         """
         Return the git branch name for the dataset repository, if any.
-
-        An empty string will be returned if the repository is in "detached
-        head" state.
         """
-        # --show-current prints nothing for detached head.
-        branch_args = ["git", "branch", "--show-current"]
+        branch_args = ["git", "branch"]
         branch_proc = subprocess.run(
             branch_args,
             cwd=self.path,
@@ -153,7 +149,11 @@ class LocalDataset:
             logger.error("'%s' failed:\n%s", " ".join(branch_args), branch_proc.stdout)
             raise RuntimeError(f"`git branch` failed for {self.path}")
 
-        return branch_proc.stdout.strip()
+        branch_name = ""
+        for bline in branch_proc.stdout.splitlines():
+            if bline.startswith("*"):
+                branch_name = bline[2:].rstrip()
+        return branch_name
 
     def git_status(self):
         """
