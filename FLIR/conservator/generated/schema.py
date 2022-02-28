@@ -19,12 +19,12 @@ class AllowedLabelCharacters(sgqlc.types.Scalar):
 
 class AnnotationImportState(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("completed", "failed", "processing", "retrying", "uploading")
+    __choices__ = ("uploading", "processing", "retrying", "completed", "failed")
 
 
 class AnnotationSourceType(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("human", "machine", "unknown")
+    __choices__ = ("human", "unknown", "machine")
 
 
 class ArrayUpdateMode(sgqlc.types.Enum):
@@ -34,7 +34,7 @@ class ArrayUpdateMode(sgqlc.types.Enum):
 
 class AttributePrototypeType(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("checklist", "dropdown", "number", "radio", "text")
+    __choices__ = ("radio", "checklist", "dropdown", "text", "number")
 
 
 class AttributeSource(sgqlc.types.Enum):
@@ -47,22 +47,22 @@ Boolean = sgqlc.types.Boolean
 
 class CollectionSQARunStatus(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("complete", "failed", "pending", "processing", "queued")
+    __choices__ = ("pending", "queued", "processing", "failed", "complete")
 
 
 class DatasheetJobState(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = (
-        "completed",
         "created",
-        "downloading",
-        "failed",
-        "nntc_dynamic",
-        "nntc_static",
-        "processing",
         "queued",
         "received",
+        "downloading",
+        "processing",
+        "nntc_static",
+        "nntc_dynamic",
         "uploading",
+        "failed",
+        "completed",
     )
 
 
@@ -71,7 +71,7 @@ Date = FLIR.conservator.generated.date.Date
 
 class FavoriteAssetType(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("collection", "dataset", "datasetFrame", "frame", "image", "video")
+    __choices__ = ("video", "frame", "datasetFrame", "dataset", "collection", "image")
 
 
 Float = sgqlc.types.Float
@@ -79,7 +79,7 @@ Float = sgqlc.types.Float
 
 class GroupType(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("admin", "common", "everyone")
+    __choices__ = ("admin", "everyone", "common")
 
 
 ID = sgqlc.types.ID
@@ -89,7 +89,7 @@ Int = sgqlc.types.Int
 
 class Spectrum(sgqlc.types.Enum):
     __schema__ = schema
-    __choices__ = ("Mixed", "Other", "RGB", "Thermal", "Unknown")
+    __choices__ = ("RGB", "Thermal", "Other", "Mixed", "Unknown")
 
 
 String = sgqlc.types.String
@@ -102,12 +102,12 @@ class StringLowerCase(sgqlc.types.Scalar):
 class VideoState(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = (
-        "adminFailed",
-        "completed",
-        "failed",
+        "uploading",
         "processing",
         "retrying",
-        "uploading",
+        "completed",
+        "failed",
+        "adminFailed",
     )
 
 
@@ -313,6 +313,8 @@ class AnnotationCreate(sgqlc.types.Input):
         "custom",
         "source",
         "attributes",
+        "qa_status",
+        "qa_status_note",
     )
     labels = sgqlc.types.Field(
         sgqlc.types.non_null(
@@ -333,6 +335,8 @@ class AnnotationCreate(sgqlc.types.Input):
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of(AddAttributeInput), graphql_name="attributes"
     )
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
 
 class AnnotationSourceInput(sgqlc.types.Input):
@@ -364,6 +368,8 @@ class AnnotationUpdate(sgqlc.types.Input):
         "bounding_polygon",
         "point",
         "target_id",
+        "qa_status",
+        "qa_status_note",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     labels = sgqlc.types.Field(
@@ -378,6 +384,8 @@ class AnnotationUpdate(sgqlc.types.Input):
     )
     point = sgqlc.types.Field("InputPoint", graphql_name="point")
     target_id = sgqlc.types.Field(String, graphql_name="targetId")
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
 
 class ArchiveDatasetInput(sgqlc.types.Input):
@@ -426,6 +434,8 @@ class CreateDatasetAnnotationInput(sgqlc.types.Input):
         "source",
         "attributes",
         "custom",
+        "qa_status",
+        "qa_status_note",
     )
     dataset_frame_id = sgqlc.types.Field(
         sgqlc.types.non_null(ID), graphql_name="datasetFrameId"
@@ -449,11 +459,14 @@ class CreateDatasetAnnotationInput(sgqlc.types.Input):
         sgqlc.types.list_of(AddAttributeInput), graphql_name="attributes"
     )
     custom = sgqlc.types.Field(String, graphql_name="custom")
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
 
 class CreateDatasetInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("name", "collection_ids")
+    __field_names__ = ("id", "name", "collection_ids")
+    id = sgqlc.types.Field(ID, graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     collection_ids = sgqlc.types.Field(
         sgqlc.types.list_of(String), graphql_name="collectionIds"
@@ -1001,6 +1014,8 @@ class UpdateDatasetAnnotationInput(sgqlc.types.Input):
         "bounding_polygon",
         "point",
         "target_id",
+        "qa_status",
+        "qa_status_note",
     )
     dataset_annotation_id = sgqlc.types.Field(
         sgqlc.types.non_null(ID), graphql_name="datasetAnnotationId"
@@ -1019,6 +1034,8 @@ class UpdateDatasetAnnotationInput(sgqlc.types.Input):
     )
     point = sgqlc.types.Field(InputPoint, graphql_name="point")
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
 
 class UpdateDatasetInput(sgqlc.types.Input):
@@ -1173,6 +1190,8 @@ class Annotation(sgqlc.types.Type):
         "point",
         "custom_metadata",
         "attributes",
+        "qa_status",
+        "qa_status_note",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     target_id = sgqlc.types.Field(String, graphql_name="targetId")
@@ -1194,6 +1213,8 @@ class Annotation(sgqlc.types.Type):
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of("Attribute"), graphql_name="attributes"
     )
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
 
 class AnnotationMeta(sgqlc.types.Type):
@@ -1818,6 +1839,8 @@ class DatasetAnnotation(sgqlc.types.Type):
         "source",
         "custom_metadata",
         "attributes",
+        "qa_status",
+        "qa_status_note",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     target_id = sgqlc.types.Field(String, graphql_name="targetId")
@@ -1839,6 +1862,8 @@ class DatasetAnnotation(sgqlc.types.Type):
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of(Attribute), graphql_name="attributes"
     )
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
 
 class DatasetCreationStatus(sgqlc.types.Type):
@@ -2594,6 +2619,8 @@ class Image(sgqlc.types.Type):
         "has_write_access",
         "has_admin_access",
         "processed_with_agc",
+        "qa_status",
+        "qa_status_note",
         "attached_label_set_ids",
         "attached_label_sets",
     )
@@ -2711,6 +2738,8 @@ class Image(sgqlc.types.Type):
         sgqlc.types.non_null(Boolean), graphql_name="hasAdminAccess"
     )
     processed_with_agc = sgqlc.types.Field(String, graphql_name="processedWithAGC")
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
     attached_label_set_ids = sgqlc.types.Field(
         sgqlc.types.list_of(ID), graphql_name="attachedLabelSetIds"
     )
@@ -2796,6 +2825,10 @@ class Mutation(sgqlc.types.Type):
         "remove_annotations",
         "accept_annotations",
         "move_annotations",
+        "approve_annotation",
+        "request_changes_annotation",
+        "unset_qa_status_annotation",
+        "update_qa_status_note_annotation",
         "sign_in",
         "sign_out",
         "create_collection",
@@ -2845,6 +2878,10 @@ class Mutation(sgqlc.types.Type):
         "update_dataset_annotation",
         "delete_dataset_annotations",
         "move_dataset_annotations",
+        "approve_dataset_annotation",
+        "request_changes_dataset_annotation",
+        "unset_qa_status_dataset_annotation",
+        "update_qa_status_note_dataset_annotation",
         "flag_dataset_frame",
         "unflag_dataset_frame",
         "mark_dataset_frame_empty",
@@ -3159,6 +3196,64 @@ class Mutation(sgqlc.types.Type):
                     "input",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(MoveAnnotationsInput),
+                        graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    approve_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(Annotation),
+        graphql_name="approveAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    request_changes_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(Annotation),
+        graphql_name="requestChangesAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    unset_qa_status_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(Annotation),
+        graphql_name="unsetQaStatusAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    update_qa_status_note_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(Annotation),
+        graphql_name="updateQaStatusNoteAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(UpdateQaStatusNoteInput),
                         graphql_name="input",
                         default=None,
                     ),
@@ -4075,6 +4170,64 @@ class Mutation(sgqlc.types.Type):
                     "input",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(MoveAnnotationsInput),
+                        graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    approve_dataset_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(DatasetAnnotation),
+        graphql_name="approveDatasetAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    request_changes_dataset_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(DatasetAnnotation),
+        graphql_name="requestChangesDatasetAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    unset_qa_status_dataset_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(DatasetAnnotation),
+        graphql_name="unsetQaStatusDatasetAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    update_qa_status_note_dataset_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(DatasetAnnotation),
+        graphql_name="updateQaStatusNoteDatasetAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(UpdateQaStatusNoteInput),
                         graphql_name="input",
                         default=None,
                     ),
