@@ -2023,18 +2023,18 @@ preferred method of working with local datasets.</p>
 <li><p><strong>conservator</strong> – A <a class="reference internal" href="#FLIR.conservator.conservator.Conservator" title="FLIR.conservator.conservator.Conservator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Conservator</span></code></a>
 instance to use for uploading new images.</p></li>
 <li><p><strong>path</strong> – The path to the local dataset. This should point to the root
-directory (containing <code class="docutils literal notranslate"><span class="pre">index.json</span></code>).</p></li>
+directory (containing <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and JSONL files).</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.add_local_changes">
 <span class="sig-name descname"><span class="pre">add_local_changes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip_validation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.add_local_changes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stages changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> for the next commit.</p>
+<dd><p>Stages changes to <cite>index.json</cite> or <cite>*.jsonl</cite> files and <cite>associated_files</cite> for the next commit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>skip_validation</strong> – By default, <code class="docutils literal notranslate"><span class="pre">index.json</span></code> is validated against a schema.
-If the schema is incorrect and you’re sure your <code class="docutils literal notranslate"><span class="pre">index.json</span></code> is valid, you can
+<dd class="field-odd"><p><strong>skip_validation</strong> – By default, <cite>index.json</cite> or <cite>*.jsonl</cite> are validated against a schema.
+If the schema is incorrect and you’re sure your source files are valid, you can
 pass <cite>True</cite> to skip the check. In this case, please also submit a PR so we can
 update the schema.</p>
 </dd>
@@ -2044,8 +2044,8 @@ update the schema.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.checkout">
 <span class="sig-name descname"><span class="pre">checkout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.checkout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks out a specific commit. This will delete any local changes in <code class="docutils literal notranslate"><span class="pre">index.json</span></code>
-or <code class="docutils literal notranslate"><span class="pre">associated_files</span></code>.</p>
+<dd><p>Checks out a specific commit. This will delete any local changes in
+<cite>index.json</cite> or <cite>associated_files</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
@@ -2090,21 +2090,42 @@ immediately available.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.download">
 <span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_analytics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_eight_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_symlink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the files listed in <code class="docutils literal notranslate"><span class="pre">index.json</span></code> of the local dataset.</p>
+<dd><p>Downloads the files listed in <cite>frames.jsonl</cite> or <cite>index.json</cite> of the
+local dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to <code class="docutils literal notranslate"><span class="pre">analyticsData/</span></code>.</p></li>
-<li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to <code class="docutils literal notranslate"><span class="pre">data/</span></code>.</p></li>
-<li><p><strong>process_count</strong> – Number of concurrent download processes. Passing <cite>None</cite>
-will use <cite>os.cpu_count()</cite>.</p></li>
-<li><p><strong>use_symlink</strong> – If <cite>True</cite>, use symbolic links instead of hardlinks when linking the
-cache and data.</p></li>
-<li><p><strong>no_meter</strong> – If ‘True’, don’t display file download progress meters.</p></li>
-<li><p><strong>tries</strong> – Specify a retry limit when recovering from connection errors.</p></li>
+<li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to
+<cite>analyticsData/</cite>.</p></li>
+<li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to
+<cite>data/</cite>.</p></li>
+<li><p><strong>process_count</strong> – Number of concurrent download processes. Passing
+<cite>None</cite> will use <cite>os.cpu_count()</cite>.</p></li>
+<li><p><strong>use_symlink</strong> – If <cite>True</cite>, use symbolic links instead of hardlinks
+when linking the cache and data.</p></li>
+<li><p><strong>no_meter</strong> – If ‘True’, don’t display file download progress
+meters.</p></li>
+<li><p><strong>tries</strong> – Specify a retry limit when recovering from connection
+errors.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.get_dataset_info">
+<span class="sig-name descname"><span class="pre">get_dataset_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_dataset_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dataset’s top-level info.</p>
+<p>Collect the data from <cite>dataset.jsonl</cite> if present, else fall back to
+using the <cite>index.json</cite> file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.get_frames">
+<span class="sig-name descname"><span class="pre">get_frames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the frames array for the dataset.</p>
+<p>Collect the data from <cite>frames.jsonl</cite> if present, else fall back to
+using the <cite>index.json</cite> file.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2123,10 +2144,16 @@ and get the dimensions.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.get_jsonl_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_jsonl_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jsonl_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_jsonl_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a single JSON list object from a JSONL source file.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_max_frame_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the maximum frame index in a dataset’s <cite>index</cite>.</p>
-<p>This only checks “loose” frames, that aren’t a part of a specific video.</p>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_max_frame_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_frames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the maximum frame index in a dataset’s frames.</p>
+<p>This only counts frames uploaded directly to the dataset.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2136,9 +2163,62 @@ and get the dimensions.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.get_videos">
+<span class="sig-name descname"><span class="pre">get_videos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.get_videos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the videos array for the dataset.</p>
+<p>Collect the data from <cite>videos.jsonl</cite> if present, else fall back to
+using the <cite>index.json</cite> file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.git_branch">
+<span class="sig-name descname"><span class="pre">git_branch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.git_branch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the git branch name for the dataset repository, if any.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.git_status">
+<span class="sig-name descname"><span class="pre">git_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.git_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the git branch and status for the dataset repository.</p>
+<p>Returned table format:</p>
+<p>added – contains a dictionary:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“staged” contains a list of new files that have been staged.</p></li>
+<li><dl class="simple">
+<dt>“working” contains a list of untracked files in the working</dt><dd><p>directory.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>modified – contains a dictionary:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“staged” contains a list of modified files that have been staged.</p></li>
+<li><dl class="simple">
+<dt>“working” contains a list of modified files in the working</dt><dd><p>directory.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<dl class="simple">
+<dt>other – contains a list of dictionaries; for each dictionary in the</dt><dd><p>list:</p>
+<ul class="simple">
+<li><p>“index” contains the index status character (e.g. ‘A’, ‘D’, etc).</p></li>
+<li><p>“working” contains the working directory status character.</p></li>
+<li><p>“source” contains the file name associated with the status.</p></li>
+<li><p>A rename or copy status will also contain a “dest” key.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.pull">
 <span class="sig-name descname"><span class="pre">pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.pull" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pulls the latest <code class="docutils literal notranslate"><span class="pre">index.json</span></code>.</p>
+<dd><p>Pulls the latest repository state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
@@ -2162,7 +2242,8 @@ and get the dimensions.</p>
 <span class="sig-name descname"><span class="pre">push_staged_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy_to_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Push the staged images.</p>
 <p>This reads the staged image paths, uploads them, adds metadata
-to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>, and deletes the staged image paths.</p>
+to <cite>index.json</cite> (or <cite>frames.jsonl</cite> if it exists), and deletes the
+staged image paths.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2183,9 +2264,22 @@ downloading the images back from conservator (but without downloading).</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.validate_index">
-<span class="sig-name descname"><span class="pre">validate_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.validate_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validates that <code class="docutils literal notranslate"><span class="pre">index.json</span></code> matches the expected
-JSON Schema.</p>
+<span class="sig-name descname"><span class="pre">validate_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.validate_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates that the given <code class="docutils literal notranslate"><span class="pre">index.json</span></code> matches the expected JSON
+Schema.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.validate_jsonl">
+<span class="sig-name descname"><span class="pre">validate_jsonl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.validate_jsonl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the contents of the .jsonl files into <cite>index.json</cite> format and
+validate the result.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.write_frames_to_jsonl">
+<span class="sig-name descname"><span class="pre">write_frames_to_jsonl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.write_frames_to_jsonl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewrite <cite>frames.jsonl</cite> with the contents of <cite>frames_list</cite>.</p>
 </dd></dl>
 
 </dd></dl>

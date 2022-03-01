@@ -539,6 +539,8 @@
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.get_commit_history">get_commit_history() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
 </li>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.get_dataset_info">get_dataset_info() (FLIR.conservator.local_dataset.LocalDataset method)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.get_datasets">get_datasets() (FLIR.conservator.wrappers.collection.Collection method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.connection.ConservatorConnection.get_domain">get_domain() (FLIR.conservator.connection.ConservatorConnection method)</a>
@@ -551,12 +553,16 @@
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.image.Image.get_frame">get_frame() (FLIR.conservator.wrappers.image.Image method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.wrappers.media.MediaType.get_frame_by_index">get_frame_by_index() (FLIR.conservator.wrappers.media.MediaType method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.get_frames">get_frames() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.get_frames">get_frames() (FLIR.conservator.local_dataset.LocalDataset method)</a>
+
+      <ul>
+        <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.get_frames">(FLIR.conservator.wrappers.dataset.Dataset method)</a>
 </li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.get_frames_reversed">get_frames_reversed() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.wrappers.dataset.Dataset.get_git_url">get_git_url() (FLIR.conservator.wrappers.dataset.Dataset method)</a>
@@ -566,6 +572,8 @@
       <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.get_images">get_images() (FLIR.conservator.wrappers.collection.Collection method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.get_index">get_index() (FLIR.conservator.local_dataset.LocalDataset method)</a>
+</li>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.get_jsonl_data">get_jsonl_data() (FLIR.conservator.local_dataset.LocalDataset static method)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index">get_max_frame_index() (FLIR.conservator.local_dataset.LocalDataset static method)</a>
 </li>
@@ -585,9 +593,17 @@
 </li>
       <li><a href="api.html#FLIR.conservator.conservator.Conservator.get_user">get_user() (FLIR.conservator.conservator.Conservator method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.get_videos">get_videos() (FLIR.conservator.wrappers.collection.Collection method)</a>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.get_videos">get_videos() (FLIR.conservator.local_dataset.LocalDataset method)</a>
+
+      <ul>
+        <li><a href="api.html#FLIR.conservator.wrappers.collection.Collection.get_videos">(FLIR.conservator.wrappers.collection.Collection method)</a>
 </li>
+      </ul></li>
       <li><a href="api.html#FLIR.conservator.wrappers.type_proxy.TypeProxy.get_wrapping_type">get_wrapping_type() (FLIR.conservator.wrappers.type_proxy.TypeProxy static method)</a>
+</li>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.git_branch">git_branch() (FLIR.conservator.local_dataset.LocalDataset method)</a>
+</li>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.git_status">git_status() (FLIR.conservator.local_dataset.LocalDataset method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -908,10 +924,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.validate_index">validate_index() (FLIR.conservator.local_dataset.LocalDataset method)</a>
 </li>
-      <li><a href="api.html#FLIR.conservator.wrappers.media.MediaType.verify_md5">verify_md5() (FLIR.conservator.wrappers.media.MediaType static method)</a>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.validate_jsonl">validate_jsonl() (FLIR.conservator.local_dataset.LocalDataset method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#FLIR.conservator.wrappers.media.MediaType.verify_md5">verify_md5() (FLIR.conservator.wrappers.media.MediaType static method)</a>
+</li>
       <li><a href="api.html#FLIR.conservator.wrappers.video.Video">Video (class in FLIR.conservator.wrappers.video)</a>
 </li>
       <li><a href="api.html#FLIR.conservator.managers.VideoManager">VideoManager (class in FLIR.conservator.managers)</a>
@@ -924,11 +942,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.managers.media.MediaTypeManager.wait_for_processing">wait_for_processing() (FLIR.conservator.managers.media.MediaTypeManager method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.paginated_query.PaginatedQuery.with_fields">with_fields() (FLIR.conservator.paginated_query.PaginatedQuery method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#FLIR.conservator.wrappers.type_proxy.TypeProxy.wrap">wrap() (FLIR.conservator.wrappers.type_proxy.TypeProxy static method)</a>
+</li>
+      <li><a href="api.html#FLIR.conservator.local_dataset.LocalDataset.write_frames_to_jsonl">write_frames_to_jsonl() (FLIR.conservator.local_dataset.LocalDataset method)</a>
 </li>
   </ul></td>
 </tr></table>
