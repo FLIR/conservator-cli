@@ -58,4 +58,13 @@ def base_convert(b, n):
 
 
 def chunks(list, size):
+    """
+    Splits a :param list: into lists of :param size:.
+    Returns an iterator of these lists.
+    Once the input list is exhausted, the last list in the output
+    iterator will be padded by None's to make up the size difference.
+    e.g. chunks(['a', 'b', 'c'], 2) will return an iterator containing
+    ['a', 'b'] and ['c', None]
+    Adapted from  https://stackoverflow.com/a/312644
+    """
     return zip_longest(*[iter(list)]*size, fillvalue=None)
