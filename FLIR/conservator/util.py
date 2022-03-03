@@ -1,6 +1,8 @@
 import hashlib
 import logging
 
+from itertools import zip_longest
+
 logger = logging.getLogger(__name__)
 
 
@@ -53,3 +55,7 @@ def base_convert(b, n):
         output.append(r)
         n = int(n / b)
     return output
+
+
+def chunks(list, size):
+    return zip_longest(*[iter(list)]*size, fillvalue=None)

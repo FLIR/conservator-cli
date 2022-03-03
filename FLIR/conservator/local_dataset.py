@@ -17,7 +17,7 @@ from PIL import Image
 
 from FLIR.conservator.file_transfers import FileDownloadException
 from FLIR.conservator.generated.schema import Query
-from FLIR.conservator.util import md5sum_file
+from FLIR.conservator.util import md5sum_file, chunks
 from FLIR.conservator.jsonl_to_index_json import jsonl_to_json
 
 logger = logging.getLogger(__name__)
@@ -401,57 +401,88 @@ class LocalDataset:
             index = self.get_index()
             dataset_frames = index.get("frames", [])
         next_index = LocalDataset.get_max_frame_index(dataset_frames) + 1
-        for path in image_paths:
-            image_info = LocalDataset.get_image_info(path)
-            if image_info is None:
-                logger.error(f"Skipping '{path}'")
-                continue
 
-            md5 = image_info["md5"]
-            if not self.conservator.dvc_hash_exists(md5):
-                self.upload_image(path, md5, tries=tries)
-            else:
-                logger.debug(f"File '{path}' already exists on conservator, skipping")
+        video_id = dataset_info["datasetId"]
 
-            # Dataset frames uploaded in this manner do not have a video.
-            # They use the dataset's ID in place of a video ID.
-            video_id = dataset_info["datasetId"]
-            frame_id = self.conservator.generate_id()
+        image_chunks = chunks(image_paths, 100)
 
-            del image_info["filename"]
+        for chunk in image_chunks:
+            paths = list(filter(lambda path: path is not None, chunk))
+            logger.debug(f"Processing next {len(paths)} images...")
 
-            new_frame = {
-                **image_info,
-                "datasetFrameId": frame_id,
-                "isEmpty": False,
-                "isFlagged": False,
-                "annotations": [],
-                "videoMetadata": {
-                    "frameId": frame_id,
-                    "videoId": video_id,
-                    "frameIndex": next_index,
-                },
-            }
-            dataset_frames.append(new_frame)
-            logger.debug(f"Added new DatasetFrame with id {frame_id}")
+            md5_list = []
 
-            if copy_to_data:
-                os.makedirs(self.data_path, exist_ok=True)
+            file_dict = {}
 
-                # First copy it to the cache:
-                cache_path = self.get_cache_path(md5)
-                cache_dir = os.path.split(cache_path)[0]
-                os.makedirs(cache_dir, exist_ok=True)
-                logger.debug(f"Copying file from '{path}' to '{cache_path}'")
-                shutil.copyfile(path, cache_path)
+            for path in paths:
+                image_info = LocalDataset.get_image_info(path)
+                if image_info is None:
+                    logger.error(f"Skipping '{path}'")
+                    continue
+                md5_list.append(image_info["md5"])
 
-                # Then link to data path:
-                filename = f"video-{video_id}-frame-{next_index:06d}-{frame_id}.jpg"
-                data_path = os.path.join(self.data_path, filename)
-                logger.debug(f"Linking '{data_path}' to '{cache_path}'")
-                os.link(cache_path, data_path)
+                file_dict[image_info["md5"]] = image_info
 
-            next_index += 1
+            md5_check_result = self.conservator.query(
+                Query.check_frames_by_md5, md5s=md5_list
+            )
+
+            for result in md5_check_result:
+
+                logger.debug(result)
+
+                image_data = file_dict[result.md5]
+
+                if result.exists == "Invalid":
+                    continue
+                elif result.exists == "False":
+                    logger.debug(
+                        f"File '{image_data['filename']}' doesn't exist on conservator, uploading"
+                    )
+                    self.upload_image(image_data["filename"], result.md5, tries=tries)
+                else:
+                    logger.debug(
+                        f"File '{image_data['filename']}' already exists on conservator, skipping"
+                    )
+
+                frame_id = self.conservator.generate_id()
+
+                file_path = image_data["filename"]
+
+                del image_data["filename"]
+
+                new_frame = {
+                    **image_data,
+                    "datasetFrameId": frame_id,
+                    "isEmpty": False,
+                    "isFlagged": False,
+                    "annotations": [],
+                    "videoMetadata": {
+                        "frameId": frame_id,
+                        "videoId": video_id,
+                        "frameIndex": next_index,
+                    },
+                }
+                dataset_frames.append(new_frame)
+                logger.debug(f"Added new DatasetFrame with id {frame_id}")
+
+                if copy_to_data:
+                    os.makedirs(self.data_path, exist_ok=True)
+
+                    # First copy it to the cache:
+                    cache_path = self.get_cache_path(result.md5)
+                    cache_dir = os.path.split(cache_path)[0]
+                    os.makedirs(cache_dir, exist_ok=True)
+                    logger.debug(f"Copying file from '{file_path}' to '{cache_path}'")
+                    shutil.copyfile(file_path, cache_path)
+
+                    # Then link to data path:
+                    filename = f"video-{video_id}-frame-{next_index:06d}-{frame_id}.jpg"
+                    data_path = os.path.join(self.data_path, filename)
+                    logger.debug(f"Linking '{data_path}' to '{cache_path}'")
+                    os.link(cache_path, data_path)
+
+                next_index += 1
 
         if jsonl_update:
             self.write_frames_to_jsonl(dataset_frames)
