@@ -42,7 +42,7 @@ pipeline {
       environment {
         AWS_DOMAIN = credentials("docker-aws-domain-conservator")
         // version of conservator known to have working KInD config
-        KIND_GIT_HASH = "47c589dca2456ecadc68c70fe8f577aadffaa7e8"
+        KIND_GIT_HASH = "745de5b4a1b3ef504f2f43b2ecaf8e88bc43de8d"
       }
       stages {
         stage("Create kind cluster") {
