@@ -12,6 +12,8 @@ There are currently two test suites:
  - Integration tests, for checking that CLI works with a Conservator instance.
    This requires that a local instance of Conservator is running, via docker or k8s.
 
+**Note that running the integration tests will wipe all data from your Conservator database, apart from the `organizations`, `allowedDomains`, and `groups` collections.**
+
 Jenkins runs both. For the second, we use the latest production image.
 
 To run tests manually, from the root directory:
