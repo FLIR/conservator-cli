@@ -189,7 +189,7 @@ class ConservatorFileTransfers:
                     )
                     time.sleep(retries)  # Timeout increases per retry.
                     continue
-            raise FileUploadException(url)
+            raise FileUploadException(f"url={url} response={response}))")
         logger.info(f"Completed upload of '{path}'")
         return response
 

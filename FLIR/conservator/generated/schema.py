@@ -3052,7 +3052,7 @@ class Mutation(sgqlc.types.Type):
         "delete_segment",
         "generate_api_key",
         "update_user_role",
-        "delete_user",
+        "delete_users",
         "update_user",
         "create_user",
         "set_local_password",
@@ -6121,15 +6121,17 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    delete_user = sgqlc.types.Field(
-        sgqlc.types.non_null("User"),
-        graphql_name="deleteUser",
+    delete_users = sgqlc.types.Field(
+        sgqlc.types.list_of(sgqlc.types.non_null("User")),
+        graphql_name="deleteUsers",
         args=sgqlc.types.ArgDict(
             (
                 (
-                    "id",
+                    "ids",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
+                        sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID)),
+                        graphql_name="ids",
+                        default=None,
                     ),
                 ),
             )
@@ -6236,28 +6238,32 @@ class Mutation(sgqlc.types.Type):
         ),
     )
     sign_in_lock = sgqlc.types.Field(
-        sgqlc.types.non_null("User"),
+        sgqlc.types.list_of(sgqlc.types.non_null("User")),
         graphql_name="signInLock",
         args=sgqlc.types.ArgDict(
             (
                 (
-                    "id",
+                    "ids",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
+                        sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID)),
+                        graphql_name="ids",
+                        default=None,
                     ),
                 ),
             )
         ),
     )
     sign_in_un_lock = sgqlc.types.Field(
-        sgqlc.types.non_null("User"),
+        sgqlc.types.list_of(sgqlc.types.non_null("User")),
         graphql_name="signInUnLock",
         args=sgqlc.types.ArgDict(
             (
                 (
-                    "id",
+                    "ids",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
+                        sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID)),
+                        graphql_name="ids",
+                        default=None,
                     ),
                 ),
             )
@@ -6285,10 +6291,10 @@ class Mutation(sgqlc.types.Type):
         args=sgqlc.types.ArgDict(
             (
                 (
-                    "user_id",
+                    "ids",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID),
-                        graphql_name="userId",
+                        sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID)),
+                        graphql_name="ids",
                         default=None,
                     ),
                 ),

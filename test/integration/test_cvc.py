@@ -79,8 +79,18 @@ def test_cvc_clone_download(default_conservator, tmp_cwd, test_data):
     video = default_conservator.get_media_instance_from_id(media_id)
     video.populate("frames")
     dataset.add_frames(video.frames)
-    dataset.commit("Add video frames to dataset")
-    sleep(5)
+    commit_message = "Add video frames to dataset"
+    dataset.commit(commit_message)
+
+    # wait up to 30 sec for commit to appear.
+    history = []
+    for i in range(30):
+        sleep(1)
+        history = dataset.get_commit_history(fields="short_message")
+        if history[0].short_message == commit_message:
+            break
+    assert history
+    assert history[0].short_message == commit_message
 
     cvc("clone", dataset.id)
     os.chdir("My dataset")
