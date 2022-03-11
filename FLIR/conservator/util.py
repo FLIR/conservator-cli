@@ -67,4 +67,4 @@ def chunks(list, size):
     ['a', 'b'] and ['c', None]
     Adapted from  https://stackoverflow.com/a/312644
     """
-    return zip_longest(*[iter(list)]*size, fillvalue=None)
+    return zip_longest(*[iter(list)] * size, fillvalue=None)
