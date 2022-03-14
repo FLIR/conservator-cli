@@ -59,11 +59,15 @@ def base_convert(b, n):
 
 def chunks(list, size):
     """
-    :param list: list to be split into smaller "chunk" lists
-    :param size: the desired size of the chunk lists
-    :return: an iterator of these lists.
+    Simple one-line function to divide a list of items into chunks
+    of a specified size.
+
     Once the input list is exhausted, the last list in the output
     iterator will be padded by None's to make up the size difference.
+
+    :param list: list to be split into smaller "chunk" lists
+    :param size: the desired size of the chunk lists
+    :return: an iterator of these chunks.
 
     :Example:
 
