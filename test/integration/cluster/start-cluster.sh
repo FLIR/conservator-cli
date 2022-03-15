@@ -29,7 +29,7 @@ export AWS_DOMAIN AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 
 # IMAGE is used in kubernetes templates as well as loading the image, must be literal
 sed "s:\$AWS_DOMAIN:$AWS_DOMAIN:" kind-init.env.tmpl > kind-init.env
-. kind-init.env
+. ./kind-init.env
 
 echo "** Pull Conservator Image"
 env aws ecr get-login-password --region us-east-1 \
