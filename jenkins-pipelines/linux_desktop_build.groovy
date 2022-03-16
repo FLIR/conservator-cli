@@ -55,7 +55,7 @@ pipeline {
               sh "git clone ssh://git@github.com/FLIR/flirconservator fc"
             }
             sh "cd fc && git checkout $KIND_GIT_HASH"
-            sh "cd $WORKSPACE/test/integration/cluster && ./start-cluster.sh $WORKSPACE/fc/docker/kubernetes"
+            sh "cd $WORKSPACE/test/integration/cluster && ./stop-cluster.sh && ./start-cluster.sh $WORKSPACE/fc/docker/kubernetes"
           }
         }
         stage("Run integration tests") {
