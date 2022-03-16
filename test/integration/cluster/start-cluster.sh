@@ -29,11 +29,12 @@ export AWS_DOMAIN AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 
 # IMAGE is used in kubernetes templates as well as loading the image, must be literal
 sed "s:\$AWS_DOMAIN:$AWS_DOMAIN:" kind-init.env.tmpl > kind-init.env
+. ./kind-init.env
 
 echo "** Pull Conservator Image"
 env aws ecr get-login-password --region us-east-1 \
                | docker login --username AWS --password-stdin $AWS_DOMAIN
-docker pull $AWS_DOMAIN/conservator_webapp:prod -q
+docker pull $IMAGE -q
 echo "** Create Conservator Cluster"
 rm -rf ./kubernetes
 if [ -d "$1" ] ; then
@@ -41,7 +42,7 @@ if [ -d "$1" ] ; then
   cp -r $1 kubernetes
 else
   echo "-- Copy kubernetes configs from docker image"
-  id=$(docker create $AWS_DOMAIN/conservator_webapp:prod)
+  id=$(docker create $IMAGE)
   docker cp $id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
   docker rm -v $id
 fi

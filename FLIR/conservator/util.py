@@ -1,6 +1,8 @@
 import hashlib
 import logging
 
+from itertools import zip_longest
+
 logger = logging.getLogger(__name__)
 
 
@@ -53,3 +55,25 @@ def base_convert(b, n):
         output.append(r)
         n = int(n / b)
     return output
+
+
+def chunks(list, size):
+    """
+    Simple one-line function to divide a list of items into chunks
+    of a specified size.
+
+    Once the input list is exhausted, the last list in the output
+    iterator will be padded by None's to make up the size difference.
+
+    :param list: list to be split into smaller "chunk" lists
+    :param size: the desired size of the chunk lists
+    :return: an iterator of these chunks.
+
+    :Example:
+
+    chunks(['a', 'b', 'c'], 2) will return an iterator containing
+    ['a', 'b'] and ['c', None]
+
+    .. note:: Adapted from  https://stackoverflow.com/a/312644
+    """
+    return zip_longest(*[iter(list)] * size, fillvalue=None)

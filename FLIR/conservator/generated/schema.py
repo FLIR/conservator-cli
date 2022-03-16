@@ -91,6 +91,11 @@ ID = sgqlc.types.ID
 Int = sgqlc.types.Int
 
 
+class Md5Exists(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("True", "False", "Invalid")
+
+
 class Spectrum(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = ("RGB", "Thermal", "Other", "Mixed", "Unknown")
@@ -2888,6 +2893,13 @@ class MachineAnnotationStats(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = ("total",)
     total = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="total")
+
+
+class Md5Result(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("md5", "exists")
+    md5 = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="md5")
+    exists = sgqlc.types.Field(sgqlc.types.non_null(Md5Exists), graphql_name="exists")
 
 
 class Mutation(sgqlc.types.Type):
@@ -7573,6 +7585,7 @@ class Query(sgqlc.types.Type):
         "frame_search",
         "get_frame_id_by_offset",
         "frame_count",
+        "check_frames_by_md5",
         "group",
         "groups",
         "label_set",
@@ -8433,6 +8446,24 @@ class Query(sgqlc.types.Type):
                 (
                     "search_text",
                     sgqlc.types.Arg(String, graphql_name="searchText", default=None),
+                ),
+            )
+        ),
+    )
+    check_frames_by_md5 = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Md5Result))),
+        graphql_name="checkFramesByMd5",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "md5s",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(
+                            sgqlc.types.list_of(sgqlc.types.non_null(String))
+                        ),
+                        graphql_name="md5s",
+                        default=None,
+                    ),
                 ),
             )
         ),
