@@ -26,6 +26,32 @@ def test_create_child(conservator):
     assert children[0].id == collection.id
 
 
+def test_move_child(conservator):
+    project = conservator.projects.create("Root")
+    project2 = conservator.projects.create("Top")
+    parent_collection = project.root_collection
+    parent_collection2 = project2.root_collection
+    collection = parent_collection.create_child("My child collection")
+
+    # try to move to good folder
+    ret = collection.move(parent_collection2)
+
+    assert ret
+    assert collection.name == "My child collection"
+    assert collection.path == "/Top/My child collection"
+    parent_collection.populate("children")
+    assert not parent_collection.children
+    parent_collection2.populate("children")
+    children = parent_collection2.children
+    assert len(children) == 1
+    assert children[0].id == collection.id
+
+    # try to move to deleted folder
+    parent_collection.delete()
+    with pytest.raises(ConservatorGraphQLServerError):
+        ret = collection.move(parent_collection)
+
+
 def test_create_from_parent_id(conservator):
     project = conservator.projects.create("Root")
     parent_collection = project.root_collection
