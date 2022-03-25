@@ -1,3 +1,4 @@
+import dataclasses
 import pathlib
 import os
 import secrets
@@ -13,16 +14,103 @@ from FLIR.conservator.conservator import Conservator
 ADMIN_ROLE = "Conservator Administrator"
 
 
-@pytest.fixture(scope="session")
-def using_kubernetes():
-    if shutil.which("kubectl") is None:
-        return False
-    kube_services = subprocess.getoutput(
-        "kubectl --insecure-skip-tls-verify get services -o name"
+@dataclasses.dataclass
+class TestSettings:
+    server_deployment: str = ""
+    server_inside_kubernetes: bool = False
+    conservator_url: str = ""
+    mongo_url: str = ""
+    pytest_inside_docker: bool = False
+
+
+test_settings = TestSettings()
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--server-deployment",
+        choices=["docker", "kind", "minikube"],
+        default="kind",
+        help="Type of deployment for tested conservator instance",
     )
-    if "conservator-webapp" in kube_services:
-        return True
-    return False
+
+
+def pytest_configure(config):
+    # deployment type of Conservator server comes from command-line parser
+    test_settings.server_deployment = config.option.server_deployment
+    test_settings.server_inside_kubernetes = config.option.server_deployment in (
+        "kind",
+        "minikube",
+    )
+
+    # pytest runtime context (native host or inside container) comes from environment
+    test_settings.pytest_inside_docker = (
+        os.environ.get("RUNNING_IN_CLI_TESTING_DOCKER") == "True"
+    )
+
+    # if using kubernetes, make sure kubectl commands default to using correct cluster
+    if test_settings.server_deployment == "kind":
+        (code, out) = subprocess.getstatusoutput(
+            "kubectl --insecure-skip-tls-verify config use-context kind-kind"
+        )
+        if code:
+            raise RuntimeError(
+                f"Could not select '{test_settings.server_deployment} cluster: {out}"
+            )
+    elif test_settings.server_deployment == "minikube":
+        (code, out) = subprocess.getstatusoutput(
+            "kubectl --insecure-skip-tls-verify config use-context minikube"
+        )
+        if code:
+            raise RuntimeError(
+                f"Could not select '{test_settings.server_deployment} cluster: {out}"
+            )
+
+    # conservator URL depends on both server deployment type and runtime context
+    conservator_ip = ""
+    conservator_port = 0
+
+    if test_settings.server_deployment == "kind":
+        # KInD sets up access to webapp at localhost:8080 of the host system,
+        # but that is not available at localhost if pytest is inside a container
+        conservator_port = 8080
+
+        if test_settings.pytest_inside_docker:
+            # If we are in a container, we connect to host.
+            conservator_ip = subprocess.getoutput(
+                "ip route list default | sed 's/.*via //; s/ .*//' "
+            )
+        else:
+            # Running on host
+            conservator_ip = "localhost"
+    elif test_settings.server_deployment == "minikube":
+        # minikube sets up access to webapp at $MINIKUBE_IP:80
+        # where $MINIKUBE_IP is dynamically allocated IP for the minikube container
+        conservator_port = 80
+        conservator_ip = subprocess.getoutput("minikube ip")
+    elif test_settings.server_deployment == "docker":
+        # conservator webapp in docker container is mapped to localhost:8080
+        conservator_ip = "localhost"
+        conservator_port = 8080
+
+    test_settings.conservator_url = f"http://{conservator_ip}:{conservator_port}"
+
+    # mongo URL depends on server deployment type
+    mongo_ip = ""
+    mongo_port = (
+        27017  # leave port alone -- must match port in mongo replica set config
+    )
+
+    if test_settings.server_inside_kubernetes:
+        # there will be a kubernetes port-forward for mongo access,
+        # so it will be available at localhost
+        mongo_ip = "localhost"
+    else:
+        mongo_ip = subprocess.getoutput(
+            "docker inspect conservator_mongo -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
+        ).strip()
+
+    test_settings.mongo_url = f"mongodb://{mongo_ip}:{mongo_port}/"
 
 
 def get_mongo_pod_name():
@@ -37,28 +125,9 @@ def get_mongo_pod_name():
     raise RuntimeError("Can't find mongo pod")
 
 
-def running_in_testing_docker():
-    # We might be running in test Docker, we have an environment
-    # variable set to be able to check. This determines how we
-    # connect to docker or k8s.
-    return os.environ.get("RUNNING_IN_CLI_TESTING_DOCKER") == "True"
-
-
 @pytest.fixture(scope="session")
-def conservator_domain(using_kubernetes):
-    # If we are in a container, we connect to host.
-    if running_in_testing_docker():
-        host_ip = subprocess.getoutput(
-            "ip route list default | sed 's/.*via //; s/ .*//' "
-        )
-        return host_ip  # Host IP
-    # Running on host
-    return "localhost"
-
-
-@pytest.fixture(scope="session")
-def mongo_client(using_kubernetes, conservator_domain):
-    if using_kubernetes:
+def mongo_client():
+    if test_settings.server_inside_kubernetes:
         mongo_pod_name = get_mongo_pod_name()
         # Port forward 27017 in the background...
         # note that it should be the standard mongo port,
@@ -73,14 +142,12 @@ def mongo_client(using_kubernetes, conservator_domain):
                 f"27017:27017",
             ]
         )
-        # Because of the port forward process, mongo will be accessible on localhost
-        yield pymongo.MongoClient(f"mongodb://localhost:27017/")
+
+    yield pymongo.MongoClient(test_settings.mongo_url)
+
+    if test_settings.server_inside_kubernetes:
+        # clean up port-forward process
         port_forward_proc.terminate()
-    else:  # Using docker
-        domain = subprocess.getoutput(
-            "docker inspect conservator_mongo -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
-        ).strip()
-        yield pymongo.MongoClient(host=[f"{domain}:27017"])
 
 
 @pytest.fixture(scope="session")
@@ -104,7 +171,7 @@ def empty_db(db):
 
 
 @pytest.fixture(scope="class")
-def conservator(empty_db, conservator_domain):
+def conservator(empty_db):
     """
     Provides a Conservator connection to be used for testing.
 
@@ -135,10 +202,10 @@ def conservator(empty_db, conservator_domain):
         }
     )
     config = Config(
-        CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=f"http://{conservator_domain}:8080"
+        CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=test_settings.conservator_url
     )
     print(
-        f"Using key={api_key}, email={admin_email} url=http://{conservator_domain}:8080"
+        f"Using key={api_key[0]}***{api_key[-1]}, email={admin_email} url={test_settings.conservator_url}"
     )
     yield Conservator(config)
 
