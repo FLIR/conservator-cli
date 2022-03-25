@@ -50,13 +50,21 @@ def pytest_configure(config):
 
     # if using kubernetes, make sure kubectl commands default to using correct cluster
     if test_settings.server_deployment == "kind":
-        kube_pods = subprocess.getoutput(
+        (code, out) = subprocess.getstatusoutput(
             "kubectl --insecure-skip-tls-verify config use-context kind-kind"
         )
+        if code:
+            raise RuntimeError(
+                f"Could not select '{test_settings.server_deployment} cluster: {out}"
+            )
     elif test_settings.server_deployment == "minikube":
-        kube_pods = subprocess.getoutput(
+        (code, out) = subprocess.getstatusoutput(
             "kubectl --insecure-skip-tls-verify config use-context minikube"
         )
+        if code:
+            raise RuntimeError(
+                f"Could not select '{test_settings.server_deployment} cluster: {out}"
+            )
 
     # conservator URL depends on both server deployment type and runtime context
     conservator_ip = ""
