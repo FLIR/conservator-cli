@@ -4,6 +4,7 @@ import re
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.file_transfers import DownloadRequest
+from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import (
     Query,
@@ -250,6 +251,18 @@ class Collection(QueryableType, FileLockerType):
             Mutation.move_video,
             input=input_,
         )
+
+    def move(self, parent):
+        """
+        Move the collection into another collection.
+        """
+        result = self._conservator.query(
+            Mutation.move_collection,
+            id=self.id,
+            parent_id=parent.id,
+        )
+        self.populate(fields="path")
+        return result
 
     def delete(self):
         """
