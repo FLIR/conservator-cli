@@ -82,8 +82,8 @@ pipeline {
 
                 case 'LOCAL':
                   DOMAIN = "jenkins-cli-tests"
-                  find_commit_cmd = "cd fc && git checkout ${LOCAL_BRANCH} && git rev-parse --short HEAD"
-                  TAG = sh(returnStdout: true, script: find_commit_cmd)
+                  find_commit_cmd = "cd fc && git checkout ${LOCAL_BRANCH} > /dev/null && git rev-parse --short HEAD"
+                  TAG = sh(returnStdout: true, script: find_commit_cmd).trim()
                   echo "LOCAL: DOMAIN=${DOMAIN}, TAG=${TAG}"
 
                   // configure image build
@@ -91,6 +91,8 @@ pipeline {
                   sh "echo TAG=${TAG} >> fc/docker/deploy/defaults.sh"
                   sh "echo GIT_COMMIT=${TAG} >> fc/docker/deploy/defaults.sh"
                   sh "echo GIT_BRANCH=${LOCAL_BRANCH} >> fc/docker/deploy/defaults.sh"
+                  echo "defaults.sh:"
+                  sh "cat fc/docker/deploy/defaults.sh"
 
                   // do the docker image build, which wants to do its own shallow git clone
                   sshagent(credentials: ["flir-service-key"]) {
