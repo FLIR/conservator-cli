@@ -60,13 +60,18 @@ pipeline {
         FC_GIT_REPO = "ssh://git@github.com/FLIR/flirconservator"
         // version of conservator known to have working KInD config
         KIND_GIT_HASH = "745de5b4a1b3ef504f2f43b2ecaf8e88bc43de8d"
+
+        // uid of jenkins user, for fixing up ownership of checked-out source
+        BUILD_UID = sh(returnStdout: true, script: "stat -c '%u' ${WORKSPACE}").trim()
       }
       stages {
         stage("Prepare conservator image") {
           steps {
+            echo "BUILD_UID=${env.BUILD_UID}"
             // check out conservator source code now, in case it is needed for build scripts
             sshagent(credentials: ["flir-service-key"]) {
-              sh "git clone ${FC_GIT_REPO} fc"
+              sh "git clone ${FC_GIT_REPO} fc && chown -R ${BUILD_UID} fc"
+              writeFile(file: "fc/deploy_key", text: "STUB")
             }
             script {
               def DOMAIN
