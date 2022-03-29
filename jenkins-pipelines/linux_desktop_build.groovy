@@ -40,22 +40,78 @@ pipeline {
 
     stage("Integration Tests") {
       environment {
+        // following variables could be changed from this default via a parameter in
+        // "freestyle" job (as opposed to the normal multibranch job that polls github)
+        //   IMAGE_TYPE -- select AWS or LOCAL
+        //     AWS: test image pulled from AWS
+        //     LOCAL: test image built locally from conservator checkout
+        //   AWS_TAG -- select prod or stable (only used if IMAGE_TYPE == AWS)
+        //   LOCAL_BRANCH -- conservator branch to be built (only used if IMAGE_TYPE == LOCAL)
+        IMAGE_TYPE = "${env.IMAGE_TYPE ?: 'AWS'}"
+        AWS_TAG = "${env.AWS_TAG ?: 'prod'}"
+        LOCAL_BRANCH = "${env.LOCAL_BRANCH ?: 'master'}"
+
+        // access to AWS docker registry
         AWS_DOMAIN = credentials("docker-aws-domain-conservator")
+        AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
+        AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
+
+        // conservator source repo
+        FC_GIT_REPO = "ssh://git@github.com/FLIR/flirconservator"
         // version of conservator known to have working KInD config
         KIND_GIT_HASH = "745de5b4a1b3ef504f2f43b2ecaf8e88bc43de8d"
       }
       stages {
-        stage("Create kind cluster") {
-          environment {
-            AWS_ACCESS_KEY_ID = credentials("docker-aws-access-key-id-conservator")
-            AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
-          }
+        stage("Prepare conservator image") {
           steps {
+            // check out conservator source code now, in case it is needed for build scripts
             sshagent(credentials: ["flir-service-key"]) {
-              sh "git clone ssh://git@github.com/FLIR/flirconservator fc"
+              sh "git clone ${FC_GIT_REPO} fc"
             }
+            script {
+              def DOMAIN
+              def TAG
+
+              switch(env.IMAGE_TYPE) {
+                case 'AWS':
+                  DOMAIN = env.AWS_DOMAIN
+                  TAG = env.AWS_TAG
+                  env.IMAGE = "${DOMAIN}/conservator_webapp:${TAG}"
+                  echo "AWS: DOMAIN=${DOMAIN}, TAG=${TAG}"
+                  break
+
+                case 'LOCAL':
+                  DOMAIN = "jenkins-cli-tests"
+                  find_commit_cmd = "cd fc && git checkout ${LOCAL_BRANCH} && git rev-parse --short HEAD"
+                  TAG = sh(returnStdout: true, script: find_commit_cmd)
+                  echo "LOCAL: DOMAIN=${DOMAIN}, TAG=${TAG}"
+
+                  // configure image build
+                  sh "echo REPO=${DOMAIN} >> fc/docker/deploy/defaults.sh"
+                  sh "echo TAG=${TAG} >> fc/docker/deploy/defaults.sh"
+                  sh "echo GIT_COMMIT=${TAG} >> fc/docker/deploy/defaults.sh"
+                  sh "echo GIT_BRANCH=${LOCAL_BRANCH} >> fc/docker/deploy/defaults.sh"
+
+                  // do the docker image build, which wants to do its own shallow git clone
+                  sshagent(credentials: ["flir-service-key"]) {
+                    sh "fc/docker/deploy/build_pipeline.sh"
+                  }
+                  break
+
+                default:
+                  error "ERROR: unknown IMAGE_TYPE ${env.IMAGE_TYPE}"
+                  break
+              }
+
+              // full docker image identifier including tag
+              env.IMAGE = "${DOMAIN}/conservator_webapp:${TAG}"
+            }
+          }
+        }
+        stage("Create kind cluster") {
+          steps {
             sh "cd fc && git checkout $KIND_GIT_HASH"
-            sh "cd $WORKSPACE/test/integration/cluster && ./stop-cluster.sh && ./start-cluster.sh $WORKSPACE/fc/docker/kubernetes"
+            sh "cd test/integration/cluster && ./stop-cluster.sh && ./start-cluster.sh $WORKSPACE/fc/docker/kubernetes"
           }
         }
         stage("Run integration tests") {
