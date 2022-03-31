@@ -83,36 +83,21 @@ pipeline {
                   TAG = env.AWS_TAG
                   env.IMAGE = "${DOMAIN}/conservator_webapp:${TAG}"
                   echo "AWS: DOMAIN=${DOMAIN}, TAG=${TAG}"
+
+                  // image will be pulled by start-cluster.sh
                   break
 
                 case 'LOCAL':
                   DOMAIN = "jenkins-cli-tests"
-                  find_commit_cmd = "cd fc && git checkout ${LOCAL_BRANCH} > /dev/null && git rev-parse --short HEAD"
+                  find_commit_cmd = "cd fc && git checkout ${LOCAL_BRANCH} > /dev/null && git rev-parse --short=7 HEAD"
                   TAG = sh(returnStdout: true, script: find_commit_cmd).trim()
                   echo "LOCAL: DOMAIN=${DOMAIN}, TAG=${TAG}"
 
-                  // configure image build
-                  sh "echo REPO=${DOMAIN} >> fc/docker/deploy/defaults.sh"
-                  sh "echo TAG=${TAG} >> fc/docker/deploy/defaults.sh"
-                  sh "echo GIT_COMMIT=${TAG} >> fc/docker/deploy/defaults.sh"
-                  sh "echo GIT_BRANCH=${LOCAL_BRANCH} >> fc/docker/deploy/defaults.sh"
-                  echo "defaults.sh:"
-                  sh "cat fc/docker/deploy/defaults.sh"
-
-                  // export source tarball for build to use
+                  // build the image, which will get loaded by start-cluster.sh
                   sh """
-                     cd fc &&
-                       git archive -o docker/deploy/flirmachinelearning.tar --prefix=flirmachinelearning/ ${TAG}
+                     cd test/integration/cluster &&
+                       ./build-fc-docker.sh ${DOMAIN} ${TAG} ${LOCAL_BRANCH} ${WORKSPACE}/fc
                      """
-                  sh "mkdir -p flirmachinelearning"
-                  sh "echo ${TAG} > flirmachinelearning/conservator_build.txt"
-                  sh """
-                     tar --append -f fc/docker/deploy/flirmachinelearning.tar
-                       flirmachinelearning/conservator_build.txt
-                     """
-
-                  // run the image build
-                  sh "cd fc/docker/deploy && ./build_pipeline.sh"
                   break
 
                 default:
