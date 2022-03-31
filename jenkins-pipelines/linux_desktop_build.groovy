@@ -99,10 +99,20 @@ pipeline {
                   echo "defaults.sh:"
                   sh "cat fc/docker/deploy/defaults.sh"
 
-                  // do the docker image build, which wants to do its own shallow git clone
-                  sshagent(credentials: ["flir-service-key"]) {
-                    sh "fc/docker/deploy/build_pipeline.sh"
-                  }
+                  // export source tarball for build to use
+                  sh """
+                     cd fc &&
+                       git archive -o docker/deploy/flirmachinelearning.tar --prefix=flirmachinelearning/ ${TAG}
+                     """
+                  sh "mkdir -p flirmachinelearning"
+                  sh "echo ${TAG} > flirmachinelearning/conservator_build.txt"
+                  sh """
+                     tar --append -f fc/docker/deploy/flirmachinelearning.tar
+                       flirmachinelearning/conservator_build.txt
+                     """
+
+                  // run the image build
+                  sh "cd fc/docker/deploy && ./build_pipeline.sh"
                   break
 
                 default:
@@ -118,7 +128,11 @@ pipeline {
         stage("Create kind cluster") {
           steps {
             sh "cd fc && git checkout $KIND_GIT_HASH"
-            sh "cd test/integration/cluster && ./stop-cluster.sh && ./start-cluster.sh $WORKSPACE/fc/docker/kubernetes"
+            sh """
+               cd test/integration/cluster &&
+                 ./stop-cluster.sh &&
+                 ./start-cluster.sh $WORKSPACE/fc/docker/kubernetes
+               """
           }
         }
         stage("Run integration tests") {
