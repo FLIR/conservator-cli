@@ -20,5 +20,7 @@ To run tests manually, from the root directory:
 
 ```sh
 $ pytest test/unit
-$ pytest test/integration
+$ pytest test/integration --server-deployment=<server_type>
 ```
+
+where `<server_type>` is either `docker`, `kind`, or `minikube`, depending on how Conservator is being run. `<server_type>` defaults to `kind`.
