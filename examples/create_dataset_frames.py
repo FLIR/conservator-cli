@@ -34,7 +34,7 @@ def upload_image_and_return_metadata(image_path, frame_index=0):
 
     # The assets_by_md5s API returns an object containing the md5 queried,
     # plus lists of dataset_details and video_details objects
-    # If there is more than 0 dataset_details objects, 
+    # If there is more than 0 dataset_details objects,
     # or more than 0 video_details objects, then the md5 is in use
     dataset_details_count = len(asset.dataset_details)
 
@@ -77,7 +77,7 @@ def upload_image_and_return_metadata(image_path, frame_index=0):
 
     # create_dataset_frames also needs the image's dimensions
     image = Image.open(image_path)
-    
+
     # We're not creating a preview image, so the preview values
     # are the same as the actual values.
     # If desired, it would be possible to create and upload a preview
