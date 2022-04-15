@@ -28,7 +28,7 @@ test_settings = TestSettings()
 def pytest_addoption(parser):
     parser.addoption(
         "--server-deployment",
-        choices=[ "kind", "minikube"],
+        choices=["kind", "minikube"],
         default="kind",
         help="Type of deployment for tested conservator instance",
     )
