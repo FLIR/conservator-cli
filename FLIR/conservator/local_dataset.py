@@ -915,21 +915,48 @@ class LocalDataset:
 
         return LocalDataset(dataset._conservator, clone_path)
 
+    def validate_annotations(self, index_data):
+        valid = True
+        for frame in index_data["frames"]:
+            target_ids = [a["targetId"] for a in frame["annotations"]]
+
+            # check for duplicate target IDs
+            unique_target_ids = set(target_ids)
+            if len(unique_target_ids) < len(target_ids):
+                logger.error(
+                    "Duplicate targetIds in annotations of frame %s",
+                    frame["datasetFrameId"],
+                )
+                valid = False
+
+            # check for negative target IDs
+            if any(int(tgt) < 0 for tgt in target_ids):
+                logger.error(
+                    "Negative targetId in annotations of frame %s",
+                    frame["datasetFrameId"],
+                )
+                valid = False
+
+        return valid
+
     def validate_index(self, index_location=None):
         """
         Validates that the given ``index.json`` matches the expected JSON
-        Schema.
+        Schema and that all annotations have valid targetIDs
         """
         schema_json = self.conservator.query(Query.validation_schema)
         schema = json.loads(schema_json)
 
         idx_location = index_location if index_location else self.index_path
+        valid = False
         try:
             with open(idx_location) as index:
                 index_data = json.load(index)
+
+            valid = self.validate_annotations(index_data)
             jsonschema.validate(index_data, schema)
-            return True
         except jsonschema.exceptions.ValidationError as e:
-            logger.error(e.message)
+            logger.error("Syntax failure: " + e.message)
             logger.debug(e)
-        return False
+            valid = False
+        return valid

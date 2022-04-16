@@ -55,3 +55,17 @@ def test_add_commit_push_frame(conservator, tmp_cwd, test_data):
         if max_tries <= 0:
             break
     assert os.path.exists(local_dset.frames_path)
+
+
+def test_validation(conservator, tmp_cwd, test_data):
+    good_index = test_data / "txt" / "good-index"
+    good_dset = LocalDataset(conservator, good_index)
+    assert good_dset.validate_index()
+
+    neg_index = test_data / "txt" / "neg-index"
+    neg_dset = LocalDataset(conservator, neg_index)
+    assert not neg_dset.validate_index()
+
+    dupe_index = test_data / "txt" / "dupe-index"
+    dupe_dset = LocalDataset(conservator, dupe_index)
+    assert not dupe_dset.validate_index()
