@@ -35,9 +35,14 @@ RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-
 
 # Install AWS CLI to pull docker images from ECR
 RUN apt-get update \
-    && apt-get install unzip \
-    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-    && unzip awscliv2.zip \
-    && ./aws/install
+    && apt-get install unzip 
+# aws cli v1
+RUN curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" \
+    && unzip awscli-bundle.zip \
+    && ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+# aws cli v2
+#RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+#    && unzip awscliv2.zip \
+#    && ./aws/install
 
 ENV RUNNING_IN_CLI_TESTING_DOCKER=True
