@@ -18,9 +18,7 @@ def upload_image_and_return_metadata(image_path, frame_index=0):
     image_md5 = md5sum_file(image_path)
 
     # This API call checks if the image's md5 exists in Conservator
-    does_md5_exist = conservator.query(
-        Query.does_md5_exist, md5=image_md5
-    )
+    does_md5_exist = conservator.query(Query.does_md5_exist, md5=image_md5)
 
     file_name = os.path.split(image_path)[1]
 
@@ -143,8 +141,7 @@ if __name__ == "__main__":
             if image_path is not None:
                 # Upload image, if necessary, and add the returned
                 # frame object to the list of frames to create
-                frame = upload_image_and_return_metadata(image_path,
-                                                         frame_index)
+                frame = upload_image_and_return_metadata(image_path, frame_index)
                 frames_to_create.append(frame)
                 frame_index = frame_index + 1
 
