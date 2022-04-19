@@ -10,14 +10,6 @@ from PIL import Image
 
 conservator = Conservator.default()
 
-# The assets_by_md5s query can return a lot of data;
-# specifying the fields will reduce the amount
-md5_assets_fields = [
-    "md5",
-    "dataset_details.dataset_frame.id",
-    "video_details.frame.id",
-]
-
 
 # This function takes an image path an optional frame index,
 # and returns an object suitable to pass to the create_dataset_frames
@@ -26,23 +18,13 @@ def upload_image_and_return_metadata(image_path, frame_index=0):
     image_md5 = md5sum_file(image_path)
 
     # This API call checks if the image's md5 exists in Conservator
-    md5_assets = conservator.query(
-        Query.assets_by_md5s, md5s=[image_md5], fields=md5_assets_fields
+    does_md5_exist = conservator.query(
+        Query.does_md5_exist, md5=image_md5
     )
-
-    asset = md5_assets[0]
-
-    # The assets_by_md5s API returns an object containing the md5 queried,
-    # plus lists of dataset_details and video_details objects
-    # If there is more than 0 dataset_details objects,
-    # or more than 0 video_details objects, then the md5 is in use
-    dataset_details_count = len(asset.dataset_details)
-
-    video_details_count = len(asset.video_details)
 
     file_name = os.path.split(image_path)[1]
 
-    if dataset_details_count > 0 or video_details_count > 0:
+    if does_md5_exist:
         print(f"{file_name} already exists in Conservator; skipping upload")
     else:
         # If the image doesn't exist, upload it to Conservator.
@@ -161,7 +143,8 @@ if __name__ == "__main__":
             if image_path is not None:
                 # Upload image, if necessary, and add the returned
                 # frame object to the list of frames to create
-                frame = upload_image_and_return_metadata(image_path, frame_index)
+                frame = upload_image_and_return_metadata(image_path,
+                                                         frame_index)
                 frames_to_create.append(frame)
                 frame_index = frame_index + 1
 

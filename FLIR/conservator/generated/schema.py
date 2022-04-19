@@ -7951,6 +7951,7 @@ class Query(sgqlc.types.Type):
         "project",
         "ntk_configs",
         "assets_by_md5s",
+        "does_md5_exist",
     )
     annotations_by_video_id = sgqlc.types.Field(
         sgqlc.types.list_of(Annotation),
@@ -9392,6 +9393,22 @@ class Query(sgqlc.types.Type):
                             sgqlc.types.list_of(sgqlc.types.non_null(Md5String))
                         ),
                         graphql_name="md5s",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    does_md5_exist = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean),
+        graphql_name="doesMd5Exist",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "md5",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(Md5String),
+                        graphql_name="md5",
                         default=None,
                     ),
                 ),
