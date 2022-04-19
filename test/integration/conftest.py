@@ -17,7 +17,6 @@ ADMIN_ROLE = "Conservator Administrator"
 @dataclasses.dataclass
 class TestSettings:
     server_deployment: str = ""
-    server_inside_kubernetes: bool = False
     conservator_url: str = ""
     mongo_url: str = ""
     pytest_inside_docker: bool = False
@@ -29,7 +28,7 @@ test_settings = TestSettings()
 def pytest_addoption(parser):
     parser.addoption(
         "--server-deployment",
-        choices=["docker", "kind", "minikube"],
+        choices=["kind", "minikube"],
         default="kind",
         help="Type of deployment for tested conservator instance",
     )
@@ -38,10 +37,6 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     # deployment type of Conservator server comes from command-line parser
     test_settings.server_deployment = config.option.server_deployment
-    test_settings.server_inside_kubernetes = config.option.server_deployment in (
-        "kind",
-        "minikube",
-    )
 
     # pytest runtime context (native host or inside container) comes from environment
     test_settings.pytest_inside_docker = (
@@ -88,28 +83,15 @@ def pytest_configure(config):
         # where $MINIKUBE_IP is dynamically allocated IP for the minikube container
         conservator_port = 80
         conservator_ip = subprocess.getoutput("minikube ip")
-    elif test_settings.server_deployment == "docker":
-        # conservator webapp in docker container is mapped to localhost:8080
-        conservator_ip = "localhost"
-        conservator_port = 8080
 
     test_settings.conservator_url = f"http://{conservator_ip}:{conservator_port}"
 
-    # mongo URL depends on server deployment type
-    mongo_ip = ""
+    # there will be a kubernetes port-forward for mongo access,
+    # so it will be available at localhost
+    mongo_ip = "localhost"
     mongo_port = (
         27017  # leave port alone -- must match port in mongo replica set config
     )
-
-    if test_settings.server_inside_kubernetes:
-        # there will be a kubernetes port-forward for mongo access,
-        # so it will be available at localhost
-        mongo_ip = "localhost"
-    else:
-        mongo_ip = subprocess.getoutput(
-            "docker inspect conservator_mongo -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
-        ).strip()
-
     test_settings.mongo_url = f"mongodb://{mongo_ip}:{mongo_port}/"
 
 
@@ -127,27 +109,25 @@ def get_mongo_pod_name():
 
 @pytest.fixture(scope="session")
 def mongo_client():
-    if test_settings.server_inside_kubernetes:
-        mongo_pod_name = get_mongo_pod_name()
-        # Port forward 27017 in the background...
-        # note that it should be the standard mongo port,
-        # anything else causes problems if mongodb server
-        # has been configured with replica set
-        port_forward_proc = subprocess.Popen(
-            [
-                "kubectl",
-                "--insecure-skip-tls-verify",
-                "port-forward",
-                "service/conservator-mongo",
-                f"27017:27017",
-            ]
-        )
+    mongo_pod_name = get_mongo_pod_name()
+    # Port forward 27017 in the background...
+    # note that it should be the standard mongo port,
+    # anything else causes problems if mongodb server
+    # has been configured with replica set
+    port_forward_proc = subprocess.Popen(
+        [
+            "kubectl",
+            "--insecure-skip-tls-verify",
+            "port-forward",
+            "service/conservator-mongo",
+            f"27017:27017",
+        ]
+    )
 
     yield pymongo.MongoClient(test_settings.mongo_url)
 
-    if test_settings.server_inside_kubernetes:
-        # clean up port-forward process
-        port_forward_proc.terminate()
+    # clean up port-forward process
+    port_forward_proc.terminate()
 
 
 @pytest.fixture(scope="session")
