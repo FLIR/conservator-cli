@@ -1,7 +1,7 @@
 # NOTE: If a package is required for conservator-cli to run, also include it in setup.py
 wheel
 sphinx
-sgqlc
+sgqlc >= 13
 click >= 8
 tqdm
 pytest

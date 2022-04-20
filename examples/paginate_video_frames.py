@@ -9,7 +9,7 @@ fields.include_field("height")
 fields.include_field("annotations.bounding_box")
 fields.include_field("annotations.labels")
 
-video = conservator.videos.all().including("name", "frames_count").first()
+video = conservator.videos.all().including("name", "frame_count").first()
 print(video)
 
 # Unless you're working with huge videos (10k+ frames), you'll probably
