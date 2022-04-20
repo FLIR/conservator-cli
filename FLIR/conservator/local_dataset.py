@@ -337,6 +337,23 @@ class LocalDataset:
         commit_cmd += ["-m", message]
         return subprocess.call(commit_cmd, cwd=self.path)
 
+    def _parse_git_push_error(self, push_error):
+        err_msg = "[UNKNOWN ERROR]"
+        msg_prefix = "remote: "  # prepended before json returned from server
+        lines = push_error.split("\n")
+        # error message is near end of response from server
+        for line in reversed(lines):
+            if line.startswith(msg_prefix):
+                try:
+                    # skip over prefix, see if remainder of line is valid json
+                    server_event = json.loads(line[len(msg_prefix) :])
+                    err_msg = server_event["msg"][0]
+                    break
+                except:
+                    pass
+
+        return err_msg
+
     def push_commits(self, verbose=True):
         """
         Push the git repo.
@@ -356,8 +373,9 @@ class LocalDataset:
             if "Everything up-to-date" in push_proc.stdout:
                 logger.warning(push_proc.stdout)
             else:
+                parsed = self._parse_git_push_error(push_proc.stdout)
                 logger.error(
-                    "Server did not accept changes to index.json:\n%s", push_proc.stdout
+                    "Server did not accept changes to index.json:\n** %s", parsed
                 )
                 raise RuntimeError("Failed to push changes to index.json")
         self.pull(verbose)
