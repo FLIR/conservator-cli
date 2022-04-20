@@ -67,6 +67,7 @@ pipeline {
       stages {
         stage("Prepare conservator image") {
           steps {
+            sh "echo DUMP ENV; env"
             echo "BUILD_UID=${env.BUILD_UID}"
             // check out conservator source code now, in case it is needed for build scripts
             sshagent(credentials: ["flir-service-key"]) {
