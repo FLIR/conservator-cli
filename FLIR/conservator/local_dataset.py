@@ -915,29 +915,45 @@ class LocalDataset:
 
         return LocalDataset(dataset._conservator, clone_path)
 
-    def validate_annotations(self, index_data):
-        valid = True
-        for frame in index_data["frames"]:
-            target_ids = [a["targetId"] for a in frame["annotations"]]
+    def _parse_jsonschema_error(self, e):
+        if e.path and len(e.path):
+            result = {}
 
-            # check for duplicate target IDs
-            unique_target_ids = set(target_ids)
-            if len(unique_target_ids) < len(target_ids):
-                logger.error(
-                    "Duplicate targetIds in annotations of frame %s",
-                    frame["datasetFrameId"],
-                )
-                valid = False
+            # look for location of error in dataset
+            # e.g. "dataset[frames][0][annotations][0][targetId]"
+            concat_path = "][".join([str(ent) for ent in e.path])
+            concat_path = "dataset[" + concat_path + "]"
+            result["err_details"] = f"{concat_path} = {e.instance}"
 
-            # check for negative target IDs
-            if any(int(tgt) < 0 for tgt in target_ids):
-                logger.error(
-                    "Negative targetId in annotations of frame %s",
-                    frame["datasetFrameId"],
-                )
-                valid = False
+            # get type of dataset field that flunked validation,
+            # meaning the last named (not number) index in error location
+            # e.g. "annotations" or "targetId"
+            err_field = None
+            while len(e.path):
+                err_field = e.path.pop()
+                if isinstance(err_field, str):
+                    break
+            result["err_field"] = err_field
 
-        return valid
+            return result
+
+        # didn't turn up anything useful
+        if not e.parent:
+            return {}
+
+        # try recursing up to the next level to find a non-empty path
+        return self._parse_jsonschema_error(e.parent)
+
+    def _log_validation_error(self, e):
+        parsed = self._parse_jsonschema_error(e)
+        logger.error("Details: " + parsed["err_details"])
+        if "err_field" in parsed:
+            if parsed["err_field"] == "targetId" and int(e.instance) < 0:
+                # special user-friendly message for negative targetId,
+                # because some old datasets are known to have them
+                logger.error("** targetId must not be negative")
+            else:
+                logger.error("** invalid " + parsed["err_field"])
 
     def validate_index(self, index_location=None):
         """
@@ -953,10 +969,15 @@ class LocalDataset:
             with open(idx_location) as index:
                 index_data = json.load(index)
 
-            valid = self.validate_annotations(index_data)
             jsonschema.validate(index_data, schema)
+            valid = True
         except jsonschema.exceptions.ValidationError as e:
-            logger.error("Syntax failure: " + e.message)
+            logger.error("Syntax failure:" + e.message)
+            self._log_validation_error(e)
             logger.debug(e)
             valid = False
+            # dump_validation_error(e)
+            # print(json.dumps(index_data, indent=2))
+            # print(stringify_jsonschema_path(e))
+            # print(index_data["frames"][0]["annotations"][0]["targetId"])
         return valid

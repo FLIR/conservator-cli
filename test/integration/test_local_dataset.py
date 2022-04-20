@@ -66,6 +66,7 @@ def test_validation(conservator, tmp_cwd, test_data):
     neg_dset = LocalDataset(conservator, neg_index)
     assert not neg_dset.validate_index()
 
+    # duplicates pass validation, would fail on attempt to push
     dupe_index = test_data / "txt" / "dupe-index"
     dupe_dset = LocalDataset(conservator, dupe_index)
-    assert not dupe_dset.validate_index()
+    assert dupe_dset.validate_index()
