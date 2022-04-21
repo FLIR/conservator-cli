@@ -38,7 +38,7 @@ with open("README.md", "r") as fh:
 # Packages only used for developing (pytest, black, etc.) should be placed
 # in requirements.txt instead.
 INSTALL_REQUIRES = [
-    "sgqlc",
+    "sgqlc >= 13",
     "click >= 8",
     "tqdm",
     "requests",

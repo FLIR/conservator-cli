@@ -7,7 +7,6 @@ read -p "API Key: " key
 read -p "Endpoint URL (include /graphql): " url
 
 python3 -m sgqlc.introspection \
-  --exclude-deprecated \
   --exclude-description \
   -H "authorization: ${key}" \
   ${url} \

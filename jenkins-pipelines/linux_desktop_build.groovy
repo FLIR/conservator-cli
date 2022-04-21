@@ -59,7 +59,8 @@ pipeline {
         // conservator source repo
         FC_GIT_REPO = "ssh://git@github.com/FLIR/flirconservator"
         // version of conservator known to have working KInD config
-        KIND_GIT_HASH = "745de5b4a1b3ef504f2f43b2ecaf8e88bc43de8d"
+        // only need to set this if running tests against fc image w/ broken kubernetes configs
+        KIND_GIT_HASH = ""
 
         // uid of jenkins user, for fixing up ownership of checked-out source
         BUILD_UID = sh(returnStdout: true, script: "stat -c '%u' ${WORKSPACE}").trim()
@@ -110,7 +111,11 @@ pipeline {
             }
           }
         }
-        stage("Create kind cluster") {
+        // only one of the next 2 stages actually runs
+        stage("Create kind cluster from external kubernetes configs") {
+          when {
+            expression { env.KIND_GIT_HASH != null }
+          }
           steps {
             sh "cd fc && git checkout $KIND_GIT_HASH"
             sh """
@@ -120,6 +125,15 @@ pipeline {
                """
           }
         }
+        stage("Create kind cluster from kubernetes configs inside image") {
+          when {
+            expression { env.KIND_GIT_HASH == null }
+          }
+          steps {
+            sh "cd test/integration/cluster && ./stop-cluster.sh && ./start-cluster.sh"
+          }
+        }
+
         stage("Run integration tests") {
           steps {
             dir("integration-tests") {

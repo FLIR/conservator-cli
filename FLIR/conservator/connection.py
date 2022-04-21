@@ -1,6 +1,8 @@
 import re
 import urllib.parse
 import logging
+import platform
+import sys
 
 import requests
 from sgqlc.endpoint.http import HTTPEndpoint
@@ -9,6 +11,7 @@ from sgqlc.operation import Operation
 from FLIR.conservator.fields_manager import FieldsManager
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated.schema import schema, Query
+from FLIR.conservator.version import version as cli_ver
 
 __all__ = [
     "ConservatorMalformedQueryException",
@@ -59,8 +62,16 @@ class ConservatorConnection:
         self.config = config
         self.email = None
         self.graphql_url = ConservatorConnection.to_graphql_url(config.url)
+
+        python_ver = sys.version.split()[0]
+        os_name = platform.system()
+        os_ver = platform.release()
+        agent_string = (
+            f"conservator-cli/{cli_ver} Python/{python_ver} {os_name}/{os_ver}"
+        )
         headers = {
             "authorization": config.key,
+            "User-Agent": agent_string,
         }
         self.endpoint = HTTPEndpoint(self.graphql_url, base_headers=headers)
         self.fields_manager = FieldsManager()
