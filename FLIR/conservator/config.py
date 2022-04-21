@@ -9,6 +9,9 @@ import os
 import json
 import logging
 
+import requests
+from FLIR.conservator.connection import ConservatorConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -85,17 +88,47 @@ class Config:
         """
         Creates a :class:`Config` object from standard input.
         """
-        d = {}
-        for name, attr in Config.ATTRIBUTES.items():
-            if attr.default is None:
-                v = input(f"{attr.friendly_name}: ")
-            else:
-                v = input(f"{attr.friendly_name} (leave empty for {attr.default}): ")
-            v = v.strip()
-            if len(v) == 0:
-                v = None
-            d[attr.internal_name] = v
-        return Config.from_dict(d)
+
+        # just show prompts, not errors from functions used to validate config
+        logging.disable(logging.CRITICAL)
+
+        # loop until user supplies a config that actually works
+        while True:
+            d = {}
+            for name, attr in Config.ATTRIBUTES.items():
+                if attr.default is None:
+                    v = input(f"{attr.friendly_name}: ")
+                else:
+                    v = input(
+                        f"{attr.friendly_name} (leave empty for {attr.default}): "
+                    )
+                v = v.strip()
+                if len(v) == 0:
+                    v = None
+                d[attr.internal_name] = v
+
+            # check whether this is a valid config
+            config = Config.from_dict(d)
+
+            # does url have graphql endpoint?
+            check_url = ConservatorConnection.to_graphql_url(config.url)
+            r = requests.head(check_url)
+            if r.status_code != 405:
+                print("Error: invalid url, please try again")
+                continue
+
+            # is API key accepted by server?
+            connection = ConservatorConnection(config)
+            try:
+                connection.get_email()
+                break
+            except Exception as e:
+                print("Error: invalid API Key, please try again")
+
+        # restore logging level to normal
+        logging.disable(logging.NOTSET)
+
+        return config
 
     @staticmethod
     def from_file(path):
