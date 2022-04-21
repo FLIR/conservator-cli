@@ -64,7 +64,7 @@ def test_upload_video(conservator, test_data):
     assert video is not None
     assert video.id == media_id
     assert video.name == "adas_thermal.mp4"
-    assert video.frames_count == 60
+    assert video.frame_count == 60
 
 
 def test_upload_many_in_parallel(conservator, test_data):
@@ -166,7 +166,7 @@ def test_get_all_frames_paginated(conservator, test_data):
 
     paginated_frames = video.get_all_frames_paginated()
     frames = list(paginated_frames)
-    assert len(frames) == video.frames_count
+    assert len(frames) == video.frame_count
     for i, frame in enumerate(frames):
         assert frame.frame_index == i
         assert frame.video_id == video.id
