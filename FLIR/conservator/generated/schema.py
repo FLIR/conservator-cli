@@ -1339,7 +1339,6 @@ class Annotation(sgqlc.types.Type):
     __field_names__ = (
         "id",
         "target_id",
-        "label",
         "labels",
         "label_id",
         "bounding_box",
@@ -1353,9 +1352,6 @@ class Annotation(sgqlc.types.Type):
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     target_id = sgqlc.types.Field(String, graphql_name="targetId")
-    label = sgqlc.types.Field(
-        sgqlc.types.non_null(AllowedLabelCharacters), graphql_name="label"
-    )
     labels = sgqlc.types.Field(
         sgqlc.types.non_null(
             sgqlc.types.list_of(sgqlc.types.non_null(AllowedLabelCharacters))
@@ -2016,7 +2012,6 @@ class DatasetAnnotation(sgqlc.types.Type):
     __field_names__ = (
         "id",
         "target_id",
-        "label",
         "labels",
         "label_id",
         "bounding_box",
@@ -2030,9 +2025,6 @@ class DatasetAnnotation(sgqlc.types.Type):
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     target_id = sgqlc.types.Field(String, graphql_name="targetId")
-    label = sgqlc.types.Field(
-        sgqlc.types.non_null(AllowedLabelCharacters), graphql_name="label"
-    )
     labels = sgqlc.types.Field(
         sgqlc.types.non_null(
             sgqlc.types.list_of(sgqlc.types.non_null(AllowedLabelCharacters))
