@@ -77,8 +77,10 @@ $ cd &quot;DATASET NAME/&quot;     # the default directory is the name of the da
 $ cvc download           # download media
 </pre></div>
 </div>
-<p>Now, you can make modifications to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> or <code class="docutils literal notranslate"><span class="pre">associated_files</span></code>. Then,
-publish your changes:</p>
+<p>Now, you can make modifications to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> or <code class="docutils literal notranslate"><span class="pre">associated_files</span></code>. In
+addition to modifying existing associated files, you can add one or more new
+associated files by copying them into the <code class="docutils literal notranslate"><span class="pre">associated_files</span></code> subdirectory.
+Then, publish your changes:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc publish &quot;Your commit message here&quot;
 </pre></div>
 </div>
@@ -309,8 +311,9 @@ and push. All three steps can be done with a single command:</p>
 </pre></div>
 </div>
 <p>If you don’t have any images staged, the upload process will be skipped.
-So this is also a suitable replacement for commit, push.</p>
-<p>At this time, associated files will not be included in this commit.</p>
+So this is also a suitable replacement for commit, push.
+Any modifications or additions to associated files will also be included
+in the commit.</p>
 </section>
 <section id="pull-local-commits">
 <h3>Pull Local Commits<a class="headerlink" href="#pull-local-commits" title="Permalink to this headline">¶</a></h3>
