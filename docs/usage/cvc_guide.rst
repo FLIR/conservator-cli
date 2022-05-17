@@ -40,8 +40,10 @@ The basic workflow to clone and download a dataset::
     $ cd "DATASET NAME/"     # the default directory is the name of the dataset
     $ cvc download           # download media
 
-Now, you can make modifications to ``index.json`` or ``associated_files``. Then,
-publish your changes::
+Now, you can make modifications to ``index.json`` or ``associated_files``. In
+addition to modifying existing associated files, you can add one or more new
+associated files by copying them into the ``associated_files`` subdirectory.
+Then, publish your changes::
 
     $ cvc publish "Your commit message here"
 
@@ -297,8 +299,8 @@ and push. All three steps can be done with a single command::
 
 If you don't have any images staged, the upload process will be skipped.
 So this is also a suitable replacement for commit, push.
-
-At this time, associated files will not be included in this commit.
+Any modifications or additions to associated files will also be included
+in the commit.
 
 
 Pull Local Commits

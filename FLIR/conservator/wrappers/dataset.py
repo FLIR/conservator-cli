@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import os
 
 from FLIR.conservator.generated import schema
@@ -357,6 +358,35 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         clone for some operations.
         """
         self.download_blob_by_name("index.json", path, commit_id="HEAD")
+
+    def wait_for_history_len(self, num_expected_commits, max_tries=10):
+        """
+        Waits until the number of commits in Dataset's history is at least the
+        requested number. Intended as heuristic for checking whether a recent
+        commit has finished processing on the server, though it could be
+        misleading if multiple commits are being pushed to the dataset from
+        different sources (e.g. if local clone and web UI are being used
+        to make changes in parallel)
+        """
+        got_new_commit = False
+        tries = 0
+        while tries < max_tries:
+            self.populate(fields="git_commit_state")
+            commits = self.get_commit_history()
+            if (
+                len(commits) >= num_expected_commits
+                and self.git_commit_state == "completed"
+            ):
+                got_new_commit = True
+                break
+            else:
+                tries += 1
+                if tries < max_tries:
+                    time.sleep(1)
+                else:
+                    break
+
+        return got_new_commit
 
     @classmethod
     def from_local_path(cls, conservator, path="."):

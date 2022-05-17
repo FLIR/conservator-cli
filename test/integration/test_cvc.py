@@ -44,18 +44,7 @@ def test_publish_image(default_conservator, tmp_cwd, test_data):
     p = cvc("publish", "My test commit")
     assert p.returncode == 0
 
-    max_tries = 10
-    tries = 0
-    while tries < max_tries:
-        commits = dataset.get_commit_history()
-        if len(commits) < 3:
-            # New datasets begin with 2 commits.
-            tries += 1
-            if tries < max_tries:
-                sleep(tries)  # It takes a bit for the commit to be available.
-        else:
-            break
-
+    dataset.wait_for_history_len(3, max_tries=100)
     latest_commit = dataset.get_commit_by_id("HEAD")
     assert latest_commit.short_message == "My test commit"
 
