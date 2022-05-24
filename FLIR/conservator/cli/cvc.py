@@ -87,10 +87,19 @@ def checkout_(local_dataset, commit):
     local_dataset.checkout(commit)
 
 
+def is_image_file(ctx, param, value):
+    for filename in value:
+        if not LocalDataset.get_image_info(filename):
+            raise click.BadParameter(
+                f"{filename} is not an image -- use 'cvc publish' to add associated files"
+            )
+    return value
+
+
 @main.command(
     help="Stage images for uploading and adding to frames.jsonl or index.json"
 )
-@click.argument("paths", type=click.Path(exists=True), nargs=-1)
+@click.argument("paths", type=click.Path(exists=True), callback=is_image_file, nargs=-1)
 @pass_valid_local_dataset
 def add(local_dataset, paths):
     local_dataset.stage_local_images(paths)
@@ -259,8 +268,10 @@ def upload(local_dataset, skip_copy, tries):
 
 
 @main.command(
-    help="Upload staged images (if any), then commit all changes to frames.jsonl or index.json "
-    "and associated_files with message and push"
+    help="Upload staged images (if any), commit all changes to metadata (frames.jsonl or index.json) "
+    "and/or associated files (files inside associated_files/), and push to server with given message. "
+    "Note that associated files can be added by putting them into associated_files/ subdir "
+    "before running 'publish'."
 )
 @click.argument("message")
 @click.option(

@@ -19,6 +19,7 @@ from FLIR.conservator.file_transfers import FileDownloadException
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.util import md5sum_file, chunks
 from FLIR.conservator.jsonl_to_index_json import jsonl_to_json
+from FLIR.conservator.wrappers.dataset import Dataset
 
 logger = logging.getLogger(__name__)
 
@@ -343,6 +344,10 @@ class LocalDataset:
 
         :param verbose: If False, run git commands with the `-q` option.
         """
+        # count existing commits to compare against later
+        dataset = Dataset.from_local_path(self.conservator, self.path)
+        num_initial_commits = len(dataset.get_commit_history())
+
         # The subprocess will return a non-zero exit code even if it succeeded.
         # Check its output to determine whether it worked.
         push_proc = subprocess.run(
@@ -360,7 +365,17 @@ class LocalDataset:
                     "Server did not accept changes to index.json:\n%s", push_proc.stdout
                 )
                 raise RuntimeError("Failed to push changes to index.json")
-        self.pull(verbose)
+
+        # wait for another commit to appear
+        found_new_commit = dataset.wait_for_history_len(num_initial_commits + 1)
+
+        if found_new_commit:
+            self.pull(verbose)
+        else:
+            logger.warn("Timeout waiting for commit to be processed on server")
+            logger.warn(
+                "Will need to run 'pull' later to get workdir synced with server"
+            )
 
     def push_staged_images(self, copy_to_data=True, tries=5):
         """
