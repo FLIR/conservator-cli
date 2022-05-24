@@ -8,6 +8,7 @@ In general, use :func:`Config.default`.
 import os
 import json
 import logging
+from collections import OrderedDict
 
 import requests
 from FLIR.conservator.connection import ConservatorConnection
@@ -20,11 +21,75 @@ class ConfigError(Exception):
 
 
 class ConfigAttribute:
-    def __init__(self, internal_name, friendly_name, default=None, type_=str):
+    def __init__(
+        self, internal_name, friendly_name, default=None, type_=str, validator=None
+    ):
         self.internal_name = internal_name
         self.friendly_name = friendly_name
         self.default = default
         self.type_ = type_
+        self.validator = validator
+
+
+"""
+validators for config fields
+
+input argument 'd' is dict of config data containing the field of interest
+"""
+
+
+def validate_max_retries(d):
+    retries_ok = False
+    try:
+        int(d["CONSERVATOR_MAX_RETRIES"])
+        retries_ok = True
+    except Exception:
+        print("Error: invalid retries count, please try again")
+    return retries_ok
+
+
+def validate_cache_path(d):
+    cache_path = d["CONSERVATOR_CVC_CACHE_PATH"]
+    dir_ok = False
+    try:
+        os.makedirs(cache_path, exist_ok=True)
+        os.chmod(cache_path, 0o755)
+        dir_ok = True
+    except Exception:
+        print("Error: invalid cache path, please try again")
+    return dir_ok
+
+
+def validate_url(d):
+    url_ok = False
+    try:
+        # does url have graphql endpoint?
+        check_url = ConservatorConnection.to_graphql_url(d["CONSERVATOR_URL"])
+        r = requests.head(check_url)
+        if r.status_code == 405:
+            url_ok = True
+    except Exception:
+        pass
+
+    if not url_ok:
+        print("Error: invalid url, please try again")
+    return url_ok
+
+
+def validate_key(d):
+    key_ok = False
+
+    # check whether this is a valid config
+    config = Config.from_dict(d)
+
+    # is API key accepted by server?
+    connection = ConservatorConnection(config)
+    try:
+        connection.get_email()
+        key_ok = True
+    except Exception:
+        print("Error: invalid API Key, please try again")
+    return key_ok
 
 
 class Config:
@@ -45,20 +110,33 @@ class Config:
     """
 
     DEFAULT_NAME = "default"
-    ATTRIBUTES = {
-        "key": ConfigAttribute("CONSERVATOR_API_KEY", "Conservator API Key"),
-        "url": ConfigAttribute(
-            "CONSERVATOR_URL", "Conservator URL", default="https://flirconservator.com/"
-        ),
-        "max_retries": ConfigAttribute(
-            "CONSERVATOR_MAX_RETRIES", "Conservator Max Retries", default=5, type_=int
-        ),
-        "cvc_cache_path": ConfigAttribute(
-            "CONSERVATOR_CVC_CACHE_PATH",
-            "CVC Cache Path",
-            default=os.path.join(".cvc", "cache"),
-        ),
-    }
+    ATTRIBUTES = OrderedDict(
+        {
+            "max_retries": ConfigAttribute(
+                "CONSERVATOR_MAX_RETRIES",
+                "Conservator Max Retries",
+                default=5,
+                type_=int,
+                validator=validate_max_retries,
+            ),
+            "cvc_cache_path": ConfigAttribute(
+                "CONSERVATOR_CVC_CACHE_PATH",
+                "CVC Cache Path",
+                default=os.path.join(".cvc", "cache"),
+                validator=validate_cache_path,
+            ),
+            "url": ConfigAttribute(
+                "CONSERVATOR_URL",
+                "Conservator URL",
+                default="https://flirconservator.com/",
+                validator=validate_url,
+            ),
+            # from_input() needs 'key' to come after 'url'
+            "key": ConfigAttribute(
+                "CONSERVATOR_API_KEY", "Conservator API Key", validator=validate_key
+            ),
+        }
+    )
 
     def __init__(self, **kwargs):
         for name, attr in Config.ATTRIBUTES.items():
@@ -92,10 +170,10 @@ class Config:
         # just show prompts, not errors from functions used to validate config
         logging.disable(logging.CRITICAL)
 
-        # loop until user supplies a config that actually works
-        while True:
-            d = {}
-            for name, attr in Config.ATTRIBUTES.items():
+        d = {}
+        for name, attr in Config.ATTRIBUTES.items():
+            # loop until user supplies a config that actually works
+            while True:
                 if attr.default is None:
                     v = input(f"{attr.friendly_name}: ")
                 else:
@@ -104,31 +182,16 @@ class Config:
                     )
                 v = v.strip()
                 if len(v) == 0:
-                    v = None
+                    v = attr.default
                 d[attr.internal_name] = v
-
-            # check whether this is a valid config
-            config = Config.from_dict(d)
-
-            # does url have graphql endpoint?
-            check_url = ConservatorConnection.to_graphql_url(config.url)
-            r = requests.head(check_url)
-            if r.status_code != 405:
-                print("Error: invalid url, please try again")
-                continue
-
-            # is API key accepted by server?
-            connection = ConservatorConnection(config)
-            try:
-                connection.get_email()
-                break
-            except Exception as e:
-                print("Error: invalid API Key, please try again")
+                # move on to next field if validator passes
+                if attr.validator(d):
+                    break
 
         # restore logging level to normal
         logging.disable(logging.NOTSET)
 
-        return config
+        return Config.from_dict(d)
 
     @staticmethod
     def from_file(path):
