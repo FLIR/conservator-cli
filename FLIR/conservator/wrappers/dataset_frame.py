@@ -97,6 +97,40 @@ class DatasetFrame(QueryableType):
             Mutation.update_dataset_qa_status_note, input=note
         )
 
+    def add_annotations(self, annotation_create_list, fields=None):
+        """
+        Adds annotations using the specified list of `CreateDatasetAnnotationInput`
+        objects.
+
+        Returns a list of the added annotations, each with the specified
+        `fields`.
+        """
+        if annotation_create_list:
+            for anno in annotation_create_list:
+                anno["dataset_frame_id"] = self.id
+
+            return self._conservator.query(
+                Mutation.create_dataset_annotations,
+                fields=fields,
+                input=annotation_create_list,
+            )
+        # If supplied an empty list, return the same.
+        return []
+
+    def update_annotation(self, annotation, fields=None):
+        """
+        Updates existing annotation using the specified `UpdateDatasetAnnotationInput`
+        object.
+
+        Returns updated annotation with the specified `fields`.
+        """
+        return self._conservator.query(
+            Mutation.update_dataset_annotation,
+            fields=fields,
+            dataset_frame_id=self.id,
+            input=annotation,
+        )
+
     def approve_annotation(self, annotation_id):
         """
         Approve an annotation within dataset frame.

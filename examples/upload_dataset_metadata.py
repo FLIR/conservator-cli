@@ -1,18 +1,21 @@
 # example of using API to upload annotations and QA status from local copy of dataset
 #
 # This is a subset of what 'cvc publish' would update; for instance,
-# it does not currently add new frames or update flag/unflag attribute of
-# existing frames.
+# it does not currently add new frames or annotaitons, or update flag/unflag
+# attribute of existing frames.
 
 import argparse
 import json
 import logging
 import os
 
+import sgqlc.types
+
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.wrappers.dataset import Dataset
 from FLIR.conservator.wrappers.dataset import DatasetFrame
 from FLIR.conservator.connection import ConservatorGraphQLServerError
+from FLIR.conservator.generated.schema import UpdateDatasetAnnotationInput
 
 
 def try_commit(dataset, commit_msg):
@@ -25,16 +28,8 @@ def try_commit(dataset, commit_msg):
             raise e
 
 
-def upload_dataset_annotations(conservator_cli, local_dir, commit_msg):
-    logger.info("upload annotations from local index.json")
-    dataset = Dataset.from_local_path(conservator_cli, local_dir)
-
-    index_path = os.path.join(local_dir, "index.json")
-    dataset.upload_metadata(index_path)
-
-
-def upload_dataset_qa(conservator_cli, local_dir, commit_msg):
-    logger.info("upload QA from local index.json")
+def upload_dataset_metadata(conservator_cli, local_dir, commit_msg):
+    logger.info("upload metadata from local index.json")
     dataset = Dataset.from_local_path(conservator_cli, local_dir)
 
     # get any pending changes from web UI saved in a separate commit
@@ -50,21 +45,51 @@ def upload_dataset_qa(conservator_cli, local_dir, commit_msg):
         dset_frame = DatasetFrame.from_id(
             conservator_cli, local_frame["datasetFrameId"]
         )
-        for anno in local_frame.get("annotations", []):
-            if "qaStatus" in anno.keys():
-                anno_id = anno["id"]
-                if anno["qaStatus"] == "approved":
-                    logger.debug("Marking %s annotation 'approved'", anno_id)
-                    dset_frame.approve_annotation(anno_id)
-                elif anno["qaStatus"] == "changesRequested":
-                    qa_note = anno.get("qaStatusNote", "")
-                    logger.debug(
-                        "Marking %s annotation 'changesRequested' reason '%s'",
-                        anno_id,
-                        qa_note,
-                    )
-                    dset_frame.request_changes_annotation(anno_id)
-                    dset_frame.update_qa_status_note_annotation(qa_note, anno_id)
+        dset_frame.populate("annotations")
+
+        for local_anno in local_frame.get("annotations", []):
+            # find matching annotation on server
+            remote_anno = [
+                anno for anno in dset_frame.annotations if anno.id == local_anno["id"]
+            ]
+            if not remote_anno:
+                logger.info(
+                    "Skipping %s annotation from %s frame (not found on server)",
+                    local_anno["id"],
+                    dset_frame.id,
+                )
+                continue
+
+            # check to see if there are any relevant changes
+            remote_anno = remote_anno[0]  # should be just one match from above search
+            remote_anno = (
+                remote_anno.to_json()
+            )  # turn into normal dict for field compare
+
+            for ignore_field in ("attributes", "custom_metadata", "source"):
+                remote_anno.pop(ignore_field, None)
+                local_anno.pop(ignore_field, None)
+
+            if local_anno == remote_anno:
+                logger.debug(
+                    "No changes to %s annotation from %s frame",
+                    local_anno["id"],
+                    dset_frame.id,
+                )
+                continue
+
+            # yes need to make changes for this annotation; pack the fields into needed format
+            local_anno["dataset_annotation_id"] = local_anno[
+                "id"
+            ]  # id => dataset_annotation_id
+            local_anno.pop("id")
+            update_fields = {}
+            for (key, value) in local_anno.items():
+                # boundingBox -> bounding_box and so forth
+                update_fields[sgqlc.types.BaseItem._to_python_name(key)] = value
+
+            update_anno_input = UpdateDatasetAnnotationInput(**update_fields)
+            dset_frame.update_annotation(update_anno_input)
 
         if "qaStatus" in local_frame.keys():
             if local_frame["qaStatus"] == "approved":
@@ -80,7 +105,7 @@ def upload_dataset_qa(conservator_cli, local_dir, commit_msg):
                 dset_frame.request_changes()
                 dset_frame.update_qa_status_note(qa_note)
 
-    try_commit(dataset, f"commit any QA changes for: {commit_msg}")
+    try_commit(dataset, commit_msg)
 
 
 if __name__ == "__main__":
@@ -132,5 +157,4 @@ if __name__ == "__main__":
     logging.basicConfig(format=log_format, level=log_levels[args.log_level])
     logger = logging.getLogger("upload_dataset_metadata")
 
-    upload_dataset_qa(conservator_cli, args.dataset_dir, args.commit_msg)
-    upload_dataset_annotations(conservator_cli, args.dataset_dir, args.commit_msg)
+    upload_dataset_metadata(conservator_cli, args.dataset_dir, args.commit_msg)
