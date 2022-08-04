@@ -11,6 +11,7 @@ from click import get_current_context
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
 
+
 def pass_valid_local_dataset(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
