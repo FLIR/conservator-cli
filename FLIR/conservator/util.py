@@ -83,6 +83,8 @@ def chunks(list, size):
 
 
 def get_conservator_cli_version():
+    # Get latest version from PyPi programatically
+    # See https://stackoverflow.com/a/62571316
     response = requests.get('https://pypi.org/pypi/conservator-cli/json')
     return response.json()['info']['version']
 
