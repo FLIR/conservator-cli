@@ -34,13 +34,18 @@ def check_git_config(func):
     def wrapper(*args, **kwargs):
         ctx_obj = get_current_context().obj
         conservator = Conservator.create(ctx_obj["config_name"])
-        user = conservator.get_user()
-        print(conservator.get_authenticated_url())
-        if not user:
+
+        logging.disable(logging.CRITICAL)
+
+        try:
+            conservator.get_email()
+        except Exception:
             click.echo(
                 "Cannot retrieve user details! Please check your API key configuration"
             )
             sys.exit(1)
+
+        logging.disable(logging.NOTSET)
 
         path = ctx_obj["cvc_local_path"]
         full_path = os.path.join(os.getcwd(), path)
@@ -50,11 +55,11 @@ def check_git_config(func):
             click.echo(f"Dataset git config file ({git_config_file}) is missing!")
             sys.exit(1)
 
-        git_config = configparser.ConfigParser()
+        git_config = configparser.RawConfigParser()
 
         git_config.read(git_config_file)
 
-        git_url = git_config.get('remote "origin"', "url", raw=True)
+        git_url = git_config.get('remote "origin"', "url")
 
         git_url = parse.unquote(git_url)
 
@@ -65,15 +70,15 @@ def check_git_config(func):
         if split_result.port is not None:
             host_name = f"{host_name}:{split_result.port}"
 
-        if not user.email == split_result.username:
+        if not conservator.get_email() == split_result.username:
             click.echo(
-                f"This dataset was checked out as {split_result.username}, not {user.email}!"
+                f"This dataset was checked out as {split_result.username}, not {conservator.get_email()}!"
             )
             click.echo("Run ", nl=False)
             click.echo(click.style("conservator config view", bold=True), nl=False)
             click.echo(" to see your current configuration")
             click.echo("Run ", nl=False)
-            click.echo(click.style("cvc update_identity", bold=True), nl=False)
+            click.echo(click.style("cvc update-identity", bold=True), nl=False)
             click.echo(" to update the configuration of the current dataset")
             sys.exit(1)
 
@@ -94,7 +99,7 @@ def check_git_config(func):
             click.echo(click.style("conservator config view", bold=True), nl=False)
             click.echo(" to see your current configuration")
             click.echo("Run ", nl=False)
-            click.echo(click.style("cvc update_identity", bold=True), nl=False)
+            click.echo(click.style("cvc update-identity", bold=True), nl=False)
             click.echo(" to update the configuration of the current dataset")
             sys.exit(1)
 
@@ -384,10 +389,11 @@ def publish(local_dataset, message, skip_validation, tries):
 
 
 @main.command(
-    help="Updates the configuration of the selected dataset to match current conservator-cli configuration"
+    "update-identity",
+    help="Updates the configuration of the selected dataset to match current conservator-cli configuration",
 )
 @pass_valid_local_dataset
-def update_identity():
+def update_identity(local_dataset):
     ctx_obj = get_current_context().obj
     conservator = Conservator.create(ctx_obj["config_name"])
 
@@ -399,20 +405,25 @@ def update_identity():
         click.echo(f"Dataset git config file ({git_config_file}) is missing!")
         sys.exit(1)
 
-    git_config = configparser.ConfigParser()
+    git_config = configparser.RawConfigParser()
 
     git_config.read(git_config_file)
 
-    git_url = git_config.get('remote "origin"', "url", raw=True)
+    git_url = git_config.get('remote "origin"', "url")
 
     git_url = parse.unquote(git_url)
 
     split_result = parse.urlsplit(git_url)
 
-    new_url = f'{conservator.get_authenticated_url()}{split_result.path}'
+    new_url = f"{conservator.get_authenticated_url()}{split_result.path}"
 
-    print(new_url)
+    git_config.set('remote "origin"', "url", new_url)
 
+    git_config.set("user", "email", conservator.email)
+
+    with open(git_config_file, "w") as config_file:
+        git_config.write(config_file)
+        click.echo(f"Updated config file {git_config_file}")
 
 
 @click.group(help="Commands for manipulating local datasets")
