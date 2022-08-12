@@ -85,8 +85,8 @@ def chunks(list, size):
 def get_conservator_cli_version():
     # Get latest version from PyPi programatically
     # See https://stackoverflow.com/a/62571316
-    response = requests.get('https://pypi.org/pypi/conservator-cli/json')
-    return response.json()['info']['version']
+    response = requests.get("https://pypi.org/pypi/conservator-cli/json")
+    return response.json()["info"]["version"]
 
 
 def compare_conservator_cli_version():
@@ -100,7 +100,15 @@ def compare_conservator_cli_version():
         logger.warning("Please upgrade to the latest version %s" % latest_version)
         return False
     if semver.compare(latest_version, current_version) == 1:
-        logger.warning("You are using an unreleased version of Conservator-cli (%s)" % current_version)
-        logger.warning("Please be aware that this version may not be supported in the future")
-        logger.warning("For reference, the current supported version of Conservator-cli is %s" % latest_version)
+        logger.warning(
+            "You are using an unreleased version of Conservator-cli (%s)"
+            % current_version
+        )
+        logger.warning(
+            "Please be aware that this version may not be supported in the future"
+        )
+        logger.warning(
+            "For reference, the current supported version of Conservator-cli is %s"
+            % latest_version
+        )
         return False
