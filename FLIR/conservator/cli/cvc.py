@@ -2,9 +2,12 @@ import functools
 import os
 import subprocess
 import sys
+import configparser
+import logging
+
+from urllib import parse
 
 import click
-import logging
 
 from click import get_current_context
 
@@ -22,6 +25,80 @@ def pass_valid_local_dataset(func):
         # valid LocalDataset (defined as a directory containing index.json).
         local_dataset = LocalDataset(conservator, path)
         return func(local_dataset, *args, **kwargs)
+
+    return wrapper
+
+
+def check_git_config(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        ctx_obj = get_current_context().obj
+        conservator = Conservator.create(ctx_obj["config_name"])
+        user = conservator.get_user()
+        print(conservator.get_authenticated_url())
+        if not user:
+            click.echo(
+                "Cannot retrieve user details! Please check your API key configuration"
+            )
+            sys.exit(1)
+
+        path = ctx_obj["cvc_local_path"]
+        full_path = os.path.join(os.getcwd(), path)
+        git_config_file = os.path.join(full_path, ".git", "config")
+
+        if not os.path.exists(git_config_file):
+            click.echo(f"Dataset git config file ({git_config_file}) is missing!")
+            sys.exit(1)
+
+        git_config = configparser.ConfigParser()
+
+        git_config.read(git_config_file)
+
+        git_url = git_config.get('remote "origin"', "url", raw=True)
+
+        git_url = parse.unquote(git_url)
+
+        split_result = parse.urlsplit(git_url)
+
+        host_name = f"{split_result.scheme}://{split_result.hostname}"
+
+        if split_result.port is not None:
+            host_name = f"{host_name}:{split_result.port}"
+
+        if not user.email == split_result.username:
+            click.echo(
+                f"This dataset was checked out as {split_result.username}, not {user.email}!"
+            )
+            click.echo("Run ", nl=False)
+            click.echo(click.style("conservator config view", bold=True), nl=False)
+            click.echo(" to see your current configuration")
+            click.echo("Run ", nl=False)
+            click.echo(click.style("cvc update_identity", bold=True), nl=False)
+            click.echo(" to update the configuration of the current dataset")
+            sys.exit(1)
+
+        if conservator.get_url() != host_name:
+            click.echo(
+                f"This dataset was checked out from {host_name}, not {conservator.get_url()}!"
+            )
+            click.echo("Run ", nl=False)
+            click.echo(click.style("conservator config view", bold=True), nl=False)
+            click.echo(" to see your current configuration")
+            sys.exit(1)
+
+        if conservator.config.key != split_result.password:
+            click.echo(
+                "Your currently configures API key does not match the API key used to check out this dataset"
+            )
+            click.echo("Run ", nl=False)
+            click.echo(click.style("conservator config view", bold=True), nl=False)
+            click.echo(" to see your current configuration")
+            click.echo("Run ", nl=False)
+            click.echo(click.style("cvc update_identity", bold=True), nl=False)
+            click.echo(" to update the configuration of the current dataset")
+            sys.exit(1)
+
+        return func(*args, **kwargs)
 
     return wrapper
 
@@ -83,6 +160,7 @@ def clone(ctx, identifier, path, checkout):
 @main.command("checkout", help="Checkout a commit hash")
 @click.argument("commit")
 @pass_valid_local_dataset
+@check_git_config
 def checkout_(local_dataset, commit):
     local_dataset.checkout(commit)
 
@@ -101,6 +179,7 @@ def is_image_file(ctx, param, value):
 )
 @click.argument("paths", type=click.Path(exists=True), callback=is_image_file, nargs=-1)
 @pass_valid_local_dataset
+@check_git_config
 def add(local_dataset, paths):
     local_dataset.stage_local_images(paths)
 
@@ -114,6 +193,7 @@ def add(local_dataset, paths):
     "--skip-validation", is_flag=True, help="Skip frames.jsonl / index.json validation."
 )
 @pass_valid_local_dataset
+@check_git_config
 def commit_(local_dataset, message, skip_validation):
     local_dataset.add_local_changes(skip_validation=skip_validation)
     local_dataset.commit(message)
@@ -121,12 +201,14 @@ def commit_(local_dataset, message, skip_validation):
 
 @main.command(help="Push commits")
 @pass_valid_local_dataset
+@check_git_config
 def push(local_dataset):
     local_dataset.push_commits()
 
 
 @main.command(help="Pull the latest commits")
 @pass_valid_local_dataset
+@check_git_config
 def pull(local_dataset):
     click.echo("Updating JSONL, index.json and associated files.")
     local_dataset.pull()
@@ -137,6 +219,7 @@ def pull(local_dataset):
     help="Show changes in JSONL, index.json and associated_files since last commit"
 )
 @pass_valid_local_dataset
+@check_git_config
 def diff(local_dataset):
     subprocess.call(
         ["git", "diff", "*.jsonl", "index.json", "associated_files"],
@@ -146,6 +229,7 @@ def diff(local_dataset):
 
 @main.command("log", help="Show log of commits")
 @pass_valid_local_dataset
+@check_git_config
 def log_(local_dataset):
     subprocess.call(["git", "log"], cwd=local_dataset.path)
 
@@ -153,6 +237,7 @@ def log_(local_dataset):
 @main.command(help="Shows information on a specific commit or object")
 @click.argument("hash", default=None, required=False)
 @pass_valid_local_dataset
+@check_git_config
 def show(local_dataset, hash):
     if hash is None:
         subprocess.call(["git", "show"], cwd=local_dataset.path)
@@ -162,6 +247,7 @@ def show(local_dataset, hash):
 
 @main.command(help="Print staged images and files")
 @pass_valid_local_dataset
+@check_git_config
 def status(local_dataset):
     subprocess.call(
         ["git", "status", "*.jsonl", "index.json", "associated_files"],
@@ -204,6 +290,7 @@ def status(local_dataset):
     help="Number of tries to recover from spurious server errors.",
 )
 @pass_valid_local_dataset
+@check_git_config
 def download(local_dataset, include_analytics, pool_size, symlink, tries):
     if pool_size == 10:  # default
         yellow = "\x1b[33;21m"
@@ -227,6 +314,7 @@ def download(local_dataset, include_analytics, pool_size, symlink, tries):
 
 @main.command(help="Validate index.json and frames.jsonl formats")
 @pass_valid_local_dataset
+@check_git_config
 @click.option(
     "--skip_index",
     is_flag=True,
@@ -263,6 +351,7 @@ def validate(local_dataset, skip_index):
     help="Number of tries to recover from spurious server errors.",
 )
 @pass_valid_local_dataset
+@check_git_config
 def upload(local_dataset, skip_copy, tries):
     local_dataset.push_staged_images(copy_to_data=not skip_copy, tries=tries)
 
@@ -286,11 +375,44 @@ def upload(local_dataset, skip_copy, tries):
     help="Number of tries to recover from spurious server errors.",
 )
 @pass_valid_local_dataset
+@check_git_config
 def publish(local_dataset, message, skip_validation, tries):
     local_dataset.push_staged_images(tries=tries)
     local_dataset.add_local_changes(skip_validation=skip_validation)
     local_dataset.commit(message)
     local_dataset.push_commits()
+
+
+@main.command(
+    help="Updates the configuration of the selected dataset to match current conservator-cli configuration"
+)
+@pass_valid_local_dataset
+def update_identity():
+    ctx_obj = get_current_context().obj
+    conservator = Conservator.create(ctx_obj["config_name"])
+
+    path = ctx_obj["cvc_local_path"]
+    full_path = os.path.join(os.getcwd(), path)
+    git_config_file = os.path.join(full_path, ".git", "config")
+
+    if not os.path.exists(git_config_file):
+        click.echo(f"Dataset git config file ({git_config_file}) is missing!")
+        sys.exit(1)
+
+    git_config = configparser.ConfigParser()
+
+    git_config.read(git_config_file)
+
+    git_url = git_config.get('remote "origin"', "url", raw=True)
+
+    git_url = parse.unquote(git_url)
+
+    split_result = parse.urlsplit(git_url)
+
+    new_url = f'{conservator.get_authenticated_url()}{split_result.path}'
+
+    print(new_url)
+
 
 
 @click.group(help="Commands for manipulating local datasets")
@@ -308,7 +430,6 @@ def cvc(ctx, path):
 
 # Hacky way to "add" commands to both groups
 cvc.commands = main.commands
-
 
 if __name__ == "__main__":
     main()
