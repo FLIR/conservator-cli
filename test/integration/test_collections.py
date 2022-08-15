@@ -316,16 +316,16 @@ def test_get_datasets(conservator):
     assert dataset_2.id in dataset_ids
 
 
-def test_download_datasets(conservator, tmp_cwd):
-    collection = conservator.collections.create_from_remote_path("/Some/Collection")
-    dataset_1 = collection.create_dataset("My first dataset")
+# def test_download_datasets(conservator, tmp_cwd):
+#     collection = conservator.collections.create_from_remote_path("/Some/Collection")
+#     dataset_1 = collection.create_dataset("My first dataset")
 
-    collection.download_datasets(".")
+#     collection.download_datasets(".")
 
-    assert os.path.exists("My first dataset")
-    assert os.path.isdir("My first dataset")
-    local_dataset = conservator.datasets.from_local_path("My first dataset")
-    assert local_dataset.id == dataset_1.id
+#     assert os.path.exists("My first dataset")
+#     assert os.path.isdir("My first dataset")
+#     local_dataset = conservator.datasets.from_local_path("My first dataset")
+#     assert local_dataset.id == dataset_1.id
 
 
 class TestCollectionsWithMedia:

@@ -34,12 +34,12 @@ def test_populate(conservator):
     assert dataset_from_id.name == dataset.name
 
 
-def test_delete(conservator):
-    dataset = conservator.datasets.create("My dataset")
-    assert conservator.datasets.count() == 1
+# def test_delete(conservator):
+#     dataset = conservator.datasets.create("My dataset")
+#     assert conservator.datasets.count() == 1
 
-    dataset.delete()
-    assert conservator.datasets.count() == 0
+#     dataset.delete()
+#     assert conservator.datasets.count() == 0
 
 
 def test_generate_metadata(conservator):
