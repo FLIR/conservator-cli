@@ -316,18 +316,17 @@ def test_get_datasets(conservator):
     assert dataset_2.id in dataset_ids
 
 
-# TODO: This is failing, for some reason, when the entire integration suite is run,
-# but not when this test suite is run by itself. I suspect that
-# def test_download_datasets(conservator):
-#     collection = conservator.collections.create_from_remote_path("/test_download/dataset")
-#     dataset_1 = collection.create_dataset("Test Download Dataset")
+@pytest.mark.skip()
+def test_download_datasets(conservator):
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
+    dataset_1 = collection.create_dataset("My first dataset")
 
-#     collection.download_datasets(".")
+    collection.download_datasets(".")
 
-#     assert os.path.exists("Test Download Dataset")
-#     assert os.path.isdir("Test Download Dataset")
-#     local_dataset = conservator.datasets.from_local_path("Test Download Dataset")
-#     assert local_dataset.id == dataset_1.id
+    assert os.path.exists("My first dataset")
+    assert os.path.isdir("My first dataset")
+    local_dataset = conservator.datasets.from_local_path("My first dataset")
+    assert local_dataset.id == dataset_1.id
 
 
 class TestCollectionsWithMedia:

@@ -34,14 +34,13 @@ def test_populate(conservator):
     assert dataset_from_id.name == dataset.name
 
 
-# TODO: This test case (or the underlying method being tested) needs to be refactored;
-# deleting a dataset is no longer instantaneous, instead the dataset is queued to be committed before being deleted.
-# def test_delete(conservator):
-#     dataset = conservator.datasets.create("My dataset")
-#     assert conservator.datasets.count() == 1
+@pytest.mark.skip()
+def test_delete(conservator):
+    dataset = conservator.datasets.create("My dataset")
+    assert conservator.datasets.count() == 1
 
-#     dataset.delete()
-#     assert conservator.datasets.count() == 0
+    dataset.delete()
+    assert conservator.datasets.count() == 0
 
 
 def test_generate_metadata(conservator):

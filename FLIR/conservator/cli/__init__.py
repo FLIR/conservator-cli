@@ -12,7 +12,7 @@ from FLIR.conservator.managers import (
     VideoManager,
     ImageManager,
 )
-from FLIR.conservator.util import to_clean_string
+from FLIR.conservator.util import to_clean_string, get_conservator_cli_version
 from FLIR.conservator.cli.cvc import cvc
 import logging
 
@@ -30,7 +30,13 @@ import logging
     default=None,
     help="Conservator config name, use default credentials if not specified",
 )
-@click.version_option(prog_name="conservator-cli", package_name="conservator-cli")
+@click.version_option(
+    prog_name="conservator-cli",
+    package_name="conservator-cli",
+    message="%(prog)s, version %(version)s \nLatest version on PyPi is {}".format(
+        get_conservator_cli_version()
+    ),
+)
 def main(log, config):
     levels = {
         "DEBUG": logging.DEBUG,
