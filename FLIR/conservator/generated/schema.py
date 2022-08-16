@@ -6586,6 +6586,10 @@ class Mutation(sgqlc.types.Type):
                     ),
                 ),
                 (
+                    "password",
+                    sgqlc.types.Arg(String, graphql_name="password", default=None),
+                ),
+                (
                     "role",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(String), graphql_name="role", default=None

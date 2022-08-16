@@ -13,3 +13,4 @@ dataclasses; python_version<'3.7'
 pymongo
 # docker is for building conservator image from inside jenkins pipeline
 docker
+semver == 2.13.0
