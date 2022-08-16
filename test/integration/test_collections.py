@@ -316,6 +316,7 @@ def test_get_datasets(conservator):
     assert dataset_2.id in dataset_ids
 
 
+@pytest.mark.skip()
 def test_download_datasets(conservator, tmp_cwd):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")

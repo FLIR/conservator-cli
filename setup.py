@@ -46,6 +46,7 @@ INSTALL_REQUIRES = [
     "jsonschema",
     "dataclasses; python_version<'3.7'",
     "pyreadline; platform_system=='Windows'",
+    "semver == 2.13.0",
 ]
 
 setuptools.setup(

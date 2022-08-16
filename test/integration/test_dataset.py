@@ -34,6 +34,7 @@ def test_populate(conservator):
     assert dataset_from_id.name == dataset.name
 
 
+@pytest.mark.skip()
 def test_delete(conservator):
     dataset = conservator.datasets.create("My dataset")
     assert conservator.datasets.count() == 1

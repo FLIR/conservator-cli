@@ -1,7 +1,10 @@
 import hashlib
 import logging
+import semver
+import requests
 
 from itertools import zip_longest
+from FLIR.conservator.version import version as cli_ver
 
 logger = logging.getLogger(__name__)
 
@@ -77,3 +80,35 @@ def chunks(list, size):
     .. note:: Adapted from  https://stackoverflow.com/a/312644
     """
     return zip_longest(*[iter(list)] * size, fillvalue=None)
+
+
+def get_conservator_cli_version():
+    # Get latest version from PyPi programatically
+    # See https://stackoverflow.com/a/62571316
+    response = requests.get("https://pypi.org/pypi/conservator-cli/json")
+    return response.json()["info"]["version"]
+
+
+def compare_conservator_cli_version():
+    current_version = cli_ver
+    latest_version = get_conservator_cli_version()
+
+    if semver.compare(latest_version, current_version) == 0:
+        return True
+    if semver.compare(latest_version, current_version) == -1:
+        logger.warning("You are using Conservator-cli version %s" % current_version)
+        logger.warning("Please upgrade to the latest version %s" % latest_version)
+        return False
+    if semver.compare(latest_version, current_version) == 1:
+        logger.warning(
+            "You are using an unreleased version of Conservator-cli (%s)"
+            % current_version
+        )
+        logger.warning(
+            "Please be aware that this version may not be supported in the future"
+        )
+        logger.warning(
+            "For reference, the current supported version of Conservator-cli is %s"
+            % latest_version
+        )
+        return False
