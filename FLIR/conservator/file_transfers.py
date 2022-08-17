@@ -86,7 +86,7 @@ class ConservatorFileTransfers:
         if os.path.exists(local_path):
             local_md5 = md5sum_file(local_path)
             if local_md5 == expected_md5:
-                logger.info(f"Skip {file} (already downloaded)")
+                logger.info("Skip %s (already downloaded)", file)
                 return True
         return self.download(url, local_path, no_meter=no_meter)
 
@@ -98,23 +98,30 @@ class ConservatorFileTransfers:
         os.makedirs(directory, exist_ok=True)
         url = self.full_url(url)
 
-        logger.debug(f"Downloading {file} from {url}")
+        logger.debug("Downloading %s from %s", file, url)
         response = None
         try:
             retries = 0
             while retries < max_retries:
                 response = requests.get(url, stream=True, allow_redirects=True)
+                logger.info('Got status code %s', response.status_code)
                 if response.ok:
                     break
                 if response.status_code == 502:
                     retries += 1
                     if retries < max_retries:
-                        logger.info(f"Bad Gateway error, retrying {file} ..")
+                        logger.info("Bad Gateway error, retrying %s..", file)
+                        time.sleep(retries)  # Timeout increases per retry.
+                        continue
+                if response.status_code == 504:
+                    retries += 1
+                    if retries < max_retries:
+                        logger.info("Gateway timeout error, retrying  %s..", file)
                         time.sleep(retries)  # Timeout increases per retry.
                         continue
                 raise FileDownloadException(url)
-        except requests.exceptions.ConnectionError as e:
-            raise FileDownloadException(url) from e
+        except requests.exceptions.ConnectionError as conn_ex:
+            raise FileDownloadException(url) from conn_ex
 
         size = int(response.headers.get("content-length", 0))
         progress = tqdm.tqdm(
@@ -128,12 +135,12 @@ class ConservatorFileTransfers:
                 for chunk in response.iter_content(chunk_size=chunk_size):
                     progress.update(len(chunk))
                     fd.write(chunk)
-        except BaseException as e:  # BaseException includes KeyboardInterrupt
+        except BaseException as base_ex:  # BaseException includes KeyboardInterrupt
             # To avoid partial downloads:
             if os.path.exists(local_path):
                 os.remove(local_path)
 
-            raise FileDownloadException(url) from e
+            raise FileDownloadException(url) from base_ex
         finally:
             progress.close()
         return response
