@@ -34,13 +34,32 @@ def test_populate(conservator):
     assert dataset_from_id.name == dataset.name
 
 
-@pytest.mark.skip()
 def test_delete(conservator):
     dataset = conservator.datasets.create("My dataset")
-    assert conservator.datasets.count() == 1
+    # Give the server time to create and commit the dataset.
+    found = False
+    for _ in range(10):
+        time.sleep(1)
+        for dset in conservator.datasets.all():
+            if dset.id == dataset.id:
+                found = True
+                break
+        if found:
+            break
+    assert found
 
     dataset.delete()
-    assert conservator.datasets.count() == 0
+    # Give the server time to commit and delete the dataset.
+    found = False
+    for _ in range(10):
+        time.sleep(1)
+        for dset in conservator.datasets.all():
+            if dset.id == dataset.id:
+                found = True
+                break
+        if not found:
+            break
+    assert not found
 
 
 def test_generate_metadata(conservator):

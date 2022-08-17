@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import pytest
 from FLIR.conservator.connection import ConservatorGraphQLServerError
@@ -321,6 +322,17 @@ def test_get_datasets(conservator):
 def test_download_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
+    # Give the server time to create and commit the dataset.
+    found = False
+    for _ in range(10):
+        time.sleep(1)
+        for dset in conservator.datasets.all():
+            if dset.id == dataset_1.id:
+                found = True
+                break
+        if found:
+            break
+    assert found
 
     collection.download_datasets(".")
 
