@@ -322,17 +322,16 @@ def test_get_datasets(conservator):
 def test_download_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
-    # Give the server time to create and commit the dataset.
-    found = False
+    # Wait for the server to create and commit the dataset.
+    done = False
     for _ in range(10):
         time.sleep(1)
-        for dset in conservator.datasets.all():
-            if dset.id == dataset_1.id:
-                found = True
-                break
-        if found:
+        dset = conservator.datasets.from_id(dataset_1.id)
+        dset.populate(["git_commit_state"])
+        if dset and dset.git_commit_state == "completed":
+            done = True
             break
-    assert found
+    assert done
 
     collection.download_datasets(".")
 

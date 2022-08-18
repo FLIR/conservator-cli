@@ -36,17 +36,16 @@ def test_populate(conservator):
 
 def test_delete(conservator):
     dataset = conservator.datasets.create("My dataset")
-    # Give the server time to create and commit the dataset.
-    found = False
+    # Wait for the server to create and commit the dataset.
+    done = False
     for _ in range(10):
         time.sleep(1)
-        for dset in conservator.datasets.all():
-            if dset.id == dataset.id:
-                found = True
-                break
-        if found:
+        dset = conservator.datasets.from_id(dataset.id)
+        dset.populate(["git_commit_state"])
+        if dset and dset.git_commit_state == "completed":
+            done = True
             break
-    assert found
+    assert done
 
     dataset.delete()
     # Give the server time to commit and delete the dataset.
