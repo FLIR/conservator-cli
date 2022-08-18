@@ -39,7 +39,7 @@ def test_delete(conservator):
     dataset = conservator.datasets.create("My dataset")
     # Wait for the server to create and commit the dataset.
     done = False
-    for _ in range(10):
+    for _ in range(60):
         time.sleep(1)
         dset = conservator.datasets.from_id(dataset.id)
         dset.populate(["git_commit_state"])
@@ -51,7 +51,7 @@ def test_delete(conservator):
     dataset.delete()
     # Wait for the server to commit and delete the dataset.
     deleted = False
-    for _ in range(10):
+    for _ in range(60):
         time.sleep(1)
         dset = conservator.datasets.from_id(dataset.id)
         try:

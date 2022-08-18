@@ -324,7 +324,7 @@ def test_download_datasets(conservator):
     dataset_1 = collection.create_dataset("My first dataset")
     # Wait for the server to create and commit the dataset.
     done = False
-    for _ in range(10):
+    for _ in range(60):
         time.sleep(1)
         dset = conservator.datasets.from_id(dataset_1.id)
         dset.populate(["git_commit_state"])
