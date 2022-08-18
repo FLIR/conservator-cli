@@ -82,7 +82,7 @@ class ConservatorFileTransfers:
         Check that a file exists at `local_path` with the `expected_md5` hash. If it
         doesn't, download it from `url`.
         """
-        directory, file = os.path.split(local_path)
+        file = os.path.basename(local_path)
         if os.path.exists(local_path):
             local_md5 = md5sum_file(local_path)
             if local_md5 == expected_md5:
@@ -106,7 +106,7 @@ class ConservatorFileTransfers:
                 response = requests.get(url, stream=True, allow_redirects=True)
                 if response.ok:
                     break
-                logger.info('Got status code %s', response.status_code)
+                logger.warning("Got status code %s", response.status_code)
                 if response.status_code == 502:
                     retries += 1
                     if retries < max_retries:
@@ -161,7 +161,9 @@ class ConservatorFileTransfers:
             )
         except FileDownloadException:
             # This is called from multiprocessing context, errors should not be raised.
-            logger.warning(f"Encountered FileDownloadException with {download_request}")
+            logger.warning(
+                "Encountered FileDownloadException with %s", download_request
+            )
             return False
 
     def _do_upload_request(self, upload_request):
@@ -171,7 +173,7 @@ class ConservatorFileTransfers:
             )
         except FileUploadException:
             # This is called from multiprocessing context, errors should not be raised.
-            logger.warning(f"Encountered FileUploadException with {upload_request}")
+            logger.warning("Encountered FileUploadException with %s", upload_request)
             return False
 
     def upload(self, url, local_path, max_retries=5):
@@ -180,7 +182,7 @@ class ConservatorFileTransfers:
         """
         url = self.full_url(url)
         path = os.path.abspath(local_path)
-        logger.info(f"Uploading '{path}'")
+        logger.info("Uploading '%s'", path)
         response = None
         retries = 0
         while retries < max_retries:
@@ -188,16 +190,25 @@ class ConservatorFileTransfers:
                 response = requests.put(url, f)
             if response.ok:
                 break
+            logger.warning("Got status code %s", response.status_code)
             if response.status_code == 502:
                 retries += 1
                 if retries < max_retries:
-                    logger.info(
-                        f"Bad Gateway error, retrying {os.path.basename(path)} .."
+                    logger.warning(
+                        "Bad Gateway error, retrying %s..", os.path.basename(path)
+                    )
+                    time.sleep(retries)  # Timeout increases per retry.
+                    continue
+            if response.status_code == 504:
+                retries += 1
+                if retries < max_retries:
+                    logger.warning(
+                        "Gateway timeout error, retrying %s..", os.path.basename(path)
                     )
                     time.sleep(retries)  # Timeout increases per retry.
                     continue
             raise FileUploadException(f"url={url} response={response}))")
-        logger.info(f"Completed upload of '{path}'")
+        logger.info("Completed upload of '%s'", path)
         return response
 
     def download_many(self, downloads, process_count=None, no_meter=False):
