@@ -104,9 +104,9 @@ class ConservatorFileTransfers:
             retries = 0
             while retries < max_retries:
                 response = requests.get(url, stream=True, allow_redirects=True)
-                logger.info('Got status code %s', response.status_code)
                 if response.ok:
                     break
+                logger.info('Got status code %s', response.status_code)
                 if response.status_code == 502:
                     retries += 1
                     if retries < max_retries:
