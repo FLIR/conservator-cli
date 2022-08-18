@@ -3,6 +3,7 @@ import pytest
 import time
 
 from FLIR.conservator.generated.schema import AddAssociatedFrameInput
+from FLIR.conservator.connection import ConservatorGraphQLServerError
 
 
 def test_create(conservator):
@@ -48,17 +49,17 @@ def test_delete(conservator):
     assert done
 
     dataset.delete()
-    # Give the server time to commit and delete the dataset.
-    found = False
+    # Wait for the server to commit and delete the dataset.
+    deleted = False
     for _ in range(10):
         time.sleep(1)
-        for dset in conservator.datasets.all():
-            if dset.id == dataset.id:
-                found = True
-                break
-        if not found:
+        dset = conservator.datasets.from_id(dataset.id)
+        try:
+            dset.populate(["name"])
+        except ConservatorGraphQLServerError:
+            deleted = True
             break
-    assert not found
+    assert deleted
 
 
 def test_generate_metadata(conservator):
