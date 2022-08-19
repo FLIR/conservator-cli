@@ -142,10 +142,22 @@ def db(mongo_client):
 @pytest.fixture(scope="class")
 def empty_db(db):
     PRESERVED_COLLECTIONS = ["groups", "organizations", "allowedDomains"]
+    admin_found = False
+    admin_email = "admin@example.com"
+    if "TEST_ADMIN_EMAIL" in os.environ:
+        admin_email = os.environ["TEST_ADMIN_EMAIL"]
     for name in db.list_collection_names():
         if name.startswith("system."):
             continue
         if name in PRESERVED_COLLECTIONS:
+            continue
+        if name == "users":
+            for user in db.users.find({}):
+                if "apiKey" in user and (user["email"] == admin_email):
+                    admin_found = True
+                    break
+            if not admin_found:
+                db.users.delete_many({})
             continue
         db.get_collection(name).delete_many({})
     return db
@@ -172,16 +184,24 @@ def conservator(empty_db):
     else:
         admin_email = "admin@example.com"
 
-    empty_db.users.insert_one(
-        {
-            "_id": Conservator.generate_id(),
-            "role": ADMIN_ROLE,
-            "name": "admin user",
-            "email": admin_email,
-            "apiKey": api_key,
-            "organizationId": organization["_id"],
-        }
-    )
+    admin_found = False
+    for user in empty_db.users.find({}):
+        if "apiKey" in user and (user["email"] == admin_email):
+            admin_found = True
+            api_key = user["apiKey"]
+            break
+
+    if not admin_found:
+        empty_db.users.insert_one(
+            {
+                "_id": Conservator.generate_id(),
+                "role": ADMIN_ROLE,
+                "name": "admin user",
+                "email": admin_email,
+                "apiKey": api_key,
+                "organizationId": organization["_id"],
+            }
+        )
     config = Config(
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=test_settings.conservator_url
     )
