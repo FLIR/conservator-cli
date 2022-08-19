@@ -2,12 +2,14 @@ import json
 import pytest
 import time
 
+from conftest import wait_for_dataset_commit
 from FLIR.conservator.generated.schema import AddAssociatedFrameInput
 from FLIR.conservator.connection import ConservatorGraphQLServerError
 
 
 def test_create(conservator):
     dataset = conservator.datasets.create("My Dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
     assert dataset is not None
     assert dataset.name == "My Dataset"
 
@@ -20,6 +22,7 @@ def test_create(conservator):
 def test_create_in_collection(conservator):
     collection = conservator.collections.create_from_remote_path("/My/Collection")
     dataset = conservator.datasets.create("My Dataset", collections=[collection])
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     datasets = list(collection.get_datasets())
     assert len(datasets) == 1
@@ -29,6 +32,7 @@ def test_create_in_collection(conservator):
 
 def test_populate(conservator):
     dataset = conservator.datasets.create("My Dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     dataset_from_id = conservator.datasets.from_id(dataset.id)
     dataset_from_id.populate("name")
@@ -37,16 +41,7 @@ def test_populate(conservator):
 
 def test_delete(conservator):
     dataset = conservator.datasets.create("My dataset")
-    # Wait for the server to create and commit the dataset.
-    done = False
-    for _ in range(60):
-        time.sleep(1)
-        dset = conservator.datasets.from_id(dataset.id)
-        dset.populate(["git_commit_state"])
-        if dset and dset.git_commit_state == "completed":
-            done = True
-            break
-    assert done
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     dataset.delete()
     # Wait for the server to commit and delete the dataset.
@@ -64,6 +59,7 @@ def test_delete(conservator):
 
 def test_generate_metadata(conservator):
     dataset = conservator.datasets.create("My dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     metadata = dataset.generate_metadata()
     # check that we got metadata that can be parsed into JSON
@@ -81,6 +77,7 @@ def test_add_get_frames(conservator, test_data):
     frame = image.get_frame()
 
     dataset = conservator.datasets.create("Test dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
     dataset.add_frames([frame])
 
     dataset.populate("frame_count")
@@ -98,10 +95,11 @@ def test_add_get_frames_reversed(conservator, test_data):
     media_ids.append(conservator.media.upload(local_path2))
     for media_id in media_ids:
         conservator.media.wait_for_processing(media_id)
-    images = list(conservator.images.all())
+    images = [conservator.images.from_id(m_id) for m_id in media_ids]
     frames = [image.get_frame() for image in images]
 
     dataset = conservator.datasets.create("Test dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
     dataset.add_frames(frames)
 
     dataset.populate("frame_count")
@@ -128,8 +126,10 @@ def test_associate_frames(conservator, test_data):
     frames = [image.get_frame() for image in images]
 
     dataset1 = conservator.datasets.create("Test dataset1")
+    assert wait_for_dataset_commit(conservator, dataset1.id)
     dataset1.add_frames([frames[0]])
     dataset2 = conservator.datasets.create("Test dataset2")
+    assert wait_for_dataset_commit(conservator, dataset2.id)
     dataset2.add_frames([frames[1]])
 
     dset1_frames = list(dataset1.get_frames(fields="dataset_frames.id"))
@@ -161,6 +161,7 @@ def test_add_with_associated_frames(conservator, test_data):
     frames = [image.get_frame() for image in images]
 
     dataset = conservator.datasets.create("Test dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     associate_frame_input = AddAssociatedFrameInput(
         frame_id=frames[1].id, spectrum="Thermal"
@@ -185,6 +186,7 @@ def test_remove_frames(conservator, test_data):
     image = conservator.images.all().first()
     frame = image.get_frame()
     dataset = conservator.datasets.create("Test dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     # test deleting by dataset frame id
     dataset.add_frames([frame])
@@ -217,7 +219,7 @@ def test_commit_and_history(conservator, test_data):
     frame = image.get_frame()
 
     dataset = conservator.datasets.create("Test dataset")
-    time.sleep(20)
+    assert wait_for_dataset_commit(conservator, dataset.id)
     dataset.populate("repository")
     assert dataset.repository.master is not None
     # All datasets start with two commits.
@@ -234,6 +236,7 @@ def test_commit_and_history(conservator, test_data):
 
 def test_from_string_id(conservator):
     dataset = conservator.datasets.create("My Dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     dataset_from_string = conservator.datasets.from_string(dataset.id, fields=None)
     assert dataset_from_string.id == dataset.id
@@ -242,6 +245,7 @@ def test_from_string_id(conservator):
 
 def test_from_string_name(conservator):
     dataset = conservator.datasets.create("My Dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     dataset_from_string = conservator.datasets.from_string("My Dataset", fields=None)
     assert dataset_from_string.id == dataset.id
@@ -251,6 +255,7 @@ def test_from_string_name(conservator):
 def test_from_string_path(conservator):
     collection = conservator.collections.create_from_remote_path("/My/Collection")
     dataset = conservator.datasets.create("My Dataset", collections=[collection])
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     dataset_from_string = conservator.datasets.from_string(
         "/My/Collection/My Dataset", fields=None

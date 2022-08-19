@@ -1,5 +1,7 @@
 import pytest as pytest
 
+from conftest import wait_for_dataset_commit
+
 
 class TestDatasetFrame:
     @pytest.fixture(scope="class", autouse=True)
@@ -10,6 +12,7 @@ class TestDatasetFrame:
         image = conservator.images.all().first()
         frame = image.get_frame()
         dataset = conservator.datasets.create("Test dataset")
+        assert wait_for_dataset_commit(conservator, dataset.id)
         dataset.add_frames([frame])
 
     def test_initial_state(self, conservator):

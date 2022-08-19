@@ -3,6 +3,7 @@ import os
 import time
 
 import pytest
+from conftest import wait_for_dataset_commit
 from FLIR.conservator.connection import ConservatorGraphQLServerError
 
 from FLIR.conservator.wrappers.collection import (
@@ -297,6 +298,7 @@ def test_create_dataset(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
 
     dataset = collection.create_dataset("My dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
 
     assert conservator.datasets.id_exists(dataset.id)
     dataset.populate("collections")  # a list of Collection IDs
@@ -307,7 +309,9 @@ def test_create_dataset(conservator):
 def test_get_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
+    assert wait_for_dataset_commit(conservator, dataset_1.id)
     dataset_2 = collection.create_dataset("My second dataset")
+    assert wait_for_dataset_commit(conservator, dataset_2.id)
 
     datasets = collection.get_datasets()
 
@@ -322,6 +326,7 @@ def test_get_datasets(conservator):
 def test_download_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
+    assert wait_for_dataset_commit(conservator, dataset_1.id)
     # Wait for the server to create and commit the dataset.
     done = False
     for _ in range(60):

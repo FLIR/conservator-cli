@@ -7,12 +7,14 @@ import pathlib
 import time
 import pytest
 
+from conftest import wait_for_dataset_commit
 from FLIR.conservator.local_dataset import LocalDataset
 
 
 @pytest.mark.usefixtures("tmp_cwd")
 def test_clone(conservator):
     dataset = conservator.datasets.create("My Dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
     local_dset = LocalDataset.clone(dataset)
     assert os.path.exists("My Dataset")
     assert os.path.exists("My Dataset/index.json")
@@ -24,6 +26,7 @@ def test_add_commit_push_frame(conservator, test_data):
     local_path = test_data / "jpg" / "banana_0.jpg"
 
     dataset = conservator.datasets.create("My Dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
     local_dset = LocalDataset.clone(dataset)
     local_dset.stage_local_images([local_path])
     staged_paths = [pathlib.Path(path) for path in local_dset.get_staged_images()]

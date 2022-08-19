@@ -4,6 +4,7 @@ from time import sleep
 
 import pytest
 
+from conftest import wait_for_dataset_commit
 from FLIR.conservator.generated.schema import AnnotationCreate
 
 # Unfortunately, metadata references specific IDs, so
@@ -66,6 +67,7 @@ def test_metadata_download_upload_for_media(conservator, test_data):
 @pytest.mark.usefixtures("tmp_cwd")
 def test_metadata_download_upload_for_dataset(conservator, test_data):
     dataset = conservator.datasets.create("The Dataset")
+    assert wait_for_dataset_commit(conservator, dataset.id)
     local_path = test_data / "jpg" / "bicycle_0.jpg"
     media_id = conservator.media.upload(local_path)
     conservator.media.wait_for_processing(media_id)

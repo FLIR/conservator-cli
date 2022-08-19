@@ -9,6 +9,8 @@ import subprocess
 from time import sleep
 import pytest
 
+from conftest import wait_for_dataset_commit
+
 
 def cvc(*args):
     return subprocess.run(
@@ -22,6 +24,7 @@ def cvc(*args):
 def test_empty_clone(default_conservator):
     dataset = default_conservator.datasets.create("My dataset")
     assert dataset is not None
+    assert wait_for_dataset_commit(default_conservator, dataset.id)
 
     p = cvc("clone", dataset.id)
     assert p.returncode == 0
@@ -36,6 +39,7 @@ def test_empty_clone(default_conservator):
 def test_publish_image(default_conservator, test_data):
     dataset = default_conservator.datasets.create("My dataset")
     assert dataset is not None
+    assert wait_for_dataset_commit(default_conservator, dataset.id)
 
     p = cvc("clone", dataset.id)
     assert p.returncode == 0
@@ -67,6 +71,7 @@ def test_publish_image(default_conservator, test_data):
 @pytest.mark.usefixtures("tmp_cwd")
 def test_cvc_clone_download(default_conservator, test_data):
     dataset = default_conservator.datasets.create("My dataset")
+    assert wait_for_dataset_commit(default_conservator, dataset.id)
     media_id = default_conservator.media.upload(test_data / "mp4" / "adas_thermal.mp4")
     default_conservator.media.wait_for_processing(media_id)
     video = default_conservator.get_media_instance_from_id(media_id)

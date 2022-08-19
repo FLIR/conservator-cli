@@ -4,6 +4,7 @@ import os
 import secrets
 import shutil
 import subprocess
+import time
 
 import pytest
 import pymongo
@@ -246,3 +247,16 @@ def upload_media(conservator, media):
         )
         media_ids.append(media_id)
     conservator.media.wait_for_processing(media_ids)
+
+
+def wait_for_dataset_commit(cns, dataset_id):
+    # Wait for the server to create the first commit for a new dataset.
+    done = False
+    for _ in range(60):
+        time.sleep(1)
+        dset = cns.datasets.from_id(dataset_id)
+        dset.populate(["git_commit_state"])
+        if dset and dset.git_commit_state == "completed":
+            done = True
+            break
+    return done
