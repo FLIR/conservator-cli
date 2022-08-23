@@ -1,6 +1,5 @@
 import json
 import os
-import time
 
 import pytest
 from conftest import wait_for_dataset_commit
