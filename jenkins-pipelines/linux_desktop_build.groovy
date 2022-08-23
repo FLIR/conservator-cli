@@ -188,6 +188,8 @@ pipeline {
       sh "chmod -R 777 ."
       cleanWs()
       sh "kind delete cluster"
+      sh "docker image prune"
+      sh "docker system prune -a --filter 'until=120h'"
     }
   }
 }
