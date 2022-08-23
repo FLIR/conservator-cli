@@ -44,7 +44,7 @@ def test_delete(conservator):
     assert wait_for_dataset_commit(conservator, dataset.id)
 
     dataset.delete()
-    # Wait for the server to commit and delete the dataset.
+    # Wait for the dataset ID to become invalid.
     deleted = False
     for _ in range(60):
         time.sleep(1)
