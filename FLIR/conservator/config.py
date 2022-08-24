@@ -41,8 +41,11 @@ input argument 'd' is dict of config data containing the field of interest
 def validate_max_retries(d):
     retries_ok = False
     try:
-        int(d["CONSERVATOR_MAX_RETRIES"])
-        retries_ok = True
+        max_retries = int(d["CONSERVATOR_MAX_RETRIES"])
+        if max_retries > 0:
+            retries_ok = True
+        else:
+            print("Error: invalid retries count, please try again")
     except Exception:
         print("Error: invalid retries count, please try again")
     return retries_ok
