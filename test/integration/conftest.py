@@ -4,6 +4,7 @@ import os
 import secrets
 import shutil
 import subprocess
+import sys
 
 import pytest
 import pymongo
@@ -12,6 +13,10 @@ from FLIR.conservator.config import Config
 from FLIR.conservator.conservator import Conservator
 
 ADMIN_ROLE = "Conservator Administrator"
+
+PATH = os.path.dirname(os.path.realpath(__file__))
+DATA_FOLDER = os.path.realpath(os.path.join(PATH, '..', 'data'))
+MP4_FOLDER = os.path.join(DATA_FOLDER, 'mp4')
 
 
 @dataclasses.dataclass
@@ -35,6 +40,17 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
+
+    lfs_is_ok = check_git_lfs()
+
+    if not lfs_is_ok:
+        error_msg = '''
+            git-lfs is not installed, or the repository was not initialized correctly
+            Please ensure that git-lfs is installed on your system, and that the files in test/data
+            are correctly checked out
+            '''
+        pytest.exit(error_msg)
+
     # deployment type of Conservator server comes from command-line parser
     test_settings.server_deployment = config.option.server_deployment
 
@@ -246,3 +262,19 @@ def upload_media(conservator, media):
         )
         media_ids.append(media_id)
     conservator.media.wait_for_processing(media_ids)
+
+
+def check_git_lfs():
+    which_result = subprocess.call(['which', 'git-lfs'], stdout=subprocess.DEVNULL)
+
+    if which_result != 0:
+        return False
+
+    mp4_file = os.path.join(MP4_FOLDER, 'tower_gimbal.mp4')
+
+    result = str(subprocess.check_output(['file', mp4_file]))
+
+    if result.find("ASCII") != -1:
+        return False
+
+    return True
