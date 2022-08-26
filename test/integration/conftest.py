@@ -4,7 +4,7 @@ import os
 import secrets
 import shutil
 import subprocess
-import sys
+import socket
 
 import pytest
 import pymongo
@@ -46,8 +46,18 @@ def pytest_configure(config):
     if not lfs_is_ok:
         error_msg = '''
             git-lfs is not installed, or the repository was not initialized correctly
-            Please ensure that git-lfs is installed on your system, and that the files in test/data
-            are correctly checked out
+            Please ensure that git-lfs is installed on your system, and then run `git lfs pull`
+            to ensure all binary files are checked out correctly
+            '''
+        pytest.exit(error_msg)
+
+    mongo_dns_is_ok = check_conservator_mongo()
+
+    if not mongo_dns_is_ok:
+        error_msg = '''
+            `conservator-mongo` is not configured as a host.
+            Please edit your `/etc/hosts` file to contain the following entry:
+            `127.0.0.1        conservator-mongo`
             '''
         pytest.exit(error_msg)
 
@@ -277,4 +287,12 @@ def check_git_lfs():
     if result.find("ASCII") != -1:
         return False
 
+    return True
+
+
+def check_conservator_mongo():
+    try:
+        socket.gethostbyname('conservator-mongo')
+    except Exception:
+        return False
     return True
