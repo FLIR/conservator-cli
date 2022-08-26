@@ -317,6 +317,7 @@ def test_get_datasets(conservator):
 
 
 @pytest.mark.skip()
+@pytest.mark.usefixtures("tmp_cwd")
 def test_download_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
@@ -390,7 +391,8 @@ class TestCollectionsWithMedia:
         media = list(collection.recursively_get_media())
         assert len(media) == 4  # 2 images, 2 videos
 
-    def test_download_metadata(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download_metadata(self, conservator):
         collection = conservator.collections.from_remote_path("/Cats")
         collection.download_metadata("./cats")
         assert os.path.exists("./cats/media_metadata")
@@ -408,7 +410,8 @@ class TestCollectionsWithMedia:
             media.populate()
             assert media.name == "Named cat pic.jpg"
 
-    def test_download_images(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download_images(self, conservator):
         collection = conservator.collections.from_remote_path("/Cats")
         collection.download_images("./images/")
 
@@ -417,7 +420,8 @@ class TestCollectionsWithMedia:
         assert os.path.exists("images/cat_1.jpg")
         assert os.path.exists("images/Named cat pic.jpg")
 
-    def test_download_videos(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download_videos(self, conservator):
         collection = conservator.collections.from_remote_path("/Flight/Thermal")
         collection.download_videos("./videos/")
 
@@ -425,7 +429,8 @@ class TestCollectionsWithMedia:
         assert os.path.exists("videos/adas_thermal.mp4")
         assert os.path.exists("videos/Same video but named.mp4")
 
-    def test_download_media(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download_media(self, conservator):
         collection = conservator.collections.from_remote_path("/Flight")
         collection.download_media("./media/")
 
@@ -433,7 +438,8 @@ class TestCollectionsWithMedia:
         assert os.path.exists("media/aerial_0.jpg")
         assert os.path.exists("media/drone_0.jpg")
 
-    def test_download_recursively(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download_recursively(self, conservator):
         collection = conservator.collections.from_remote_path("/Animals")
 
         collection.download(

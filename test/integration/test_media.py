@@ -2,12 +2,12 @@ import os
 
 import pytest
 
+from conftest import upload_media
 from FLIR.conservator.conservator import UnknownMediaIdException
 from FLIR.conservator.generated.schema import AnnotationCreate
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import Image, Video
 from FLIR.conservator.wrappers.media import MediaCompare
-from conftest import upload_media
 
 
 def test_upload_image(conservator, test_data):
@@ -302,14 +302,16 @@ class TestDownloadMedia:
         ]
         upload_media(conservator, MEDIA)
 
-    def test_download(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download(self, conservator):
         image = conservator.images.by_exact_name("My cat.jpg").first()
         image.download(".")
         assert os.path.exists("My cat.jpg")
         assert os.path.isfile("My cat.jpg")
         assert md5sum_file("My cat.jpg") == image.md5
 
-    def test_download_path(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download_path(self, conservator):
         image = conservator.images.by_exact_name("My cat.jpg").first()
         image.download("Some/Path")
         assert os.path.exists("Some/Path/My cat.jpg")
