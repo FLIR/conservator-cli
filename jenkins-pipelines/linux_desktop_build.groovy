@@ -7,6 +7,12 @@ pipeline {
     }
   }
   stages {
+    stage('Cleanup') {
+      steps {
+        sh "docker image prune"
+        sh "docker system prune -a --filter 'until=120h'"
+      }
+    }
     stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
@@ -188,6 +194,7 @@ pipeline {
       sh "chmod -R 777 ."
       cleanWs()
       sh "kind delete cluster"
+      sh "docker image prune"
     }
   }
 }
