@@ -183,11 +183,18 @@ pipeline {
   }
   post {
     cleanup {
+      sh "kind delete cluster"
       // This docker executes as root, so any files created (python cache, etc.) can't be deleted
       // by the Jenkins worker. We need to lower permissions before asking to clean up.
       sh "chmod -R 777 ."
+      sh """
+      if [ -d $WORKSPACE/fc/docker/kubernetes ] ; then
+        echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+        echo '!!!!!! used external kubernetes config, please disable when fix has been deployed !!!!!!'
+        echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+      fi
+      """
       cleanWs()
-      sh "kind delete cluster"
     }
   }
 }
