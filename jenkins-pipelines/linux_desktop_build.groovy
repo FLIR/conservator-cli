@@ -66,7 +66,7 @@ pipeline {
         FC_GIT_REPO = "ssh://git@github.com/FLIR/flirconservator"
         // version of conservator known to have working KInD config
         // only need to set this if running tests against fc image w/ broken kubernetes configs
-        KIND_GIT_HASH = ""
+        KIND_GIT_HASH = "6967f839b9e8d72885f8665af9853e20a9a4fd47"
 
         // uid of jenkins user, for fixing up ownership of checked-out source
         BUILD_UID = sh(returnStdout: true, script: "stat -c '%u' ${WORKSPACE}").trim()
@@ -189,12 +189,19 @@ pipeline {
   }
   post {
     cleanup {
+      sh "kind delete cluster"
+      sh "docker image prune"
       // This docker executes as root, so any files created (python cache, etc.) can't be deleted
       // by the Jenkins worker. We need to lower permissions before asking to clean up.
       sh "chmod -R 777 ."
+      sh """
+      if [ -d $WORKSPACE/fc/docker/kubernetes ] ; then
+        echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+        echo '!!!!!! used external kubernetes config, please disable when fix has been deployed !!!!!!'
+        echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+      fi
+      """
       cleanWs()
-      sh "kind delete cluster"
-      sh "docker image prune"
     }
   }
 }

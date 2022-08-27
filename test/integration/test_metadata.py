@@ -2,7 +2,7 @@ import os
 import json
 from time import sleep
 
-import pytest as pytest
+import pytest
 
 from FLIR.conservator.generated.schema import AnnotationCreate
 
@@ -12,7 +12,8 @@ from FLIR.conservator.generated.schema import AnnotationCreate
 # between tests.
 
 
-def test_metadata_download_upload_for_media(conservator, test_data, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_metadata_download_upload_for_media(conservator, test_data):
     local_path = test_data / "jpg" / "bicycle_0.jpg"
     media_id = conservator.media.upload(local_path)
     conservator.media.wait_for_processing(media_id)
@@ -62,7 +63,8 @@ def test_metadata_download_upload_for_media(conservator, test_data, tmp_cwd):
 
 # TODO: This test will fail because the import-dataset-metadata worker is not running in k8s.
 @pytest.mark.skip()
-def test_metadata_download_upload_for_dataset(conservator, test_data, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_metadata_download_upload_for_dataset(conservator, test_data):
     dataset = conservator.datasets.create("The Dataset")
     local_path = test_data / "jpg" / "bicycle_0.jpg"
     media_id = conservator.media.upload(local_path)
