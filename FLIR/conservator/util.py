@@ -90,16 +90,16 @@ def get_conservator_cli_version():
 
 
 def compare_conservator_cli_version():
-    current_version = cli_ver
-    latest_version = get_conservator_cli_version()
+    current_version = semver.VersionInfo.parse(cli_ver)
+    latest_version = semver.VersionInfo.parse(get_conservator_cli_version())
 
-    if semver.compare(latest_version, current_version) == 0:
+    if latest_version == current_version:
         return True
-    if semver.compare(latest_version, current_version) == -1:
+    if latest_version < current_version:
         logger.warning("You are using Conservator-cli version %s", current_version)
         logger.warning("Please upgrade to the latest version %s", latest_version)
         return False
-    if semver.compare(latest_version, current_version) == 1:
+    if latest_version > current_version:
         logger.warning(
             "You are using an unreleased version of Conservator-cli (%s)",
             current_version,
