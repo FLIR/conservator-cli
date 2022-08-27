@@ -7,6 +7,12 @@ pipeline {
     }
   }
   stages {
+    stage('Cleanup') {
+      steps {
+        sh "docker image prune"
+        sh "docker system prune -a --filter 'until=120h'"
+      }
+    }
     stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
@@ -184,6 +190,7 @@ pipeline {
   post {
     cleanup {
       sh "kind delete cluster"
+      sh "docker image prune"
       // This docker executes as root, so any files created (python cache, etc.) can't be deleted
       // by the Jenkins worker. We need to lower permissions before asking to clean up.
       sh "chmod -R 777 ."
