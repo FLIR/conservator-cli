@@ -284,11 +284,7 @@ def check_git_lfs():
 
     mp4_file = os.path.join(MP4_FOLDER, "tower_gimbal.mp4")
 
-    print(f"Checking file {mp4_file}")
-
     result = str(subprocess.check_output(["file", mp4_file]))
-
-    print(f"result is: {result}")
 
     if result.find("ASCII") != -1:
         return False
