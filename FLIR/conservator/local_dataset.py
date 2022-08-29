@@ -1,3 +1,7 @@
+"""
+Provides utilities to manage local datasets.
+cvc.py delegates to these methods.
+"""
 import collections
 import multiprocessing
 import subprocess
@@ -25,6 +29,11 @@ logger = logging.getLogger(__name__)
 
 
 class InvalidLocalDatasetPath(Exception):
+    """
+    Custom exception
+    """
+
+    # pylint: disable=super-init-not-called
     def __init__(self, path):
         self.path = path
 
@@ -70,6 +79,7 @@ class LocalDataset:
         if not os.path.exists(self.cvc_path):
             os.makedirs(self.cvc_path)
         if not os.path.exists(self.staging_path):
+            # pylint: disable=invalid-name
             with open(self.staging_path, "w+", encoding="utf-8") as f:
                 json.dump([], f)
         logger.debug("Opened local dataset at %s", self.path)
@@ -130,6 +140,7 @@ class LocalDataset:
         if not os.path.exists(self.dataset_info_path):
             logger.info("Skip write to frames.jsonl: Repository missing dataset.jsonl")
             return
+        # pylint: disable=invalid-name
         with open(self.frames_path, "w", encoding="utf-8") as f:
             for frame in frames_list:
                 f.write(f"{json.dumps(frame, separators=(',', ':'))}\n")
@@ -229,12 +240,12 @@ class LocalDataset:
 
     def add_local_changes(self, skip_validation=False):
         """
-        Stages changes to `index.json` or `*.jsonl` files and `associated_files` for the next commit.
+        Stages changes to `index.json`/`*.jsonl` files and `associated_files` for the next commit.
 
-        :param skip_validation: By default, `index.json` or `*.jsonl` are validated against a schema.
-            If the schema is incorrect and you're sure your source files are valid, you can
-            pass `True` to skip the check. In this case, please also submit a PR so we can
-            update the schema.
+        :param skip_validation: By default, `index.json` or `*.jsonl` are validated against
+            a schema. If the schema is incorrect and you're sure your source files are valid,
+            you can pass `True` to skip the check. In this case, please also submit a PR so
+            we can update the schema.
         """
         if skip_validation:
             logger.warning(
@@ -271,9 +282,9 @@ class LocalDataset:
                 elif not os.path.exists(self.dataset_info_path):
                     if not jsonl_warning_printed:
                         logger.warning(
-                            "'%s' cannot be added to a repository.  Move it aside, commit the current \
-                            repository state from the Conservator web site and pull the new commit to \
-                            get this file into the repository.",
+                            "'%s' cannot be added to a repository.  Move it aside, commit the \
+                            current repository state from the Conservator web site and pull \
+                            the new commit to get this file into the repository.",
                             added,
                         )
                     jsonl_warning_printed = True
@@ -294,7 +305,7 @@ class LocalDataset:
                 break
         if jsonl_change and "index.json" in stage_files:
             logger.error(
-                "Cannot commit changes to index.json along with changes to any file ending in '.jsonl'"
+                "Cannot commit changes to both index.json any file ending in '.jsonl'"
             )
             logger.error(
                 "Move JSONL and/or index.json files aside and recover the original versions using \
@@ -316,7 +327,8 @@ class LocalDataset:
                     ", ".join(val_files),
                 )
                 logger.error(
-                    "You may be able to skip this check with '--skip-validation' if you're sure your file conforms."
+                    "You may be able to skip this check with '--skip-validation' \
+                        if you're sure your file conforms."
                 )
                 sys.exit(-1)
 
@@ -516,6 +528,9 @@ class LocalDataset:
             json.dump([], f)
 
     def upload_image(self, path, md5, tries=5):
+        """
+        Upload a new image to a dataset
+        """
         url = self.conservator.get_dvc_hash_url(md5)
         filename = os.path.split(path)[1]
         headers = {
@@ -526,6 +541,7 @@ class LocalDataset:
         retry_count = 0
         while retry_count < tries:
             with open(path, "rb") as data:
+                # pylint: disable=invalid-name
                 r = requests.put(url, data, headers=headers)
             if r.status_code == 502:
                 retry_count += 1
@@ -542,6 +558,7 @@ class LocalDataset:
         """
         Returns the object in ``index.json``.
         """
+        # pylint: disable=invalid-name
         with open(self.index_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
@@ -604,6 +621,7 @@ class LocalDataset:
         """
         Returns the staged image paths from the staging file.
         """
+        # pylint: disable=invalid-name
         with open(self.staging_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
@@ -629,6 +647,7 @@ class LocalDataset:
             if abspath not in staged_images:
                 logger.info("Adding '%s' to staging file.", abspath)
                 staged_images.append(abspath)
+        # pylint: disable=invalid-name
         with open(self.staging_path, "w", encoding="utf-8") as f:
             json.dump(staged_images, f)
 
@@ -668,9 +687,9 @@ class LocalDataset:
         This only counts frames uploaded directly to the dataset.
         """
         max_index = 0
-        for f in dataset_frames:
-            if f["datasetFrameId"] == f["videoMetadata"]["frameId"]:
-                frame_index = f["videoMetadata"]["frameIndex"]
+        for frame in dataset_frames:
+            if frame["datasetFrameId"] == frame["videoMetadata"]["frameId"]:
+                frame_index = frame["videoMetadata"]["frameIndex"]
                 max_index = max(max_index, frame_index)
         return max_index
 
@@ -915,9 +934,7 @@ class LocalDataset:
             logging.error(
                 "Dataset %s has no repository. Unable to clone.", dataset.name
             )
-            logging.error(
-                "This dataset can be fixed by browsing to it in Conservator Web UI and clicking 'Commit Changes'."
-            )
+            logging.error("Please contact support to resolve this issue.")
             return
 
         if clone_path is None:
@@ -932,6 +949,7 @@ class LocalDataset:
         if not verbose:
             clone_cmd.append("-q")
         clone_cmd += [url, clone_path]
+        # pylint: disable=invalid-name
         r = subprocess.call(clone_cmd)
         if r != 0:
             logging.error("Error %s when cloning.", r)
