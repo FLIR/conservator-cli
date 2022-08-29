@@ -520,12 +520,13 @@ class LocalDataset:
         if jsonl_update:
             self.write_frames_to_jsonl(dataset_frames)
         else:
-            # pylint: disable=invalid-name
-            with open(self.index_path, "w", encoding="utf-8") as f:
-                json.dump(index, f, indent=1, sort_keys=True, separators=(",", ": "))
-        # pylint: disable=invalid-name
-        with open(self.staging_path, "w", encoding="utf-8") as f:
-            json.dump([], f)
+            with open(self.index_path, "w", encoding="utf-8") as index_json:
+                json.dump(
+                    index, index_json, indent=1, sort_keys=True, separators=(",", ": ")
+                )
+
+        with open(self.staging_path, "w", encoding="utf-8") as staging_file:
+            json.dump([], staging_file)
 
     def upload_image(self, path, md5, tries=5):
         """
