@@ -2,7 +2,7 @@ FROM python:3.8-slim-bullseye
 
 # Install standalone apt dependencies
 RUN apt-get update \
-    && apt-get install -y git make curl iproute2 git-lfs
+    && apt-get install -y git make curl iproute2 git-lfs file
 
 # Configure git
 RUN git config --global user.name "FLIR QA SERVICE" \
