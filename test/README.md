@@ -22,7 +22,7 @@ There are currently two test suites:
  to your `/etc/hosts` file.
 
 
-**Note that running the integration tests will wipe all data from your Conservator database, apart from the `organizations`, `allowedDomains`, and `groups` collections.**
+**Note that running the integration tests will wipe all data from your Conservator database, apart from the `organizations`, `allowedDomains`, and `groups` collections. Note also that the integration tests will not run correctly if there is a local `conservator_mongo` docker image running**
 
 Jenkins runs both sets of tests. Jenkins runs the integration tests against a Conservator instance using the latest `prod` docker image.
 

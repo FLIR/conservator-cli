@@ -7,6 +7,7 @@ as used by the CLI commands.
 import os
 import subprocess
 from time import sleep
+import pytest
 
 
 def cvc(*args):
@@ -17,7 +18,8 @@ def cvc(*args):
     )
 
 
-def test_empty_clone(default_conservator, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_empty_clone(default_conservator):
     dataset = default_conservator.datasets.create("My dataset")
     assert dataset is not None
 
@@ -30,7 +32,8 @@ def test_empty_clone(default_conservator, tmp_cwd):
     assert cloned_dataset.id == dataset.id
 
 
-def test_publish_image(default_conservator, tmp_cwd, test_data):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_publish_image(default_conservator, test_data):
     dataset = default_conservator.datasets.create("My dataset")
     assert dataset is not None
 
@@ -61,7 +64,8 @@ def test_publish_image(default_conservator, tmp_cwd, test_data):
     assert uploaded_frame.height == 375
 
 
-def test_cvc_clone_download(default_conservator, tmp_cwd, test_data):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_cvc_clone_download(default_conservator, test_data):
     dataset = default_conservator.datasets.create("My dataset")
     media_id = default_conservator.media.upload(test_data / "mp4" / "adas_thermal.mp4")
     default_conservator.media.wait_for_processing(media_id)
