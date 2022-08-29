@@ -43,16 +43,12 @@ def pytest_configure(config):
 
     lfs_is_ok = check_git_lfs()
 
-    if lfs_is_ok != 0:
-
-        # error_msg = """
-        #     git-lfs is not installed, or the repository was not initialized correctly
-        #     Please ensure that git-lfs is installed on your system, and then run `git lfs pull`
-        #     to ensure all binary files are checked out correctly
-        #     """
-        # pytest.exit(error_msg)
-        error_msg = f"check_git_lfs failed with result {lfs_is_ok}"
-
+    if not lfs_is_ok:
+        error_msg = """
+            git-lfs is not installed, or the repository was not initialized correctly
+            Please ensure that git-lfs is installed on your system, and then run `git lfs pull`
+            to ensure all binary files are checked out correctly
+            """
         pytest.exit(error_msg)
 
     mongo_dns_is_ok = check_conservator_mongo()
@@ -284,7 +280,7 @@ def check_git_lfs():
     print(f"which result is: {which_result}")
 
     if which_result != 0:
-        return 1
+        return False
 
     mp4_file = os.path.join(MP4_FOLDER, "tower_gimbal.mp4")
 
@@ -295,9 +291,9 @@ def check_git_lfs():
     print(f"result is: {result}")
 
     if result.find("ASCII") != -1:
-        return 2
+        return False
 
-    return 0
+    return True
 
 
 def check_conservator_mongo():
