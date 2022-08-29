@@ -1,6 +1,6 @@
 import os
 
-import pytest as pytest
+import pytest
 
 from FLIR.conservator.generated.schema import AnnotationCreate, PredictionCreate, Query
 from FLIR.conservator.util import md5sum_file
@@ -68,7 +68,8 @@ def test_add_prediction(conservator, test_data):
     assert annotation.source.type == "machine"
 
 
-def test_download(conservator, test_data, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_download(conservator, test_data):
     path = test_data / "jpg" / "bottle_0.jpg"
     media_id = conservator.media.upload(path)
     conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)

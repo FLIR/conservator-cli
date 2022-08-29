@@ -2,16 +2,16 @@
 Test LocalDataset.
 """
 
-import json
 import os.path
 import pathlib
-import shutil
 import time
+import pytest
 
 from FLIR.conservator.local_dataset import LocalDataset
 
 
-def test_clone(conservator, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_clone(conservator):
     dataset = conservator.datasets.create("My Dataset")
     local_dset = LocalDataset.clone(dataset)
     assert os.path.exists("My Dataset")
@@ -19,7 +19,8 @@ def test_clone(conservator, tmp_cwd):
     assert os.path.exists("My Dataset/dataset.jsonl")
 
 
-def test_add_commit_push_frame(conservator, tmp_cwd, test_data):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_add_commit_push_frame(conservator, test_data):
     local_path = test_data / "jpg" / "banana_0.jpg"
 
     dataset = conservator.datasets.create("My Dataset")
