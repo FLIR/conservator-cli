@@ -1,10 +1,13 @@
+"""
+CLI functionality for manipulating datasets
+"""
 import functools
 import os
 import subprocess
 import sys
+import logging
 
 import click
-import logging
 
 from click import get_current_context
 
@@ -13,6 +16,11 @@ from FLIR.conservator.local_dataset import LocalDataset
 
 
 def pass_valid_local_dataset(func):
+    """
+    Wrapper that will create a valid local dataset object
+    and pass it to the wrapped function
+    """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ctx_obj = get_current_context().obj
@@ -45,6 +53,9 @@ def pass_valid_local_dataset(func):
 @click.version_option(prog_name="conservator-cli", package_name="conservator-cli")
 @click.pass_context
 def main(ctx, log, path, config):
+    """
+    Main entrypoint
+    """
     levels = {
         "DEBUG": logging.DEBUG,
         "INFO": logging.INFO,
@@ -73,6 +84,9 @@ def main(ctx, log, path, config):
 )
 @click.pass_context
 def clone(ctx, identifier, path, checkout):
+    """
+    CLI option to clone a dataset
+    """
     conservator = Conservator.create(ctx.obj["config_name"])
     dataset = conservator.datasets.from_string(identifier)
     cloned = LocalDataset.clone(dataset, path)
@@ -84,10 +98,17 @@ def clone(ctx, identifier, path, checkout):
 @click.argument("commit")
 @pass_valid_local_dataset
 def checkout_(local_dataset, commit):
+    """
+    CLI option to check out a specific commit of a dataset
+    """
     local_dataset.checkout(commit)
 
 
+# pylint: disable=unused-argument
 def is_image_file(ctx, param, value):
+    """
+    Check if a filename represents an image
+    """
     for filename in value:
         if not LocalDataset.get_image_info(filename):
             raise click.BadParameter(
@@ -102,6 +123,9 @@ def is_image_file(ctx, param, value):
 @click.argument("paths", type=click.Path(exists=True), callback=is_image_file, nargs=-1)
 @pass_valid_local_dataset
 def add(local_dataset, paths):
+    """
+    Adds an image file to the dataset
+    """
     local_dataset.stage_local_images(paths)
 
 
@@ -115,6 +139,9 @@ def add(local_dataset, paths):
 )
 @pass_valid_local_dataset
 def commit_(local_dataset, message, skip_validation):
+    """
+    Commit dataset changes
+    """
     local_dataset.add_local_changes(skip_validation=skip_validation)
     local_dataset.commit(message)
 
@@ -122,12 +149,18 @@ def commit_(local_dataset, message, skip_validation):
 @main.command(help="Push commits")
 @pass_valid_local_dataset
 def push(local_dataset):
+    """
+    Push local commits to Conservator
+    """
     local_dataset.push_commits()
 
 
 @main.command(help="Pull the latest commits")
 @pass_valid_local_dataset
 def pull(local_dataset):
+    """
+    Pull latest changes from Conservator
+    """
     click.echo("Updating JSONL, index.json and associated files.")
     local_dataset.pull()
     click.echo("To download media, use cvc download.")
@@ -138,6 +171,9 @@ def pull(local_dataset):
 )
 @pass_valid_local_dataset
 def diff(local_dataset):
+    """
+    Thin wrapper around git diff
+    """
     subprocess.call(
         ["git", "diff", "*.jsonl", "index.json", "associated_files"],
         cwd=local_dataset.path,
@@ -147,13 +183,20 @@ def diff(local_dataset):
 @main.command("log", help="Show log of commits")
 @pass_valid_local_dataset
 def log_(local_dataset):
+    """
+    Thin wrapper around git log
+    """
     subprocess.call(["git", "log"], cwd=local_dataset.path)
 
 
 @main.command(help="Shows information on a specific commit or object")
 @click.argument("hash", default=None, required=False)
 @pass_valid_local_dataset
+# pylint: disable=redefined-builtin
 def show(local_dataset, hash):
+    """
+    Thin wrapper around git show
+    """
     if hash is None:
         subprocess.call(["git", "show"], cwd=local_dataset.path)
     else:
@@ -163,6 +206,10 @@ def show(local_dataset, hash):
 @main.command(help="Print staged images and files")
 @pass_valid_local_dataset
 def status(local_dataset):
+    """
+    Thin wrapper around git status; also shows any staged images
+    that have not been pushed to Conservator yet
+    """
     subprocess.call(
         ["git", "status", "*.jsonl", "index.json", "associated_files"],
         cwd=local_dataset.path,
@@ -205,6 +252,9 @@ def status(local_dataset):
 )
 @pass_valid_local_dataset
 def download(local_dataset, include_analytics, pool_size, symlink, tries):
+    """
+    Downloads all dataset frame images
+    """
     if pool_size == 10:  # default
         yellow = "\x1b[33;21m"
         cyan = "\x1b[36;21m"
@@ -214,14 +264,14 @@ def download(local_dataset, include_analytics, pool_size, symlink, tries):
             f"this up by rerunning with the -p (--process_count) option. "
             f"For instance: {cyan}cvc download -p 50{reset}"
         )
-    status = local_dataset.download(
+    download_status = local_dataset.download(
         include_analytics=include_analytics,
         include_eight_bit=True,
         process_count=pool_size,
         use_symlink=symlink,
         tries=tries,
     )
-    if not status:
+    if not download_status:
         sys.exit(1)
 
 
@@ -233,6 +283,9 @@ def download(local_dataset, include_analytics, pool_size, symlink, tries):
     help="If provided, only validate frames.jsonl if present",
 )
 def validate(local_dataset, skip_index):
+    """
+    Validates JSON/JSONL file changes against the Conservator schema
+    """
     if not skip_index:
         if local_dataset.validate_index():
             click.secho("index.json Valid", fg="green")
@@ -264,6 +317,9 @@ def validate(local_dataset, skip_index):
 )
 @pass_valid_local_dataset
 def upload(local_dataset, skip_copy, tries):
+    """
+    Uploads staged image files to Conservator
+    """
     local_dataset.push_staged_images(copy_to_data=not skip_copy, tries=tries)
 
 
@@ -287,6 +343,9 @@ def upload(local_dataset, skip_copy, tries):
 )
 @pass_valid_local_dataset
 def publish(local_dataset, message, skip_validation, tries):
+    """
+    Publishes all local changes to Conservator
+    """
     local_dataset.push_staged_images(tries=tries)
     local_dataset.add_local_changes(skip_validation=skip_validation)
     local_dataset.commit(message)
@@ -299,10 +358,12 @@ def publish(local_dataset, message, skip_validation, tries):
 )
 @click.pass_context
 def cvc(ctx, path):
-    # This command is added to conservator CLI.
-    # It is the same as main() except it skips things that toplevel
-    # conservator command already handles (logging and conservator config,
-    # and would result in confusing behavior if included twice.
+    """
+    This command is added to conservator CLI.
+    It is the same as main() except it skips things that toplevel
+    conservator command already handles (logging and conservator config,
+    and would result in confusing behavior if included twice.
+    """
     ctx.obj["cvc_local_path"] = path
 
 
@@ -311,4 +372,5 @@ cvc.commands = main.commands
 
 
 if __name__ == "__main__":
+    # pylint: disable=no-value-for-parameter
     main()
