@@ -324,10 +324,11 @@ def upload(local_dataset, skip_copy, tries):
 
 
 @main.command(
-    help="Upload staged images (if any), commit all changes to metadata (frames.jsonl or index.json) "
-    "and/or associated files (files inside associated_files/), and push to server with given message. "
-    "Note that associated files can be added by putting them into associated_files/ subdir "
-    "before running 'publish'."
+    help="Upload staged images (if any), commit all changes to metadata \
+        (frames.jsonl or index.json) and/or associated files (files inside \
+        associated_files/), and push to server with given message. \
+        Note that associated files can be added by putting them into the \
+        associated_files/ subdir before running 'publish'."
 )
 @click.argument("message")
 @click.option(
