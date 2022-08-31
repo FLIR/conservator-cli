@@ -198,9 +198,9 @@ pipeline {
       cleanWs()
       sh "docker image prune"
       // Note in --filter the "*" character will not match a "/"
-      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs docker image rm -f"
-      sh "docker image ls --filter reference='*conservator*' --quiet | xargs docker image rm -f"
-      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs docker image rm"
+      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f"
+      sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f"
+      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm"
     }
   }
 }
