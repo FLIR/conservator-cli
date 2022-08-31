@@ -179,7 +179,9 @@ def conservator(empty_db):
     admin_found = False
     user = empty_db.users.find_one({"email": admin_email})
     if user:
-        if "apiKey" not in user or ("TEST_API_KEY" in os.environ and user["apiKey"] != api_key):
+        if "apiKey" not in user or (
+            "TEST_API_KEY" in os.environ and user["apiKey"] != api_key
+        ):
             empty_db.users.update({"_id": user["_id"]}, {"$set": {"apiKey": api_key}})
         else:
             api_key = user["apiKey"]
