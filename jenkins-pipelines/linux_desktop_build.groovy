@@ -66,7 +66,7 @@ pipeline {
         FC_GIT_REPO = "ssh://git@github.com/FLIR/flirconservator"
         // version of conservator known to have working KInD config
         // only need to set this if running tests against fc image w/ broken kubernetes configs
-        KIND_GIT_HASH = "6967f839b9e8d72885f8665af9853e20a9a4fd47"
+        KIND_GIT_HASH = ""
 
         // uid of jenkins user, for fixing up ownership of checked-out source
         BUILD_UID = sh(returnStdout: true, script: "stat -c '%u' ${WORKSPACE}").trim()
