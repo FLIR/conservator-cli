@@ -3,16 +3,11 @@ pipeline {
     dockerfile {
       dir "test"
       label "docker"
+      additionalBuildArgs "-t conservator-cli/test"
       args "-u root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
   stages {
-    stage('Cleanup') {
-      steps {
-        sh "docker image prune"
-        sh "docker system prune -a --filter 'until=120h'"
-      }
-    }
     stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
@@ -191,6 +186,10 @@ pipeline {
     cleanup {
       sh "kind delete cluster"
       sh "docker image prune"
+      // Note in --filter the "*" character will not match a "/"
+      sh "docker image rm $(docker image ls --filter reference='*/*conservator*' --quiet)"
+      sh "docker image rm $(docker image ls --filter reference='*conservator*' --quiet)"
+      // sh "docker image rm $(docker image ls --filter reference='*conservator-cli*/*' --quiet)"
       // This docker executes as root, so any files created (python cache, etc.) can't be deleted
       // by the Jenkins worker. We need to lower permissions before asking to clean up.
       sh "chmod -R 777 ."
