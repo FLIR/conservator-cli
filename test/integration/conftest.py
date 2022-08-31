@@ -141,7 +141,7 @@ def db(mongo_client):
 
 @pytest.fixture(scope="class")
 def empty_db(db):
-    PRESERVED_COLLECTIONS = ["groups", "organizations", "allowedDomains"]
+    PRESERVED_COLLECTIONS = ["users", "groups", "organizations", "allowedDomains"]
     admin_found = False
     admin_email = "admin@example.com"
     if "TEST_ADMIN_EMAIL" in os.environ:
@@ -150,14 +150,6 @@ def empty_db(db):
         if name.startswith("system."):
             continue
         if name in PRESERVED_COLLECTIONS:
-            continue
-        if name == "users":
-            for user in db.users.find({}):
-                if "apiKey" in user and (user["email"] == admin_email):
-                    admin_found = True
-                    break
-            if not admin_found:
-                db.users.delete_many({})
             continue
         db.get_collection(name).delete_many({})
     return db
@@ -185,11 +177,13 @@ def conservator(empty_db):
         admin_email = "admin@example.com"
 
     admin_found = False
-    for user in empty_db.users.find({}):
-        if "apiKey" in user and (user["email"] == admin_email):
-            admin_found = True
+    user = empty_db.users.find_one({"email": admin_email})
+    if user:
+        if "apiKey" not in user or ("TEST_API_KEY" in os.environ and user["apiKey"] != api_key):
+            empty_db.users.update({"_id": user["_id"]}, {"$set": {"apiKey": api_key}})
+        else:
             api_key = user["apiKey"]
-            break
+        admin_found = True
 
     if not admin_found:
         empty_db.users.insert_one(
