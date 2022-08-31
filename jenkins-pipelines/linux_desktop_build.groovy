@@ -185,11 +185,6 @@ pipeline {
   post {
     cleanup {
       sh "kind delete cluster"
-      sh "docker image prune"
-      // Note in --filter the "*" character will not match a "/"
-      // sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs docker image rm -f"
-      // sh "docker image ls --filter reference='*conservator*' --quiet | xargs docker image rm -f"
-      // sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs docker image rm"
       // This docker executes as root, so any files created (python cache, etc.) can't be deleted
       // by the Jenkins worker. We need to lower permissions before asking to clean up.
       sh "chmod -R 777 ."
@@ -201,6 +196,11 @@ pipeline {
       fi
       """
       cleanWs()
+      sh "docker image prune"
+      // Note in --filter the "*" character will not match a "/"
+      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs docker image rm -f"
+      sh "docker image ls --filter reference='*conservator*' --quiet | xargs docker image rm -f"
+      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs docker image rm"
     }
   }
 }
