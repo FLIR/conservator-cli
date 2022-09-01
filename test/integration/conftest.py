@@ -177,7 +177,9 @@ def conservator(empty_db):
         if "apiKey" not in user or (
             "TEST_API_KEY" in os.environ and user["apiKey"] != api_key
         ):
-            empty_db.users.update_one({"_id": user["_id"]}, {"$set": {"apiKey": api_key}})
+            empty_db.users.update_one(
+                {"_id": user["_id"]}, {"$set": {"apiKey": api_key}}
+            )
         else:
             api_key = user["apiKey"]
     else:
