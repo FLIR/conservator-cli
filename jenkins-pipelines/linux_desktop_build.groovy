@@ -143,26 +143,27 @@ pipeline {
           }
         }
 
-        stage("Compare API versions") {
-          CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
-          echo "Conservator Host is ${CONSERVATOR_HOST}"
-          sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' ${CONSERVATOR_HOST}:8080 schema.json"
-          LATEST_API_VERSION = sh ( script: "md5sum ${SCRIPT_PATH}/schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
-          echo "API version on K8S: ${LATEST_API_VERSION}"
-          BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
-
-          if (LATEST_API_VERSION == BUILT_API_VERSION) {
-            echo "API Versions match ($BUILT_API_VERSION)"
-          } else {
-            error("Build failed - schema API version ($BUILT_API_VERSION) does not match API version in cluster ($LATEST_API_VERSION)")
-          }
-
-        }
-
         stage("Run integration tests") {
           steps {
             dir("integration-tests") {
               sh "pytest $WORKSPACE/test/integration"
+            }
+          }
+        }
+
+        stage("Compare API versions") {
+          steps {
+            CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
+            echo "Conservator Host is ${CONSERVATOR_HOST}"
+            sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' ${CONSERVATOR_HOST}:8080 schema.json"
+            LATEST_API_VERSION = sh ( script: "md5sum ${SCRIPT_PATH}/schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
+            echo "API version on K8S: ${LATEST_API_VERSION}"
+            BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
+
+            if (LATEST_API_VERSION == BUILT_API_VERSION) {
+              echo "API Versions match ($BUILT_API_VERSION)"
+            } else {
+              error("Build failed - schema API version ($BUILT_API_VERSION) does not match API version in cluster ($LATEST_API_VERSION)")
             }
           }
         }
