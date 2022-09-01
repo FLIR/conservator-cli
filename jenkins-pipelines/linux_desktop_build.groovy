@@ -6,6 +6,9 @@ pipeline {
       args "-u root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
+  environment {
+    TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
+  }
   stages {
     stage('Cleanup') {
       steps {
@@ -138,6 +141,22 @@ pipeline {
           steps {
             sh "cd test/integration/cluster && ./stop-cluster.sh && ./start-cluster.sh"
           }
+        }
+
+        stage("Compare API versions") {
+          CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
+          echo "Conservator Host is ${CONSERVATOR_HOST}"
+          sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' ${CONSERVATOR_HOST}:8080 schema.json"
+          LATEST_API_VERSION = sh ( script: "md5sum ${SCRIPT_PATH}/schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
+          echo "API version on K8S: ${LATEST_API_VERSION}"
+          BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
+
+          if (LATEST_API_VERSION == BUILT_API_VERSION) {
+            echo "API Versions match ($BUILT_API_VERSION)"
+          } else {
+            error("Build failed - schema API version ($BUILT_API_VERSION) does not match API version in cluster ($LATEST_API_VERSION)")
+          }
+
         }
 
         stage("Run integration tests") {
