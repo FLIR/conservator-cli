@@ -200,7 +200,7 @@ pipeline {
       // Note in --filter the "*" character will not match a "/"
       sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
       sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
-      sh 'docker rmi --force $(docker images --quiet --filter=reference="conservator-cli/test")'
+      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
     }
   }
 }
