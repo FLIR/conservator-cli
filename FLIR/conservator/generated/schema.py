@@ -69,6 +69,11 @@ class DatasheetJobState(sgqlc.types.Enum):
 Date = FLIR.conservator.generated.date.Date
 
 
+class DuplicateAction(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("overwrite", "skip")
+
+
 class FavoriteAssetType(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = ("collection", "dataset", "datasetFrame", "frame", "image", "video")
@@ -3262,6 +3267,7 @@ class Mutation(sgqlc.types.Type):
         "update_segment",
         "delete_segment",
         "generate_api_key",
+        "delete_api_key",
         "update_user_role",
         "delete_users",
         "update_user",
@@ -4391,6 +4397,12 @@ class Mutation(sgqlc.types.Type):
                         sgqlc.types.non_null(GraphqlID),
                         graphql_name="targetDatasetId",
                         default=None,
+                    ),
+                ),
+                (
+                    "duplicate_action",
+                    sgqlc.types.Arg(
+                        DuplicateAction, graphql_name="duplicateAction", default=None
                     ),
                 ),
             )
@@ -6501,6 +6513,9 @@ class Mutation(sgqlc.types.Type):
     )
     generate_api_key = sgqlc.types.Field(
         sgqlc.types.non_null("User"), graphql_name="generateApiKey"
+    )
+    delete_api_key = sgqlc.types.Field(
+        sgqlc.types.non_null("User"), graphql_name="deleteApiKey"
     )
     update_user_role = sgqlc.types.Field(
         sgqlc.types.non_null("User"),
