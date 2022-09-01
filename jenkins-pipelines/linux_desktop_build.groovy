@@ -157,10 +157,10 @@ pipeline {
               CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
               echo "Conservator Host is ${CONSERVATOR_HOST}"
               sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' http://${CONSERVATOR_HOST}:8080/graphql schema.json"
-              LATEST_API_VERSION = sh ( script: "md5sum ${SCRIPT_PATH}/schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
+              LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
               echo "API version on K8S: ${LATEST_API_VERSION}"
               BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
-
+              sh "rm schema.json"
               if (LATEST_API_VERSION == BUILT_API_VERSION) {
                 echo "API Versions match ($BUILT_API_VERSION)"
               } else {
