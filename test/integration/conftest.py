@@ -142,10 +142,6 @@ def db(mongo_client):
 @pytest.fixture(scope="class")
 def empty_db(db):
     PRESERVED_COLLECTIONS = ["users", "groups", "organizations", "allowedDomains"]
-    admin_found = False
-    admin_email = "admin@example.com"
-    if "TEST_ADMIN_EMAIL" in os.environ:
-        admin_email = os.environ["TEST_ADMIN_EMAIL"]
     for name in db.list_collection_names():
         if name.startswith("system."):
             continue
@@ -176,18 +172,15 @@ def conservator(empty_db):
     else:
         admin_email = "admin@example.com"
 
-    admin_found = False
     user = empty_db.users.find_one({"email": admin_email})
     if user:
         if "apiKey" not in user or (
             "TEST_API_KEY" in os.environ and user["apiKey"] != api_key
         ):
-            empty_db.users.update({"_id": user["_id"]}, {"$set": {"apiKey": api_key}})
+            empty_db.users.update_one({"_id": user["_id"]}, {"$set": {"apiKey": api_key}})
         else:
             api_key = user["apiKey"]
-        admin_found = True
-
-    if not admin_found:
+    else:
         empty_db.users.insert_one(
             {
                 "_id": Conservator.generate_id(),
