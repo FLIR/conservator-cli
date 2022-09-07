@@ -2,7 +2,7 @@ FROM python:3.8-slim-bullseye
 
 # Install standalone apt dependencies
 RUN apt-get update \
-    && apt-get install -y git make curl iproute2
+    && apt-get install -y git make curl iproute2 git-lfs file
 
 # Configure git
 RUN git config --global user.name "FLIR QA SERVICE" \
@@ -35,7 +35,7 @@ RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-
 
 # Install AWS CLI to pull docker images from ECR
 RUN apt-get update \
-    && apt-get install unzip 
+    && apt-get install unzip
 # aws cli v1
 RUN curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" \
     && unzip awscli-bundle.zip \

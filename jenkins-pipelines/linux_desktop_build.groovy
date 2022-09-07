@@ -3,16 +3,14 @@ pipeline {
     dockerfile {
       dir "test"
       label "docker"
+      additionalBuildArgs "-t conservator-cli/test"
       args "-u root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
+  environment {
+    TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
+  }
   stages {
-    stage('Cleanup') {
-      steps {
-        sh "docker image prune"
-        sh "docker system prune -a --filter 'until=120h'"
-      }
-    }
     stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
@@ -147,6 +145,25 @@ pipeline {
             }
           }
         }
+
+        stage("Compare API versions") {
+          steps {
+            script {
+              CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
+              echo "Conservator Host is ${CONSERVATOR_HOST}"
+              sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' http://${CONSERVATOR_HOST}:8080/graphql schema.json"
+              LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
+              echo "API version on K8S: ${LATEST_API_VERSION}"
+              BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
+              sh "rm schema.json"
+              if (LATEST_API_VERSION == BUILT_API_VERSION) {
+                echo "API Versions match ($BUILT_API_VERSION)"
+              } else {
+                error("Build failed - schema API version ($BUILT_API_VERSION) does not match API version in cluster ($LATEST_API_VERSION)")
+              }
+            }
+          }
+        }
       }
     }
     stage("Deploy Documentation") {
@@ -190,7 +207,6 @@ pipeline {
   post {
     cleanup {
       sh "kind delete cluster"
-      sh "docker image prune"
       // This docker executes as root, so any files created (python cache, etc.) can't be deleted
       // by the Jenkins worker. We need to lower permissions before asking to clean up.
       sh "chmod -R 777 ."
@@ -202,6 +218,11 @@ pipeline {
       fi
       """
       cleanWs()
+      sh "docker image prune"
+      // Note in --filter the "*" character will not match a "/"
+      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
     }
   }
 }
