@@ -12,11 +12,19 @@ There are currently two test suites:
  - Integration tests, for checking that CLI works with a Conservator instance.
    This requires that a local instance of Conservator is running, via k8s.
 
-**Note that running the integration tests will wipe all data from your Conservator database, apart from the `organizations`, `allowedDomains`, and `groups` collections.**
+## Requirements
 
-**Note also that running integration tests locally will not work if you are running a conservator_mongo docker container as well as a k8s cluster**
+ - In order to run the integration tests, you will need `git-lfs` installed, in order to pull the test data correctly. `git-lfs` can be installed through your package manager (e.g. `sudo apt install git-lfs`). If the files in `test/data` do not look as expected (e.g. `ls -alh` reports that they are only 100B in size, or if `file <file_name>` reports that all the files are ASCII text), running `git lfs pull` should resolve that.
+ - The integration tests also require `conservator-mongo` to be a resolvable hostname. To do this, add:
+ ```
+ 127.0.0.1        conservator-mongo
+ ```
+ to your `/etc/hosts` file.
 
-Jenkins runs both. For the second, we use the latest production image.
+
+**Note that running the integration tests will wipe all data from your Conservator database, apart from the `organizations`, `allowedDomains`, and `groups` collections. Note also that the integration tests will not run correctly if there is a local `conservator_mongo` docker image running**
+
+Jenkins runs both sets of tests. Jenkins runs the integration tests against a Conservator instance using the latest `prod` docker image.
 
 To run tests manually, from the root directory:
 
