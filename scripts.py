@@ -26,7 +26,7 @@ def test() -> None:
     """
     test_result = subprocess.call(["pytest", os.path.join(BASE_DIR, "test", "unit")])
     if test_result == 0:
-        click.secho("Unit tests succeeded", fg="green", bold=True)
+        click.secho("Unit tests passed", fg="green", bold=True)
     else:
         click.secho("Unit tests failed", fg="red", bold=True)
     return test_result
@@ -39,9 +39,9 @@ def black() -> None:
     """
     black_result = subprocess.call(["black", "--check", BASE_DIR])
     if black_result == 0:
-        click.secho("Black succeeded", fg="green", bold=True)
+        click.secho("Black check passed", fg="green", bold=True)
     else:
-        click.secho("Black failed", fg="red", bold=True)
+        click.secho("Black check failed", fg="red", bold=True)
     return black_result
 
 
