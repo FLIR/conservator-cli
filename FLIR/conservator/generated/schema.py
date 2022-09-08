@@ -69,6 +69,11 @@ class DatasheetJobState(sgqlc.types.Enum):
 Date = FLIR.conservator.generated.date.Date
 
 
+class DuplicateAction(sgqlc.types.Enum):
+    __schema__ = schema
+    __choices__ = ("overwrite", "skip")
+
+
 class FavoriteAssetType(sgqlc.types.Enum):
     __schema__ = schema
     __choices__ = ("collection", "dataset", "datasetFrame", "frame", "image", "video")
@@ -161,7 +166,7 @@ class AcceptAnnotation(sgqlc.types.Input):
     source = sgqlc.types.Field(
         sgqlc.types.non_null("InputSource"), graphql_name="source"
     )
-    target_id = sgqlc.types.Field(String, graphql_name="targetId")
+    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null("AddAttributeInput")),
         graphql_name="attributes",
@@ -361,7 +366,7 @@ class AnnotationCreate(sgqlc.types.Input):
         sgqlc.types.list_of(sgqlc.types.non_null("InputPoint")),
         graphql_name="boundingPolygon",
     )
-    target_id = sgqlc.types.Field(String, graphql_name="targetId")
+    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
     custom = sgqlc.types.Field(String, graphql_name="custom")
     source = sgqlc.types.Field("AnnotationSourceInput", graphql_name="source")
     attributes = sgqlc.types.Field(
@@ -415,7 +420,7 @@ class AnnotationUpdate(sgqlc.types.Input):
         graphql_name="boundingPolygon",
     )
     point = sgqlc.types.Field("InputPoint", graphql_name="point")
-    target_id = sgqlc.types.Field(String, graphql_name="targetId")
+    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
     qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
     qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
@@ -1026,7 +1031,7 @@ class PredictionCreate(sgqlc.types.Input):
     classifier_id = sgqlc.types.Field(
         sgqlc.types.non_null(String), graphql_name="classifierId"
     )
-    target_id = sgqlc.types.Field(String, graphql_name="targetId")
+    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
     custom = sgqlc.types.Field(String, graphql_name="custom")
 
 
@@ -1354,7 +1359,7 @@ class Annotation(sgqlc.types.Type):
         "labelbox_metadata",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
-    target_id = sgqlc.types.Field(String, graphql_name="targetId")
+    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
     label = sgqlc.types.Field(
         sgqlc.types.non_null(AllowedLabelCharacters), graphql_name="label"
     )
@@ -2037,7 +2042,7 @@ class DatasetAnnotation(sgqlc.types.Type):
         "labelbox_metadata",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
-    target_id = sgqlc.types.Field(String, graphql_name="targetId")
+    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
     label = sgqlc.types.Field(
         sgqlc.types.non_null(AllowedLabelCharacters), graphql_name="label"
     )
@@ -3262,6 +3267,7 @@ class Mutation(sgqlc.types.Type):
         "update_segment",
         "delete_segment",
         "generate_api_key",
+        "delete_api_key",
         "update_user_role",
         "delete_users",
         "update_user",
@@ -4391,6 +4397,12 @@ class Mutation(sgqlc.types.Type):
                         sgqlc.types.non_null(GraphqlID),
                         graphql_name="targetDatasetId",
                         default=None,
+                    ),
+                ),
+                (
+                    "duplicate_action",
+                    sgqlc.types.Arg(
+                        DuplicateAction, graphql_name="duplicateAction", default=None
                     ),
                 ),
             )
@@ -6501,6 +6513,9 @@ class Mutation(sgqlc.types.Type):
     )
     generate_api_key = sgqlc.types.Field(
         sgqlc.types.non_null("User"), graphql_name="generateApiKey"
+    )
+    delete_api_key = sgqlc.types.Field(
+        sgqlc.types.non_null("User"), graphql_name="deleteApiKey"
     )
     update_user_role = sgqlc.types.Field(
         sgqlc.types.non_null("User"),
