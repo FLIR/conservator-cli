@@ -10,6 +10,7 @@ class TestDatasetFrame:
         image = conservator.images.all().first()
         frame = image.get_frame()
         dataset = conservator.datasets.create("Test dataset")
+        assert dataset.wait_for_dataset_commit()
         dataset.add_frames([frame])
 
     def test_initial_state(self, conservator):
