@@ -1194,6 +1194,12 @@ but will fail if you mix both types together in the same list.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.wait_for_dataset_commit">
+<span class="sig-name descname"><span class="pre">wait_for_dataset_commit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.wait_for_dataset_commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for the server to create the first commit to a new dataset.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset.Dataset.wait_for_history_len">
 <span class="sig-name descname"><span class="pre">wait_for_history_len</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_expected_commits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset.Dataset.wait_for_history_len" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits until the number of commits in Dataset’s history is at least the
