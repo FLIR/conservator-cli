@@ -1,3 +1,5 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
 import functools
 import os
 import subprocess
@@ -170,6 +172,7 @@ def checkout_(local_dataset, commit):
     local_dataset.checkout(commit)
 
 
+# pylint: disable=unused-argument
 def is_image_file(ctx, param, value):
     for filename in value:
         if not LocalDataset.get_image_info(filename):
@@ -306,14 +309,14 @@ def download(local_dataset, include_analytics, pool_size, symlink, tries):
             f"this up by rerunning with the -p (--process_count) option. "
             f"For instance: {cyan}cvc download -p 50{reset}"
         )
-    status = local_dataset.download(
+    download_status = local_dataset.download(
         include_analytics=include_analytics,
         include_eight_bit=True,
         process_count=pool_size,
         use_symlink=symlink,
         tries=tries,
     )
-    if not status:
+    if not download_status:
         sys.exit(1)
 
 
@@ -443,4 +446,5 @@ def cvc(ctx, path):
 cvc.commands = main.commands
 
 if __name__ == "__main__":
+    # pylint: disable=no-value-for-parameter
     main()

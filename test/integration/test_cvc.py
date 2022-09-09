@@ -22,6 +22,7 @@ def cvc(*args):
 def test_empty_clone(default_conservator):
     dataset = default_conservator.datasets.create("My dataset")
     assert dataset is not None
+    assert dataset.wait_for_dataset_commit()
 
     p = cvc("clone", dataset.id)
     assert p.returncode == 0
@@ -34,22 +35,23 @@ def test_empty_clone(default_conservator):
 
 @pytest.mark.usefixtures("tmp_cwd")
 def test_publish_image(default_conservator, test_data):
-    dataset = default_conservator.datasets.create("My dataset")
+    dataset = default_conservator.datasets.create("Publish Image Dataset")
     assert dataset is not None
+    assert dataset.wait_for_dataset_commit()
 
     p = cvc("clone", dataset.id)
     assert p.returncode == 0
-    assert os.path.exists("My dataset")
-    os.chdir("My dataset")
+    assert os.path.exists("Publish Image Dataset")
+    os.chdir("Publish Image Dataset")
 
     p = cvc("add", test_data / "jpg" / "cat_0.jpg")
     assert p.returncode == 0
-    p = cvc("publish", "My test commit")
+    p = cvc("publish", "publish image test commit")
     assert p.returncode == 0
 
     dataset.wait_for_history_len(3, max_tries=100)
     latest_commit = dataset.get_commit_by_id("HEAD")
-    assert latest_commit.short_message == "My test commit"
+    assert latest_commit.short_message == "publish image test commit"
 
     # Load new values
     dataset.populate()
@@ -67,6 +69,7 @@ def test_publish_image(default_conservator, test_data):
 @pytest.mark.usefixtures("tmp_cwd")
 def test_cvc_clone_download(default_conservator, test_data):
     dataset = default_conservator.datasets.create("My dataset")
+    assert dataset.wait_for_dataset_commit()
     media_id = default_conservator.media.upload(test_data / "mp4" / "adas_thermal.mp4")
     default_conservator.media.wait_for_processing(media_id)
     video = default_conservator.get_media_instance_from_id(media_id)

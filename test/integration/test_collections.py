@@ -296,6 +296,7 @@ def test_create_dataset(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
 
     dataset = collection.create_dataset("My dataset")
+    assert dataset.wait_for_dataset_commit()
 
     assert conservator.datasets.id_exists(dataset.id)
     dataset.populate("collections")  # a list of Collection IDs
@@ -306,7 +307,9 @@ def test_create_dataset(conservator):
 def test_get_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
+    assert dataset_1.wait_for_dataset_commit()
     dataset_2 = collection.create_dataset("My second dataset")
+    assert dataset_2.wait_for_dataset_commit()
 
     datasets = collection.get_datasets()
 
@@ -321,6 +324,7 @@ def test_get_datasets(conservator):
 def test_download_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
+    assert dataset_1.wait_for_dataset_commit()
 
     collection.download_datasets(".")
 

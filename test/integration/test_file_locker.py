@@ -1,5 +1,6 @@
 import os
 import pytest
+
 from FLIR.conservator.util import md5sum_file
 
 
@@ -39,7 +40,8 @@ def test_media_file_locker(conservator, test_data):
 
 @pytest.mark.usefixtures("tmp_cwd")
 def test_dataset_file_locker(conservator, test_data):
-    conservator.datasets.create("Test dataset")
+    new_dset = conservator.datasets.create("Test dataset")
+    assert new_dset.wait_for_dataset_commit()
 
     dataset = conservator.datasets.all().first()
     dataset.populate("file_locker_files")

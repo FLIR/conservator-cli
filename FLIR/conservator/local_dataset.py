@@ -1,16 +1,20 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=super-init-not-called
+# pylint: disable=unspecified-encoding
 import collections
 import multiprocessing
 import subprocess
 import os
 import json
 import shutil
-import requests
 import logging
 import sys
 import tempfile
 import time
 import functools
-
+import requests
 import jsonschema
 import tqdm
 from PIL import Image
@@ -65,14 +69,14 @@ class LocalDataset:
 
         if not os.path.isabs(self.cache_path):
             self.cache_path = os.path.join(self.path, self.cache_path)
-        logger.debug(f"Using cache at {self.cache_path}")
+        logger.debug("Using cache at %s", self.cache_path)
 
         if not os.path.exists(self.cvc_path):
             os.makedirs(self.cvc_path)
         if not os.path.exists(self.staging_path):
             with open(self.staging_path, "w+") as f:
                 json.dump([], f)
-        logger.debug(f"Opened local dataset at {self.path}")
+        logger.debug("Opened local dataset at %s", self.path)
 
     def pull(self, verbose=True):
         """
@@ -145,6 +149,7 @@ class LocalDataset:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True,
+            check=False,
         )
         if branch_proc.returncode != 0:
             logger.error("'%s' failed:\n%s", " ".join(branch_args), branch_proc.stdout)
@@ -190,6 +195,7 @@ class LocalDataset:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
+            check=False,
         )
         if status_proc.returncode != 0:
             logger.error("'%s' failed:\n%s", " ".join(status_args), status_proc.stderr)
@@ -242,8 +248,8 @@ class LocalDataset:
         branch_name = self.git_branch()
         if branch_name != "master":
             logger.warning(
-                "Only the 'master' branch will accept changes.  Switch branches with "
-                + "`git checkout master`."
+                "Only the 'master' branch will accept changes.  Switch branches with \
+                `git checkout master`."
             )
             return None
 
@@ -269,9 +275,9 @@ class LocalDataset:
                 elif not os.path.exists(self.dataset_info_path):
                     if not jsonl_warning_printed:
                         logger.warning(
-                            "'%s' cannot be added to a repository.  Move it aside, commit the current "
-                            + "repository state from the Conservator web site and pull the new commit to "
-                            + "get this file into the repository.",
+                            "'%s' cannot be added to a repository.  Move it aside, commit the current \
+                            repository state from the Conservator web site and pull the new commit to \
+                            get this file into the repository.",
                             added,
                         )
                     jsonl_warning_printed = True
@@ -279,8 +285,8 @@ class LocalDataset:
                     stage_files.append(added)
         if not stage_files:
             logger.info(
-                "No changes to be staged: no writable tracked files (%s) were modified, "
-                + "and no new files were found in 'associated_files'.",
+                "No changes to be staged: no writable tracked files (%s) were modified, \
+                and no new files were found in 'associated_files'.",
                 ", ".join([f"'{afile}'" for afile in self.WRITABLE_TRACKED_FILES]),
             )
             return None
@@ -295,13 +301,12 @@ class LocalDataset:
                 "Cannot commit changes to index.json along with changes to any file ending in '.jsonl'"
             )
             logger.error(
-                "Move JSONL and/or index.json files aside and recover the original versions using "
-                + "`git restore <filename>`, then commit the conflicting changes separately."
+                "Move JSONL and/or index.json files aside and recover the original versions using \
+                `git restore <filename>`, then commit the conflicting changes separately."
             )
             sys.exit(-1)
 
         if not skip_validation:
-            val_error = False
             val_files = [
                 valf for valf in stage_files if valf in self.WRITABLE_TRACKED_FILES
             ]
@@ -356,6 +361,7 @@ class LocalDataset:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True,
+            check=False,
         )
         if "updated in conservator" not in push_proc.stdout:
             if "Everything up-to-date" in push_proc.stdout:
@@ -372,8 +378,8 @@ class LocalDataset:
         if found_new_commit:
             self.pull(verbose)
         else:
-            logger.warn("Timeout waiting for commit to be processed on server")
-            logger.warn(
+            logger.warning("Timeout waiting for commit to be processed on server")
+            logger.warning(
                 "Will need to run 'pull' later to get workdir synced with server"
             )
 
@@ -398,8 +404,8 @@ class LocalDataset:
         branch_name = self.git_branch()
         if branch_name != "master":
             logger.warning(
-                "Only the 'master' branch will accept image uploads.  Switch branches with "
-                + "`git checkout master`."
+                "Only the 'master' branch will accept image uploads.  Switch branches with \
+                `git checkout master`."
             )
             return
 
@@ -423,7 +429,7 @@ class LocalDataset:
 
         for chunk in image_chunks:
             paths = list(filter(lambda path: path is not None, chunk))
-            logger.debug(f"Processing next {len(paths)} images...")
+            logger.debug("Processing next %s images...", len(paths))
 
             md5_list = []
 
@@ -432,7 +438,7 @@ class LocalDataset:
             for path in paths:
                 image_info = LocalDataset.get_image_info(path)
                 if image_info is None:
-                    logger.error(f"Skipping '{path}'")
+                    logger.error("Skipping '%s'", path)
                     continue
                 md5_list.append(image_info["md5"])
 
@@ -452,12 +458,14 @@ class LocalDataset:
                     continue
                 elif result.exists == "False":
                     logger.debug(
-                        f"File '{image_data['filename']}' doesn't exist on conservator, uploading"
+                        "File '%s' doesn't exist on conservator, uploading",
+                        image_data["filename"],
                     )
                     self.upload_image(image_data["filename"], result.md5, tries=tries)
                 else:
                     logger.debug(
-                        f"File '{image_data['filename']}' already exists on conservator, skipping"
+                        "File '%s' already exists on conservator, skipping",
+                        image_data["filename"],
                     )
 
                 frame_id = self.conservator.generate_id()
@@ -479,7 +487,7 @@ class LocalDataset:
                     },
                 }
                 dataset_frames.append(new_frame)
-                logger.debug(f"Added new DatasetFrame with id {frame_id}")
+                logger.debug("Added new DatasetFrame with id %s", frame_id)
 
                 if copy_to_data:
                     os.makedirs(self.data_path, exist_ok=True)
@@ -488,13 +496,15 @@ class LocalDataset:
                     cache_path = self.get_cache_path(result.md5)
                     cache_dir = os.path.split(cache_path)[0]
                     os.makedirs(cache_dir, exist_ok=True)
-                    logger.debug(f"Copying file from '{file_path}' to '{cache_path}'")
+                    logger.debug(
+                        "Copying file from '%s' to '%s'", file_path, cache_path
+                    )
                     shutil.copyfile(file_path, cache_path)
 
                     # Then link to data path:
                     filename = f"video-{video_id}-frame-{next_index:06d}-{frame_id}.jpg"
                     data_path = os.path.join(self.data_path, filename)
-                    logger.debug(f"Linking '{data_path}' to '{cache_path}'")
+                    logger.debug("Linking '%s' to '%s'", data_path, cache_path)
                     os.link(cache_path, data_path)
 
                 next_index += 1
@@ -514,7 +524,7 @@ class LocalDataset:
             "Content-type": "image/jpeg",
             "x-amz-meta-originalfilename": filename,
         }
-        logger.info(f"Uploading '{path}'.")
+        logger.info("Uploading '%s'.", path)
         retry_count = 0
         while retry_count < tries:
             with open(path, "rb") as data:
@@ -522,7 +532,7 @@ class LocalDataset:
             if r.status_code == 502:
                 retry_count += 1
                 if retry_count < tries:
-                    logger.info(f"Bad Gateway error, retrying {filename} ..")
+                    logger.info("Bad Gateway error, retrying %s..", filename)
                     time.sleep(retry_count)  # Timeout increases per retry.
                     continue
             else:
@@ -606,10 +616,10 @@ class LocalDataset:
         # First check all are valid paths
         for image_path in image_paths:
             if not os.path.exists(image_path):
-                logger.error(f"Path '{image_path}' does not exist.")
+                logger.error("Path '%s' does not exist.", image_path)
                 return
             if os.path.isdir(image_path):
-                logger.error(f"Path '{image_path}' is a directory.")
+                logger.error("Path '%s' is a directory.", image_path)
                 return
             if LocalDataset.get_image_info(image_path) is None:
                 return
@@ -619,7 +629,7 @@ class LocalDataset:
         for image_path in image_paths:
             abspath = os.path.abspath(image_path)
             if abspath not in staged_images:
-                logger.info(f"Adding '{abspath}' to staging file.")
+                logger.info("Adding '%s' to staging file.", abspath)
                 staged_images.append(abspath)
         with open(self.staging_path, "w") as f:
             json.dump(staged_images, f)
@@ -636,11 +646,11 @@ class LocalDataset:
         try:
             image = Image.open(path)
         except IOError:
-            logger.error(f"'{path}' is not an image")
+            logger.error("'%s' is not an image", path)
             return
 
         if image.format != "JPEG":
-            logger.error(f"'{path}' is not a JPEG")
+            logger.error("'%s' is not a JPEG", path)
             return
 
         info = {
@@ -695,7 +705,7 @@ class LocalDataset:
         if not os.path.exists(path):
             return
         for link_path in paths_to_link:
-            logger.debug(f"Linking '{link_path}' to '{path}'")
+            logger.debug("Linking '%s' to '%s'", link_path, path)
             if os.path.exists(link_path):
                 os.remove(link_path)
             if use_symlink:
@@ -708,10 +718,10 @@ class LocalDataset:
         if not os.path.exists(cache_path):
             return False
         if not os.path.getsize(cache_path) > 0:
-            logger.warning(f"Cache file '{cache_path}' was empty, ignoring.")
+            logger.warning("Cache file '%s' was empty, ignoring.", cache_path)
             return False
         if not md5sum_file(cache_path) == md5:
-            logger.warning(f"Cache file '{cache_path}' had invalid MD5, ignoring.")
+            logger.warning("Cache file '%s' had invalid MD5, ignoring.", cache_path)
             return False
         return True
 
@@ -747,7 +757,7 @@ class LocalDataset:
         if include_analytics:
             os.makedirs(self.analytics_path, exist_ok=True)
 
-        logger.info(f"Getting frames from frames.jsonl / index.json...")
+        logger.info("Getting frames from frames.jsonl / index.json...")
         frame_count = 0
         # Stores unique keys in order of insertion. This maps hash -> [links]
         # dict is unordered until Python version 3.7+ (we support 3.6)
@@ -784,7 +794,7 @@ class LocalDataset:
         # can just delete everything.
         self.clean_data_dir()
 
-        logger.info(f"Checking cache...")
+        logger.info("Checking cache...")
         cache_hits = 0
         assets = []  # (path, name, url, paths_to_link, use_symlink)
         for md5, paths_to_link in hashes_required.items():
@@ -792,19 +802,21 @@ class LocalDataset:
             if self.exists_in_cache(md5):
                 LocalDataset._add_links(cache_path, paths_to_link, use_symlink)
                 cache_hits += 1
-                logger.debug(f"Skipping {md5}: already downloaded.")
+                logger.debug("Skipping %s: already downloaded.", md5)
                 continue
             url = self.conservator.get_dvc_hash_url(md5)
             asset = (cache_path, url, paths_to_link, use_symlink)
-            logger.debug(f"Going to download {md5}")
+            logger.debug("Going to download %s", md5)
             assets.append(asset)
 
-        logger.info(f"Total frames: {frame_count}")
-        logger.info(f"  Unique hashes: {len(hashes_required)}")
-        logger.info(f"  Already downloaded: {cache_hits}")
-        logger.info(f"  Missing: {len(assets)}")
+        logger.info("Total frames: %s", frame_count)
+        logger.info("  Unique hashes: %s", len(hashes_required))
+        logger.info("  Already downloaded: %s", cache_hits)
+        logger.info("  Missing: %s", len(assets))
         logger.info(
-            f"Going to download {len(assets)} new frames using {process_count} processes."
+            "Going to download %s new frames using %s processes.",
+            len(assets),
+            process_count,
         )
         current_assets = list(assets)
         failures = 0
@@ -832,11 +844,13 @@ class LocalDataset:
                 if not os.path.exists(entry[0]) or os.path.getsize(entry[0]) == 0:
                     if attempt < tries - 1:
                         logger.warning(
-                            f"Download to {entry[0]} seems to have failed. Retrying .."
+                            "Download to %s seems to have failed. Retrying ..",
+                            entry[0],
                         )
                     else:
                         logger.error(
-                            f"Download to {entry[0]} seems to have failed. Try again, or submit an issue."
+                            "Download to %s seems to have failed. Try again, or submit an issue.",
+                            entry[0],
                         )
                     failures += 1
                     retry_assets.append(entry)
@@ -851,10 +865,10 @@ class LocalDataset:
 
         successes = len(assets) - failures
 
-        logger.info(f"Downloads attempted: {len(assets)}")
-        logger.info(f"  Reported {sum(results)} successes.")
-        logger.info(f"  Successful downloads: {successes}")
-        logger.info(f"  Failed downloads: {failures}")
+        logger.info("Downloads attempted: %s", len(assets))
+        logger.info("  Reported %s successes.", sum(results))
+        logger.info("  Successful downloads: %s", successes)
+        logger.info("  Failed downloads: %s", failures)
 
         return failures == 0
 
@@ -882,13 +896,17 @@ class LocalDataset:
             if dataset.has_field("repository.master"):
                 break
             logger.info(
-                f"Dataset {dataset.name} not available for cloning, retry in {timeout} seconds..."
+                "Dataset %s not available for cloning, retry in %s seconds...",
+                dataset.name,
+                timeout,
             )
             time.sleep(timeout)
             dataset.populate(["name", "repository.master"])
 
         if not dataset.has_field("repository.master"):
-            logging.error(f"Dataset {dataset.name} has no repository. Unable to clone.")
+            logging.error(
+                "Dataset %s has no repository. Unable to clone.", dataset.name
+            )
             logging.error(
                 "This dataset can be fixed by browsing to it in Conservator Web UI and clicking 'Commit Changes'."
             )
@@ -898,7 +916,7 @@ class LocalDataset:
             clone_path = dataset.name
 
         if os.path.exists(clone_path):
-            logging.error(f"Path {clone_path} already exists, can't clone.")
+            logging.error("Path %s already exists, can't clone.", clone_path)
             return
 
         url = dataset.get_git_url()
@@ -908,9 +926,10 @@ class LocalDataset:
         clone_cmd += [url, clone_path]
         r = subprocess.call(clone_cmd)
         if r != 0:
-            logging.error(f"Error {r} when cloning.")
+            logging.error("Error %s when cloning.", r)
             return
 
+        # pylint: disable=protected-access
         email = dataset._conservator.get_email()
         subprocess.call(["git", "config", "user.email", email], cwd=clone_path)
 
@@ -927,7 +946,7 @@ class LocalDataset:
         else:
             # raise RuntimeError for compatibility with dataset-toolkit (see #165)
             raise RuntimeError("The repository exists, but does not contain index.json")
-
+        # pylint: disable=protected-access
         return LocalDataset(dataset._conservator, clone_path)
 
     def validate_index(self, index_location=None):
@@ -944,7 +963,7 @@ class LocalDataset:
                 index_data = json.load(index)
             jsonschema.validate(index_data, schema)
             return True
-        except jsonschema.exceptions.ValidationError as e:
-            logger.error(e.message)
-            logger.debug(e)
+        except jsonschema.exceptions.ValidationError as validation_error:
+            logger.error(validation_error.message)
+            logger.debug(validation_error)
         return False
