@@ -96,3 +96,77 @@ You can also build the docs manually::
     There is a Jenkins instance that will run tests on any new commits,
     and new documentation in the ``main`` branch will automatically be
     deployed to Github Pages.
+
+Installation for Windows
+========================
+
+Links
+-----
+
+https://docs.microsoft.com/en-us/windows/wsl/install
+https://docs.microsoft.com/en-us/windows/wsl/troubleshooting#installation-issues
+https://flir.github.io/conservator-cli/usage/installation.html
+
+Pre install information
+-----------------------
+
+Ensure Windows is at or above required for wsl (per the first link above)
+Ensure virtualization is enabled in bios
+CAUTION - Right clicking in the Ubuntu shell WILL paste the contents of your clipboard
+
+VM INSTALLATION
+---------------
+
+Press Windows key
+Type powershell (or cmd)
+Right click powershell (or command prompt) and choose run as administrator
+In the shell type::
+
+    $ wsl --install
+
+Reboot when install is complete
+Windows will configure some before and after reboot
+After logging back in shell with ubuntu should auto start. If not, it should be under Recently added in the Windows menu
+If you experience any issues, see the second link above
+
+UBUNTU SETUP
+------------
+
+In the Ubuntu shell::
+
+Add user name and password at prompts
+Run the commands below to update, install and add the new cli commands to your path::
+
+    $ sudo apt update
+    $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
+    $ sudo apt install -y python3-pip
+    $ pip install conservator-cli
+    $ source ~/.profile
+
+CVC SETUP
+---------
+
+Change ``staging`` below to desired target, if needed
+
+    $ conservator config create staging
+
+Press enter 2x (or adjust default values if desired) then enter the full url (e.g. https://staging.flirconservator.com/) and your api key
+Apply default config::
+
+    $ conservator config set-default staging
+
+CONFIGURE GIT
+-------------
+
+Update below with your information
+
+    $ git config --global user.email "you@example.com"
+    $ git config --global user.name "Your Name"
+
+TEST
+----
+
+Login to Conservator and use clone command from dataset -> download -> From CLI
+e.g. in Ubuntu shell::
+
+    $ cvc clone MEvzFWwcLu5Gt72C8
