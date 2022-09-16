@@ -130,7 +130,7 @@ class Config:
             ),
             "url": ConfigAttribute(
                 "CONSERVATOR_URL",
-                "Conservator URL",
+                "Conservator URL (The URL you use to access Conservator in a browser)",
                 default="https://flirconservator.com/",
                 validator=validate_url,
             ),

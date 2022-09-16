@@ -22,9 +22,9 @@ other settings. Log in to your conservator instance, and find your API key. Then
 
     $ conservator config create default
 
-Conservator CLI will ask you for your API key, and some other settings.
-The defaults should work for most users. These settings will be
-saved in a config file for future use. To verify that they're correct, run::
+Conservator CLI will ask you for your API key, the URL you use to access Conservator,
+and some other settings. These settings will be saved in a config file for future use.
+To verify that they're correct, run::
 
     $ conservator whoami
 
