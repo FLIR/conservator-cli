@@ -1,8 +1,8 @@
 Installation
 ============
 
-Basic Install
--------------
+Installation on Linux
+---------------------
 
 The easiest way to install Conservator CLI is with ``pip``::
 
@@ -16,6 +16,11 @@ your current Python Environment.
     running above install command, you may also need to ``source ~/.profile``
     on any currently open shells in order to fix your PATH
     https://github.com/FLIR/conservator-cli/issues/281
+
+
+.. _configuring_cli:
+Configuring Conservator-CLI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Before you can use the command, you need to tell Conservator-CLI your API key and
 other settings. Log in to your conservator instance, and find your API key. Then run::
@@ -38,8 +43,65 @@ If you want to change credentials, you can edit your config by running::
 For developers working with multiple conservator instances, you can add
 multiple configs. Conservator CLI stores its configurations as json files in ``~/.config/conservator-cli``.
 For example, the default configuration will located at ``~/.config/conservator-cli/default.json``.
-See ``conservator config --help`` for more info.
+See ``conservator config --help`` for more information.
 
+
+Installation on Windows
+-----------------------
+
+Pre-installation
+^^^^^^^^^^^^^^^^
+
+ - Ensure that your Windows installation meets the mininum requirements detailed `here <https://learn.microsoft.com/en-us/windows/wsl/install>`_
+ - Ensure that virtualization is enabled on your system. Consult your vendor documentation for details.
+
+Installing Windows Subsystem for Linux (WSL)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ - Open the Start menu, and type in "powershell".
+ - Right-click on the PowerShell icon, and select "Run as Administrator" from the menu.
+ - In the shell, type:
+   ::
+
+        $ wsl --install
+
+   This will start the WSL installation process. Once it is complete, you will be prompted to reboot,
+   which will finish the installation process.
+ - After Windows has restarted, and you have logged back in, an Ubuntu command prompt should open automatically.
+   If it doesn't, open the Start menu, and type in "ubuntu"; clicking the displayed icon will open the Ubuntu terminal.
+ - See the `Microsoft WSL Troubleshooting Guide <https://docs.microsoft.com/en-us/windows/wsl/troubleshooting#installation-issues>`_
+   for any issues with WSL installation.
+
+
+Configuring Ubuntu and Installing Conservator-CLI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the Ubuntu shell:
+ - When prompted, enter a username and password to use with Ubuntu.
+ - Enter the following commands:
+   ::
+
+        $ sudo apt update
+        $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
+        $ sudo apt install -y python3-pip
+        $ pip install conservator-cli
+        $ source ~/.profile
+
+   These commands will configure Python3, and install Conservator-CLI on your system.
+
+
+Configuring Git
+^^^^^^^^^^^^^^^
+
+To configure Git on WSL, use the following commands::
+
+    $ git config --global user.email "you@example.com"
+    $ git config --global user.name "Your Name"
+
+Replace "you@example.com" with the email address you use to log in to Conservator, and "Your Name" with your name.
+
+Once Git has been configured on your WSL system, you can follow the instructions in :ref:`configuring_cli` to configure
+Conservator-CLI.
 
 Developers
 ----------
@@ -96,77 +158,3 @@ You can also build the docs manually::
     There is a Jenkins instance that will run tests on any new commits,
     and new documentation in the ``main`` branch will automatically be
     deployed to Github Pages.
-
-Installation for Windows
-========================
-
-Links
------
-
-https://docs.microsoft.com/en-us/windows/wsl/install
-https://docs.microsoft.com/en-us/windows/wsl/troubleshooting#installation-issues
-https://flir.github.io/conservator-cli/usage/installation.html
-
-Pre install information
------------------------
-
-Ensure Windows is at or above required for wsl (per the first link above)
-Ensure virtualization is enabled in bios
-CAUTION - Right clicking in the Ubuntu shell WILL paste the contents of your clipboard
-
-VM INSTALLATION
----------------
-
-Press Windows key
-Type powershell (or cmd)
-Right click powershell (or command prompt) and choose run as administrator
-In the shell type::
-
-    $ wsl --install
-
-Reboot when install is complete
-Windows will configure some before and after reboot
-After logging back in shell with ubuntu should auto start. If not, it should be under Recently added in the Windows menu
-If you experience any issues, see the second link above
-
-UBUNTU SETUP
-------------
-
-In the Ubuntu shell::
-
-Add user name and password at prompts
-Run the commands below to update, install and add the new cli commands to your path::
-
-    $ sudo apt update
-    $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
-    $ sudo apt install -y python3-pip
-    $ pip install conservator-cli
-    $ source ~/.profile
-
-CVC SETUP
----------
-
-Change ``staging`` below to desired target, if needed
-
-    $ conservator config create staging
-
-Press enter 2x (or adjust default values if desired) then enter the full url (e.g. https://staging.flirconservator.com/) and your api key
-Apply default config::
-
-    $ conservator config set-default staging
-
-CONFIGURE GIT
--------------
-
-Update below with your information
-
-    $ git config --global user.email "you@example.com"
-    $ git config --global user.name "Your Name"
-
-TEST
-----
-
-Login to Conservator and use clone command from dataset -> download -> From CLI
-e.g. in Ubuntu shell::
-
-    $ cvc clone MEvzFWwcLu5Gt72C8
