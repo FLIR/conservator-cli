@@ -220,7 +220,7 @@ class ConservatorFileTransfers:
             ``os.cpu_count()``.
         :param no_meter: If `True`, hide the progress bar.
         """
-        with multiprocessing.get_context('fork').Pool(process_count) as pool:
+        with multiprocessing.get_context("fork").Pool(process_count) as pool:
             progress = tqdm.tqdm(
                 iterable=pool.imap(self._do_download_request, downloads),
                 desc="Downloading files",
@@ -239,7 +239,7 @@ class ConservatorFileTransfers:
             ``os.cpu_count()``.
         :param no_meter: If `True`, hide the progress bar.
         """
-        with multiprocessing.Pool(process_count) as pool:
+        with multiprocessing.get_context("fork").Pool(process_count) as pool:
             progress = tqdm.tqdm(
                 iterable=pool.imap(self._do_upload_request, uploads),
                 desc="Uploading files",
