@@ -2765,10 +2765,10 @@ class Group(sgqlc.types.Type):
         "name",
         "members",
         "acl",
-        "is_immutable",
         "notes",
         "conservator_insights_license_key",
         "group_type",
+        "group_data_usage",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
@@ -2777,7 +2777,6 @@ class Group(sgqlc.types.Type):
         graphql_name="members",
     )
     acl = sgqlc.types.Field(Acl, graphql_name="acl")
-    is_immutable = sgqlc.types.Field(Boolean, graphql_name="isImmutable")
     notes = sgqlc.types.Field(String, graphql_name="notes")
     conservator_insights_license_key = sgqlc.types.Field(
         String, graphql_name="conservatorInsightsLicenseKey"
@@ -2785,6 +2784,7 @@ class Group(sgqlc.types.Type):
     group_type = sgqlc.types.Field(
         sgqlc.types.non_null(GroupType), graphql_name="groupType"
     )
+    group_data_usage = sgqlc.types.Field(Float, graphql_name="groupDataUsage")
 
 
 class HUNK(sgqlc.types.Type):
@@ -9715,6 +9715,7 @@ class User(sgqlc.types.Type):
         "notes",
         "user_data_stats",
         "user_data_stats_running",
+        "user_data_usage",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     email = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="email")
@@ -9742,6 +9743,7 @@ class User(sgqlc.types.Type):
     user_data_stats_running = sgqlc.types.Field(
         Boolean, graphql_name="userDataStatsRunning"
     )
+    user_data_usage = sgqlc.types.Field(Float, graphql_name="userDataUsage")
 
 
 class UserDataStats(sgqlc.types.Type):

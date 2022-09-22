@@ -823,7 +823,7 @@ class LocalDataset:
         results = []
         progress_msg = "Downloading new frames"
         for attempt in range(tries):
-            with multiprocessing.Pool(process_count) as pool:
+            with multiprocessing.get_context("fork").Pool(process_count) as pool:
                 download_method = functools.partial(
                     LocalDataset._download_and_link, self, max_retries=tries
                 )
