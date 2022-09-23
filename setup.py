@@ -52,7 +52,7 @@ INSTALL_REQUIRES = [
 setuptools.setup(
     name="conservator-cli",
     version=version,
-    author="FLIR Systems, INC",
+    author="Teledyne FLIR LLC",
     description="A library for using the FLIR Conservator API, with a nice command line interface.",
     long_description=long_description,
     long_description_content_type="text/markdown",
