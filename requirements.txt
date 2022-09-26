@@ -1,7 +1,8 @@
 # NOTE: If a package is required for conservator-cli to run, also include it in setup.py
 wheel
 sphinx
-sgqlc >= 13
+sgqlc >= 13; python_version>='3.7'
+sgqlc == 16.0; python_version<'3.7'
 click >= 8
 tqdm
 pytest
