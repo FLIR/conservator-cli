@@ -14,6 +14,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,12 +37,12 @@
             
   <section id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">¶</a></h1>
-<section id="module-FLIR.conservator.config">
-<span id="config"></span><h2>Config<a class="headerlink" href="#module-FLIR.conservator.config" title="Permalink to this heading">¶</a></h2>
+<section id="config">
+<h2>Config<a class="headerlink" href="#config" title="Permalink to this heading">¶</a></h2>
 <p>A <a class="reference internal" href="#FLIR.conservator.config.Config" title="FLIR.conservator.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> object is required connect to Conservator. There are
 a variety of ways to create an instance of config.</p>
 <p>In general, use <a class="reference internal" href="#FLIR.conservator.config.Config.default" title="FLIR.conservator.config.Config.default"><code class="xref py py-func docutils literal notranslate"><span class="pre">Config.default()</span></code></a>.</p>
-<dl class="py class">
+<span class="target" id="module-FLIR.conservator.config"></span><dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.config.Config">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contains a user’s API Key (token) and other settings, to be used when authenticating
@@ -50,7 +51,7 @@ at a certain URL.</p>
 <dl class="simple">
 <dt>Config attribute names (environment variables, dictionary keys):</dt><dd><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_API_KEY</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL</span></code> (default: <a class="reference external" href="https://flirconservator.com/">https://flirconservator.com/</a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_URL</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_MAX_RETRIES</span></code> (default: 5)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CONSERVATOR_CVC_CACHE_PATH</span></code> (default: .cvc/cache)</p></li>
 </ul>
@@ -597,8 +598,8 @@ should always be preferred to relying on defaults.</p>
 </dd></dl>
 
 </section>
-<section id="module-FLIR.conservator.wrappers">
-<span id="wrappers-and-typeproxies"></span><h2>Wrappers and TypeProxies<a class="headerlink" href="#module-FLIR.conservator.wrappers" title="Permalink to this heading">¶</a></h2>
+<section id="wrappers-and-typeproxies">
+<h2>Wrappers and TypeProxies<a class="headerlink" href="#wrappers-and-typeproxies" title="Permalink to this heading">¶</a></h2>
 <p>This modules contains types that wrap generated SGQLC types.</p>
 <p>These wrapped types all extend <a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy" title="FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeProxy</span></code></a>, and contain
 a private instance of the underling SGQLC object. Initialized fields
@@ -610,7 +611,7 @@ For instance, a <a class="reference internal" href="#FLIR.conservator.wrappers.c
 <a class="reference internal" href="#FLIR.conservator.wrappers.collection.Collection.get_datasets" title="FLIR.conservator.wrappers.collection.Collection.get_datasets"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_datasets()</span></code></a>,
 which runs the GraphQL query for a collection’s datasets, and returns
 them as proxied <a class="reference internal" href="#FLIR.conservator.wrappers.dataset.Dataset" title="FLIR.conservator.wrappers.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> objects.</p>
-<section id="module-FLIR.conservator.wrappers.type_proxy">
+<span class="target" id="module-FLIR.conservator.wrappers"></span><section id="module-FLIR.conservator.wrappers.type_proxy">
 <span id="typeproxy"></span><h3>TypeProxy<a class="headerlink" href="#module-FLIR.conservator.wrappers.type_proxy" title="Permalink to this heading">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.type_proxy.ListTypeProxy">
@@ -1544,10 +1545,10 @@ parent object</p>
 
 </section>
 </section>
-<section id="module-FLIR.conservator.managers">
-<span id="managers"></span><h2>Managers<a class="headerlink" href="#module-FLIR.conservator.managers" title="Permalink to this heading">¶</a></h2>
+<section id="managers">
+<h2>Managers<a class="headerlink" href="#managers" title="Permalink to this heading">¶</a></h2>
 <p>A Manager is simply a bundle of utilities for querying a specific type.</p>
-<dl class="py class">
+<span class="target" id="module-FLIR.conservator.managers"></span><dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.managers.CollectionManager">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.managers.</span></span><span class="sig-name descname"><span class="pre">CollectionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.managers.CollectionManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager" title="FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchableTypeManager</span></code></a></p>
@@ -2338,14 +2339,14 @@ validate the result.</p>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_advanced.html">Advanced Python API Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config">Config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.file_transfers">File Transfers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wrappers-and-typeproxies">Wrappers and TypeProxies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managers">Managers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.local_dataset">LocalDataset</a></li>
 </ul>
@@ -2386,7 +2387,7 @@ validate the result.</p>
       &copy;2022, Teledyne FLIR LLC.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
