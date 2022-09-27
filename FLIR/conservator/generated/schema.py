@@ -395,36 +395,6 @@ class AnnotationSourceMetaInput(sgqlc.types.Input):
     user = sgqlc.types.Field(GraphqlID, graphql_name="user")
 
 
-class AnnotationUpdate(sgqlc.types.Input):
-    __schema__ = schema
-    __field_names__ = (
-        "id",
-        "labels",
-        "label_id",
-        "bounding_box",
-        "bounding_polygon",
-        "point",
-        "target_id",
-        "qa_status",
-        "qa_status_note",
-    )
-    id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
-    labels = sgqlc.types.Field(
-        sgqlc.types.list_of(sgqlc.types.non_null(AllowedLabelCharacters)),
-        graphql_name="labels",
-    )
-    label_id = sgqlc.types.Field(GraphqlID, graphql_name="labelId")
-    bounding_box = sgqlc.types.Field("BoundingBoxInput", graphql_name="boundingBox")
-    bounding_polygon = sgqlc.types.Field(
-        sgqlc.types.list_of(sgqlc.types.non_null("InputPoint")),
-        graphql_name="boundingPolygon",
-    )
-    point = sgqlc.types.Field("InputPoint", graphql_name="point")
-    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
-    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
-    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
-
-
 class ArchiveDatasetInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("id",)
@@ -980,10 +950,21 @@ class ModifyAttributePrototypeInput(sgqlc.types.Input):
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
 
-class MoveAnnotationInput(sgqlc.types.Input):
+class MoveAnnotationBulkInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("id", "bounding_box", "bounding_polygon", "point")
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
+    bounding_box = sgqlc.types.Field(BoundingBoxInput, graphql_name="boundingBox")
+    bounding_polygon = sgqlc.types.Field(
+        sgqlc.types.list_of(sgqlc.types.non_null(InputPoint)),
+        graphql_name="boundingPolygon",
+    )
+    point = sgqlc.types.Field(InputPoint, graphql_name="point")
+
+
+class MoveAnnotationInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("bounding_box", "bounding_polygon", "point")
     bounding_box = sgqlc.types.Field(BoundingBoxInput, graphql_name="boundingBox")
     bounding_polygon = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(InputPoint)),
@@ -1000,7 +981,7 @@ class MoveAnnotationsInput(sgqlc.types.Input):
     )
     annotations = sgqlc.types.Field(
         sgqlc.types.non_null(
-            sgqlc.types.list_of(sgqlc.types.non_null(MoveAnnotationInput))
+            sgqlc.types.list_of(sgqlc.types.non_null(MoveAnnotationBulkInput))
         ),
         graphql_name="annotations",
     )
@@ -1137,6 +1118,19 @@ class UnflagDatasetFrameInput(sgqlc.types.Input):
     )
 
 
+class UpdateAnnotationInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("labels", "label_id", "target_id", "qa_status", "qa_status_note")
+    labels = sgqlc.types.Field(
+        sgqlc.types.list_of(sgqlc.types.non_null(AllowedLabelCharacters)),
+        graphql_name="labels",
+    )
+    label_id = sgqlc.types.Field(GraphqlID, graphql_name="labelId")
+    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
+    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
+
+
 class UpdateCollectionInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("id", "name", "default_classifier", "description")
@@ -1144,40 +1138,6 @@ class UpdateCollectionInput(sgqlc.types.Input):
     name = sgqlc.types.Field(String, graphql_name="name")
     default_classifier = sgqlc.types.Field(String, graphql_name="defaultClassifier")
     description = sgqlc.types.Field(String, graphql_name="description")
-
-
-class UpdateDatasetAnnotationInput(sgqlc.types.Input):
-    __schema__ = schema
-    __field_names__ = (
-        "dataset_annotation_id",
-        "labels",
-        "label_id",
-        "bounding_box",
-        "bounding_polygon",
-        "point",
-        "target_id",
-        "qa_status",
-        "qa_status_note",
-    )
-    dataset_annotation_id = sgqlc.types.Field(
-        sgqlc.types.non_null(GraphqlID), graphql_name="datasetAnnotationId"
-    )
-    labels = sgqlc.types.Field(
-        sgqlc.types.non_null(
-            sgqlc.types.list_of(sgqlc.types.non_null(AllowedLabelCharacters))
-        ),
-        graphql_name="labels",
-    )
-    label_id = sgqlc.types.Field(GraphqlID, graphql_name="labelId")
-    bounding_box = sgqlc.types.Field(BoundingBoxInput, graphql_name="boundingBox")
-    bounding_polygon = sgqlc.types.Field(
-        sgqlc.types.list_of(sgqlc.types.non_null(InputPoint)),
-        graphql_name="boundingPolygon",
-    )
-    point = sgqlc.types.Field(InputPoint, graphql_name="point")
-    target_id = sgqlc.types.Field(Int, graphql_name="targetId")
-    qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
-    qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
 
 
 class UpdateDatasetInput(sgqlc.types.Input):
@@ -1848,6 +1808,7 @@ class Dataset(sgqlc.types.Type):
         "recalculate_stats_state",
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
+        "has_changes",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     user_id = sgqlc.types.Field(GraphqlID, graphql_name="userId")
@@ -2019,6 +1980,9 @@ class Dataset(sgqlc.types.Type):
     )
     allow_duplicate_target_id = sgqlc.types.Field(
         Boolean, graphql_name="allowDuplicateTargetId"
+    )
+    has_changes = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean), graphql_name="hasChanges"
     )
 
 
@@ -3122,6 +3086,7 @@ class Mutation(sgqlc.types.Type):
         "create_annotations",
         "create_prediction",
         "update_annotation",
+        "move_annotation",
         "remove_annotations",
         "accept_annotations",
         "move_annotations",
@@ -3179,6 +3144,7 @@ class Mutation(sgqlc.types.Type):
         "create_dataset_annotations",
         "accept_dataset_annotations",
         "update_dataset_annotation",
+        "move_dataset_annotation",
         "delete_dataset_annotations",
         "move_dataset_annotations",
         "approve_dataset_annotation",
@@ -3204,11 +3170,11 @@ class Mutation(sgqlc.types.Type):
         "delete_dataset_frames_by_search",
         "add_associated_frame_to_dataset_frame",
         "remove_associated_frame_from_dataset_frame",
-        "dataset_frame_id_from_index",
         "copy_filtered_frames_to_dataset",
         "copy_frames_to_dataset",
         "remove_dataset_frame_predictions",
         "create_dataset_frames",
+        "dataset_frame_id_from_index",
         "create_datasheet",
         "update_datasheet_job_state",
         "complete_datasheet_job_success",
@@ -3448,8 +3414,56 @@ class Mutation(sgqlc.types.Type):
                 (
                     "annotation",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(AnnotationUpdate),
+                        sgqlc.types.non_null(UpdateAnnotationInput),
                         graphql_name="annotation",
+                        default=None,
+                    ),
+                ),
+                (
+                    "annotation_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="annotationId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="frameId",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    move_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(Annotation),
+        graphql_name="moveAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "annotation",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(MoveAnnotationInput),
+                        graphql_name="annotation",
+                        default=None,
+                    ),
+                ),
+                (
+                    "annotation_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="annotationId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="frameId",
                         default=None,
                     ),
                 ),
@@ -4542,6 +4556,22 @@ class Mutation(sgqlc.types.Type):
         args=sgqlc.types.ArgDict(
             (
                 (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(UpdateAnnotationInput),
+                        graphql_name="input",
+                        default=None,
+                    ),
+                ),
+                (
+                    "dataset_annotation_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetAnnotationId",
+                        default=None,
+                    ),
+                ),
+                (
                     "dataset_frame_id",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(GraphqlID),
@@ -4549,11 +4579,35 @@ class Mutation(sgqlc.types.Type):
                         default=None,
                     ),
                 ),
+            )
+        ),
+    )
+    move_dataset_annotation = sgqlc.types.Field(
+        sgqlc.types.non_null(DatasetAnnotation),
+        graphql_name="moveDatasetAnnotation",
+        args=sgqlc.types.ArgDict(
+            (
                 (
                     "input",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(UpdateDatasetAnnotationInput),
+                        sgqlc.types.non_null(MoveAnnotationInput),
                         graphql_name="input",
+                        default=None,
+                    ),
+                ),
+                (
+                    "dataset_annotation_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetAnnotationId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "dataset_frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetFrameId",
                         default=None,
                     ),
                 ),
@@ -5154,33 +5208,6 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    dataset_frame_id_from_index = sgqlc.types.Field(
-        sgqlc.types.non_null(String),
-        graphql_name="datasetFrameIdFromIndex",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "index",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(Int), graphql_name="index", default=None
-                    ),
-                ),
-                (
-                    "dataset_id",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID),
-                        graphql_name="datasetId",
-                        default=None,
-                    ),
-                ),
-                (
-                    "search_text",
-                    sgqlc.types.Arg(String, graphql_name="searchText", default=None),
-                ),
-                ("sort", sgqlc.types.Arg(String, graphql_name="sort", default=None)),
-            )
-        ),
-    )
     copy_filtered_frames_to_dataset = sgqlc.types.Field(
         sgqlc.types.non_null(Int),
         graphql_name="copyFilteredFramesToDataset",
@@ -5298,6 +5325,33 @@ class Mutation(sgqlc.types.Type):
                         default=None,
                     ),
                 ),
+            )
+        ),
+    )
+    dataset_frame_id_from_index = sgqlc.types.Field(
+        sgqlc.types.non_null(String),
+        graphql_name="datasetFrameIdFromIndex",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "index",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(Int), graphql_name="index", default=None
+                    ),
+                ),
+                (
+                    "dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "search_text",
+                    sgqlc.types.Arg(String, graphql_name="searchText", default=None),
+                ),
+                ("sort", sgqlc.types.Arg(String, graphql_name="sort", default=None)),
             )
         ),
     )
