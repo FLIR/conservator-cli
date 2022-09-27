@@ -1,4 +1,5 @@
 # NOTE: If a package is required for conservator-cli to run, also include it in setup.py
+graphql-core == 3.2.1; python_version<'3.7'
 wheel
 sphinx
 sgqlc >= 13; python_version>='3.7'

@@ -38,6 +38,7 @@ with open("README.md", "r") as fh:
 # Packages only used for developing (pytest, black, etc.) should be placed
 # in requirements.txt instead.
 INSTALL_REQUIRES = [
+    "graphql-core == 3.2.1; python_version<'3.7'",
     "sgqlc >= 13; python_version>='3.7'",
     "sgqlc == 16.0; python_version<'3.7'",
     "click >= 8",
