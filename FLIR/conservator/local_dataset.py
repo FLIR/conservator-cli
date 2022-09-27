@@ -240,6 +240,16 @@ class LocalDataset:
             pass `True` to skip the check. In this case, please also submit a PR so we can
             update the schema.
         """
+        dataset = Dataset.from_local_path(self.conservator, self.path)
+        dataset.populate(["has_changes", "is_locked"])
+        if dataset.is_locked:
+            logger.error("Cannot commit changes, dataset is locked!")
+            sys.exit(1)
+        if dataset.has_changes:
+            logger.error(
+                "Dataset has changes on the server; please pull latest changes before attempting to commit"
+            )
+            sys.exit(1)
         if skip_validation:
             logger.warning(
                 "Skipping validation. Please submit a PR if the schema should be changed."
@@ -333,14 +343,15 @@ class LocalDataset:
         :param verbose: If False, run git commands with the `-q` option.
         """
         dataset = Dataset.from_local_path(self.conservator, self.path)
-        dataset.populate(["has_changes", "is_locked" ])
+        dataset.populate(["has_changes", "is_locked"])
         if dataset.is_locked:
             logger.error("Cannot commit changes, dataset is locked!")
-            return
+            sys.exit(1)
         if dataset.has_changes:
-            logger.error("Dataset has changes on the server;\
-                please pull latest changes before attempting to commit")
-            return
+            logger.error(
+                "Dataset has changes on the server; please pull latest changes before attempting to commit"
+            )
+            sys.exit(1)
         repo_status = self.git_status()
         # Verify whether there are any changes to the index.
         if not repo_status["modified"]["staged"] and not repo_status["added"]["staged"]:
@@ -361,14 +372,15 @@ class LocalDataset:
         # count existing commits to compare against later
         dataset = Dataset.from_local_path(self.conservator, self.path)
 
-        dataset.populate(["has_changes", "is_locked" ])
+        dataset.populate(["has_changes", "is_locked"])
         if dataset.is_locked:
             logger.error("Cannot commit changes, dataset is locked!")
-            return
+            sys.exit(1)
         if dataset.has_changes:
-            logger.error("Dataset has changes on the server;\
-                please pull latest changes before attempting to commit")
-            return
+            logger.error(
+                "Dataset has changes on the server; please pull latest changes before attempting to commit"
+            )
+            sys.exit(1)
 
         num_initial_commits = len(dataset.get_commit_history())
 
