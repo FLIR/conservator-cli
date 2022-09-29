@@ -10,7 +10,6 @@ from sgqlc.operation import Operation
 
 from FLIR.conservator.fields_manager import FieldsManager
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.generated.schema import schema, Query
 from FLIR.conservator.version import version as cli_ver
 from FLIR.conservator.util import compare_conservator_cli_version
 

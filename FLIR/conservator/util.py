@@ -1,9 +1,14 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
 import hashlib
 import logging
+
+from itertools import zip_longest
+
 import semver
 import requests
 
-from itertools import zip_longest
 from FLIR.conservator.version import version as cli_ver
 
 logger = logging.getLogger(__name__)
