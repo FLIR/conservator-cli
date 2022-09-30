@@ -103,7 +103,7 @@ class Config:
 
     Config attribute names (environment variables, dictionary keys):
      - ``CONSERVATOR_API_KEY``
-     - ``CONSERVATOR_URL`` (default: https://flirconservator.com/)
+     - ``CONSERVATOR_URL``
      - ``CONSERVATOR_MAX_RETRIES`` (default: 5)
      - ``CONSERVATOR_CVC_CACHE_PATH`` (default: .cvc/cache)
 
@@ -130,8 +130,7 @@ class Config:
             ),
             "url": ConfigAttribute(
                 "CONSERVATOR_URL",
-                "Conservator URL",
-                default="https://flirconservator.com/",
+                "Conservator URL (The URL you use to access Conservator in a browser)",
                 validator=validate_url,
             ),
             # from_input() needs 'key' to come after 'url'

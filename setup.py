@@ -38,7 +38,9 @@ with open("README.md", "r") as fh:
 # Packages only used for developing (pytest, black, etc.) should be placed
 # in requirements.txt instead.
 INSTALL_REQUIRES = [
-    "sgqlc >= 13",
+    "graphql-core == 3.2.1; python_version<'3.7'",
+    "sgqlc >= 13; python_version>='3.7'",
+    "sgqlc == 16.0; python_version<'3.7'",
     "click >= 8",
     "tqdm",
     "requests",
@@ -52,7 +54,7 @@ INSTALL_REQUIRES = [
 setuptools.setup(
     name="conservator-cli",
     version=version,
-    author="FLIR Systems, INC",
+    author="Teledyne FLIR LLC",
     description="A library for using the FLIR Conservator API, with a nice command line interface.",
     long_description=long_description,
     long_description_content_type="text/markdown",

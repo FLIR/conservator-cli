@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "Conservator CLI"
-copyright = "2021, FLIR Systems"
-author = "FLIR Systems"
+copyright = "2022, Teledyne FLIR LLC"
+author = "Teledyne FLIR LLC"
 
 
 # -- General configuration ---------------------------------------------------
