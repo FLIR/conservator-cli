@@ -1746,7 +1746,6 @@ class Dataset(sgqlc.types.Type):
         "frames",
         "frame_count",
         "video_count",
-        "highest_target_id",
         "notes",
         "archive_url",
         "archived_at",
@@ -1836,9 +1835,6 @@ class Dataset(sgqlc.types.Type):
     )
     video_count = sgqlc.types.Field(
         sgqlc.types.non_null(Int), graphql_name="videoCount"
-    )
-    highest_target_id = sgqlc.types.Field(
-        sgqlc.types.non_null(Int), graphql_name="highestTargetId"
     )
     notes = sgqlc.types.Field(String, graphql_name="notes")
     archive_url = sgqlc.types.Field(String, graphql_name="archiveUrl")
@@ -2818,7 +2814,6 @@ class Image(sgqlc.types.Type):
         "annotation_import_state_modified_at",
         "process_video_error_message",
         "annotation_import_error_message",
-        "highest_target_id",
         "custom_metadata",
         "collections",
         "datasets",
@@ -2924,7 +2919,6 @@ class Image(sgqlc.types.Type):
     annotation_import_error_message = sgqlc.types.Field(
         String, graphql_name="annotationImportErrorMessage"
     )
-    highest_target_id = sgqlc.types.Field(Int, graphql_name="highestTargetId")
     custom_metadata = sgqlc.types.Field(String, graphql_name="customMetadata")
     collections = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID))),
@@ -9876,7 +9870,6 @@ class Video(sgqlc.types.Type):
         "file_locker_files",
         "annotation_import_state",
         "annotation_import_state_modified_at",
-        "highest_target_id",
         "custom_metadata",
         "collections",
         "segments",
@@ -9991,7 +9984,6 @@ class Video(sgqlc.types.Type):
     annotation_import_state_modified_at = sgqlc.types.Field(
         Date, graphql_name="annotationImportStateModifiedAt"
     )
-    highest_target_id = sgqlc.types.Field(Int, graphql_name="highestTargetId")
     custom_metadata = sgqlc.types.Field(String, graphql_name="customMetadata")
     collections = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(GraphqlID)), graphql_name="collections"
