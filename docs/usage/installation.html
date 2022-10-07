@@ -38,8 +38,8 @@
             
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
-<section id="basic-install">
-<h2>Basic Install<a class="headerlink" href="#basic-install" title="Permalink to this heading">¶</a></h2>
+<section id="installation-on-linux">
+<h2>Installation on Linux<a class="headerlink" href="#installation-on-linux" title="Permalink to this heading">¶</a></h2>
 <p>The easiest way to install Conservator CLI is with <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install conservator-cli
 </pre></div>
@@ -53,6 +53,8 @@ running above install command, you may also need to <code class="docutils litera
 on any currently open shells in order to fix your PATH
 <a class="reference external" href="https://github.com/FLIR/conservator-cli/issues/281">https://github.com/FLIR/conservator-cli/issues/281</a></p>
 </div>
+<section id="configuring-conservator-cli">
+<span id="configuring-cli"></span><h3>Configuring Conservator-CLI<a class="headerlink" href="#configuring-conservator-cli" title="Permalink to this heading">¶</a></h3>
 <p>Before you can use the command, you need to tell Conservator-CLI your API key and
 other settings. Log in to your conservator instance, and find your API key. Then run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator config create default
@@ -73,7 +75,70 @@ with <a class="reference internal" href="cli_quickstart.html"><span class="doc">
 <p>For developers working with multiple conservator instances, you can add
 multiple configs. Conservator CLI stores its configurations as json files in <code class="docutils literal notranslate"><span class="pre">~/.config/conservator-cli</span></code>.
 For example, the default configuration will located at <code class="docutils literal notranslate"><span class="pre">~/.config/conservator-cli/default.json</span></code>.
-See <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">config</span> <span class="pre">--help</span></code> for more info.</p>
+See <code class="docutils literal notranslate"><span class="pre">conservator</span> <span class="pre">config</span> <span class="pre">--help</span></code> for more information.</p>
+</section>
+</section>
+<section id="installation-on-windows">
+<h2>Installation on Windows<a class="headerlink" href="#installation-on-windows" title="Permalink to this heading">¶</a></h2>
+<section id="pre-installation">
+<h3>Pre-installation<a class="headerlink" href="#pre-installation" title="Permalink to this heading">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>Ensure that your Windows installation meets the mininum requirements detailed <a class="reference external" href="https://learn.microsoft.com/en-us/windows/wsl/install">here</a></p></li>
+<li><p>Ensure that virtualization is enabled on your system. Consult your vendor documentation for details.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="installing-windows-subsystem-for-linux-wsl">
+<h3>Installing Windows Subsystem for Linux (WSL)<a class="headerlink" href="#installing-windows-subsystem-for-linux-wsl" title="Permalink to this heading">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p>Open the Start menu, and type in “powershell”.</p></li>
+<li><p>Right-click on the PowerShell icon, and select “Run as Administrator” from the menu.</p></li>
+<li><p>In the shell, type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ wsl --install
+</pre></div>
+</div>
+<p>This will start the WSL installation process. Once it is complete, you will be prompted to reboot,
+which will finish the installation process.</p>
+</li>
+<li><p>After Windows has restarted, and you have logged back in, an Ubuntu command prompt should open automatically.
+If it doesn’t, open the Start menu, and type in “ubuntu”; clicking the displayed icon will open the Ubuntu terminal.</p></li>
+<li><p>See the <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/troubleshooting#installation-issues">Microsoft WSL Troubleshooting Guide</a>
+for any issues with WSL installation.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="configuring-ubuntu-and-installing-conservator-cli">
+<h3>Configuring Ubuntu and Installing Conservator-CLI<a class="headerlink" href="#configuring-ubuntu-and-installing-conservator-cli" title="Permalink to this heading">¶</a></h3>
+<dl>
+<dt>In the Ubuntu shell:</dt><dd><ul>
+<li><p>When prompted, enter a username and password to use with Ubuntu.</p></li>
+<li><p>Enter the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo apt update
+$ sudo ln -s /usr/bin/python3 /usr/local/bin/python
+$ sudo apt install -y python3-pip
+$ pip install conservator-cli
+$ source ~/.profile
+</pre></div>
+</div>
+<p>These commands will configure Python3, and install Conservator-CLI on your system.</p>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="configuring-git">
+<h3>Configuring Git<a class="headerlink" href="#configuring-git" title="Permalink to this heading">¶</a></h3>
+<p>To configure Git on WSL, use the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git config --global user.email &quot;you@example.com&quot;
+$ git config --global user.name &quot;Your Name&quot;
+</pre></div>
+</div>
+<p>Replace “<a class="reference external" href="mailto:you&#37;&#52;&#48;example&#46;com">you<span>&#64;</span>example<span>&#46;</span>com</a>” with the email address you use to log in to Conservator, and “Your Name” with your name.</p>
+<p>Once Git has been configured on your WSL system, you can follow the instructions in <a class="reference internal" href="#configuring-cli"><span class="std std-ref">Configuring Conservator-CLI</span></a> to configure
+Conservator-CLI.</p>
+</section>
 </section>
 <section id="developers">
 <h2>Developers<a class="headerlink" href="#developers" title="Permalink to this heading">¶</a></h2>
@@ -155,7 +220,8 @@ deployed to Github Pages.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#basic-install">Basic Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-on-linux">Installation on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-on-windows">Installation on Windows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#developers">Developers</a></li>
 </ul>
 </li>
