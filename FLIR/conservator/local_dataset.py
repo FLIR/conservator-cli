@@ -240,6 +240,16 @@ class LocalDataset:
             pass `True` to skip the check. In this case, please also submit a PR so we can
             update the schema.
         """
+        dataset = Dataset.from_local_path(self.conservator, self.path)
+        dataset.populate(["has_changes", "is_locked"])
+        if dataset.is_locked:
+            logger.error("Cannot commit changes, dataset is locked!")
+            sys.exit(1)
+        if dataset.has_changes:
+            logger.error(
+                "Dataset has changes on the server; please pull latest changes before attempting to commit"
+            )
+            sys.exit(1)
         if skip_validation:
             logger.warning(
                 "Skipping validation. Please submit a PR if the schema should be changed."
@@ -332,6 +342,16 @@ class LocalDataset:
 
         :param verbose: If False, run git commands with the `-q` option.
         """
+        dataset = Dataset.from_local_path(self.conservator, self.path)
+        dataset.populate(["has_changes", "is_locked"])
+        if dataset.is_locked:
+            logger.error("Cannot commit changes, dataset is locked!")
+            sys.exit(1)
+        if dataset.has_changes:
+            logger.error(
+                "Dataset has changes on the server; please pull latest changes before attempting to commit"
+            )
+            sys.exit(1)
         repo_status = self.git_status()
         # Verify whether there are any changes to the index.
         if not repo_status["modified"]["staged"] and not repo_status["added"]["staged"]:
@@ -351,6 +371,17 @@ class LocalDataset:
         """
         # count existing commits to compare against later
         dataset = Dataset.from_local_path(self.conservator, self.path)
+
+        dataset.populate(["has_changes", "is_locked"])
+        if dataset.is_locked:
+            logger.error("Cannot commit changes, dataset is locked!")
+            sys.exit(1)
+        if dataset.has_changes:
+            logger.error(
+                "Dataset has changes on the server; please pull latest changes before attempting to commit"
+            )
+            sys.exit(1)
+
         num_initial_commits = len(dataset.get_commit_history())
 
         # The subprocess will return a non-zero exit code even if it succeeded.
@@ -528,8 +559,8 @@ class LocalDataset:
         retry_count = 0
         while retry_count < tries:
             with open(path, "rb") as data:
-                r = requests.put(url, data, headers=headers)
-            if r.status_code == 502:
+                put_response = requests.put(url, data, headers=headers, timeout=5)
+            if put_response.status_code == 502:
                 retry_count += 1
                 if retry_count < tries:
                     logger.info("Bad Gateway error, retrying %s..", filename)
@@ -537,8 +568,8 @@ class LocalDataset:
                     continue
             else:
                 break
-        assert r.status_code == 200
-        assert r.headers["ETag"] == f'"{md5}"'
+        assert put_response.status_code == 200
+        assert put_response.headers["ETag"] == f'"{md5}"'
 
     def get_index(self):
         """
@@ -670,9 +701,9 @@ class LocalDataset:
         This only counts frames uploaded directly to the dataset.
         """
         max_index = 0
-        for f in dataset_frames:
-            if f["datasetFrameId"] == f["videoMetadata"]["frameId"]:
-                frame_index = f["videoMetadata"]["frameIndex"]
+        for frame in dataset_frames:
+            if frame["datasetFrameId"] == frame["videoMetadata"]["frameId"]:
+                frame_index = frame["videoMetadata"]["frameIndex"]
                 max_index = max(max_index, frame_index)
         return max_index
 
@@ -908,7 +939,8 @@ class LocalDataset:
                 "Dataset %s has no repository. Unable to clone.", dataset.name
             )
             logging.error(
-                "This dataset can be fixed by browsing to it in Conservator Web UI and clicking 'Commit Changes'."
+                "This dataset can be fixed by browsing to it in\
+                    Conservator Web UI and clicking 'Commit Changes'."
             )
             return
 
@@ -924,9 +956,9 @@ class LocalDataset:
         if not verbose:
             clone_cmd.append("-q")
         clone_cmd += [url, clone_path]
-        r = subprocess.call(clone_cmd)
-        if r != 0:
-            logging.error("Error %s when cloning.", r)
+        result = subprocess.call(clone_cmd)
+        if result != 0:
+            logging.error("Error %s when cloning.", result)
             return
 
         # pylint: disable=protected-access
