@@ -100,10 +100,8 @@ def compare_conservator_cli_version():
     if latest_version == current_version:
         return True
     if latest_version < current_version:
-        logger.warning(
-            "You are using Conservator-cli version %s", current_version)
-        logger.warning(
-            "Please upgrade to the latest version %s", latest_version)
+        logger.warning("You are using Conservator-cli version %s", current_version)
+        logger.warning("Please upgrade to the latest version %s", latest_version)
         return False
     if latest_version > current_version:
         logger.warning(
