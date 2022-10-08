@@ -21,11 +21,18 @@ def pass_valid_local_dataset(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ctx_obj = get_current_context().obj
-        path = ctx_obj["cvc_local_path"]
-        conservator = Conservator.create(ctx_obj["config_name"])
+
+        if "conservator" in ctx_obj:
+            conservator = ctx_obj["conservator"]
+        else:
+            path = ctx_obj["cvc_local_path"]
+            conservator = Conservator.create(ctx_obj["config_name"])
+            ctx_obj["conservator"] = conservator
+
         # raises InvalidLocalDatasetPath if the path does not point to a
         # valid LocalDataset (defined as a directory containing index.json).
         local_dataset = LocalDataset(conservator, path)
+
         return func(local_dataset, *args, **kwargs)
 
     return wrapper
@@ -35,7 +42,15 @@ def check_git_config(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ctx_obj = get_current_context().obj
-        conservator = Conservator.create(ctx_obj["config_name"])
+
+        if "conservator" in ctx_obj:
+            print("conservator is in ctx_obj!")
+            conservator = ctx_obj["conservator"]
+        else:
+            path = ctx_obj["cvc_local_path"]
+            conservator = Conservator.create(ctx_obj["config_name"])
+            print("Setting conservator in context obj")
+            ctx_obj["conservator"] = conservator
 
         logging.disable(logging.CRITICAL)
 
