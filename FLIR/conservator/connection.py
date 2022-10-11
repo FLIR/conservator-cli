@@ -12,7 +12,7 @@ from FLIR.conservator.fields_manager import FieldsManager
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.version import version as cli_ver
-from FLIR.conservator.util import compare_conservator_cli_version
+from FLIR.conservator.util import compare_conservator_cli_version, check_platform
 
 __all__ = [
     "ConservatorMalformedQueryException",
@@ -60,6 +60,7 @@ class ConservatorConnection:
     """
 
     def __init__(self, config):
+        check_platform()
         compare_conservator_cli_version()
 
         self.config = config
