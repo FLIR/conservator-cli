@@ -15,6 +15,7 @@ from click import get_current_context
 
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
+from FLIR.conservator.util import check_platform
 
 
 def pass_valid_local_dataset(func):
@@ -69,7 +70,8 @@ def check_git_config(func):
         git_config_file = os.path.join(full_path, ".git", "config")
 
         if not os.path.exists(git_config_file):
-            click.echo(f"Dataset git config file ({git_config_file}) is missing!")
+            click.echo(
+                f"Dataset git config file ({git_config_file}) is missing!")
             sys.exit(1)
 
         git_config = configparser.RawConfigParser()
@@ -92,7 +94,8 @@ def check_git_config(func):
                 f"This dataset was checked out as {split_result.username}, not {conservator.get_email()}!"
             )
             click.echo("Run ", nl=False)
-            click.echo(click.style("conservator config view", bold=True), nl=False)
+            click.echo(click.style(
+                "conservator config view", bold=True), nl=False)
             click.echo(" to see your current configuration")
             click.echo("Run ", nl=False)
             click.echo(click.style("cvc update-identity", bold=True), nl=False)
@@ -104,7 +107,8 @@ def check_git_config(func):
                 f"This dataset was checked out from {host_name}, not {conservator.get_url()}!"
             )
             click.echo("Run ", nl=False)
-            click.echo(click.style("conservator config view", bold=True), nl=False)
+            click.echo(click.style(
+                "conservator config view", bold=True), nl=False)
             click.echo(" to see your current configuration")
             sys.exit(1)
 
@@ -113,7 +117,8 @@ def check_git_config(func):
                 "Your currently configures API key does not match the API key used to check out this dataset"
             )
             click.echo("Run ", nl=False)
-            click.echo(click.style("conservator config view", bold=True), nl=False)
+            click.echo(click.style(
+                "conservator config view", bold=True), nl=False)
             click.echo(" to see your current configuration")
             click.echo("Run ", nl=False)
             click.echo(click.style("cvc update-identity", bold=True), nl=False)
@@ -144,6 +149,7 @@ def check_git_config(func):
 @click.version_option(prog_name="conservator-cli", package_name="conservator-cli")
 @click.pass_context
 def main(ctx, log, path, config):
+    check_platform()
     levels = {
         "DEBUG": logging.DEBUG,
         "INFO": logging.INFO,
@@ -454,6 +460,7 @@ def cvc(ctx, path):
     # It is the same as main() except it skips things that toplevel
     # conservator command already handles (logging and conservator config,
     # and would result in confusing behavior if included twice.
+    check_platform()
     ctx.obj["cvc_local_path"] = path
 
 

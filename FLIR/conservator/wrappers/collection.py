@@ -17,7 +17,6 @@ from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.wrappers.file_locker import FileLockerType
-from FLIR.conservator.wrappers.queryable import QueryableType
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +83,8 @@ class Collection(QueryableType, FileLockerType):
 
         This requires your account to have privilege to create new projects.
         """
-        project = conservator.projects.create(name, fields="root_collection.id")
+        project = conservator.projects.create(
+            name, fields="root_collection.id")
         root_collection = project.root_collection
         root_collection.populate(fields)
         return root_collection
@@ -105,7 +105,8 @@ class Collection(QueryableType, FileLockerType):
                 conservator, path=path, make_if_no_exist=False, fields="id"
             )
             if collection is not None:
-                raise RemotePathExistsException(f"Path '{path}' already exists.")
+                raise RemotePathExistsException(
+                    f"Path '{path}' already exists.")
         except InvalidRemotePathException:
             pass
 
@@ -335,7 +336,8 @@ class Collection(QueryableType, FileLockerType):
         Downloads videos and images.  If `preview_videos` is set, download
         preview videos in place of full videos.
         """
-        self.download_videos(path, preview_videos=preview_videos, no_meter=no_meter)
+        self.download_videos(
+            path, preview_videos=preview_videos, no_meter=no_meter)
         self.download_images(path, no_meter=no_meter)
 
     def download_videos(self, path, preview_videos=False, no_meter=False):

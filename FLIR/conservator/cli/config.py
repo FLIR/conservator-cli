@@ -24,6 +24,9 @@ def delete(name):
 @click.argument("name", default="default")
 def view(name):
     config = Config.from_name(name)
+    if config is None:
+        click.echo(f"No configuration exists named {name}")
+        return
     conservator = Conservator(config)
     click.echo(config)
     click.echo(f"Corresponds to email: {conservator.get_email()}")
@@ -39,6 +42,9 @@ def list_():
 @click.argument("name", default="default")
 def edit_(name):
     config = Config.from_name(name)
+    if config is None:
+        click.echo(f"No configuration exists named {name}")
+        return
     config_json = json.dumps(config.to_dict(), indent=2)
     value = click.edit(config_json)
     if value is not None:
@@ -47,13 +53,16 @@ def edit_(name):
         new_config.save_to_named_config(name)
         click.echo(f"Edited {name}")
         return
-    click.echo(f"No changes.")
+    click.echo("No changes.")
 
 
 @config_.command(name="set-default", help="Set default config")
 @click.argument("name")
 def set_default(name):
     config = Config.from_name(name)
+    if config is None:
+        click.echo(f"No configuration exists named {name}")
+        return
     config.save_to_default_config()
     click.echo("Saved.")
 
