@@ -12,7 +12,11 @@ from FLIR.conservator.managers import (
     VideoManager,
     ImageManager,
 )
-from FLIR.conservator.util import to_clean_string, get_conservator_cli_version, check_platform
+from FLIR.conservator.util import (
+    to_clean_string,
+    get_conservator_cli_version,
+    check_platform,
+)
 from FLIR.conservator.cli.cvc import cvc
 import logging
 
@@ -65,10 +69,8 @@ main.add_command(config_)
 main.add_command(
     get_manager_command(CollectionManager, schema.Collection, "collections")
 )
-main.add_command(get_manager_command(
-    DatasetManager, schema.Dataset, "datasets"))
-main.add_command(get_manager_command(
-    ProjectManager, schema.Project, "projects"))
+main.add_command(get_manager_command(DatasetManager, schema.Dataset, "datasets"))
+main.add_command(get_manager_command(ProjectManager, schema.Project, "projects"))
 main.add_command(get_manager_command(VideoManager, schema.Video, "videos"))
 main.add_command(get_manager_command(ImageManager, schema.Image, "images"))
 main.add_command(interactive)
