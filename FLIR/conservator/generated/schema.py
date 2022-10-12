@@ -1146,7 +1146,6 @@ class UpdateDatasetInput(sgqlc.types.Input):
         "id",
         "owner",
         "name",
-        "is_locked",
         "notes",
         "tags",
         "attached_label_set_ids",
@@ -1157,7 +1156,6 @@ class UpdateDatasetInput(sgqlc.types.Input):
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     owner = sgqlc.types.Field(GraphqlID, graphql_name="owner")
     name = sgqlc.types.Field(String, graphql_name="name")
-    is_locked = sgqlc.types.Field(Boolean, graphql_name="isLocked")
     notes = sgqlc.types.Field(String, graphql_name="notes")
     tags = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(String)), graphql_name="tags"
@@ -3102,6 +3100,8 @@ class Mutation(sgqlc.types.Type):
         "commit_dataset",
         "create_dataset",
         "update_dataset",
+        "lock_dataset",
+        "unlock_dataset",
         "delete_dataset",
         "archive_dataset",
         "add_segments_to_dataset",
@@ -3845,6 +3845,34 @@ class Mutation(sgqlc.types.Type):
                         sgqlc.types.non_null(UpdateDatasetInput),
                         graphql_name="input",
                         default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    lock_dataset = sgqlc.types.Field(
+        sgqlc.types.non_null(Dataset),
+        graphql_name="lockDataset",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    unlock_dataset = sgqlc.types.Field(
+        sgqlc.types.non_null(Dataset),
+        graphql_name="unlockDataset",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
                     ),
                 ),
             )
