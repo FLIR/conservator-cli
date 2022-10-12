@@ -3,6 +3,16 @@ import platform
 import re
 import setuptools
 
+current_platform = platform.system()
+
+if current_platform.lower() == "windows":
+    print("Conservator-CLI is currently only supported on Windows through WSL.")
+    print(
+        "Please see https://flir.github.io/conservator-cli/usage/installation.html#installation-on-windows for details"
+    )
+    sys.exit(1)
+
+
 try:
     from setuptools import find_namespace_packages
 except ImportError:
@@ -20,15 +30,6 @@ except ImportError:
 # if this is run from git repo, create updated version file,
 # otherwise there should be a previously created version file
 try:
-    current_platform = platform.system()
-
-    if current_platform.lower() == "windows":
-        print("Conservator-CLI is currently only supported on Windows through WSL.")
-        print(
-            "Please see https://flir.github.io/conservator-cli/usage/installation.html#installation-on-windows for details"
-        )
-        sys.exit(1)
-
     import version
 
     version = version.get_git_version()
