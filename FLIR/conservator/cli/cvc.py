@@ -15,6 +15,7 @@ from click import get_current_context
 
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
+from FLIR.conservator.util import check_platform
 
 
 def pass_valid_local_dataset(func):
@@ -144,6 +145,7 @@ def check_git_config(func):
 @click.version_option(prog_name="conservator-cli", package_name="conservator-cli")
 @click.pass_context
 def main(ctx, log, path, config):
+    check_platform()
     levels = {
         "DEBUG": logging.DEBUG,
         "INFO": logging.INFO,
@@ -454,6 +456,7 @@ def cvc(ctx, path):
     # It is the same as main() except it skips things that toplevel
     # conservator command already handles (logging and conservator config,
     # and would result in confusing behavior if included twice.
+    check_platform()
     ctx.obj["cvc_local_path"] = path
 
 

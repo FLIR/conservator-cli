@@ -2,6 +2,8 @@
 # pylint: disable=missing-function-docstring
 import hashlib
 import logging
+import platform
+import sys
 
 from itertools import zip_longest
 
@@ -116,3 +118,14 @@ def compare_conservator_cli_version():
             latest_version,
         )
         return False
+
+
+def check_platform():
+    current_platform = platform.system()
+
+    if current_platform.lower() == "windows":
+        print("Conservator-CLI is currently only supported on Windows through WSL.")
+        print(
+            "Please see https://flir.github.io/conservator-cli/usage/installation.html#installation-on-windows for details"
+        )
+        sys.exit(1)

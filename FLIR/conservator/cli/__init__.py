@@ -12,7 +12,11 @@ from FLIR.conservator.managers import (
     VideoManager,
     ImageManager,
 )
-from FLIR.conservator.util import to_clean_string, get_conservator_cli_version
+from FLIR.conservator.util import (
+    to_clean_string,
+    get_conservator_cli_version,
+    check_platform,
+)
 from FLIR.conservator.cli.cvc import cvc
 import logging
 
@@ -38,6 +42,7 @@ import logging
     ),
 )
 def main(log, config):
+    check_platform()
     levels = {
         "DEBUG": logging.DEBUG,
         "INFO": logging.INFO,

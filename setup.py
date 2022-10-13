@@ -1,7 +1,17 @@
 import sys
-
-import setuptools
+import platform
 import re
+import setuptools
+
+current_platform = platform.system()
+
+if current_platform.lower() == "windows":
+    print("Conservator-CLI is currently only supported on Windows through WSL.")
+    print(
+        "Please see https://flir.github.io/conservator-cli/usage/installation.html#installation-on-windows for details"
+    )
+    sys.exit(1)
+
 
 try:
     from setuptools import find_namespace_packages
@@ -24,12 +34,12 @@ try:
 
     version = version.get_git_version()
     print("GIT VERSION: ", version)
-    with open("FLIR/conservator/version.py", "w") as fp:
+    with open("FLIR/conservator/version.py", "w", encoding="utf-8") as fp:
         fp.write(f'version = "{version}"\n')
 except:
     from FLIR.conservator.version import version
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 
