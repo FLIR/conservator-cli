@@ -52,7 +52,7 @@ pipeline {
         //   AWS_TAG -- select prod or stable (only used if IMAGE_TYPE == AWS)
         //   LOCAL_BRANCH -- conservator branch to be built (only used if IMAGE_TYPE == LOCAL)
         IMAGE_TYPE = "${env.IMAGE_TYPE ?: 'AWS'}"
-        AWS_TAG = "${env.AWS_TAG ?: 'prod'}"
+        AWS_TAG = "${env.AWS_TAG ?: 'staging'}"
         LOCAL_BRANCH = "${env.LOCAL_BRANCH ?: 'master'}"
 
         // access to AWS docker registry
