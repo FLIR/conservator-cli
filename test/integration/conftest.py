@@ -166,8 +166,7 @@ def db(mongo_client):
 
 @pytest.fixture(scope="class")
 def empty_db(db):
-    PRESERVED_COLLECTIONS = ["users", "groups",
-                             "organizations", "allowedDomains"]
+    PRESERVED_COLLECTIONS = ["users", "groups", "organizations", "allowedDomains"]
     for name in db.list_collection_names():
         if name.startswith("system."):
             continue
@@ -287,8 +286,7 @@ def upload_media(conservator, media):
 
 
 def check_git_lfs():
-    which_result = subprocess.call(
-        ["which", "git-lfs"], stdout=subprocess.DEVNULL)
+    which_result = subprocess.call(["which", "git-lfs"], stdout=subprocess.DEVNULL)
 
     print(f"which result is: {which_result}")
 
