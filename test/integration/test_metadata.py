@@ -21,7 +21,7 @@ def test_metadata_download_upload_for_media(conservator, test_data):
     image = conservator.images.all().first()
     frame = image.get_frame()
     annotation = AnnotationCreate(
-        labels=["abc", "def"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+        labels=["abc"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
     frame.add_annotations([annotation])
 
@@ -74,7 +74,7 @@ def test_metadata_download_upload_for_dataset(conservator, test_data):
     image = conservator.images.all().first()
     frame = image.get_frame()
     annotation = AnnotationCreate(
-        labels=["abc", "def"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+        labels=["abc"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
     frame.add_annotation(annotation)
 
