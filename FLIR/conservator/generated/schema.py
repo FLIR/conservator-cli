@@ -920,7 +920,6 @@ class MetadataInput(sgqlc.types.Input):
         "location",
         "tags",
         "spectrum",
-        "asset_type",
         "attached_label_set_ids",
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
@@ -933,7 +932,6 @@ class MetadataInput(sgqlc.types.Input):
         sgqlc.types.list_of(sgqlc.types.non_null(StringLowerCase)), graphql_name="tags"
     )
     spectrum = sgqlc.types.Field(Spectrum, graphql_name="spectrum")
-    asset_type = sgqlc.types.Field(Spectrum, graphql_name="assetType")
     attached_label_set_ids = sgqlc.types.Field(
         sgqlc.types.list_of(GraphqlID), graphql_name="attachedLabelSetIds"
     )
@@ -2844,7 +2842,6 @@ class Image(sgqlc.types.Type):
         "object_detect_batches_total",
         "object_detect_batches_done",
         "spectrum",
-        "asset_type",
         "object_detect_details",
         "inherited_acl",
         "readme",
@@ -2861,6 +2858,7 @@ class Image(sgqlc.types.Type):
         "attached_label_sets",
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
+        "frame_count",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     filename = sgqlc.types.Field(String, graphql_name="filename")
@@ -2956,7 +2954,6 @@ class Image(sgqlc.types.Type):
         Int, graphql_name="objectDetectBatchesDone"
     )
     spectrum = sgqlc.types.Field(String, graphql_name="spectrum")
-    asset_type = sgqlc.types.Field(String, graphql_name="assetType")
     object_detect_details = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of("ObjectDetectDetails")),
         graphql_name="objectDetectDetails",
@@ -2988,6 +2985,7 @@ class Image(sgqlc.types.Type):
     allow_duplicate_target_id = sgqlc.types.Field(
         Boolean, graphql_name="allowDuplicateTargetId"
     )
+    frame_count = sgqlc.types.Field(Int, graphql_name="frameCount")
 
 
 class InterpolationResult(sgqlc.types.Type):
@@ -3148,7 +3146,6 @@ class Mutation(sgqlc.types.Type):
         "add_frames_to_dataset",
         "remove_frames_from_dataset",
         "remove_frames_from_dataset_by_ids",
-        "create_dataset_by_frame_filter",
         "update_dataset_acl",
         "add_dataset_acl",
         "remove_dataset_acl",
@@ -4024,30 +4021,6 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(RemoveFramesFromDatasetByIdsInput),
                         graphql_name="input",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
-    create_dataset_by_frame_filter = sgqlc.types.Field(
-        sgqlc.types.non_null(Dataset),
-        graphql_name="createDatasetByFrameFilter",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "name",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(StringLowerCase),
-                        graphql_name="name",
-                        default=None,
-                    ),
-                ),
-                (
-                    "filter",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(FrameFilter),
-                        graphql_name="filter",
                         default=None,
                     ),
                 ),
@@ -9936,7 +9909,6 @@ class Video(sgqlc.types.Type):
         "uploaded_by",
         "uploaded_by_name",
         "uploaded_by_email",
-        "frames",
         "frames_count",
         "frame_count",
         "annotations_count",
@@ -9964,7 +9936,6 @@ class Video(sgqlc.types.Type):
         "object_detect_batches_total",
         "object_detect_batches_done",
         "spectrum",
-        "asset_type",
         "is_favorite",
         "favorite_count",
         "object_detect_details",
@@ -10024,23 +9995,6 @@ class Video(sgqlc.types.Type):
     uploaded_by = sgqlc.types.Field(String, graphql_name="uploadedBy")
     uploaded_by_name = sgqlc.types.Field(String, graphql_name="uploadedByName")
     uploaded_by_email = sgqlc.types.Field(String, graphql_name="uploadedByEmail")
-    frames = sgqlc.types.Field(
-        sgqlc.types.list_of(Frame),
-        graphql_name="frames",
-        args=sgqlc.types.ArgDict(
-            (
-                ("id", sgqlc.types.Arg(GraphqlID, graphql_name="id", default=None)),
-                (
-                    "frame_index",
-                    sgqlc.types.Arg(Int, graphql_name="frameIndex", default=None),
-                ),
-                (
-                    "start_frame_index",
-                    sgqlc.types.Arg(Int, graphql_name="startFrameIndex", default=None),
-                ),
-            )
-        ),
-    )
     frames_count = sgqlc.types.Field(Int, graphql_name="framesCount")
     frame_count = sgqlc.types.Field(Int, graphql_name="frameCount")
     annotations_count = sgqlc.types.Field(Int, graphql_name="annotationsCount")
@@ -10086,7 +10040,6 @@ class Video(sgqlc.types.Type):
         Int, graphql_name="objectDetectBatchesDone"
     )
     spectrum = sgqlc.types.Field(String, graphql_name="spectrum")
-    asset_type = sgqlc.types.Field(String, graphql_name="assetType")
     is_favorite = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean), graphql_name="isFavorite"
     )
