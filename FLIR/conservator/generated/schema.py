@@ -285,6 +285,17 @@ class AddAttributePrototypeInput(sgqlc.types.Input):
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
 
+class AddDatasetsToCollectionInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("asset_ids", "to_collection")
+    asset_ids = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(GraphqlID)), graphql_name="assetIds"
+    )
+    to_collection = sgqlc.types.Field(
+        sgqlc.types.non_null(GraphqlID), graphql_name="toCollection"
+    )
+
+
 class AddFramesToDatasetInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("dataset_id", "frame_ids", "overwrite")
@@ -1120,7 +1131,14 @@ class UnflagDatasetFrameInput(sgqlc.types.Input):
 
 class UpdateAnnotationInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("labels", "label_id", "target_id", "qa_status", "qa_status_note")
+    __field_names__ = (
+        "labels",
+        "label_id",
+        "target_id",
+        "qa_status",
+        "qa_status_note",
+        "custom_metadata",
+    )
     labels = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(AllowedLabelCharacters)),
         graphql_name="labels",
@@ -1129,6 +1147,7 @@ class UpdateAnnotationInput(sgqlc.types.Input):
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
     qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
     qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
+    custom_metadata = sgqlc.types.Field(String, graphql_name="customMetadata")
 
 
 class UpdateCollectionInput(sgqlc.types.Input):
@@ -1328,7 +1347,7 @@ class Annotation(sgqlc.types.Type):
         graphql_name="labels",
     )
     label_id = sgqlc.types.Field(GraphqlID, graphql_name="labelId")
-    color = sgqlc.types.Field(String, graphql_name="color")
+    color = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="color")
     bounding_box = sgqlc.types.Field("BoundingBox", graphql_name="boundingBox")
     bounding_polygon = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null("Point")),
@@ -1503,6 +1522,7 @@ class Collection(sgqlc.types.Type):
         "sqa_run_error_message",
         "recalculate_stats_state",
         "recalculate_stats_error",
+        "are_all_datasets_committed",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     parent_id = sgqlc.types.Field(GraphqlID, graphql_name="parentId")
@@ -1586,6 +1606,9 @@ class Collection(sgqlc.types.Type):
     )
     recalculate_stats_error = sgqlc.types.Field(
         String, graphql_name="recalculateStatsError"
+    )
+    are_all_datasets_committed = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean), graphql_name="areAllDatasetsCommitted"
     )
 
 
@@ -2011,7 +2034,7 @@ class DatasetAnnotation(sgqlc.types.Type):
         graphql_name="labels",
     )
     label_id = sgqlc.types.Field(GraphqlID, graphql_name="labelId")
-    color = sgqlc.types.Field(String, graphql_name="color")
+    color = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="color")
     bounding_box = sgqlc.types.Field(BoundingBox, graphql_name="boundingBox")
     bounding_polygon = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null("Point")),
@@ -2969,10 +2992,26 @@ class Image(sgqlc.types.Type):
 
 class InterpolationResult(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("annotations_created", "error_frame", "error_target_id")
+    __field_names__ = (
+        "annotations_created",
+        "error_frame",
+        "error_target_id",
+        "error_label",
+        "duplicate_target_id_and_label",
+        "no_matching_target_id_and_label",
+        "frame_number",
+    )
     annotations_created = sgqlc.types.Field(Int, graphql_name="annotationsCreated")
     error_frame = sgqlc.types.Field(Int, graphql_name="errorFrame")
     error_target_id = sgqlc.types.Field(Int, graphql_name="errorTargetId")
+    error_label = sgqlc.types.Field(String, graphql_name="errorLabel")
+    duplicate_target_id_and_label = sgqlc.types.Field(
+        Boolean, graphql_name="duplicateTargetIdAndLabel"
+    )
+    no_matching_target_id_and_label = sgqlc.types.Field(
+        Boolean, graphql_name="noMatchingTargetIdAndLabel"
+    )
+    frame_number = sgqlc.types.Field(Int, graphql_name="frameNumber")
 
 
 class Label(sgqlc.types.Type):
@@ -3134,6 +3173,7 @@ class Mutation(sgqlc.types.Type):
         "commit_all_collection_datasets",
         "generate_dataset_preview_video",
         "move_dataset",
+        "add_datasets_to_collection",
         "recalculate_dataset_stats",
         "create_dataset_annotations",
         "accept_dataset_annotations",
@@ -4459,7 +4499,7 @@ class Mutation(sgqlc.types.Type):
         ),
     )
     commit_all_collection_datasets = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean),
+        sgqlc.types.non_null(Int),
         graphql_name="commitAllCollectionDatasets",
         args=sgqlc.types.ArgDict(
             (
@@ -4505,6 +4545,22 @@ class Mutation(sgqlc.types.Type):
                     "input",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(MoveAssetInput),
+                        graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    add_datasets_to_collection = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(GraphqlID)),
+        graphql_name="addDatasetsToCollection",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(AddDatasetsToCollectionInput),
                         graphql_name="input",
                         default=None,
                     ),

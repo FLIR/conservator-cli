@@ -146,7 +146,7 @@ def mongo_client():
             "--insecure-skip-tls-verify",
             "port-forward",
             "service/conservator-mongo",
-            f"27017:27017",
+            "27017:27017",
         ]
     )
 
