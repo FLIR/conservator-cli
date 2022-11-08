@@ -2814,8 +2814,6 @@ class Image(sgqlc.types.Type):
         "uploaded_by",
         "uploaded_by_name",
         "uploaded_by_email",
-        "frames",
-        "frames_count",
         "annotations_count",
         "human_annotations_count",
         "name",
@@ -2879,30 +2877,6 @@ class Image(sgqlc.types.Type):
     uploaded_by = sgqlc.types.Field(String, graphql_name="uploadedBy")
     uploaded_by_name = sgqlc.types.Field(String, graphql_name="uploadedByName")
     uploaded_by_email = sgqlc.types.Field(String, graphql_name="uploadedByEmail")
-    frames = sgqlc.types.Field(
-        sgqlc.types.list_of(Frame),
-        graphql_name="frames",
-        args=sgqlc.types.ArgDict(
-            (
-                ("id", sgqlc.types.Arg(GraphqlID, graphql_name="id", default=None)),
-                (
-                    "frame_index",
-                    sgqlc.types.Arg(Int, graphql_name="frameIndex", default=None),
-                ),
-                (
-                    "start_frame_index",
-                    sgqlc.types.Arg(Int, graphql_name="startFrameIndex", default=None),
-                ),
-                (
-                    "custom_metadata",
-                    sgqlc.types.Arg(
-                        String, graphql_name="customMetadata", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    frames_count = sgqlc.types.Field(Int, graphql_name="framesCount")
     annotations_count = sgqlc.types.Field(Int, graphql_name="annotationsCount")
     human_annotations_count = sgqlc.types.Field(
         Int, graphql_name="humanAnnotationsCount"
@@ -9238,7 +9212,6 @@ class Query(sgqlc.types.Type):
                         sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
                     ),
                 ),
-                ("src", sgqlc.types.Arg(String, graphql_name="src", default=None)),
             )
         ),
     )
@@ -9514,7 +9487,6 @@ class Query(sgqlc.types.Type):
                         sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
                     ),
                 ),
-                ("src", sgqlc.types.Arg(String, graphql_name="src", default=None)),
             )
         ),
     )
@@ -9909,7 +9881,6 @@ class Video(sgqlc.types.Type):
         "uploaded_by",
         "uploaded_by_name",
         "uploaded_by_email",
-        "frames_count",
         "frame_count",
         "annotations_count",
         "human_annotations_count",
@@ -9995,7 +9966,6 @@ class Video(sgqlc.types.Type):
     uploaded_by = sgqlc.types.Field(String, graphql_name="uploadedBy")
     uploaded_by_name = sgqlc.types.Field(String, graphql_name="uploadedByName")
     uploaded_by_email = sgqlc.types.Field(String, graphql_name="uploadedByEmail")
-    frames_count = sgqlc.types.Field(Int, graphql_name="framesCount")
     frame_count = sgqlc.types.Field(Int, graphql_name="frameCount")
     annotations_count = sgqlc.types.Field(Int, graphql_name="annotationsCount")
     human_annotations_count = sgqlc.types.Field(

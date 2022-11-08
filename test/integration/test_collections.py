@@ -81,8 +81,7 @@ def test_get_child_make_if_no_exist(conservator):
     project = conservator.projects.create("Root")
     parent_collection = project.root_collection
 
-    child = parent_collection.get_child(
-        "My child collection", make_if_no_exists=True)
+    child = parent_collection.get_child("My child collection", make_if_no_exists=True)
     assert child is not None
     assert child.name == "My child collection"
     assert child.path == "/Root/My child collection"
@@ -194,8 +193,7 @@ def test_from_remote_path_no_slash(conservator, path):
     ],
 )
 def test_from_remote_path_make_if_no_exist(conservator, path):
-    collection = conservator.collections.from_remote_path(
-        path, make_if_no_exist=True)
+    collection = conservator.collections.from_remote_path(path, make_if_no_exist=True)
     assert collection is not None
     assert collection.id == collection.id
 
@@ -225,8 +223,7 @@ def test_recursively_get_children_broad(conservator):
     assert set(child_paths) == set(PATHS)
 
     children_and_self = list(
-        root_collection.recursively_get_children(
-            fields="path", include_self=True)
+        root_collection.recursively_get_children(fields="path", include_self=True)
     )
     assert len(children_and_self) == len(PATHS) + 1
 
@@ -240,8 +237,7 @@ def test_recursively_get_children_deep(conservator):
     assert len(children) == DEPTH
 
     children_and_self = list(
-        root_collection.recursively_get_children(
-            fields="path", include_self=True)
+        root_collection.recursively_get_children(fields="path", include_self=True)
     )
     assert len(children_and_self) == DEPTH + 1
 
@@ -275,19 +271,16 @@ def test_delete_child(conservator):
 
 
 def test_delete_parent(conservator):
-    conservator.collections.create_from_remote_path(
-        "/My/Complicated/Collection/Path")
+    conservator.collections.create_from_remote_path("/My/Complicated/Collection/Path")
 
-    parent = conservator.collections.from_remote_path(
-        "/My/Complicated/Collection")
+    parent = conservator.collections.from_remote_path("/My/Complicated/Collection")
     with pytest.raises(ConservatorGraphQLServerError):
         # You can't delete a collection that has children
         parent.delete()
 
 
 def test_remove_media(conservator, test_data):
-    collection = conservator.collections.create_from_remote_path(
-        "/Some/Collection")
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
     local_path = test_data / "jpg" / "surfers_0.jpg"
     media_id = conservator.media.upload(local_path, collection=collection)
     conservator.media.wait_for_processing(media_id)
@@ -299,8 +292,7 @@ def test_remove_media(conservator, test_data):
 
 
 def test_create_dataset(conservator):
-    collection = conservator.collections.create_from_remote_path(
-        "/Some/Collection")
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
 
     dataset = collection.create_dataset("My dataset")
     assert dataset.wait_for_dataset_commit()
@@ -312,8 +304,7 @@ def test_create_dataset(conservator):
 
 
 def test_get_datasets(conservator):
-    collection = conservator.collections.create_from_remote_path(
-        "/Some/Collection")
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
     assert dataset_1.wait_for_dataset_commit()
     dataset_2 = collection.create_dataset("My second dataset")
@@ -330,8 +321,7 @@ def test_get_datasets(conservator):
 @pytest.mark.skip()
 @pytest.mark.usefixtures("tmp_cwd")
 def test_download_datasets(conservator):
-    collection = conservator.collections.create_from_remote_path(
-        "/Some/Collection")
+    collection = conservator.collections.create_from_remote_path("/Some/Collection")
     dataset_1 = collection.create_dataset("My first dataset")
     assert dataset_1.wait_for_dataset_commit()
 
@@ -385,8 +375,7 @@ class TestCollectionsWithMedia:
         assert len(images) == 3
 
     def test_get_videos(self, conservator):
-        collection = conservator.collections.from_remote_path(
-            "/Flight/Thermal")
+        collection = conservator.collections.from_remote_path("/Flight/Thermal")
         videos = collection.get_videos()
         assert len(videos) == 2
 
@@ -436,8 +425,7 @@ class TestCollectionsWithMedia:
 
     @pytest.mark.usefixtures("tmp_cwd")
     def test_download_videos(self, conservator):
-        collection = conservator.collections.from_remote_path(
-            "/Flight/Thermal")
+        collection = conservator.collections.from_remote_path("/Flight/Thermal")
         collection.download_videos("./videos/")
 
         assert len(os.listdir("videos")) == 2

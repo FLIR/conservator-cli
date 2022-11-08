@@ -15,6 +15,7 @@ class Image(MediaType):
         frame_filter = schema.FrameFilter(video_id=self.id, frame_index=0)
 
         image = self._conservator.query(
-            query=schema.Query.frame, filter=frame_filter, fields=fields)
+            query=schema.Query.frame, filter=frame_filter, fields=fields
+        )
 
         return image

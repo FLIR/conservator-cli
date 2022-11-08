@@ -73,8 +73,8 @@ def test_cvc_clone_download(default_conservator, test_data):
     media_id = default_conservator.media.upload(test_data / "mp4" / "adas_thermal.mp4")
     default_conservator.media.wait_for_processing(media_id)
     video = default_conservator.get_media_instance_from_id(media_id)
-    video.populate("frames")
-    dataset.add_frames(video.frames)
+    frames = video.get_frames()
+    dataset.add_frames(frames)
     commit_message = "Add video frames to dataset"
     dataset.commit(commit_message)
 
@@ -97,4 +97,4 @@ def test_cvc_clone_download(default_conservator, test_data):
     assert os.path.exists("data")
     assert os.path.isdir("data")
     files = os.listdir("data")
-    assert len(files) == len(video.frames)
+    assert len(files) == len(frames)

@@ -3,7 +3,7 @@ import os
 import traceback
 from dataclasses import dataclass
 
-from FLIR.conservator.generated.schema import Mutation, Query
+from FLIR.conservator.generated.schema import Mutation, Query, FrameFilter
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.file_locker import FileLockerType
@@ -261,3 +261,52 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             Mutation.remove_video,
             id=self.id,
         )
+
+    def get_frame_by_index(self, index, fields=None):
+        """
+        Returns a single frame at a specific `index` in the video.
+        """
+        frame_filter = FrameFilter(video_id=self.id, frame_index=index)
+
+        query_fields = fields
+
+        frame = self._conservator.query(
+            query=Query.frame, filter=frame_filter, fields=query_fields
+        )
+
+        if frame is None != 1:
+            raise IndexError(f"Invalid frame index: {index}")
+        return frame
+
+    def get_all_frames_paginated(self, fields=None):
+        """
+        Yields all frames in the video, 15 at a time
+        This is only useful if you're dealing with very long videos
+        and want to paginate frames yourself. If the video is short,
+        you could just use ``get_frames()`` to get all frames.
+        """
+        start = 0
+        frame_filter = FrameFilter(video_id=self.id)
+
+        query_fields = fields
+
+        if query_fields is None:
+            query_fields = ["frames"]
+        elif not "frames" in query_fields:
+            query_fields.append("frames")
+
+        while True:
+
+            frames = self._conservator.query(
+                query=Query.frames,
+                filter=frame_filter,
+                offset=start,
+                limit=15,
+                fields=query_fields,
+            )
+
+            yield from frames.frames
+
+            if len(frames.frames) < 15:
+                break
+            start += 15

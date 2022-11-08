@@ -20,7 +20,7 @@ def test_upload_image(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "cat_0.jpg"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
 
 def test_upload_image_collection(conservator, test_data):
@@ -34,7 +34,7 @@ def test_upload_image_collection(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "cat_0.jpg"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
     images = list(collection.get_images())
     assert len(images) == 1
@@ -51,7 +51,7 @@ def test_upload_image_filename(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "My cat photo"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
 
 def test_upload_video(conservator, test_data):
