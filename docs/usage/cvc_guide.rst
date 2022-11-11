@@ -75,6 +75,7 @@ by editing JSONL, to ensure that you do not add any additional linebreaks.
 .. note::
     - If your dataset does not have JSONL files, committing it via the Conservator UI will generate those files, and they will be available the next time you clone or pull the dataset.
     - Any changes pushed to a dataset via ``cvc`` will be reflected in both ``index.json`` and the relevant JSONL file after the dataset has been pulled.
+    - If you try to commit and push changes to both ``index.json`` and one of the JSONL files at the same time, it will fail. You can only make changes to ``index.json`` or one of the JSONL files, but not to both at the same time.
 
 
 Adding Frames
