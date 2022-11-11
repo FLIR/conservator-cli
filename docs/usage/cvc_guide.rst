@@ -54,6 +54,29 @@ If you need to pull remote changes::
 Note that an updated ``index.json`` file may reference new frames that will have
 to be downloaded (using ``cvc download``).
 
+``index.json`` vs JSONL Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Cloning a dataset using ``cvc`` will create four files that contain the dataset's metadata:
+
+    - ``index.json`` - Contains all dataset metadata, including details on the dataset itself, details on the dataset's frames, and details on which videos were used to create the dataset.
+    - ``dataset.jsonl`` - Contains dataset metadata - e.g. name, any tags applied to the dataset, dataset owner, etc.
+    - ``videos.jsonl`` - Contains details of the videos used to create the dataset.
+    - ``frames.jsonl`` - Contains details of the dataset's frames, including annotations and attributes
+
+In most cases, if you wish to make changes to your dataset locally and manage those changes via ``cvc``, you can
+do that by editing ``index.json``. Some datasets, howvever, are too large to manage via ``index.json``, in which
+case the ``index.json`` file will only contain an error message. Such datasets can be managed and updated using JSONL files.
+
+JSONL is very similar to plain JSON; the main difference being that while a JSON file represents a single JSON object,
+a JSONL file contains multiple valid JSON objects - one per line. It is therefore very important, when updating a dataset
+by editing JSONL, to ensure that you do not add any additional linebreaks.
+
+.. note::
+    - If your dataset does not have JSONL files, committing it via the Conservator UI will generate those files, and they will be available the next time you clone or pull the dataset.
+    - Any changes pushed to a dataset via ``cvc`` will be reflected in both ``index.json`` and the relevant JSONL file after the dataset has been pulled.
+
+
 Adding Frames
 ^^^^^^^^^^^^^
 
@@ -64,14 +87,15 @@ You can stage new frames to be uploaded to a dataset using the ``add`` command::
 
 Then, upload and publish your new frames::
 
-    $ cvc publish "Uploaded new frames or whatever"
+    $ cvc publish "Uploaded new frames"
 
-This will upload the frames to conservator, and also add them to ``index.json``. Then, it
-will commit and push the changes to ``index.json``
+This will upload the frames to conservator, and also add them to ``frames.jsonl``. Then, it
+will commit and push the changes to ``frames.jsonl``
 
 .. note::
    Uploading will also copy staged images alongside other downloaded dataset frames
    in ``data/``. Pass ``--skip-copy`` to not copy frames.
+   Also note that, after adding frames, the new frame data will be available in both ``frames.jsonl`` __and__ ``index.json``.
 
 Additional Reference
 --------------------
@@ -148,7 +172,7 @@ First, create a directory to hold your dataset, and enter it::
 
 Then, download the dataset's latest ``index.json`` file::
 
-    $ conservator datasets download-index [dataset id]
+    $ conservator datasets download-index <dataset id>
 
 The download may take some time (and a few attempts), but should be successful
 far more often than a full clone.
@@ -250,12 +274,12 @@ using the ``cvc upload`` or ``cvc publish`` commands.
 Uploading and Adding Staged Images
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Upload any staged images, and add them to ``index.json``::
+Upload any staged images, and add them to ``frames.jsonl``::
 
     $ cvc upload
 
 By default, the staged images will also be copied to the local dataset's ``data/``
-directory. This way you don't need to re-download the frames. To disable the copy,
+directory. This way, you don't need to re-download the frames. To disable the copy,
 pass ``--skip-copy``.
 
 
