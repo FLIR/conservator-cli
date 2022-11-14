@@ -1,6 +1,6 @@
 import json
-import pytest
 import time
+import pytest
 
 from FLIR.conservator.generated.schema import AddAssociatedFrameInput
 from FLIR.conservator.connection import ConservatorGraphQLServerError
