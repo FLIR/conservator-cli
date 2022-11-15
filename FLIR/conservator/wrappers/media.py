@@ -274,7 +274,7 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             query=Query.frame, filter=frame_filter, fields=query_fields
         )
 
-        if frame is None != 1:
+        if frame is None:
             raise IndexError(f"Invalid frame index: {index}")
         return frame
 
