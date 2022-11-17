@@ -877,6 +877,14 @@ class InterpolationInput(sgqlc.types.Input):
     end_index = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="endIndex")
 
 
+class JobsFilter(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("status", "object_type", "type")
+    status = sgqlc.types.Field(String, graphql_name="status")
+    object_type = sgqlc.types.Field(String, graphql_name="objectType")
+    type = sgqlc.types.Field(String, graphql_name="type")
+
+
 class LabelInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("name", "label_set_id", "color", "tool")
@@ -3012,6 +3020,46 @@ class InterpolationResult(sgqlc.types.Type):
         Boolean, graphql_name="noMatchingTargetIdAndLabel"
     )
     frame_number = sgqlc.types.Field(Int, graphql_name="frameNumber")
+
+
+class Job(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "type",
+        "status",
+        "message_body",
+        "user_id",
+        "user_name",
+        "pid",
+        "host",
+        "object_id",
+        "object_type",
+        "created_at",
+        "modified_at",
+        "ecs_task_link",
+        "log_message",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
+    type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="type")
+    status = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="status")
+    message_body = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="messageBody"
+    )
+    user_id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="userId")
+    user_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="userName")
+    pid = sgqlc.types.Field(String, graphql_name="pid")
+    host = sgqlc.types.Field(String, graphql_name="host")
+    object_id = sgqlc.types.Field(GraphqlID, graphql_name="objectId")
+    object_type = sgqlc.types.Field(String, graphql_name="objectType")
+    created_at = sgqlc.types.Field(
+        sgqlc.types.non_null(Float), graphql_name="createdAt"
+    )
+    modified_at = sgqlc.types.Field(
+        sgqlc.types.non_null(Float), graphql_name="modifiedAt"
+    )
+    ecs_task_link = sgqlc.types.Field(String, graphql_name="ecsTaskLink")
+    log_message = sgqlc.types.Field(String, graphql_name="logMessage")
 
 
 class Label(sgqlc.types.Type):
@@ -8231,6 +8279,9 @@ class Query(sgqlc.types.Type):
         "ntk_configs",
         "assets_by_md5s",
         "does_md5_exist",
+        "job",
+        "jobs",
+        "job_types",
     )
     annotations_by_video_id = sgqlc.types.Field(
         sgqlc.types.list_of(Annotation),
@@ -9697,6 +9748,39 @@ class Query(sgqlc.types.Type):
                 ),
             )
         ),
+    )
+    job = sgqlc.types.Field(
+        sgqlc.types.non_null(Job),
+        graphql_name="job",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    jobs = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(Job)),
+        graphql_name="jobs",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(JobsFilter),
+                        graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    job_types = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(String)), graphql_name="jobTypes"
     )
 
 
