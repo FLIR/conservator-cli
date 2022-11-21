@@ -2130,6 +2130,7 @@ class DatasetFrame(sgqlc.types.Type):
         "dataset_frame_name",
         "attributes",
         "dataset_name",
+        "is_locked",
         "associated_frames",
         "labelbox_metadata",
     )
@@ -2229,6 +2230,9 @@ class DatasetFrame(sgqlc.types.Type):
     )
     dataset_name = sgqlc.types.Field(
         sgqlc.types.non_null(String), graphql_name="datasetName"
+    )
+    is_locked = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean), graphql_name="isLocked"
     )
     associated_frames = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(AssociatedFrame)),
@@ -3219,6 +3223,7 @@ class Mutation(sgqlc.types.Type):
         "remove_dataset_frame_predictions",
         "create_dataset_frames",
         "dataset_frame_id_from_index",
+        "copy_dataset_frame_annotations_to_frame",
         "create_datasheet",
         "update_datasheet_job_state",
         "complete_datasheet_job_success",
@@ -3247,6 +3252,7 @@ class Mutation(sgqlc.types.Type):
         "add_associated_frame_to_frame",
         "remove_associated_frame_from_frame",
         "remove_frame_predictions",
+        "copy_frame_annotations_to_dataset_frame",
         "create_group",
         "clone_group",
         "update_group",
@@ -5416,6 +5422,46 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    copy_dataset_frame_annotations_to_frame = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean),
+        graphql_name="copyDatasetFrameAnnotationsToFrame",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "dataset_frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetFrameId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="frameId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "video_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="videoId",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
     create_datasheet = sgqlc.types.Field(
         sgqlc.types.non_null(DatasheetJob),
         graphql_name="createDatasheet",
@@ -6072,6 +6118,46 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(sgqlc.types.list_of(GraphqlID)),
                         graphql_name="frameIds",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    copy_frame_annotations_to_dataset_frame = sgqlc.types.Field(
+        Boolean,
+        graphql_name="copyFrameAnnotationsToDatasetFrame",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="frameId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "dataset_frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetFrameId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "video_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="videoId",
                         default=None,
                     ),
                 ),
