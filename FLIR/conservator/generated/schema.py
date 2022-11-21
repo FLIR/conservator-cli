@@ -877,6 +877,14 @@ class InterpolationInput(sgqlc.types.Input):
     end_index = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="endIndex")
 
 
+class JobsFilter(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("status", "object_type", "type")
+    status = sgqlc.types.Field(String, graphql_name="status")
+    object_type = sgqlc.types.Field(String, graphql_name="objectType")
+    type = sgqlc.types.Field(String, graphql_name="type")
+
+
 class LabelInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("name", "label_set_id", "color", "tool")
@@ -1294,24 +1302,6 @@ class AclType(sgqlc.types.Type):
     user_ids = sgqlc.types.Field(sgqlc.types.list_of("User"), graphql_name="userIds")
     group_ids = sgqlc.types.Field(sgqlc.types.list_of("Group"), graphql_name="groupIds")
     meta = sgqlc.types.Field(sgqlc.types.list_of(AclMeta), graphql_name="meta")
-
-
-class AllowedDomain(sgqlc.types.Type):
-    __schema__ = schema
-    __field_names__ = (
-        "id",
-        "domain",
-        "default_group",
-        "created_at",
-        "modified_at",
-        "is_removed",
-    )
-    id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
-    domain = sgqlc.types.Field(String, graphql_name="domain")
-    default_group = sgqlc.types.Field(String, graphql_name="defaultGroup")
-    created_at = sgqlc.types.Field(Date, graphql_name="createdAt")
-    modified_at = sgqlc.types.Field(Date, graphql_name="modifiedAt")
-    is_removed = sgqlc.types.Field(String, graphql_name="isRemoved")
 
 
 class Annotation(sgqlc.types.Type):
@@ -1752,6 +1742,42 @@ class CopyVideoAnnotationsResponse(sgqlc.types.Type):
     frame = sgqlc.types.Field(sgqlc.types.non_null("Frame"), graphql_name="frame")
 
 
+class DataDogConfig(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "client_token",
+        "application_id",
+        "site",
+        "service",
+        "env",
+        "sample_rate",
+        "premium_sample_rate",
+        "track_interactions",
+        "default_privacy_level",
+    )
+    client_token = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="clientToken"
+    )
+    application_id = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="applicationId"
+    )
+    site = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="site")
+    service = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="service")
+    env = sgqlc.types.Field(String, graphql_name="env")
+    sample_rate = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="sampleRate"
+    )
+    premium_sample_rate = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="premiumSampleRate"
+    )
+    track_interactions = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean), graphql_name="trackInteractions"
+    )
+    default_privacy_level = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="defaultPrivacyLevel"
+    )
+
+
 class Dataset(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
@@ -2078,14 +2104,6 @@ class DatasetFrame(sgqlc.types.Type):
         "preview_file_size",
         "created_at",
         "modified_at",
-        "next",
-        "next5",
-        "next100",
-        "next_flag",
-        "previous",
-        "previous5",
-        "previous100",
-        "prev_flag",
         "video",
         "annotations",
         "is_flagged",
@@ -2153,14 +2171,6 @@ class DatasetFrame(sgqlc.types.Type):
     modified_at = sgqlc.types.Field(
         sgqlc.types.non_null(Float), graphql_name="modifiedAt"
     )
-    next = sgqlc.types.Field(GraphqlID, graphql_name="next")
-    next5 = sgqlc.types.Field(GraphqlID, graphql_name="next5")
-    next100 = sgqlc.types.Field(GraphqlID, graphql_name="next100")
-    next_flag = sgqlc.types.Field(GraphqlID, graphql_name="nextFlag")
-    previous = sgqlc.types.Field(GraphqlID, graphql_name="previous")
-    previous5 = sgqlc.types.Field(GraphqlID, graphql_name="previous5")
-    previous100 = sgqlc.types.Field(GraphqlID, graphql_name="previous100")
-    prev_flag = sgqlc.types.Field(GraphqlID, graphql_name="prevFlag")
     video = sgqlc.types.Field("Video", graphql_name="video")
     annotations = sgqlc.types.Field(
         sgqlc.types.non_null(
@@ -2456,25 +2466,6 @@ class DatasheetJob(sgqlc.types.Type):
     processing_time = sgqlc.types.Field(Float, graphql_name="processingTime")
 
 
-class Domain(sgqlc.types.Type):
-    __schema__ = schema
-    __field_names__ = ("_id", "domain", "default_group")
-    _id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="_id")
-    domain = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="domain")
-    default_group = sgqlc.types.Field(
-        sgqlc.types.non_null(String), graphql_name="defaultGroup"
-    )
-
-
-class Domains(sgqlc.types.Type):
-    __schema__ = schema
-    __field_names__ = ("domains", "count")
-    domains = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(Domain)), graphql_name="domains"
-    )
-    count = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="count")
-
-
 class ErrorArg(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = ("key", "value")
@@ -2559,6 +2550,8 @@ class Frame(sgqlc.types.Type):
         "is_key_frame",
         "associated_frames",
         "labelbox_metadata",
+        "next_annotated_frame_index",
+        "previous_annotated_frame_index",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     index = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="index")
@@ -2651,6 +2644,12 @@ class Frame(sgqlc.types.Type):
         graphql_name="associatedFrames",
     )
     labelbox_metadata = sgqlc.types.Field(String, graphql_name="labelboxMetadata")
+    next_annotated_frame_index = sgqlc.types.Field(
+        Int, graphql_name="nextAnnotatedFrameIndex"
+    )
+    previous_annotated_frame_index = sgqlc.types.Field(
+        Int, graphql_name="previousAnnotatedFrameIndex"
+    )
 
 
 class Frames(sgqlc.types.Type):
@@ -2986,6 +2985,46 @@ class InterpolationResult(sgqlc.types.Type):
     frame_number = sgqlc.types.Field(Int, graphql_name="frameNumber")
 
 
+class Job(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = (
+        "id",
+        "type",
+        "status",
+        "message_body",
+        "user_id",
+        "user_name",
+        "pid",
+        "host",
+        "object_id",
+        "object_type",
+        "created_at",
+        "modified_at",
+        "ecs_task_link",
+        "log_message",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
+    type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="type")
+    status = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="status")
+    message_body = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="messageBody"
+    )
+    user_id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="userId")
+    user_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="userName")
+    pid = sgqlc.types.Field(String, graphql_name="pid")
+    host = sgqlc.types.Field(String, graphql_name="host")
+    object_id = sgqlc.types.Field(GraphqlID, graphql_name="objectId")
+    object_type = sgqlc.types.Field(String, graphql_name="objectType")
+    created_at = sgqlc.types.Field(
+        sgqlc.types.non_null(Float), graphql_name="createdAt"
+    )
+    modified_at = sgqlc.types.Field(
+        sgqlc.types.non_null(Float), graphql_name="modifiedAt"
+    )
+    ecs_task_link = sgqlc.types.Field(String, graphql_name="ecsTaskLink")
+    log_message = sgqlc.types.Field(String, graphql_name="logMessage")
+
+
 class Label(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
@@ -3285,9 +3324,6 @@ class Mutation(sgqlc.types.Type):
         "create_video_full",
         "move_video",
         "recalculate_video_stats",
-        "add_domain",
-        "update_domain",
-        "remove_domain",
         "create_saved_search",
         "delete_saved_search",
         "update_saved_search",
@@ -7585,68 +7621,6 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    add_domain = sgqlc.types.Field(
-        sgqlc.types.non_null(AllowedDomain),
-        graphql_name="addDomain",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "domain",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(String),
-                        graphql_name="domain",
-                        default=None,
-                    ),
-                ),
-                (
-                    "default_group",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID),
-                        graphql_name="defaultGroup",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
-    update_domain = sgqlc.types.Field(
-        sgqlc.types.non_null(AllowedDomain),
-        graphql_name="updateDomain",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "domain",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(String),
-                        graphql_name="domain",
-                        default=None,
-                    ),
-                ),
-                (
-                    "default_group",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID),
-                        graphql_name="defaultGroup",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
-    remove_domain = sgqlc.types.Field(
-        sgqlc.types.non_null(String),
-        graphql_name="removeDomain",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(String), graphql_name="input", default=None
-                    ),
-                ),
-            )
-        ),
-    )
     create_saved_search = sgqlc.types.Field(
         sgqlc.types.non_null("SavedSearch"),
         graphql_name="createSavedSearch",
@@ -8156,8 +8130,6 @@ class Query(sgqlc.types.Type):
         "videos_query_count",
         "videos_by_ids",
         "videos_by_state",
-        "domains",
-        "domain_by_domain",
         "saved_searches",
         "saved_searches_by_user_id",
         "classifiers",
@@ -8178,6 +8150,9 @@ class Query(sgqlc.types.Type):
         "ntk_configs",
         "assets_by_md5s",
         "does_md5_exist",
+        "job",
+        "jobs",
+        "job_types",
     )
     annotations_by_video_id = sgqlc.types.Field(
         sgqlc.types.list_of(Annotation),
@@ -9305,32 +9280,6 @@ class Query(sgqlc.types.Type):
             )
         ),
     )
-    domains = sgqlc.types.Field(
-        sgqlc.types.non_null(Domains),
-        graphql_name="domains",
-        args=sgqlc.types.ArgDict(
-            (
-                ("page", sgqlc.types.Arg(Int, graphql_name="page", default=None)),
-                ("limit", sgqlc.types.Arg(Int, graphql_name="limit", default=None)),
-            )
-        ),
-    )
-    domain_by_domain = sgqlc.types.Field(
-        AllowedDomain,
-        graphql_name="domainByDomain",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "domain",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(String),
-                        graphql_name="domain",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
     saved_searches = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of("SavedSearch")),
         graphql_name="savedSearches",
@@ -9643,6 +9592,39 @@ class Query(sgqlc.types.Type):
             )
         ),
     )
+    job = sgqlc.types.Field(
+        sgqlc.types.non_null(Job),
+        graphql_name="job",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    jobs = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(Job)),
+        graphql_name="jobs",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(JobsFilter),
+                        graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    job_types = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(String)), graphql_name="jobTypes"
+    )
 
 
 class QueueDetails(sgqlc.types.Type):
@@ -9737,6 +9719,7 @@ class Settings(sgqlc.types.Type):
         "sqa_enabled",
         "object_detect_enabled",
         "conservator_insights_docs_url",
+        "data_dog_config",
     )
     commit = sgqlc.types.Field(String, graphql_name="commit")
     jira_collector_url = sgqlc.types.Field(String, graphql_name="jiraCollectorUrl")
@@ -9753,6 +9736,7 @@ class Settings(sgqlc.types.Type):
     conservator_insights_docs_url = sgqlc.types.Field(
         String, graphql_name="conservatorInsightsDocsUrl"
     )
+    data_dog_config = sgqlc.types.Field(DataDogConfig, graphql_name="dataDogConfig")
 
 
 class SignedUrl(sgqlc.types.Type):

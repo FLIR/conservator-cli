@@ -1,3 +1,5 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
 """
 Test LocalDataset.
 """
@@ -14,7 +16,7 @@ from FLIR.conservator.local_dataset import LocalDataset
 def test_clone(conservator):
     dataset = conservator.datasets.create("My Dataset")
     assert dataset.wait_for_dataset_commit()
-    local_dset = LocalDataset.clone(dataset)
+    LocalDataset.clone(dataset)
     assert os.path.exists("My Dataset")
     assert os.path.exists("My Dataset/index.json")
     assert os.path.exists("My Dataset/dataset.jsonl")

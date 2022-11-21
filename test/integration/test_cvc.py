@@ -1,3 +1,5 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
 """
 This tests the *actual* cvc CLI, no faking it with LocalDataset.
 
@@ -15,6 +17,7 @@ def cvc(*args):
         ["cvc", *map(str, args)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        check=True,
     )
 
 
@@ -24,8 +27,8 @@ def test_empty_clone(default_conservator):
     assert dataset is not None
     assert dataset.wait_for_dataset_commit()
 
-    p = cvc("clone", dataset.id)
-    assert p.returncode == 0
+    clone_output = cvc("clone", dataset.id)
+    assert clone_output.returncode == 0
     assert os.path.exists("My dataset")
 
     # We can check the right thing was downloaded by comparing the IDs
@@ -39,15 +42,15 @@ def test_publish_image(default_conservator, test_data):
     assert dataset is not None
     assert dataset.wait_for_dataset_commit()
 
-    p = cvc("clone", dataset.id)
-    assert p.returncode == 0
+    cvc_output = cvc("clone", dataset.id)
+    assert cvc_output.returncode == 0
     assert os.path.exists("Publish Image Dataset")
     os.chdir("Publish Image Dataset")
 
-    p = cvc("add", test_data / "jpg" / "cat_0.jpg")
-    assert p.returncode == 0
-    p = cvc("publish", "publish image test commit")
-    assert p.returncode == 0
+    cvc_output = cvc("add", test_data / "jpg" / "cat_0.jpg")
+    assert cvc_output.returncode == 0
+    cvc_output = cvc("publish", "publish image test commit")
+    assert cvc_output.returncode == 0
 
     dataset.wait_for_history_len(3, max_tries=100)
     latest_commit = dataset.get_commit_by_id("HEAD")
@@ -80,7 +83,7 @@ def test_cvc_clone_download(default_conservator, test_data):
 
     # wait up to 30 sec for commit to appear.
     history = []
-    for i in range(30):
+    for _ in range(30):
         sleep(1)
         history = dataset.get_commit_history(fields="short_message")
         if history[0].short_message == commit_message:
@@ -91,8 +94,8 @@ def test_cvc_clone_download(default_conservator, test_data):
     cvc("clone", dataset.id)
     os.chdir("My dataset")
 
-    p = cvc("download")
-    assert p.returncode == 0
+    download_output = cvc("download")
+    assert download_output.returncode == 0
 
     assert os.path.exists("data")
     assert os.path.isdir("data")
