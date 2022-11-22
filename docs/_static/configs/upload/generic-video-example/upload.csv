@@ -1,0 +1,3 @@
+type,hardware_name,conservator_location,local_path,tags,description
+video,beamsplitter.thermal,/test/Upload Test/20220112_generic-video-example,./sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4,"offramp, night","Freeway offramp at night with pedestrian"
+video,beamsplitter.visible,/test/Upload Test/20220112_generic-video-example,./sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4,"offramp, night","Freeway offramp at night with pedestrian"

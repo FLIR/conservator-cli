@@ -1,0 +1,13 @@
+{
+  "source_name": "Tau2 640x512 in DualCapture recording system",
+  "camera_model": {
+    "camera_intrinsics": {"$ref": "$PWD/config/adas/components/camera_intrinsics/tau2-640_13mm.json"},
+    "camera_extrinsics": {"$ref": "$PWD/config/adas/components/camera_extrinsics/vehicle_1.json"}
+  },
+  "#device_id": "NOTE: device is hard-coded to /dev/video2",
+  "device_id": "2",
+  "reader_type": "v4l",
+  "requested_size": [640, 512],
+  "#pixel_format": "Currently only raw: 12-bit data (16-bit image)",
+  "pixel_format": "raw"
+}

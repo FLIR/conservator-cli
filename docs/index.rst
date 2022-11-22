@@ -24,7 +24,7 @@ Contents
 ========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    usage/installation
    usage/cli_quickstart
@@ -32,6 +32,7 @@ Contents
    usage/api_advanced
    usage/cvc_guide
    usage/examples
+   usage/upload_script
    api
 
 

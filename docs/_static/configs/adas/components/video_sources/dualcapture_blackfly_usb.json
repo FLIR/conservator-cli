@@ -1,0 +1,11 @@
+{
+  "source_name": "USB3 BlackFly S BFS-U3-51S5C (IMX250) in DualCapture recording system",
+  "camera_model": {
+    "camera_intrinsics": {"$ref": "$PWD/config/adas/components/camera_intrinsics/blackfly_s_bfs_u3_51s5c_8.5mm.json" },
+    "camera_extrinsics": {"$ref": "$PWD/config/adas/components/camera_extrinsics/vehicle_1.json" }
+  },
+  "#device_id": "NOTE: device is hard-coded spinnaker ID 0",
+  "device_id": "0",
+  "requested_size": [1224, 1024],
+  "reader_type": "spinnaker"
+}
