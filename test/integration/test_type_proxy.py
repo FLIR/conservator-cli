@@ -1,3 +1,6 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
 from FLIR.conservator.wrappers import Project
 
 
@@ -34,10 +37,10 @@ def test_from_json(conservator):
 
 
 def test_to_json(conservator):
-    JSON = {"name": "bar"}
-    instance = Project.from_json(conservator, JSON)
+    json_object = {"name": "bar"}
+    instance = Project.from_json(conservator, json_object)
 
-    assert instance.to_json() == JSON
+    assert instance.to_json() == json_object
 
 
 def test_list_to_json(conservator):

@@ -1,9 +1,11 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
 import pytest
 from FLIR.conservator.wrappers.collection import RemotePathExistsException
 
 
 def test_create_project(conservator):
-    # TODO: having an exclamation point in the name breaks search.
     project = conservator.projects.create("My Project")
     assert project is not None
     assert project.id is not None
@@ -92,18 +94,18 @@ def test_reuse_name(conservator):
 
 
 def test_many_projects(conservator):
-    NUM_PROJECTS = 50
+    project_count = 50
     project_ids = set()
-    for i in range(NUM_PROJECTS):
+    for i in range(project_count):
         project = conservator.projects.create(f"Project #{i}")
         assert project is not None
         assert project.id is not None
         project_ids.add(project.id)
-    assert len(project_ids) == NUM_PROJECTS
+    assert len(project_ids) == project_count
 
-    assert conservator.projects.count_all() == NUM_PROJECTS
+    assert conservator.projects.count_all() == project_count
     all_projects = list(conservator.projects.all())
     fetched_ids = set(project.id for project in all_projects)
 
-    assert len(fetched_ids) == NUM_PROJECTS
+    assert len(fetched_ids) == project_count
     assert project_ids == fetched_ids

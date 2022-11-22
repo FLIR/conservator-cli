@@ -1,3 +1,6 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
 import os
 import json
 from time import sleep
@@ -30,8 +33,8 @@ def test_metadata_download_upload_for_media(conservator, test_data):
 
     assert os.path.exists("bicycle_0.json")
     assert os.path.isfile("bicycle_0.json")
-    with open("bicycle_0.json") as f:
-        local_metadata = json.load(f)
+    with open("bicycle_0.json", encoding="UTF-8") as metadata_file:
+        local_metadata = json.load(metadata_file)
     assert local_metadata == json.loads(image.metadata)
 
     # Double-check format
@@ -50,8 +53,8 @@ def test_metadata_download_upload_for_media(conservator, test_data):
 
     # Then, we modify local metadata
     annotations.append(annotation)
-    with open("new_metadata.json", "w") as f:
-        json.dump(local_metadata, f)
+    with open("new_metadata.json", "w", encoding="UTF-8") as metadata_file:
+        json.dump(local_metadata, metadata_file)
 
     # Lastly, upload previous metadata and check it matches.
     image.upload_metadata("new_metadata.json")
@@ -61,8 +64,6 @@ def test_metadata_download_upload_for_media(conservator, test_data):
     assert len(image.get_annotations()) == 2
 
 
-# TODO: This test will fail because the import-dataset-metadata worker is not running in k8s.
-@pytest.mark.skip()
 @pytest.mark.usefixtures("tmp_cwd")
 def test_metadata_download_upload_for_dataset(conservator, test_data):
     dataset = conservator.datasets.create("The Dataset")
@@ -76,7 +77,7 @@ def test_metadata_download_upload_for_dataset(conservator, test_data):
     annotation = AnnotationCreate(
         labels=["abc"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
-    frame.add_annotation(annotation)
+    frame.add_annotations([annotation])
 
     dataset.add_frames([frame])
 
@@ -84,9 +85,8 @@ def test_metadata_download_upload_for_dataset(conservator, test_data):
 
     assert os.path.exists("The Dataset.json")
     assert os.path.isfile("The Dataset.json")
-    with open("The Dataset.json") as f:
-        local_metadata = json.load(f)
-    assert local_metadata == json.loads(dataset.generate_metadata())
+    with open("The Dataset.json", encoding="UTF-8") as metadata_file:
+        local_metadata = json.load(metadata_file)
 
     # Double-check format
     assert "frames" in local_metadata
@@ -97,15 +97,25 @@ def test_metadata_download_upload_for_dataset(conservator, test_data):
     annotations = frame["annotations"]
     assert len(annotations) == 1
     annotation = annotations[0]
+    del annotation["id"]
 
     # Then, we modify local metadata
     annotations.append(annotation)
-    with open("new_metadata.json", "w") as f:
-        json.dump(local_metadata, f)
+    with open("new_metadata.json", "w", encoding="UTF-8") as metadata_file:
+        json.dump(local_metadata, metadata_file)
 
     # Lastly, upload previous metadata and check it matches.
     dataset.upload_metadata("new_metadata.json")
-    sleep(5)  # wait for annotations to be processed
-    new_metadata = dataset.generate_metadata()
-    assert local_metadata == json.loads(new_metadata)
+
+    dataset.populate(["metadata_processing_state"])
+    print(dataset.metadata_processing_state)
+    for _ in range(60):
+        sleep(1)
+        dataset.populate(["metadata_processing_state"])
+        print(dataset.metadata_processing_state)
+        if dataset.metadata_processing_state == "completed":
+            break
+
+    new_metadata = json.loads(dataset.generate_metadata())
+
     assert len(new_metadata["frames"][0]["annotations"]) == 2

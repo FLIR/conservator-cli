@@ -1,3 +1,6 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
 import os
 
 import pytest
@@ -20,7 +23,7 @@ def test_upload_image(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "cat_0.jpg"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
 
 def test_upload_image_collection(conservator, test_data):
@@ -34,7 +37,7 @@ def test_upload_image_collection(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "cat_0.jpg"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
     images = list(collection.get_images())
     assert len(images) == 1
@@ -51,7 +54,7 @@ def test_upload_image_filename(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "My cat photo"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
 
 def test_upload_video(conservator, test_data):
@@ -68,16 +71,16 @@ def test_upload_video(conservator, test_data):
 
 
 def test_upload_many_in_parallel(conservator, test_data):
-    NUM_COPIES = 10
+    num_copies = 10
     path = test_data / "jpg" / "peds_0.jpg"
-    new_filenames = [f"upload_many_test_{i}" for i in range(NUM_COPIES)]
+    new_filenames = [f"upload_many_test_{i}" for i in range(num_copies)]
     upload_tuples = [(path, filename) for filename in new_filenames]
     collection = conservator.collections.create_from_remote_path("/Many/Videos")
 
     media_ids = conservator.videos.upload_many_to_collection(
         upload_tuples, collection=collection, process_count=10
     )
-    assert len(media_ids) == NUM_COPIES
+    assert len(media_ids) == num_copies
 
     conservator.videos.wait_for_processing(media_ids)
 
@@ -296,11 +299,11 @@ def test_from_string_video_name(conservator, test_data):
 class TestDownloadMedia:
     @pytest.fixture(scope="class", autouse=True)
     def init_media(self, conservator, test_data):
-        MEDIA = [
+        media_paths = [
             # local_path, remote_path, remote_name
             (test_data / "jpg" / "cat_2.jpg", "/Cats", "My cat.jpg"),
         ]
-        upload_media(conservator, MEDIA)
+        upload_media(conservator, media_paths)
 
     @pytest.mark.usefixtures("tmp_cwd")
     def test_download(self, conservator):

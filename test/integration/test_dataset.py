@@ -1,6 +1,9 @@
-import json
-import pytest
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
+# pylint: disable=broad-except
 import time
+import json
 
 from FLIR.conservator.generated.schema import AddAssociatedFrameInput
 from FLIR.conservator.connection import ConservatorGraphQLServerError
@@ -64,7 +67,7 @@ def test_generate_metadata(conservator):
     # check that we got metadata that can be parsed into JSON
     try:
         json.loads(metadata)
-    except Exception as e:
+    except Exception:
         assert False, "Exception when parsing metadata as JSON"
 
 

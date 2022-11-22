@@ -1,12 +1,12 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
 """
 This tests the *actual* CLI using subprocess
 
 Tests must use the default_conservator fixture, which sets Config.default(),
 as used by the CLI commands.
 """
-import os
 import subprocess
-from time import sleep
 
 
 def cli(*args):
@@ -14,13 +14,14 @@ def cli(*args):
         ["conservator", *map(str, args)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        check=True,
     )
 
 
 def test_whoami(default_conservator):
     user = default_conservator.get_user()
 
-    p = cli("whoami")
+    cli_response = cli("whoami")
 
-    assert p.returncode == 0
-    assert user.email in p.stdout.decode()
+    assert cli_response.returncode == 0
+    assert user.email in cli_response.stdout.decode()

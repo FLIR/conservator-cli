@@ -61,9 +61,7 @@ class PaginatedQuery:
         self._total_items = 0
         if reverse:
             if not total_unpack_field:
-                raise KeyError(
-                    f"total_unpack_field must be supplied if reverse is True"
-                )
+                raise KeyError("total_unpack_field must be supplied if reverse is True")
             self.fields.include_field(total_unpack_field)
             # Perform a single-entry query to collect the total count of items.
             try:
