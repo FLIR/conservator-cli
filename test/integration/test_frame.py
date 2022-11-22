@@ -2,7 +2,7 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-module-docstring
 import os
-
+import json
 import pytest
 
 from FLIR.conservator.generated.schema import AnnotationCreate, PredictionCreate, Query
@@ -21,7 +21,7 @@ def test_add_annotations(conservator, test_data):
     assert frame.annotations_count == 0
 
     annotation_create = AnnotationCreate(
-        labels=["bottle", "cat"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+        labels=["bottle"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
     frame.add_annotations([annotation_create])
 
@@ -33,8 +33,42 @@ def test_add_annotations(conservator, test_data):
     assert annotation.bounding_box.y == 2
     assert annotation.bounding_box.w == 3
     assert annotation.bounding_box.h == 4
-    assert annotation.labels == ["bottle", "cat"]
+    assert annotation.labels == ["bottle"]
     assert annotation.source.type == "human"
+
+
+def test_set_annotation_metadata(conservator, test_data):
+    path = test_data / "jpg" / "bottle_0.jpg"
+    media_id = conservator.media.upload(path)
+    conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
+    image = conservator.images.all().first()
+    frame = image.get_frame()
+
+    annotation_create = AnnotationCreate(
+        labels=["bottle"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+    )
+    frame.add_annotations([annotation_create])
+
+    frame.populate(['annotations.id'])
+
+    annotation_id = frame.annotations[0].id
+
+    annotation_metadata = {
+        "metadata": True,
+        "custom": "metadata",
+    }
+
+    frame.set_annotation_metadata(
+        annotation_id=annotation_id,
+        annotation_metadata=json.dumps(annotation_metadata),
+    )
+
+    frame.populate(['annotations.custom_metadata'])
+
+    created_metadata = frame.annotations[0].custom_metadata
+
+    assert created_metadata is not None
+    assert json.loads(created_metadata) == annotation_metadata
 
 
 def test_add_prediction(conservator, test_data):

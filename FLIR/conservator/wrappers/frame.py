@@ -4,6 +4,7 @@ from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import (
     Mutation,
     PredictionCreate,
+    UpdateAnnotationInput,
 )
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
@@ -67,4 +68,21 @@ class Frame(QueryableType):
             fields=fields,
             frame_id=self.id,
             prediction=prediction_create,
+        )
+
+    def set_annotation_metadata(
+        self, annotation_id: str, annotation_metadata: str, fields=None
+    ):
+        """
+        Set custom metadata on a video annotation
+        """
+        update_annotation_input = UpdateAnnotationInput(
+            custom_metadata=annotation_metadata,
+        )
+        return self._conservator.query(
+            Mutation.update_annotation,
+            annotation=update_annotation_input,
+            frame_id=self.id,
+            annotation_id=annotation_id,
+            fields=fields,
         )

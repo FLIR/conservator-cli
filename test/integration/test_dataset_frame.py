@@ -1,8 +1,8 @@
 # pylint: disable=missing-function-docstring
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-module-docstring
-import pytest
 import json
+import pytest
 
 from FLIR.conservator.generated.schema import CreateDatasetAnnotationInput
 
@@ -164,13 +164,16 @@ class TestDatasetFrame:
         assert len(frames) == 1
         dataset_frame = frames.first()
 
-        annotation_create = CreateDatasetAnnotationInput(
-            labels=["bottle"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
-        )
-
-        dataset_frame.add_dataset_annotations([annotation_create])
-
         dataset_frame.populate("annotations.id")
+
+        if len(dataset_frame.annotations) == 0:
+            annotation_create = CreateDatasetAnnotationInput(
+                labels=["bottle"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
+            )
+
+            dataset_frame.add_dataset_annotations([annotation_create])
+
+            dataset_frame.populate("annotations.id")
 
         assert len(dataset_frame.annotations) == 1
 
@@ -193,4 +196,4 @@ class TestDatasetFrame:
         created_metadata = dataset_frame.annotations[0].custom_metadata
 
         assert created_metadata is not None
-        assert created_metadata == json.dumps(annotation_metadata)
+        assert json.loads(created_metadata) == annotation_metadata
