@@ -49,7 +49,7 @@ def test_set_annotation_metadata(conservator, test_data):
     )
     frame.add_annotations([annotation_create])
 
-    frame.populate(['annotations.id'])
+    frame.populate(["annotations.id"])
 
     annotation_id = frame.annotations[0].id
 
@@ -63,7 +63,7 @@ def test_set_annotation_metadata(conservator, test_data):
         annotation_metadata=json.dumps(annotation_metadata),
     )
 
-    frame.populate(['annotations.custom_metadata'])
+    frame.populate(["annotations.custom_metadata"])
 
     created_metadata = frame.annotations[0].custom_metadata
 
