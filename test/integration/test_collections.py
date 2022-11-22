@@ -1,15 +1,17 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
 import json
 import os
 
 import pytest
+from conftest import upload_media
 from FLIR.conservator.connection import ConservatorGraphQLServerError
 
 from FLIR.conservator.wrappers.collection import (
     RemotePathExistsException,
     InvalidRemotePathException,
 )
-from FLIR.conservator.generated.schema import Mutation, MetadataInput
-from conftest import upload_media
 
 
 def test_create_child(conservator):
@@ -135,11 +137,11 @@ def test_create_from_remote_path(conservator):
 
 
 def test_create_from_remote_path_existing(conservator):
-    PATH = "/Some Collection's/Very/Super/Long/Path"
-    collection = conservator.collections.create_from_remote_path(PATH)
-    assert collection.path == PATH
+    very_long_path = "/Some Collection's/Very/Super/Long/Path"
+    collection = conservator.collections.create_from_remote_path(very_long_path)
+    assert collection.path == very_long_path
     with pytest.raises(RemotePathExistsException):
-        conservator.collections.create_from_remote_path(PATH)
+        conservator.collections.create_from_remote_path(very_long_path)
 
 
 @pytest.mark.parametrize(
@@ -205,7 +207,7 @@ def test_from_remote_path_make_if_no_exist(conservator, path):
 
 
 def test_recursively_get_children_broad(conservator):
-    PATHS = [
+    collection_paths = [
         "/Root/Child",
         "/Root/Sibling",
         "/Root/Grand",
@@ -215,32 +217,34 @@ def test_recursively_get_children_broad(conservator):
         "/Root/Grand/Grand/Sibling",
     ]
     root_collection = conservator.collections.create_root("Root")
-    for path in PATHS:
+    for path in collection_paths:
         conservator.collections.create_from_remote_path(path)
 
     children = list(root_collection.recursively_get_children(fields="path"))
-    assert len(children) == len(PATHS)
+    assert len(children) == len(collection_paths)
     child_paths = [child.path for child in children]
-    assert set(child_paths) == set(PATHS)
+    assert set(child_paths) == set(collection_paths)
 
     children_and_self = list(
         root_collection.recursively_get_children(fields="path", include_self=True)
     )
-    assert len(children_and_self) == len(PATHS) + 1
+    assert len(children_and_self) == len(collection_paths) + 1
 
 
 def test_recursively_get_children_deep(conservator):
-    DEPTH = 20
+    recursion_depth = 20
     root_collection = conservator.collections.create_root("Root")
-    conservator.collections.create_from_remote_path("/Root" + "/Child" * DEPTH)
+    conservator.collections.create_from_remote_path(
+        "/Root" + "/Child" * recursion_depth
+    )
 
     children = list(root_collection.recursively_get_children(fields="path"))
-    assert len(children) == DEPTH
+    assert len(children) == recursion_depth
 
     children_and_self = list(
         root_collection.recursively_get_children(fields="path", include_self=True)
     )
-    assert len(children_and_self) == DEPTH + 1
+    assert len(children_and_self) == recursion_depth + 1
 
 
 def test_delete_root(conservator):
@@ -319,7 +323,6 @@ def test_get_datasets(conservator):
     assert dataset_2.id in dataset_ids
 
 
-@pytest.mark.skip()
 @pytest.mark.usefixtures("tmp_cwd")
 def test_download_datasets(conservator):
     collection = conservator.collections.create_from_remote_path("/Some/Collection")
@@ -337,7 +340,7 @@ def test_download_datasets(conservator):
 class TestCollectionsWithMedia:
     @pytest.fixture(scope="class", autouse=True)
     def init_media(self, conservator, test_data):
-        MEDIA = [
+        media_paths = [
             # local_path, remote_path, remote_name
             (test_data / "jpg" / "cat_0.jpg", "/Cats", None),
             (test_data / "jpg" / "cat_1.jpg", "/Cats", None),
@@ -358,7 +361,7 @@ class TestCollectionsWithMedia:
                 "Same video but named.mp4",
             ),
         ]
-        upload_media(conservator, MEDIA)
+        upload_media(conservator, media_paths)
 
     def test_get_images(self, conservator):
         collection = conservator.collections.from_remote_path("/Cats")
@@ -406,8 +409,10 @@ class TestCollectionsWithMedia:
         assert "cat_1.json" in files
         assert "Named cat pic.json" in files
         # Sanity check that we actually downloaded JSON, with correct ID
-        with open("cats/media_metadata/Named cat pic.json") as o:
-            data = json.load(o)
+        with open(
+            "cats/media_metadata/Named cat pic.json", encoding="UTF-8"
+        ) as metadata_file:
+            data = json.load(metadata_file)
             media_id = data["videos"][0]["id"]
             assert conservator.images.id_exists(media_id)
             media = conservator.images.from_id(media_id)
