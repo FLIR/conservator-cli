@@ -125,7 +125,7 @@ class FieldsManager:
             selector.url()
             selector.md5()
             selector.state()
-            selector.frames_count()
+            selector.frame_count()
             selector.annotations_count()
             selector.human_annotations_count()
             selector.name()

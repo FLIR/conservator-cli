@@ -237,6 +237,7 @@ class Collection(QueryableType, FileLockerType):
         return datasets
 
     def create_dataset(self, name, fields=None):
+        """Creates a dataset in the current folder/project"""
         return self._conservator.datasets.create(
             name, collections=[self], fields=fields
         )

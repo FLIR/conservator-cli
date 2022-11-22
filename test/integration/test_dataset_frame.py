@@ -1,5 +1,9 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
 import pytest
 import json
+
 from FLIR.conservator.generated.schema import CreateDatasetAnnotationInput
 
 
