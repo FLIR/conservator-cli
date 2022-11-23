@@ -29,7 +29,11 @@ from FLIR.conservator.wrappers import Video, Collection
 # -------------------
 #  Upload data to Conservator
 
-DEFAULT_UPLOAD_CONFIG_ROOT = "config/upload"
+DEFAULT_UPLOAD_CONFIG_ROOT = osp.join(
+    osp.dirname(osp.realpath(__file__)), "config", "upload"
+)
+
+os.environ["BASE_DIR"] = osp.dirname(osp.realpath(__file__))
 
 # -------------------------------------
 #               Logging
@@ -63,27 +67,31 @@ class Stats:
         self.video_still_processing_count = 0
 
     def __str__(self):
-        t = PrettyTable(["Name", "Count"])
-        t.align = "l"
-        t.add_row(["Total entries", self.upload_entry_count])
-        t.add_row(
+        string_table = PrettyTable(["Name", "Count"])
+        string_table.align = "l"
+        string_table.add_row(["Total entries", self.upload_entry_count])
+        string_table.add_row(
             [
                 "Total entries commented out by user",
                 self.upload_entry_commented_out_count,
             ]
         )
-        t.add_row(["Total entries that are invalid", self.upload_entry_invalid_count])
-        t.add_row(["Videos would be uploaded", self.would_upload_video_count])
-        t.add_row(["Videos ACTUALLY uploaded", self.upload_video_count])
-        t.add_row(
+        string_table.add_row(
+            ["Total entries that are invalid", self.upload_entry_invalid_count]
+        )
+        string_table.add_row(
+            ["Videos would be uploaded", self.would_upload_video_count]
+        )
+        string_table.add_row(["Videos ACTUALLY uploaded", self.upload_video_count])
+        string_table.add_row(
             [
                 "Videos currently being processed by Conservator",
                 self.video_still_processing_count,
             ]
         )
-        t.add_row(["Video metadata updated", self.upload_metadata_count])
+        string_table.add_row(["Video metadata updated", self.upload_metadata_count])
 
-        return str(t)
+        return str(string_table)
 
 
 def _update_custom_video_helper(
@@ -550,9 +558,7 @@ def upload_prism_capture(
     if not osp.exists(upload_root_path):
         os.makedirs(upload_root_path, exist_ok=True)
 
-    # TODO: associate timing
     thermal_meta_path = osp.join(local_path, "thermal_meta")
-    # visible_meta_path  = osp.join(local_path, 'visible_meta')
 
     try:
         meta = get_first_meta(thermal_meta_path)
@@ -566,7 +572,6 @@ def upload_prism_capture(
         )
         return
 
-    # Round: round(float(meta['capture_timestamp_ms'])/1000.0)
     timestamp = str(meta["capture_timestamp_ms"])[0:10]  # Truncate
 
     conservator_location = row["conservator_location"]
@@ -774,8 +779,8 @@ def show_help(default_config_path: str, config_filename: str) -> None:
     :param config_filename:
     :return: None
     """
-    t = PrettyTable(["Config", "Description"])
-    t.align = "l"
+    help_table = PrettyTable(["Config", "Description"])
+    help_table.align = "l"
 
     config_folders = sorted(os.listdir(default_config_path))
 
@@ -791,8 +796,8 @@ def show_help(default_config_path: str, config_filename: str) -> None:
 
         with open(config_path, encoding="UTF-8") as config_file:
             config_data = json.load(config_file)
-            t.add_row([config_folder, config_data.get("description", "")])
-    print(t)
+            help_table.add_row([config_folder, config_data.get("description", "")])
+    print(help_table)
     sys.exit(1)
 
 
@@ -808,7 +813,7 @@ def main():
         nargs="?",
         default=None,
         type=str,
-        help="the name of the upload config (these correspond to folders in upload/config)",
+        help="the name of the upload config (these correspond to folders in config/upload)",
     )
 
     parser.add_argument(
@@ -816,7 +821,8 @@ def main():
     )
     parser.add_argument(
         "--config_root",
-        help="Override where upload configurations are read (defaults to $PWD/config/upload)",
+        help=f"Override where upload configurations are read \
+            (defaults to {DEFAULT_UPLOAD_CONFIG_ROOT})",
     )
     # False by default...
     parser.add_argument("--debug", help="Turns on debug messages", action="store_true")
@@ -892,8 +898,8 @@ def main():
                 if len(row["tags"]):
                     tags_split = row["tags"].split(",")  # Always outputs a list
                     tags: list = []
-                    for t in tags_split:
-                        tags.append(t.strip().lower())
+                    for tag in tags_split:
+                        tags.append(tag.strip().lower())
                     row["tags"] = tags
                 else:
                     row["tags"] = []

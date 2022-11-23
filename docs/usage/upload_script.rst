@@ -28,7 +28,8 @@ The features of this script include:
 Pre-requisites
 ^^^^^^^^^^^^^^
 
- - Please ensure that you have Conservator-CLI installed and configured per the :doc:`installation` guide
+ - Please ensure that you have Conservator-CLI installed and configured per the :doc:`installation` guide.
+ - Please ensure that you have Python 3.x installed.
  - The upload script requires the ``prettytable`` module; please run ``pip install prettytable`` to install it.
 
 Upload Configs
@@ -38,22 +39,28 @@ Each batch of uploads is stored in a separate folder and configured by:
 - `upload.csv`  - list of videos to upload
 - `upload.json` - metadata to associate with uploads (tags, description, intrinsics, extrinsics)
 
+By default, the ``conservator_upload`` script will look for a directory named ``config`` in the same directory as it; i.e.:
+
 ::
 
-  config/upload
-  ├── generic-video-example
-  │   ├── upload.csv
-  │   └── upload.json
+  ├── conservator_upload.py
   │
-  ├── prism-example
-  │   ├── upload.csv
-  │   └── upload.json
-  │
-  ├── {upload batch name}
-      ├── upload.csv
-      └── upload.json
+  └── config/upload
+      │
+      ├── generic-video-example
+      │   ├── upload.csv
+      │   └── upload.json
+      │
+      ├── prism-example
+      │   ├── upload.csv
+      │   └── upload.json
+      │
+      └── {upload batch name}
+          ├── upload.csv
+          └── upload.json
 
-If you want to skip uploading a row, simply comment it out by adding a ``#`` at the start of the line. The following table describes the fields used in the ``upload.csv`` file:
+If you want to skip uploading a video listed in an ``upload.csv`` file, simply comment it out by adding a ``#`` at the start of the line.
+The following table describes the fields used in the ``upload.csv`` file:
 
  +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
  | Column Name          | Description                                                                                                                                                                            |
@@ -83,8 +90,7 @@ This example can be run using data included in this repository on any customer i
   video,beamsplitter.thermal,/ADAS/Upload Test/20220112_generic-video-example,$CORTEX_ROOT/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4,"offramp, night","offramp at night with semi truck"
   video,beamsplitter.visible,/ADAS/Upload Test/20220112_generic-video-example,$CORTEX_ROOT/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4,"offramp, night","offramp at night with semi truck"
 
-
-Note that ``beamsplitter.thermal`` is referring to the metadata defined in ``["default_metadata"]["beamsplitter"]["thermal"]`` within ``upload.json``
+Note that ``beamsplitter.thermal`` is referring to the metadata defined in ``["default_metadata"]["beamsplitter"]["thermal"]`` within ``upload.json``, and that the ``conservator_location`` and ``local_path`` fields may need to be edited to reflect your user environment, and Conservator project setup respectively.
 
 Here is an example from ``examples/upload_videos/config/upload/generic-video-example/upload.json``
 
@@ -113,19 +119,23 @@ Here is an example from ``examples/upload_videos/config/upload/generic-video-exa
   }
 
 
-List All Entries
-^^^^^^^^^^^^^^^^
+List All Configuration Entries
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To list all available upload projects, run the script without any parameters (or with only a ``--config_root`` parameter):
+
 ::
 
-  $ python3 examples/upload_videos/conservator_upload.py
+$ python examples/upload_videos/conservator_upload.py
 
-  ERROR: Config not provided... This is the default config path that was provided: config/upload
-  +-----------------------+--------------------------------------------------------+
-  | Config                | Description                                            |
-  +-----------------------+--------------------------------------------------------+
-  | generic-video-example | Beamsplitter upload batch for generic video example    |
-  | prism-example         | Prism-formatted upload batch for generic video example |
-  +-----------------------+--------------------------------------------------------+
+No config path provided, using default (/home/user/conservator-cli/examples/upload_videos/config/upload)
++-----------------------+--------------------------------------------------------+
+| Config                | Description                                            |
++-----------------------+--------------------------------------------------------+
+| generic-video-example | Beamsplitter upload batch for generic video example    |
+| prism-example         | Prism-formatted upload batch for generic video example |
++-----------------------+--------------------------------------------------------+
+
 
 
 Execute in Dry-Run Mode
@@ -137,10 +147,10 @@ This is useful to establish sanity checks before kicking off a large upload job.
 
   $ python3 examples/upload_videos/conservator_upload.py generic-video-example
 
-  20:51:05 | Video exists and is ready for upload: /home/ubuntu/f/prism-ai-tools/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4
-  20:51:05 |
-  20:51:06 | Video exists and is ready for upload: /home/ubuntu/f/prism-ai-tools/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4
-  20:51:06 |
+  Video exists and is ready for upload: /home/user/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4
+
+  Video exists and is ready for upload: /home/user/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4
+
   +-------------------------------------------------+-------+
   | Name                                            | Count |
   +-------------------------------------------------+-------+
@@ -162,15 +172,15 @@ Execute Actual Upload
 
 ::
 
-  $ python3 examples/upload_videos/conservator_upload.py generic-video-example --dry_run=false
+  $ python examples/upload_videos/conservator_upload.py generic-video-example --dry_run=false
 
   20:53:56 | Uploading "thermal-video-B7JTS4i4hpoRgPsi2.mp4"
-  20:53:56 |    File on disk:         /home/ubuntu/f/prism-ai-tools/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4
+  20:53:56 |    File on disk:         /home/user/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4
   20:53:56 |    Conservator location: /ADAS/Upload Test/20220112_generic-video-example
   20:54:02 |    Success! See:         https://flirconservator.com/videos/6PGfdWgAoHa2tnx2o
   20:54:02 |
   20:54:03 | Uploading "visible-video-aJANTbw3WAW3oGkQB.mp4"
-  20:54:03 |    File on disk:         /home/ubuntu/f/prism-ai-tools/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4
+  20:54:03 |    File on disk:         /home/user/prism-ai-tools/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4
   20:54:03 |    Conservator location: /ADAS/Upload Test/20220112_generic-video-example
   20:54:07 |    Success! See:         https://flirconservator.com/videos/bGGbuopzoKjvoYixv
   20:54:07 |

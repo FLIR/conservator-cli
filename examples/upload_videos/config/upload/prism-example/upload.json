@@ -18,33 +18,27 @@
         "description": "Heavy fog (thick droplets) at night through residential area. Taken with Tau2 45 HFOV camera in a DualCapture system A (S/N  229502). All frames have corresponding visible video taken with a BlackFly S USB3.",
         "custom": {
           "video_source": {
-            "$ref": "$PWD/config/adas/components/video_sources/dualcapture_tau2_usb.json"
+            "$ref": "$BASE_DIR/config/adas/components/video_sources/dualcapture_tau2_usb.json"
           },
           "rgbt": {
             "rectify": {
-              "$ref": "$PWD/config/adas/components/camera_rectify/dual_capture_a_drive_20211129.json"
+              "$ref": "$BASE_DIR/config/adas/components/camera_rectify/dual_capture_a_drive_20211129.json"
             }
           }
         }
       },
       "rgb": {
-        "tags": [
-          "blackfly",
-          "55hfov",
-          "imx250",
-          "adas",
-          "automotive"
-        ],
+        "tags": ["blackfly", "55hfov", "imx250", "adas", "automotive"],
         "spectrum": "rgb",
         "location": "Santa Barbara, California",
         "description": "Heavy fog (thick droplets) at night through residential area. Taken with Blackfly S USB3 (BFS-U3-51S5C, IMX250) 55 HFOV in DualCapture system A (S/N  229502). All frames have corresponding thermal video taken with a Tau2.",
         "custom": {
           "video_source": {
-            "$ref": "$PWD/config/adas/components/video_sources/dualcapture_blackfly_usb.json"
+            "$ref": "$BASE_DIR/config/adas/components/video_sources/dualcapture_blackfly_usb.json"
           },
           "rgbt": {
             "rectify": {
-              "$ref": "$PWD/config/adas/components/camera_rectify/dual_capture_a_drive_20211129.json"
+              "$ref": "$BASE_DIR/config/adas/components/camera_rectify/dual_capture_a_drive_20211129.json"
             }
           }
         }
