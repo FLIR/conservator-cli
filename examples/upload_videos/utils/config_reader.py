@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring
 import os.path as osp
 from collections.abc import Callable
 
@@ -24,7 +25,8 @@ def read_config(args, default_config_path: str, show_help: Callable) -> str:
     default_config_root_path = osp.expandvars(default_config_path)
     if args.config is None:
         print(
-            f"ERROR: Config not provided... This is the default config path that was provided: {default_config_root_path}"
+            f"ERROR: Config not provided...\
+                This is the default config path that was provided: {default_config_root_path}"
         )
         if show_help is not None:
             show_help(default_config_root_path)
@@ -72,7 +74,8 @@ def read_subfolder_config(
     default_config_root_path = osp.expandvars(default_config_path)
     if args.config is None:
         print(
-            f"ERROR: Config not provided... This is the default config path that was provided: {default_config_root_path}"
+            f"ERROR: Config not provided...\
+                This is the default config path that was provided: {default_config_root_path}"
         )
         if show_help is not None:
             show_help(default_config_root_path, config_filename)
@@ -84,7 +87,7 @@ def read_subfolder_config(
         config_path = osp.join(default_config_root_path, args.config, config_filename)
 
         if not osp.exists(config_path):
-            print('ERROR: Could not find any configs input: "{}"'.format(args.config))
+            print(f'ERROR: Could not find any configs input: "{args.config}"')
             if show_help is not None:
                 show_help(default_config_root_path, config_filename)
 

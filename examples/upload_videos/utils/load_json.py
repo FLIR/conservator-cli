@@ -17,13 +17,13 @@ def flatten_refs(obj):
                 raise Exception(f'Reference ($ref) is not a string: "{ref}"')
             flat = load_json(path=ref)
 
-        for k, v in obj.items():
-            if k != "$ref":
-                flat[k] = flatten_refs(obj[k])
+        for key in obj.keys():
+            if key != "$ref":
+                flat[key] = flatten_refs(obj[key])
 
     elif isinstance(obj, list):
-        for i, v in enumerate(obj):
-            obj[i] = flatten_refs(obj[i])
+        for counter, value in enumerate(obj):
+            obj[counter] = flatten_refs(value)
 
     return flat
 
@@ -37,13 +37,13 @@ def load_json(path):
     if not os.path.isfile(expanded_path):
         raise Exception(f'Path is not a valid file: "{path}" ({expanded_path})')
 
-    with open(expanded_path) as fp:
-        obj = json.load(fp)
+    with open(expanded_path, encoding="UTF-8") as json_file:
+        obj = json.load(json_file)
         return flatten_refs(obj)
 
 
 if __name__ == "__main__":
     import sys
 
-    print("test: {}".format(sys.argv[1]))
+    print("test: {sys.argv[1]}")
     print(load_json(sys.argv[1]))

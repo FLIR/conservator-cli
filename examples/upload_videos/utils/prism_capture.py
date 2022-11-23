@@ -1,3 +1,6 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-module-docstring
+# pylint: disable=broad-except
 import json
 import os
 from os import path as osp
@@ -15,7 +18,7 @@ def get_first_meta(dir_root_path: str):
     """
     files = get_meta_files(dir_root_path)
     for filename in files:
-        basename, ext = osp.splitext(filename)
+        ext = osp.splitext(filename)[1]
 
         ext = ext.lower()
 
@@ -24,8 +27,8 @@ def get_first_meta(dir_root_path: str):
 
         file_path = osp.join(dir_root_path, filename)
 
-        with open(file_path, "r") as f:
-            return json.load(f)
+        with open(file_path, "r", encoding="UTF-8") as file:
+            return json.load(file)
 
 
 def get_meta(
@@ -49,8 +52,8 @@ def get_meta(
     """
     files = get_meta_files(dir_root_path)
     meta = []
-    SMALL_TIME_GAP = 200
-    BIG_TIME_GAP = 1000
+    small_time_gap = 200
+    big_time_gap = 1000
 
     if not quiet:
         print(f"  Found {len(files):,} total meta files in {dir_root_path}")
@@ -77,8 +80,8 @@ def get_meta(
             # Sanity check...
             file_path = osp.join(dir_root_path, filename)
 
-            with open(file_path, "r") as f:
-                current_meta = json.load(f)
+            with open(file_path, "r", encoding="UTF-8") as metadata_file:
+                current_meta = json.load(metadata_file)
 
             current_time = int(current_meta["capture_relative_ms"])
 
@@ -97,16 +100,18 @@ def get_meta(
 
                 time_delta = current_time - last_time
 
-                if time_delta >= SMALL_TIME_GAP or time_delta < 0:
-                    # There is a big time gap between frames. It could be that some footage was manually
-                    # cut out or we are putting together multiple recordings for a demo
-                    if time_delta >= BIG_TIME_GAP:
+                if time_delta >= small_time_gap or time_delta < 0:
+                    # There is a big time gap between frames.
+                    # It could be that some footage was manually cut out
+                    # or we are putting together multiple recordings for a demo
+                    if time_delta >= big_time_gap:
                         # These are likely two different clips...
-                        # Force a negative time change so that predictions are cleared (looks better for demos)
+                        # Force a negative time change so that
+                        # predictions are cleared (looks better for demos)
                         adjust_ms = -1000
                     else:
-                        # Likely: shutter was activated and it caused a delay, simply remove delay by
-                        # putting in a fairly small time delta
+                        # Likely: shutter was activated and it caused a delay,
+                        # simply remove delay by putting in a fairly small time delta
                         adjust_ms = 25
                 else:
                     adjust_ms = time_delta
@@ -124,9 +129,9 @@ def get_meta(
                 meta_count = len(meta)
                 if meta_count % 500 == 0:
                     print(f"  Read {meta_count:,} meta files")
-        except Exception as e:
+        except Exception as metadata_error:
             print(f"Failed at file: {osp.join(dir_root_path, filename)}")
-            print(e)
+            print(metadata_error)
             if exit_on_failure:
                 print("Exiting due to failure...")
                 exit(1)
@@ -145,10 +150,10 @@ def check_dir(path):
     :rtype: None
     """
     if not osp.exists(path):
-        raise Exception("Expected paths does not exist: {}".format(path))
+        raise Exception(f"Expected paths does not exist: {path}")
 
     if not osp.isdir(path):
-        raise Exception("Path is not a directory: {}".format(path))
+        raise Exception(f"Path is not a directory: {path}")
 
 
 def get_files_with_ext(dir_root_path: str, match_ext, image_prefix: str) -> list:
@@ -164,7 +169,7 @@ def get_files_with_ext(dir_root_path: str, match_ext, image_prefix: str) -> list
     files = os.listdir(dir_root_path)
     files = sorted(files)
     matching_files = []
-    if type(match_ext) is str:
+    if isinstance(match_ext, str):
         match_ext = [match_ext]
 
     print(f"Found {len(files)} total files in the {image_prefix} directory")
@@ -184,7 +189,8 @@ def get_files_with_ext(dir_root_path: str, match_ext, image_prefix: str) -> list
         if ext not in match_ext:
             continue
 
-        # We store a shorter path that is not absolute. The json file will store the prefix to prepend
+        # We store a shorter path that is not absolute.
+        # The json file will store the prefix to prepend
         short_path = osp.join(image_prefix, file)
         matching_files.append(short_path)
         matching_count = len(matching_files)

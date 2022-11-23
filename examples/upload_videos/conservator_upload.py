@@ -887,7 +887,7 @@ def main():
                 else:
                     camera_name_or_spectrum = "default"
 
-            if type(row.get("tags")) is str:
+            if isinstance(row.get("tags"), str):
                 row["tags"] = row["tags"].strip()
                 if len(row["tags"]):
                     tags_split = row["tags"].split(",")  # Always outputs a list
@@ -900,7 +900,7 @@ def main():
             else:
                 row["tags"] = []
 
-            if type(row.get("location")) is not str:
+            if not isinstance(row.get("location"), str):
                 row["location"] = ""
 
             conservator_location = str(row["conservator_location"])
@@ -913,7 +913,9 @@ def main():
             if default_metadata is None:
                 stats.upload_entry_invalid_count += 1
                 _logger.warning(
-                    f'Hardware named "{hardware_name}" could not be found (skipping entry). Please check: {config_path})'
+                    'Hardware named "%s" could not be found (skipping entry). Please check %s',
+                    hardware_name,
+                    config_path,
                 )
                 continue
 
@@ -926,7 +928,10 @@ def main():
                     row, default_metadata, stats, dry_run, camera_name_or_spectrum
                 )
             else:
-                _logger.warning(f'unsupported upload type "{upload_type}" (skipping)')
+                _logger.warning(
+                    'unsupported upload type "%s" (skipping)',
+                    upload_type,
+                )
                 continue
 
     print(stats)
