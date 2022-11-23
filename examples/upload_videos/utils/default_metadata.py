@@ -17,23 +17,29 @@ class DefaultMetadata:
         """
         default_metadata = self.metadata.get(camera_name_or_spectrum, {})
 
-        tags_input = default_metadata.get('tags')
+        tags_input = default_metadata.get("tags")
         tags = []
 
         if type(tags_input) is str:
             tags_input = tags_input.strip()
 
             if len(tags_input):
-                for t in tags_input.split(','):
+                for t in tags_input.split(","):
                     tags.append(t.strip().lower())
 
             # Cache tags
-            default_metadata['tags'] = tags
+            default_metadata["tags"] = tags
         elif type(tags) != list:
-            raise Exception(f'Unsupported type for tags for camera / spectrum: "{camera_name_or_spectrum}" for hardware name: "{self.name}"')
+            raise Exception(
+                f'Unsupported type for tags for camera / spectrum: "{camera_name_or_spectrum}" for hardware name: "{self.name}"'
+            )
         else:
             for i, tag in enumerate(tags_input):
-                tags_input[i] = tag.lower()  # Conservator wants this to be lowercase or it fails (wtf, but ok)
+                tags_input[
+                    i
+                ] = (
+                    tag.lower()
+                )  # Conservator wants this to be lowercase or it fails (wtf, but ok)
             tags = tags_input
 
         return tags
@@ -42,7 +48,9 @@ class DefaultMetadata:
         default_metadata = self.metadata.get(camera_name_or_spectrum)
 
         if default_metadata is None:
-            raise Exception(f'Default metadata does not exist for key "{camera_name_or_spectrum}"')
+            raise Exception(
+                f'Default metadata does not exist for key "{camera_name_or_spectrum}"'
+            )
 
         return default_metadata
 
@@ -53,12 +61,16 @@ class DefaultMetadata:
         """
         default_metadata = self._default_metadata(camera_name_or_spectrum)
 
-        spectrum = default_metadata.get('spectrum')
+        spectrum = default_metadata.get("spectrum")
 
         if spectrum is None:
-            raise Exception(f'Default metadata for key "{camera_name_or_spectrum}" does not have spectrum')
+            raise Exception(
+                f'Default metadata for key "{camera_name_or_spectrum}" does not have spectrum'
+            )
         elif type(spectrum) != str:
-            raise Exception(f'Unsupported type for description for camera / spectrum: "{camera_name_or_spectrum}" for hardware name: "{self.name}"')
+            raise Exception(
+                f'Unsupported type for description for camera / spectrum: "{camera_name_or_spectrum}" for hardware name: "{self.name}"'
+            )
 
         return str(spectrum).lower()
 
@@ -67,12 +79,11 @@ class DefaultMetadata:
         :param camera_name_or_spectrum:
         :return:
         """
-        return self._default_metadata(camera_name_or_spectrum).get('description', '')
+        return self._default_metadata(camera_name_or_spectrum).get("description", "")
 
     def get_location(self, camera_name_or_spectrum: str) -> str:
         """
         :param camera_name_or_spectrum:
         :return:
         """
-        return self._default_metadata(camera_name_or_spectrum).get('location', '')
-
+        return self._default_metadata(camera_name_or_spectrum).get("location", "")

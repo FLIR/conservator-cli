@@ -5,8 +5,9 @@ Originally from: https://github.com/FLIR/task_runner/blob/main/FLIR/task_runner/
 import json
 import os
 
+
 def flatten_refs(obj):
-    """ Flattens { "$ref": "filename.json" } fields """
+    """Flattens { "$ref": "filename.json" } fields"""
 
     flat = obj
     if isinstance(obj, dict):
@@ -26,8 +27,9 @@ def flatten_refs(obj):
 
     return flat
 
+
 def load_json(path):
-    """ Loads JSON and flattens refs """
+    """Loads JSON and flattens refs"""
     expanded_path = os.path.expandvars(path)
     if not os.path.exists(expanded_path):
         raise Exception(f'Path could not be found: "{path}" ({expanded_path})')
@@ -42,6 +44,6 @@ def load_json(path):
 
 if __name__ == "__main__":
     import sys
+
     print("test: {}".format(sys.argv[1]))
     print(load_json(sys.argv[1]))
-
