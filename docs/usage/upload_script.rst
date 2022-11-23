@@ -41,11 +41,11 @@ Each batch of uploads is stored in a separate folder and configured by:
 ::
 
   config/upload
-  ├── 20220112_generic-video-example
+  ├── generic-video-example
   │   ├── upload.csv
   │   └── upload.json
   │
-  ├── 20220112_prism-example
+  ├── prism-example
   │   ├── upload.csv
   │   └── upload.json
   │
@@ -53,7 +53,7 @@ Each batch of uploads is stored in a separate folder and configured by:
       ├── upload.csv
       └── upload.json
 
-If you want to skip uploading a row, simply comment it out by adding a ``#`` at the start of the line.
+If you want to skip uploading a row, simply comment it out by adding a ``#`` at the start of the line. The following table describes the fields used in the ``upload.csv`` file:
 
  +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
  | Column Name          | Description                                                                                                                                                                            |
@@ -86,8 +86,8 @@ This example can be run using data included in this repository on any customer i
 
 Note that ``beamsplitter.thermal`` is referring to the metadata defined in ``["default_metadata"]["beamsplitter"]["thermal"]`` within ``upload.json``
 
-Here is an example from `generic-video-example/upload.json
-<../_static/configs/upload/generic-video-example/upload.json>`_:
+Here is an example from ``examples/upload_videos/config/upload/generic-video-example/upload.json``
+
 ::
 
   {
@@ -191,8 +191,7 @@ Prism Example
 -------------
 
 Here is an example of `upload.csv` with 3 Prism uploads (3 thermal videos + 3 frame synced visible videos).
-The full contents are `here
-<../_static/configs/upload/prism-example/upload.csv>`_.
+The full contents are in ``examples/upload_videos/config/upload/prism-example/upload.csv``.
 
 **The example will fail if you do not have the original data, but it provides a batch upload blueprint**
 
@@ -202,8 +201,7 @@ The full contents are `here
   prism,dc,/ADAS/Upload Test/20220112_prism-example/,$CORTEX_ROOT/sample_data/night_fog,"fog, night, parking lot, person","Person walking in parking lot at 60m"
 
 
-Here is an example from `prism-example/upload.json
-<../_static/configs/upload/prism-example/upload.json>`_:
+Here is an example from ``examples/upload_videos/config/upload/prism-example/upload.json``:
 ::
 
     {
