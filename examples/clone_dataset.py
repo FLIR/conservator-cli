@@ -1,9 +1,9 @@
-import logging
-
+"""
+Example code for cloning a dataset
+"""
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
 
-logging.basicConfig(level=logging.INFO)
 conservator = Conservator.default()
 
 # Cloning from a known ID:

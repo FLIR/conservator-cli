@@ -1,3 +1,7 @@
+"""
+Sample code demonstrating how to recursively retrieve
+all media (i.e., videos and images) in a project/folder.
+"""
 from FLIR.conservator.conservator import Conservator
 
 # Unless you want to keep the media with the collections
@@ -7,20 +11,20 @@ from FLIR.conservator.conservator import Conservator
 
 conservator = Conservator.default()
 
-path = "/AndresTest"
+PATH = "/AndresTest"
 
 starting_collection = conservator.collections.from_remote_path(
-    path, fields=["path", "id"]
+    PATH, fields=["path", "id"]
 )
 children = starting_collection.recursively_get_children(fields=["path", "id"])
 
 all_collections = [starting_collection, *children]
 for collection in all_collections:
-    path = collection.path
+    PATH = collection.path
     for video in collection.get_videos(fields=["name", "id"]):
-        print(path + "/" + video.name)
+        print(PATH + "/" + video.name)
     for image in collection.get_images(fields=["name", "id"]):
-        print(path + "/" + image.name)
+        print(PATH + "/" + image.name)
 
 # To just print the names, using recursively_get_media:
 for media in starting_collection.recursively_get_media(fields="name"):

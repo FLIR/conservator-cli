@@ -1,33 +1,35 @@
+"""
+Demonstrates searching for videos within a collection
+"""
 from FLIR.conservator.conservator import Conservator
-import FLIR.conservator
-from FLIR.conservator.wrappers import Video
+from FLIR.conservator.wrappers.collection import InvalidRemotePathException
 
 conservator = Conservator.default()
 
 # For a given location (collection) search for videos with a specific name
-# the search text support all standard search logic, but we're showing an example where we search by the video name
-conservator_location = "/ADAS/003 Animals"
-search_filename = "Namibia"
-search_text = f'name:"{search_filename}"'
+# the search text support all standard search logic, but we're showing an
+# example where we search by the video name
+CONSERVATOR_LOCATION = "/ADAS/003 Animals"
+SEARCH_TEXT = 'name:"Namibia"'
 
 try:
     # Get collection
     collection = conservator.collections.from_remote_path(
-        conservator_location, fields="id"
+        CONSERVATOR_LOCATION, fields="id"
     )
 
     result_count = 0
-    print(f'Matches for search: "{search_text}":')
+
+    print(f'Matches for search: "{SEARCH_TEXT}":')
     for video in collection.recursively_get_videos(
-        fields=["name", "owner"], search_text=search_text
+        fields=["name", "owner"], search_text=SEARCH_TEXT
     ):
-        video: Video
         print(video)
         result_count += 1
 
     if result_count == 0:
         print("   Could not find any results")
-except FLIR.conservator.wrappers.collection.InvalidRemotePathException:
+except InvalidRemotePathException:
     print(
-        f"Collection at the following location does not exist: {conservator_location}"
+        f"Collection at the following location does not exist: {CONSERVATOR_LOCATION}"
     )
