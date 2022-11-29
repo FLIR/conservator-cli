@@ -1,93 +1,64 @@
 Examples
 ========
 
-Conservator-CLI includes a number of scripts, in the ``examples`` folder, that demonstrate the functionality of the APIs it provides.
+Conservator-CLI includes a number of scripts, in the ``examples`` folder of the Conservator-CLI github repository, that demonstrate the functionality of the APIs it provides.
 Some of the scripts provided are merely code samples, while others can be run interactively. Each of the scripts includes comments that describe what the code does.
-The ``examples/upload_videos`` folder includes a script that can be used to upload video data and metadata in bulk, which is described :doc:`here <upload_script>`
+The ``examples/upload_videos`` folder includes a script that can be used to upload video data and metadata in bulk, which is described :doc:`here <upload_script>`.
 
 
-``clone_dataset.py``
-^^^^^^^^^^^^^^^^^^^^
+* ``clone_dataset.py``:
+   This script contains brief examples of how to clone a dataset programmatically.
 
-This script contains brief examples of how to clone a dataset programmatically.
+* ``create_dataset_annotation_custom_metadata.py``:
+   A runnable script that demonstrates how to add custom metadata to a dataset annotation.
 
-``create_dataset_frames.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* ``create_dataset_frames.py``:
+   A runnable script that will add local JPG images as frames to a dataset.
 
-A runnable script that will add local JPG images as frames to a dataset.
+* ``create_video_annotation_custom_metadata.py``:
+   A runnable script that demonstrates how to add custom metadata to a video or image annotation.
 
-``dataset_annotation_qa.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* ``dataset_annotation_qa.py``:
+   A runnable script that demonstrates how to perform QA operations on a dataset annotation.
 
-A runnable script that demonstrates how to perform QA operations on a dataset annotation.
+* ``download_associated_files.py``:
+   This script contains brief examples of how to download associated files for projects/folders, datasets, and images.
 
-``download_associated_files.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* ``download_videos.py``:
+   This script provides sample code for downloading multiple videos in parallel.
 
-This script contains brief examples of how to download associated files for projects/folders, datasets, and images.
+* ``list_dataset_frames.py``:
+   This script provides sample code for listing the frames of a dataset.
 
-``download_videos.py``
-^^^^^^^^^^^^^^^^^^^^^^
+* ``list_projects.py``:
+   This script provides sample code for listing all projects.
 
-This script provides sample code for downloading multiple videos in parallel.
+* ``paginate_video_frames.py``:
+   This script provides sample code for paginating video frames.
 
-``list_dataset_frames.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+* ``populate_dataset.py``:
+   This script provides sample code for populating dataset fields.
 
-This script provides sample code for listing the frames of a dataset.
+* ``query_by_exact_name.py``:
+   This script provides sample code for searching projects by exact name.
 
-``list_projects.py``
-^^^^^^^^^^^^^^^^^^^^
+* ``recursively_list_project_media.py``:
+   This script provides sample code for recursively listing all media (i.e. videos and images) in a project.
 
-This script provides sample code for listing all projects.
+* ``search_datasets.py``:
+   This script provides some brief examples of using search functionality.
 
-``paginate_video_frames.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* ``search_videos_in_collection.py``:
+   This script shows how to search for videos within a project or folder.
 
-This script provides sample code for paginating video frames.
+* ``upload_associated_file.py``:
+   This script provides sample code for uploading associated files to projects/folders, datasets, and images.
 
-``populate_dataset.py``
-^^^^^^^^^^^^^^^^^^^^^^^
+* ``upload_many_videos.py``:
+   This script demonstrates how to upload multiple videos to a folder in parallel.
 
-This script provides sample code for populating dataset fields.
+* ``upload_metadata.py``:
+   This script demonstrates how to upload metadata for a dataset or an image.
 
-``query_by_exact_name.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This script provides sample code for searching projects by exact name.
-
-``recursively_list_project_media.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This script provides sample code for recursively listing all media (i.e. videos and images) in a project.
-
-``search_datasets.py``
-^^^^^^^^^^^^^^^^^^^^^^
-
-This script provides some brief examples of using search functionality.
-
-``search_videos_in_collection.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This script shows how to search for videos within a project or folder.
-
-``upload_associated_file.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This script provides sample code for uploading associated files to projects/folders, datasets, and images.
-
-``upload_many_videos.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This script demonstrates how to upload multiple videos to a folder in parallel.
-
-
-``upload_metadata.py``
-^^^^^^^^^^^^^^^^^^^^^^
-
-This script demonstrates how to upload metadata for a dataset or an image.
-
-``video_annotation_qa.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-A runnable script that demonstrates how to perform QA operations on a video annotation.
+* ``video_annotation_qa.py``:
+   A runnable script that demonstrates how to perform QA operations on a video annotation.

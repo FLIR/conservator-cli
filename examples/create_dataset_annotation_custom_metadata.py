@@ -1,5 +1,5 @@
 """
-Demonstrates adding custom metadata to a video/image annotation
+Demonstrates adding custom metadata to a dataset annotation
 """
 import json
 
@@ -8,9 +8,9 @@ from FLIR.conservator.generated.schema import Mutation, UpdateAnnotationInput
 
 conservator = Conservator.default()
 
-frame_id = input("Please provide a video or image frame id: ")
+dataset_frame_id = input("Please provide a dataset frame id: ")
 
-annotation_id = input("Please provide an annotation id: ")
+dataset_annotation_id = input("Please provide a dataset annotation id: ")
 
 # Create an object to use as metadata
 metadata_obj = {
@@ -28,10 +28,10 @@ update_annotation_input = UpdateAnnotationInput(
     custom_metadata=metadata_string)
 
 annotation = conservator.query(
-    Mutation.update_annotation,
-    frame_id=frame_id,
-    annotation_id=annotation_id,
-    annotation=update_annotation_input,
+    Mutation.update_dataset_annotation,
+    dataset_frame_id=dataset_frame_id,
+    dataset_annotation_id=dataset_annotation_id,
+    input=update_annotation_input,
 )
 
 print("Metadata has been added!")
