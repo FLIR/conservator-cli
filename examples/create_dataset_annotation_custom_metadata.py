@@ -24,8 +24,7 @@ metadata_string = json.dumps(metadata_obj)
 
 print(f"Adding custom metadata: {metadata_string}")
 
-update_annotation_input = UpdateAnnotationInput(
-    custom_metadata=metadata_string)
+update_annotation_input = UpdateAnnotationInput(custom_metadata=metadata_string)
 
 annotation = conservator.query(
     Mutation.update_dataset_annotation,
