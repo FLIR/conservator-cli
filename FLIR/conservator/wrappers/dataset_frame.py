@@ -93,7 +93,8 @@ class DatasetFrame(QueryableType):
         """
         Change the QA status note for a dataset frame.
         """
-        note = UpdateDatasetQaStatusNoteInput(id=self.id, qa_status_note=qa_status_note)
+        note = UpdateDatasetQaStatusNoteInput(
+            id=self.id, qa_status_note=qa_status_note)
         return self._conservator.query(
             Mutation.update_dataset_qa_status_note, input=note
         )
@@ -116,7 +117,6 @@ class DatasetFrame(QueryableType):
                 map(ann_map_fn, dataset_annotation_create_list)
             )
 
-            print(annotation_create_input)
             return self._conservator.query(
                 Mutation.create_dataset_annotations,
                 input=annotation_create_input,
