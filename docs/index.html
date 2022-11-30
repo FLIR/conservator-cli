@@ -51,8 +51,17 @@ interface to simplify operations and make scripting easier.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="usage/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage/installation.html#installation-on-linux">Installation on Linux</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/installation.html#installation-on-windows">Installation on Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/installation.html#installation-on-linux">Installation on Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/installation.html#configuring-conservator-cli">Configuring Conservator-CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/installation.html#installation-on-windows">Installation on Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/installation.html#pre-installation">Pre-installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/installation.html#installing-windows-subsystem-for-linux-wsl">Installing Windows Subsystem for Linux (WSL)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/installation.html#configuring-ubuntu-and-installing-conservator-cli">Configuring Ubuntu and Installing Conservator-CLI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/installation.html#configuring-git">Configuring Git</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="usage/installation.html#developers">Developers</a></li>
 </ul>
 </li>
@@ -63,12 +72,20 @@ interface to simplify operations and make scripting easier.</p>
 <li class="toctree-l2"><a class="reference internal" href="usage/cli_quickstart.html#downloading-media">Downloading Media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/cli_quickstart.html#uploading-media">Uploading Media</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/cli_quickstart.html#interactive-mode">Interactive Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/cli_quickstart.html#multiple-configurations">Multiple Configurations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/cli_quickstart.html#multiple-configurations">Multiple Configurations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/cli_quickstart.html#additional-config-files">Additional Config Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cli_quickstart.html#environment-variables">Environment variables</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage/api_quickstart.html#config-and-getting-connected">Config and Getting Connected</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/api_quickstart.html#basic-queries">Basic Queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/api_quickstart.html#basic-queries">Basic Queries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/api_quickstart.html#querying-for-all-fields">Querying for all Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/api_quickstart.html#specifying-fields">Specifying Fields</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="usage/api_quickstart.html#other-types-of-queries">Other types of Queries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/api_quickstart.html#populating-fields-later">Populating Fields Later</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/api_quickstart.html#next-steps">Next Steps</a></li>
@@ -79,21 +96,102 @@ interface to simplify operations and make scripting easier.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage/cvc_guide.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage/cvc_guide.html#additional-reference">Additional Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/cvc_guide.html#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#index-json-vs-jsonl-files"><code class="docutils literal notranslate"><span class="pre">index.json</span></code> vs JSONL Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#adding-frames">Adding Frames</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/cvc_guide.html#additional-reference">Additional Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#global-cache">Global Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#cloning">Cloning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#clone-timeout-workaround">Clone Timeout Workaround</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#downloading-frames">Downloading Frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#commit-history">Commit History</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#checking-out-a-commit">Checking out a Commit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#commit-info">Commit Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#status">Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#current-changes">Current Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#staging-new-images">Staging New Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#uploading-and-adding-staged-images">Uploading and Adding Staged Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#validating-changes">Validating Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#making-a-commit">Making a Commit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#push-local-commits">Push Local Commits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#publish-upload-commit-push">Publish: Upload, Commit, Push</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage/cvc_guide.html#pull-local-commits">Pull Local Commits</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.conservator">Conservator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.connection">Conservator Connection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.file_transfers">File Transfers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.fields_manager">Fields Manager</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.fields_request">Fields Request</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.managers">Managers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.paginated_query">PaginatedQuery</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.local_dataset">LocalDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.config">Config</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.config.ConfigError"><code class="docutils literal notranslate"><span class="pre">ConfigError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.conservator">Conservator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.conservator.Conservator"><code class="docutils literal notranslate"><span class="pre">Conservator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.conservator.UnknownMediaIdException"><code class="docutils literal notranslate"><span class="pre">UnknownMediaIdException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.connection">Conservator Connection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.connection.ConservatorConnection"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.connection.ConservatorGraphQLServerError"><code class="docutils literal notranslate"><span class="pre">ConservatorGraphQLServerError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.connection.ConservatorMalformedQueryException"><code class="docutils literal notranslate"><span class="pre">ConservatorMalformedQueryException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.file_transfers">File Transfers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.file_transfers.ConservatorFileTransfers"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.file_transfers.DownloadRequest"><code class="docutils literal notranslate"><span class="pre">DownloadRequest</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.file_transfers.FileDownloadException"><code class="docutils literal notranslate"><span class="pre">FileDownloadException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.file_transfers.FileTransferException"><code class="docutils literal notranslate"><span class="pre">FileTransferException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.file_transfers.FileUploadException"><code class="docutils literal notranslate"><span class="pre">FileUploadException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.file_transfers.UploadRequest"><code class="docutils literal notranslate"><span class="pre">UploadRequest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.fields_manager">Fields Manager</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.fields_manager.FieldsManager"><code class="docutils literal notranslate"><span class="pre">FieldsManager</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.fields_request">Fields Request</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.fields_request.FieldsRequest"><code class="docutils literal notranslate"><span class="pre">FieldsRequest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.type_proxy">TypeProxy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.queryable">Queryable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.project">Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.collection">Collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.dataset">Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.media">Media</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.image">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.video">Video</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.frame">Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.dataset_frame">DatasetFrame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.metadata">Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.wrappers.file_locker">FileLocker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.managers">Managers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.managers.CollectionManager"><code class="docutils literal notranslate"><span class="pre">CollectionManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.managers.DatasetManager"><code class="docutils literal notranslate"><span class="pre">DatasetManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.managers.ImageManager"><code class="docutils literal notranslate"><span class="pre">ImageManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.managers.ProjectManager"><code class="docutils literal notranslate"><span class="pre">ProjectManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.managers.VideoManager"><code class="docutils literal notranslate"><span class="pre">VideoManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.managers.type_manager">TypeManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.managers.searchable">SearchableTypeManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#module-FLIR.conservator.managers.media">MediaTypeManager</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.paginated_query">PaginatedQuery</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.paginated_query.ConcurrentQueryModificationException"><code class="docutils literal notranslate"><span class="pre">ConcurrentQueryModificationException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.paginated_query.PaginatedQuery"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-FLIR.conservator.local_dataset">LocalDataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.local_dataset.InvalidLocalDatasetPath"><code class="docutils literal notranslate"><span class="pre">InvalidLocalDatasetPath</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#FLIR.conservator.local_dataset.LocalDataset"><code class="docutils literal notranslate"><span class="pre">LocalDataset</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

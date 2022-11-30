@@ -2350,16 +2350,75 @@ validate the result.</p>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_advanced.html">Advanced Python API Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.file_transfers">File Transfers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.local_dataset">LocalDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.config.ConfigError"><code class="docutils literal notranslate"><span class="pre">ConfigError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator"><code class="docutils literal notranslate"><span class="pre">Conservator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.conservator.UnknownMediaIdException"><code class="docutils literal notranslate"><span class="pre">UnknownMediaIdException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorGraphQLServerError"><code class="docutils literal notranslate"><span class="pre">ConservatorGraphQLServerError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorMalformedQueryException"><code class="docutils literal notranslate"><span class="pre">ConservatorMalformedQueryException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.file_transfers">File Transfers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.DownloadRequest"><code class="docutils literal notranslate"><span class="pre">DownloadRequest</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileDownloadException"><code class="docutils literal notranslate"><span class="pre">FileDownloadException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileTransferException"><code class="docutils literal notranslate"><span class="pre">FileTransferException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileUploadException"><code class="docutils literal notranslate"><span class="pre">FileUploadException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.UploadRequest"><code class="docutils literal notranslate"><span class="pre">UploadRequest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.fields_manager.FieldsManager"><code class="docutils literal notranslate"><span class="pre">FieldsManager</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest"><code class="docutils literal notranslate"><span class="pre">FieldsRequest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.type_proxy">TypeProxy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.queryable">Queryable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.project">Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.collection">Collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.dataset">Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.media">Media</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.image">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.video">Video</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.frame">Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.dataset_frame">DatasetFrame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.metadata">Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.file_locker">FileLocker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager"><code class="docutils literal notranslate"><span class="pre">CollectionManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.DatasetManager"><code class="docutils literal notranslate"><span class="pre">DatasetManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.ImageManager"><code class="docutils literal notranslate"><span class="pre">ImageManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.ProjectManager"><code class="docutils literal notranslate"><span class="pre">ProjectManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.VideoManager"><code class="docutils literal notranslate"><span class="pre">VideoManager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.type_manager">TypeManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.searchable">SearchableTypeManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.media">MediaTypeManager</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.paginated_query.ConcurrentQueryModificationException"><code class="docutils literal notranslate"><span class="pre">ConcurrentQueryModificationException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.local_dataset">LocalDataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.local_dataset.InvalidLocalDatasetPath"><code class="docutils literal notranslate"><span class="pre">InvalidLocalDatasetPath</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset"><code class="docutils literal notranslate"><span class="pre">LocalDataset</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

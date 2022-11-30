@@ -92,6 +92,32 @@ Then, publish your changes:</p>
 </div>
 <p>Note that an updated <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file may reference new frames that will have
 to be downloaded (using <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code>).</p>
+<section id="index-json-vs-jsonl-files">
+<h3><code class="docutils literal notranslate"><span class="pre">index.json</span></code> vs JSONL Files<a class="headerlink" href="#index-json-vs-jsonl-files" title="Permalink to this heading">¶</a></h3>
+<p>Cloning a dataset using <code class="docutils literal notranslate"><span class="pre">cvc</span></code> will create four files that contain the dataset’s metadata:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">index.json</span></code> - Contains all dataset metadata, including details on the dataset itself, details on the dataset’s frames, and details on which videos were used to create the dataset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset.jsonl</span></code> - Contains dataset metadata - e.g. name, any tags applied to the dataset, dataset owner, etc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">videos.jsonl</span></code> - Contains details of the videos used to create the dataset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frames.jsonl</span></code> - Contains details of the dataset’s frames, including annotations and attributes</p></li>
+</ul>
+</div></blockquote>
+<p>In most cases, if you wish to make changes to your dataset locally and manage those changes via <code class="docutils literal notranslate"><span class="pre">cvc</span></code>, you can
+do that by editing <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. Some datasets, howvever, are too large to manage via <code class="docutils literal notranslate"><span class="pre">index.json</span></code>, in which
+case the <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file will only contain an error message. Such datasets can be managed and updated using JSONL files.</p>
+<p>JSONL is very similar to plain JSON; the main difference being that while a JSON file represents a single JSON object,
+a JSONL file contains multiple valid JSON objects - one per line. It is therefore very important, when updating a dataset
+by editing JSONL, to ensure that you do not add any additional linebreaks.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>If your dataset does not have JSONL files, committing it via the Conservator UI will generate those files, and they will be available the next time you clone or pull the dataset.</p></li>
+<li><p>Any changes pushed to a dataset via <code class="docutils literal notranslate"><span class="pre">cvc</span></code> will be reflected in both <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and the relevant JSONL file after the dataset has been pulled.</p></li>
+<li><p>If you try to commit and push changes to both <code class="docutils literal notranslate"><span class="pre">index.json</span></code> and one of the JSONL files at the same time, it will fail. You can only make changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code> or one of the JSONL files, but not to both at the same time.</p></li>
+</ul>
+</div>
+</section>
 <section id="adding-frames">
 <h3>Adding Frames<a class="headerlink" href="#adding-frames" title="Permalink to this heading">¶</a></h3>
 <p>You can stage new frames to be uploaded to a dataset using the <code class="docutils literal notranslate"><span class="pre">add</span></code> command:</p>
@@ -100,15 +126,16 @@ $ cvc add ./someimages/*.jpg
 </pre></div>
 </div>
 <p>Then, upload and publish your new frames:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc publish &quot;Uploaded new frames or whatever&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc publish &quot;Uploaded new frames&quot;
 </pre></div>
 </div>
-<p>This will upload the frames to conservator, and also add them to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>. Then, it
-will commit and push the changes to <code class="docutils literal notranslate"><span class="pre">index.json</span></code></p>
+<p>This will upload the frames to conservator, and also add them to <code class="docutils literal notranslate"><span class="pre">frames.jsonl</span></code>. Then, it
+will commit and push the changes to <code class="docutils literal notranslate"><span class="pre">frames.jsonl</span></code></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Uploading will also copy staged images alongside other downloaded dataset frames
-in <code class="docutils literal notranslate"><span class="pre">data/</span></code>. Pass <code class="docutils literal notranslate"><span class="pre">--skip-copy</span></code> to not copy frames.</p>
+in <code class="docutils literal notranslate"><span class="pre">data/</span></code>. Pass <code class="docutils literal notranslate"><span class="pre">--skip-copy</span></code> to not copy frames.
+Also note that, after adding frames, the new frame data will be available in both <code class="docutils literal notranslate"><span class="pre">frames.jsonl</span></code> __and__ <code class="docutils literal notranslate"><span class="pre">index.json</span></code>.</p>
 </div>
 </section>
 </section>
@@ -178,7 +205,7 @@ $ cd my_dataset
 </pre></div>
 </div>
 <p>Then, download the dataset’s latest <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets download-index [dataset id]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator datasets download-index &lt;dataset id&gt;
 </pre></div>
 </div>
 <p>The download may take some time (and a few attempts), but should be successful
@@ -271,12 +298,12 @@ using the <code class="docutils literal notranslate"><span class="pre">cvc</span
 </section>
 <section id="uploading-and-adding-staged-images">
 <h3>Uploading and Adding Staged Images<a class="headerlink" href="#uploading-and-adding-staged-images" title="Permalink to this heading">¶</a></h3>
-<p>Upload any staged images, and add them to <code class="docutils literal notranslate"><span class="pre">index.json</span></code>:</p>
+<p>Upload any staged images, and add them to <code class="docutils literal notranslate"><span class="pre">frames.jsonl</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc upload
 </pre></div>
 </div>
 <p>By default, the staged images will also be copied to the local dataset’s <code class="docutils literal notranslate"><span class="pre">data/</span></code>
-directory. This way you don’t need to re-download the frames. To disable the copy,
+directory. This way, you don’t need to re-download the frames. To disable the copy,
 pass <code class="docutils literal notranslate"><span class="pre">--skip-copy</span></code>.</p>
 </section>
 <section id="validating-changes">
@@ -356,8 +383,30 @@ must run <code class="docutils literal notranslate"><span class="pre">cvc</span>
 <li class="toctree-l1"><a class="reference internal" href="api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_advanced.html">Advanced Python API Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">CVC Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#additional-reference">Additional Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#index-json-vs-jsonl-files"><code class="docutils literal notranslate"><span class="pre">index.json</span></code> vs JSONL Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-frames">Adding Frames</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-reference">Additional Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#global-cache">Global Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cloning">Cloning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clone-timeout-workaround">Clone Timeout Workaround</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#downloading-frames">Downloading Frames</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commit-history">Commit History</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-out-a-commit">Checking out a Commit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commit-info">Commit Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status">Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#current-changes">Current Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#staging-new-images">Staging New Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uploading-and-adding-staged-images">Uploading and Adding Staged Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#validating-changes">Validating Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#making-a-commit">Making a Commit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#push-local-commits">Push Local Commits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publish-upload-commit-push">Publish: Upload, Commit, Push</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pull-local-commits">Pull Local Commits</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
