@@ -28,9 +28,9 @@ The features of this script include:
 Pre-requisites
 ^^^^^^^^^^^^^^
 
- - Please ensure that you have Conservator-CLI installed and configured per the :doc:`installation` guide.
- - Please ensure that you have Python 3.x installed.
- - The upload script requires the ``prettytable`` module; please run ``pip install prettytable`` to install it.
+- Please ensure that you have Conservator-CLI installed and configured per the :doc:`installation` guide.
+- Please ensure that you have Python 3.x installed.
+- The upload script requires the ``prettytable`` module; please run ``pip install prettytable`` to install it.
 
 Upload Configs
 ^^^^^^^^^^^^^^
@@ -62,22 +62,23 @@ By default, the ``conservator_upload`` script will look for a directory named ``
 If you want to skip uploading a video listed in an ``upload.csv`` file, simply comment it out by adding a ``#`` at the start of the line.
 The following table describes the fields used in the ``upload.csv`` file:
 
- +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | Column Name          | Description                                                                                                                                                                            |
- +======================+========================================================================================================================================================================================+
- | type                 | Type of upload (``video`` or ``prism``).                                                                                                                                               |
- +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | hardware_name        | A key that specifies the capture hardware/sensor used for this upload (resolved in ``upload.json``).                                                                                   |
- |                      | For the `video` type use JSON dot notation to specify the specific config (e.g. ``beamsplitter.thermal``)                                                                              |
- +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | conservator_location | Specifies which Conservator Project and Collection to upload to. Use your own conventions to organize projects. <br>**Format:** `PROJECT_NAME` / `COLLECTION` / `SUBCOLLECTION` / `..` |
- +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | local_path           | The location on disk of the asset to upload (supports expansion of any user-defined environment variable)                                                                              |
- +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | tags                 | Comma separated list of tags to associate with this specific upload                                                                                                                    |
- +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | description          | Full-text description of the capture                                                                                                                                                   |
- +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Column Name          | Description                                                                                                                                                                            |
++======================+========================================================================================================================================================================================+
+| type                 | Type of upload (``video`` or ``prism``).                                                                                                                                               |
++----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| hardware_name        | A key that specifies the capture hardware/sensor used for this upload (resolved in ``upload.json``).                                                                                   |
+|                      | For the `video` type use JSON dot notation to specify the specific config (e.g. ``beamsplitter.thermal``)                                                                              |
++----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| conservator_location | Specifies which Conservator Project and Collection to upload to. Use your own conventions to organize projects.                                                                        |
+|                      | **Format:** `PROJECT_NAME` / `FOLDER` / `SUBFOLDER` / `..`                                                                                                                             |
++----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| local_path           | The location on disk of the asset to upload (supports expansion of any user-defined environment variable)                                                                              |
++----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| tags                 | Comma separated list of tags to associate with this specific upload                                                                                                                    |
++----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| description          | Full-text description of the capture                                                                                                                                                   |
++----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Generic Video Example
 ---------------------
@@ -126,15 +127,15 @@ To list all available upload projects, run the script without any parameters (or
 
 ::
 
-$ python examples/upload_videos/conservator_upload.py
+ $ python examples/upload_videos/conservator_upload.py
 
-No config path provided, using default (/home/user/conservator-cli/examples/upload_videos/config/upload)
-+-----------------------+--------------------------------------------------------+
-| Config                | Description                                            |
-+-----------------------+--------------------------------------------------------+
-| generic-video-example | Beamsplitter upload batch for generic video example    |
-| prism-example         | Prism-formatted upload batch for generic video example |
-+-----------------------+--------------------------------------------------------+
+ No config path provided, using default (/home/user/conservator-cli/examples/upload_videos/config/upload)
+ +-----------------------+--------------------------------------------------------+
+ | Config                | Description                                            |
+ +-----------------------+--------------------------------------------------------+
+ | generic-video-example | Beamsplitter upload batch for generic video example    |
+ | prism-example         | Prism-formatted upload batch for generic video example |
+ +-----------------------+--------------------------------------------------------+
 
 
 

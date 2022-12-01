@@ -171,7 +171,7 @@ def _update_string(key: str, data: dict, new_value: str) -> bool:
 
 
 def update_video_meta_data(
-    video: Video,
+    video,
     video_metadata_all: dict,
     default_metadata: DefaultMetadata,
     specific_description: str,
@@ -331,7 +331,6 @@ def get_video_and_collection(filename: str, conservator_location: str):
         for video in collection.recursively_get_videos(
             fields=["name", "owner"], search_text=f'name:"{filename}"'
         ):
-            video: Video
             if video.name == filename:
                 video_url = _conservator.get_url() + "/videos/" + video.id
                 _logger.info("Found %s/%s", conservator_location, filename)
@@ -464,7 +463,6 @@ def upload_video_capture(
         else:
             _logger.info("Video exists and is ready for upload: %s", local_path)
     else:
-        video: Video
         if _conservator.videos.is_uploaded_media_id_processed(video.id):
             if dry_run is False:
                 # When in dry run mode we only check location (no meta data)
@@ -544,7 +542,7 @@ def upload_prism_capture(
         )
         return
 
-    if not osp.exists(thermal_input_path) or not osp.isdir(thermal_input_path):
+    if not osp.exists(visible_input_path) or not osp.isdir(visible_input_path):
         stats.upload_entry_invalid_count += 1
         _logger.warning(
             'The path "%s" is not a directory or does not exist (skipping entry).\
@@ -607,8 +605,10 @@ def upload_prism_capture(
 
         stats.would_upload_video_count += 1
         if not osp.exists(thermal_zip_path):
-            # Create the zip file if needed (compress because these are typically 16-bit uncompressed tiffs)
-            cmd = f"cd {upload_root_path} && zip -q -j {thermal_zip_filename} {thermal_input_path}/*"
+            # Create the zip file if needed
+            # (compress because these are typically 16-bit uncompressed tiffs)
+            cmd = f"cd {upload_root_path} && zip -q -j\
+                {thermal_zip_filename} {thermal_input_path}/*"
             _logger.info(
                 "     Creating zip archive for upload: %s/%s",
                 upload_root_path,
@@ -631,7 +631,6 @@ def upload_prism_capture(
             )
             stats.upload_video_count += 1
     else:
-        thermal_video: Video
         if _conservator.videos.is_uploaded_media_id_processed(thermal_video.id):
 
             if dry_run is False:
@@ -670,7 +669,8 @@ def upload_prism_capture(
         stats.would_upload_video_count += 1
         if not osp.exists(visible_zip_path):
             # Important: this command is slightly different than above: -0 means no compression
-            cmd = f"cd {upload_root_path} && zip -0 -q -j {visible_zip_filename} {visible_input_path}/*"
+            cmd = f"cd {upload_root_path} && zip -0 -q -j\
+                {visible_zip_filename} {visible_input_path}/*"
             _logger.info(
                 "     Creating zip archive for upload: %s/%s",
                 upload_root_path,
@@ -693,7 +693,6 @@ def upload_prism_capture(
             )
             stats.upload_video_count += 1
     else:
-        visible_video: Video
         if _conservator.videos.is_uploaded_media_id_processed(visible_video.id):
 
             if dry_run is False:
@@ -915,7 +914,7 @@ def main():
                 conservator_location = conservator_location[:-1]
             row["conservator_location"] = conservator_location.strip()
 
-            default_metadata: DefaultMetadata = default_metadata_dict.get(hardware_name)
+            default_metadata = default_metadata_dict.get(hardware_name)
             if default_metadata is None:
                 stats.upload_entry_invalid_count += 1
                 _logger.warning(
