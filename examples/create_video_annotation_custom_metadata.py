@@ -4,11 +4,17 @@ Demonstrates adding custom metadata to a video/image annotation
 import json
 
 from FLIR.conservator.conservator import Conservator
-from FLIR.conservator.generated.schema import Mutation, UpdateAnnotationInput
+from FLIR.conservator.generated.schema import Query
 
 conservator = Conservator.default()
 
 frame_id = input("Please provide a video or image frame id: ")
+
+frame = conservator.query(
+    Query.frame_with_search,
+    frame_id=frame_id,
+    fields=['annotations.id']
+)
 
 annotation_id = input("Please provide an annotation id: ")
 
@@ -24,14 +30,17 @@ metadata_string = json.dumps(metadata_obj)
 
 print(f"Adding custom metadata: {metadata_string}")
 
-update_annotation_input = UpdateAnnotationInput(custom_metadata=metadata_string)
+frame.set_annotation_metadata(annotation_id, metadata_string)
 
-annotation = conservator.query(
-    Mutation.update_annotation,
-    frame_id=frame_id,
-    annotation_id=annotation_id,
-    annotation=update_annotation_input,
-)
+frame.populate(['annotations.custom_metadata'])
+
+annotation = {}
+
+for ann in frame.annotations:
+    if ann.id == annotation_id:
+        annotation = ann
+        break
+
 
 print("Metadata has been added!")
 

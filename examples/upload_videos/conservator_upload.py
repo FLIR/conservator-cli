@@ -49,7 +49,6 @@ FLIR.conservator.conservator.logger.setLevel(logging.DEBUG)
 #        Conservator CLI
 # -------------------------------------
 _conservator = Conservator.default()
-_conservator: Conservator
 
 # -------------------------------------
 #               Stats
@@ -82,14 +81,16 @@ class Stats:
         string_table.add_row(
             ["Videos would be uploaded", self.would_upload_video_count]
         )
-        string_table.add_row(["Videos ACTUALLY uploaded", self.upload_video_count])
+        string_table.add_row(
+            ["Videos ACTUALLY uploaded", self.upload_video_count])
         string_table.add_row(
             [
                 "Videos currently being processed by Conservator",
                 self.video_still_processing_count,
             ]
         )
-        string_table.add_row(["Video metadata updated", self.upload_metadata_count])
+        string_table.add_row(
+            ["Video metadata updated", self.upload_metadata_count])
 
         return str(string_table)
 
@@ -127,7 +128,8 @@ def _update_custom_video_helper(
         existing_custom.get("rgbt", {}).get("rectify", {}).get("destination")
     )
     existing_apply_undistort = (
-        existing_custom.get("rgbt", {}).get("rectify", {}).get("apply_undistort")
+        existing_custom.get("rgbt", {}).get(
+            "rectify", {}).get("apply_undistort")
     )
     upload_rgbt = upload_custom.get("rgbt")
     if not isinstance(existing_destination, dict):
@@ -187,7 +189,8 @@ def update_video_meta_data(
     #     Preprocess Description
     # ----------------------------------
     new_description = specific_description
-    generic_description = default_metadata.get_description(camera_name_or_spectrum)
+    generic_description = default_metadata.get_description(
+        camera_name_or_spectrum)
     if len(generic_description):
         if len(new_description):
             new_description = new_description + ". " + generic_description
@@ -250,7 +253,8 @@ def update_video_meta_data(
         has_updates = True
         _logger.debug("       Metadata needs to be updated because of: tags")
 
-    upload_custom = default_metadata.metadata[camera_name_or_spectrum].get("custom")
+    upload_custom = default_metadata.metadata[camera_name_or_spectrum].get(
+        "custom")
     if isinstance(upload_custom, dict):
         existing_custom = video_metadata.get("custom")
 
@@ -258,14 +262,16 @@ def update_video_meta_data(
             # Just copy the whole document
             has_updates = True
             video_metadata["custom"] = upload_custom
-            _logger.debug("       Metadata needs to be updated because of: custom")
+            _logger.debug(
+                "       Metadata needs to be updated because of: custom")
         else:
             # Selective update
             if _update_custom_video_helper(
                 video_metadata, existing_custom, upload_custom
             ):
                 has_updates = True
-                _logger.debug("       Metadata needs to be updated because of: custom")
+                _logger.debug(
+                    "       Metadata needs to be updated because of: custom")
 
     if has_updates:
         with open(save_path, "w", encoding="UTF-8") as json_file:
@@ -438,7 +444,8 @@ def upload_video_capture(
     # ---------------------------
     #     Upload Video file
     # ---------------------------
-    video, collection = get_video_and_collection(filename, conservator_location)
+    video, collection = get_video_and_collection(
+        filename, conservator_location)
     video_metadata = None
 
     if video is None:
@@ -461,7 +468,8 @@ def upload_video_capture(
             )
             stats.upload_video_count += 1
         else:
-            _logger.info("Video exists and is ready for upload: %s", local_path)
+            _logger.info(
+                "Video exists and is ready for upload: %s", local_path)
     else:
         if _conservator.videos.is_uploaded_media_id_processed(video.id):
             if dry_run is False:
@@ -585,8 +593,10 @@ def upload_prism_capture(
     thermal_zip_path = osp.join(upload_root_path, thermal_zip_filename)
     visible_zip_path = osp.join(upload_root_path, visible_zip_filename)
 
-    thermal_meta_data_path = osp.join(upload_root_path, f"{thermal_basename}.json")
-    visible_meta_data_path = osp.join(upload_root_path, f"{visible_basename}.json")
+    thermal_meta_data_path = osp.join(
+        upload_root_path, f"{thermal_basename}.json")
+    visible_meta_data_path = osp.join(
+        upload_root_path, f"{visible_basename}.json")
 
     # ---------------------------------------
     #  Thermal: prepare zip files & upload
@@ -637,7 +647,8 @@ def upload_prism_capture(
                 # When in dry run mode we only check location (no meta data)
 
                 # Processing is done and we can not update the metadata
-                thermal_video.download_metadata(osp.dirname(thermal_meta_data_path))
+                thermal_video.download_metadata(
+                    osp.dirname(thermal_meta_data_path))
                 _logger.info(
                     "       Downloading video metadata to temporary file: %s",
                     thermal_meta_data_path,
@@ -699,7 +710,8 @@ def upload_prism_capture(
                 # When in dry run mode we only check location (no meta data)
 
                 # Processing is done and we can not update the metadata
-                visible_video.download_metadata(osp.dirname(visible_meta_data_path))
+                visible_video.download_metadata(
+                    osp.dirname(visible_meta_data_path))
                 _logger.info(
                     "       Downloading video metadata to temporary file: %s",
                     visible_meta_data_path,
@@ -732,7 +744,8 @@ def upload_prism_capture(
                 ]
 
                 visible_frame["associatedFrames"] = [
-                    {"spectrum": "Thermal", "frameId": thermal_frame["frameId"]}
+                    {"spectrum": "Thermal",
+                        "frameId": thermal_frame["frameId"]}
                 ]
         else:
             _logger.warning(
@@ -795,7 +808,8 @@ def show_help(default_config_path: str, config_filename: str) -> None:
 
         with open(config_path, encoding="UTF-8") as config_file:
             config_data = json.load(config_file)
-            help_table.add_row([config_folder, config_data.get("description", "")])
+            help_table.add_row(
+                [config_folder, config_data.get("description", "")])
     print(help_table)
     sys.exit(1)
 
@@ -805,7 +819,8 @@ def main():
     :return:
     :rtype:
     """
-    parser = argparse.ArgumentParser(description="Batch upload videos to Conservator")
+    parser = argparse.ArgumentParser(
+        description="Batch upload videos to Conservator")
 
     parser.add_argument(
         "config",
@@ -824,7 +839,8 @@ def main():
             (defaults to {DEFAULT_UPLOAD_CONFIG_ROOT})",
     )
     # False by default...
-    parser.add_argument("--debug", help="Turns on debug messages", action="store_true")
+    parser.add_argument(
+        "--debug", help="Turns on debug messages", action="store_true")
 
     args = parser.parse_args()
 
@@ -860,7 +876,8 @@ def main():
             default_metadata, hardware_name
         )
 
-    upload_list_path = osp.join(upload_config_root, upload_config_name, "upload.csv")
+    upload_list_path = osp.join(
+        upload_config_root, upload_config_name, "upload.csv")
 
     if not osp.exists(upload_list_path):
         _logger.fatal(
@@ -895,7 +912,8 @@ def main():
             if isinstance(row.get("tags"), str):
                 row["tags"] = row["tags"].strip()
                 if len(row["tags"]):
-                    tags_split = row["tags"].split(",")  # Always outputs a list
+                    tags_split = row["tags"].split(
+                        ",")  # Always outputs a list
                     tags: list = []
                     for tag in tags_split:
                         tags.append(tag.strip().lower())

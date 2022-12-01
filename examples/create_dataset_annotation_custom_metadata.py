@@ -4,11 +4,19 @@ Demonstrates adding custom metadata to a dataset annotation
 import json
 
 from FLIR.conservator.conservator import Conservator
-from FLIR.conservator.generated.schema import Mutation, UpdateAnnotationInput
+from FLIR.conservator.generated.schema import Query
 
 conservator = Conservator.default()
 
 dataset_frame_id = input("Please provide a dataset frame id: ")
+
+dataset_frame = conservator.query(
+    Query.dataset_frame,
+    id=dataset_frame_id,
+    fields=['annotations.id']
+)
+
+print(dataset_frame)
 
 dataset_annotation_id = input("Please provide a dataset annotation id: ")
 
@@ -24,14 +32,20 @@ metadata_string = json.dumps(metadata_obj)
 
 print(f"Adding custom metadata: {metadata_string}")
 
-update_annotation_input = UpdateAnnotationInput(custom_metadata=metadata_string)
-
-annotation = conservator.query(
-    Mutation.update_dataset_annotation,
-    dataset_frame_id=dataset_frame_id,
-    dataset_annotation_id=dataset_annotation_id,
-    input=update_annotation_input,
+dataset_frame.set_dataset_annotation_metadata(
+    annotation_id=dataset_annotation_id,
+    annotation_metadata=metadata_string,
 )
+
+dataset_frame.populate(['annotations.custom_metadata'])
+
+annotation = {}
+
+for ann in dataset_frame.annotations:
+    if ann.id == dataset_annotation_id:
+        annotation = ann
+        break
+
 
 print("Metadata has been added!")
 
