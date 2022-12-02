@@ -16,8 +16,6 @@ dataset_frame = conservator.query(
     fields=['annotations.id']
 )
 
-print(dataset_frame)
-
 dataset_annotation_id = input("Please provide a dataset annotation id: ")
 
 # Create an object to use as metadata
