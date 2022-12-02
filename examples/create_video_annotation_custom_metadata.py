@@ -11,9 +11,7 @@ conservator = Conservator.default()
 frame_id = input("Please provide a video or image frame id: ")
 
 frame = conservator.query(
-    Query.frame_with_search,
-    frame_id=frame_id,
-    fields=['annotations.id']
+    Query.frame_with_search, frame_id=frame_id, fields=["annotations.id"]
 )
 
 annotation_id = input("Please provide an annotation id: ")
@@ -32,7 +30,7 @@ print(f"Adding custom metadata: {metadata_string}")
 
 frame.set_annotation_metadata(annotation_id, metadata_string)
 
-frame.populate(['annotations.custom_metadata'])
+frame.populate(["annotations.custom_metadata"])
 
 annotation = {}
 

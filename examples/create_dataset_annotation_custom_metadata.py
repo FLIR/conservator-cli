@@ -11,9 +11,7 @@ conservator = Conservator.default()
 dataset_frame_id = input("Please provide a dataset frame id: ")
 
 dataset_frame = conservator.query(
-    Query.dataset_frame,
-    id=dataset_frame_id,
-    fields=['annotations.id']
+    Query.dataset_frame, id=dataset_frame_id, fields=["annotations.id"]
 )
 
 dataset_annotation_id = input("Please provide a dataset annotation id: ")
@@ -35,7 +33,7 @@ dataset_frame.set_dataset_annotation_metadata(
     annotation_metadata=metadata_string,
 )
 
-dataset_frame.populate(['annotations.custom_metadata'])
+dataset_frame.populate(["annotations.custom_metadata"])
 
 annotation = {}
 
