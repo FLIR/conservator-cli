@@ -3,6 +3,7 @@ import os
 import traceback
 from dataclasses import dataclass
 
+from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.generated.schema import Mutation, Query, FrameFilter
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import QueryableType
@@ -292,6 +293,9 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
 
         if query_fields is None:
             query_fields = ["frames"]
+        elif isinstance(query_fields, FieldsRequest):
+            if not "frames" in query_fields.paths:
+                query_fields.include_field("frames")
         elif not "frames" in query_fields:
             query_fields.append("frames")
 
