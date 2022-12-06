@@ -18,7 +18,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="CVC Guide" href="usage/cvc_guide.html" />
+    <link rel="prev" title="Conservator Upload Guide" href="usage/upload_script.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -493,6 +493,7 @@ at any time.</p>
 </section>
 <section id="module-FLIR.conservator.fields_request">
 <span id="fields-request"></span><h2>Fields Request<a class="headerlink" href="#module-FLIR.conservator.fields_request" title="Permalink to this heading">¶</a></h2>
+<p>See class comment below for details</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="FLIR.conservator.fields_request.FieldsRequest">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.fields_request.</span></span><span class="sig-name descname"><span class="pre">FieldsRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.fields_request.FieldsRequest" title="Permalink to this definition">¶</a></dt>
@@ -1389,6 +1390,12 @@ where <cite>media id</cite> is the id of the media this frame is a part of, and 
 padded to 6 digits.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.frame.Frame.set_annotation_metadata">
+<span class="sig-name descname"><span class="pre">set_annotation_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.set_annotation_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set custom metadata on a video annotation</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.frame.Frame.underlying_type">
 <span class="sig-name descname"><span class="pre">underlying_type</span></span><a class="headerlink" href="#FLIR.conservator.wrappers.frame.Frame.underlying_type" title="Permalink to this definition">¶</a></dt>
@@ -1404,6 +1411,15 @@ padded to 6 digits.</p>
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">FLIR.conservator.wrappers.dataset_frame.</span></span><span class="sig-name descname"><span class="pre">DatasetFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conservator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A frame within a dataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.add_dataset_annotations">
+<span class="sig-name descname"><span class="pre">add_dataset_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_annotation_create_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.add_dataset_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds annotations using the specified list of <cite>CreateDatasetAnnotationInput</cite>
+objects.</p>
+<p>Returns a list of the added annotations, each with the specified
+<cite>fields</cite>.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.approve">
 <span class="sig-name descname"><span class="pre">approve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.approve" title="Permalink to this definition">¶</a></dt>
@@ -1426,6 +1442,12 @@ padded to 6 digits.</p>
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.request_changes">
 <span class="sig-name descname"><span class="pre">request_changes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.request_changes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Request changes to the dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.set_dataset_annotation_metadata">
+<span class="sig-name descname"><span class="pre">set_dataset_annotation_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.set_dataset_annotation_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set custom metadata on a dataset annotation</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2349,6 +2371,8 @@ validate the result.</p>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/api_advanced.html">Advanced Python API Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/upload_script.html">Conservator Upload Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
@@ -2427,7 +2451,7 @@ validate the result.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="usage/cvc_guide.html" title="previous chapter">CVC Guide</a></li>
+      <li>Previous: <a href="usage/upload_script.html" title="previous chapter">Conservator Upload Guide</a></li>
   </ul></li>
 </ul>
 </div>

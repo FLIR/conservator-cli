@@ -31,6 +31,8 @@ Contents
    usage/api_quickstart
    usage/api_advanced
    usage/cvc_guide
+   usage/examples
+   usage/upload_script
    api
 
 
