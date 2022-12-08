@@ -1798,6 +1798,8 @@ class Dataset(sgqlc.types.Type):
         "archive_progress",
         "created_at",
         "modified_at",
+        "last_modified_by_user",
+        "last_modified_by_email",
         "tags",
         "acl",
         "shared_with",
@@ -1892,6 +1894,10 @@ class Dataset(sgqlc.types.Type):
     )
     created_at = sgqlc.types.Field(sgqlc.types.non_null(Date), graphql_name="createdAt")
     modified_at = sgqlc.types.Field(Date, graphql_name="modifiedAt")
+    last_modified_by_user = sgqlc.types.Field(String, graphql_name="lastModifiedByUser")
+    last_modified_by_email = sgqlc.types.Field(
+        String, graphql_name="lastModifiedByEmail"
+    )
     tags = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(String)), graphql_name="tags"
     )
@@ -3006,6 +3012,8 @@ class Job(sgqlc.types.Type):
         "modified_at",
         "ecs_task_link",
         "log_message",
+        "duration",
+        "object_link",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="type")
@@ -3027,6 +3035,8 @@ class Job(sgqlc.types.Type):
     )
     ecs_task_link = sgqlc.types.Field(String, graphql_name="ecsTaskLink")
     log_message = sgqlc.types.Field(String, graphql_name="logMessage")
+    duration = sgqlc.types.Field(sgqlc.types.non_null(Float), graphql_name="duration")
+    object_link = sgqlc.types.Field(String, graphql_name="objectLink")
 
 
 class Label(sgqlc.types.Type):
@@ -3081,6 +3091,13 @@ class LabelSet(sgqlc.types.Type):
         sgqlc.types.list_of(AttributePrototype), graphql_name="attributePrototypes"
     )
     notes = sgqlc.types.Field(String, graphql_name="notes")
+
+
+class LockResult(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("success", "skipped")
+    success = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="success")
+    skipped = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="skipped")
 
 
 class MachineAnnotationStats(sgqlc.types.Type):
@@ -3154,8 +3171,8 @@ class Mutation(sgqlc.types.Type):
         "commit_dataset",
         "create_dataset",
         "update_dataset",
-        "lock_dataset",
-        "unlock_dataset",
+        "lock_datasets",
+        "unlock_datasets",
         "delete_dataset",
         "archive_dataset",
         "add_segments_to_dataset",
@@ -3903,29 +3920,33 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    lock_dataset = sgqlc.types.Field(
-        sgqlc.types.non_null(Dataset),
-        graphql_name="lockDataset",
+    lock_datasets = sgqlc.types.Field(
+        sgqlc.types.non_null(LockResult),
+        graphql_name="lockDatasets",
         args=sgqlc.types.ArgDict(
             (
                 (
-                    "id",
+                    "ids",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
+                        sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID)),
+                        graphql_name="ids",
+                        default=None,
                     ),
                 ),
             )
         ),
     )
-    unlock_dataset = sgqlc.types.Field(
-        sgqlc.types.non_null(Dataset),
-        graphql_name="unlockDataset",
+    unlock_datasets = sgqlc.types.Field(
+        sgqlc.types.non_null(LockResult),
+        graphql_name="unlockDatasets",
         args=sgqlc.types.ArgDict(
             (
                 (
-                    "id",
+                    "ids",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(GraphqlID), graphql_name="id", default=None
+                        sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID)),
+                        graphql_name="ids",
+                        default=None,
                     ),
                 ),
             )
