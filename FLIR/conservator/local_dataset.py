@@ -460,14 +460,12 @@ class LocalDataset:
         jsonl_update = True
         if self.is_index_usable():
             jsonl_update = False
-        index = None
-        dataset_info = self.get_dataset_info()
-        if jsonl_update:
-            dataset_frames = self.get_frames()
-        else:
-            index = self.get_index()
-            dataset_frames = index.get("frames", [])
+
+        dataset_frames = self.get_frames()
+
         next_index = LocalDataset.get_max_frame_index(dataset_frames) + 1
+
+        dataset_info = self.get_dataset_info()
 
         video_id = dataset_info["datasetId"]
 
@@ -558,6 +556,8 @@ class LocalDataset:
         if jsonl_update:
             self.write_frames_to_jsonl(dataset_frames)
         else:
+            index = self.get_index()
+            index["frames"] = dataset_frames
             with open(self.index_path, "w", encoding="UTF-8") as index_json:
                 json.dump(
                     index, index_json, indent=1, sort_keys=True, separators=(",", ": ")
@@ -604,7 +604,7 @@ class LocalDataset:
         using the `index.json` file.
         """
         dataset_frames = []
-        if os.path.exists(self.dataset_info_path):
+        if os.path.exists(self.frames_path):
             # An empty dataset won't have "frames.jsonl".
             if os.path.exists(self.frames_path):
                 dataset_frames = LocalDataset.get_jsonl_data(self.frames_path)
