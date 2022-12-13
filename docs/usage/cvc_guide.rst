@@ -283,6 +283,7 @@ as you want, including path wildcards. These images can be uploaded
 using the ``cvc upload-images`` or ``cvc publish`` commands.
 
 Images can be un-staged using the ``unstage-images`` command::
+
     $ cvc unstage-image some/path/to/a.jpg
 
 

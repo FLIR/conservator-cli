@@ -387,7 +387,7 @@ def validate(local_dataset, skip_index):
 )
 @pass_valid_local_dataset
 @check_git_config
-def upload(local_dataset, skip_copy, tries):
+def upload_images(local_dataset, skip_copy, tries):
     local_dataset.push_staged_images(copy_to_data=not skip_copy, tries=tries)
 
 
@@ -456,6 +456,35 @@ def update_identity(local_dataset):
     with open(git_config_file, "w", encoding="UTF-8") as config_file:
         git_config.write(config_file)
         click.echo(f"Updated config file {git_config_file}")
+
+
+@main.command(
+    "add",
+    help="The add command has been deprecated in favor of stage-image",
+)
+@click.argument("paths", type=click.Path(exists=True), nargs=-1, required=False)
+def add(paths):
+    click.echo("The add command has been deprecated in favor of stage-image")
+
+
+@main.command(
+    "upload",
+    help="The upload command has been deprecated in favor of upload-images",
+)
+@click.option(
+    "--skip-copy",
+    is_flag=True,
+    required=False,
+)
+@click.option(
+    "-t",
+    "--tries",
+    type=int,
+    default=5,
+    required=False,
+)
+def upload(skip_copy, tries):
+    click.echo("The upload command has been deprecated in favor of upload-images")
 
 
 @click.group(help="Commands for manipulating local datasets")
