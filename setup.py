@@ -65,7 +65,7 @@ setuptools.setup(
     name="conservator-cli",
     version=version,
     author="Teledyne FLIR LLC",
-    description="A library for using the FLIR Conservator API, with a nice command line interface.",
+    description="A library for using the Teledyne FLIR Conservator API, with a nice command line interface.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/FLIR/conservator-cli",

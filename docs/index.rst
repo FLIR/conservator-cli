@@ -1,7 +1,7 @@
 Welcome to Conservator CLI's documentation!
 ===========================================
 
-Conservator CLI is a Python library built to interface with `FLIR Conservator`_.
+Conservator CLI is the official Python library to interface with `Teledyne FLIR Conservator`_.
 
 To get started, see the :doc:`usage/installation` guide. Then, get an overview using
 the :doc:`usage/cli_quickstart` or :doc:`usage/api_quickstart`.
@@ -14,10 +14,10 @@ A sophisticated CLI is included via the ``conservator`` command, built on top of
 
 .. _`sgqlc`: https://github.com/profusion/sgqlc
 
-.. _`FLIR Conservator`: https://flirconservator.com
+.. _`Teledyne FLIR Conservator`: https://www.flir.com/oem/conservator/
 
 .. image:: _static/stack.svg
-   :width: 300
+   :width: 700px
    :align: center
 
 Contents
