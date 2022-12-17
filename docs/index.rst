@@ -16,7 +16,7 @@ A sophisticated CLI is included via the ``conservator`` command, built on top of
 
 .. _`Teledyne FLIR Conservator`: https://www.flir.com/oem/conservator/
 
-.. image:: _static/stack.svg
+.. image:: _static/stack.png
    :width: 700px
    :align: center
 
