@@ -1434,13 +1434,14 @@ class AttributePrototype(sgqlc.types.Type):
 
 class AuthPayload(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("session_id", "user", "error", "error_args")
+    __field_names__ = ("session_id", "user", "error", "error_args", "initial_sign_in")
     session_id = sgqlc.types.Field(String, graphql_name="sessionId")
     user = sgqlc.types.Field("User", graphql_name="user")
     error = sgqlc.types.Field(String, graphql_name="error")
     error_args = sgqlc.types.Field(
         sgqlc.types.list_of("ErrorArg"), graphql_name="errorArgs"
     )
+    initial_sign_in = sgqlc.types.Field(Boolean, graphql_name="initialSignIn")
 
 
 class BoundingBox(sgqlc.types.Type):
@@ -3037,6 +3038,17 @@ class Job(sgqlc.types.Type):
     log_message = sgqlc.types.Field(String, graphql_name="logMessage")
     duration = sgqlc.types.Field(sgqlc.types.non_null(Float), graphql_name="duration")
     object_link = sgqlc.types.Field(String, graphql_name="objectLink")
+
+
+class Jobs(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("jobs", "jobs_count_next_two_pages")
+    jobs = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(Job)), graphql_name="jobs"
+    )
+    jobs_count_next_two_pages = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="jobsCountNextTwoPages"
+    )
 
 
 class Label(sgqlc.types.Type):
@@ -9714,7 +9726,7 @@ class Query(sgqlc.types.Type):
         ),
     )
     jobs = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(Job)),
+        sgqlc.types.non_null(Jobs),
         graphql_name="jobs",
         args=sgqlc.types.ArgDict(
             (
@@ -9725,6 +9737,16 @@ class Query(sgqlc.types.Type):
                         graphql_name="input",
                         default=None,
                     ),
+                ),
+                ("page", sgqlc.types.Arg(Int, graphql_name="page", default=None)),
+                ("limit", sgqlc.types.Arg(Int, graphql_name="limit", default=None)),
+                (
+                    "sort_by",
+                    sgqlc.types.Arg(String, graphql_name="sortBy", default=None),
+                ),
+                (
+                    "sort_order",
+                    sgqlc.types.Arg(String, graphql_name="sortOrder", default=None),
                 ),
             )
         ),

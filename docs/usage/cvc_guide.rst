@@ -106,6 +106,7 @@ will commit and push the changes to ``frames.jsonl``
 .. note::
    Uploading will also copy staged images alongside other downloaded dataset frames
    into the ``data/`` folder. Use the ``--skip-copy`` option to not copy frames.
+   Do not move images manually into the dataset folder, or the data folder.
    Also note that, after adding frames, the new frame data will be reflected in both ``frames.jsonl`` *and* ``index.json``.
 
 Additional Reference

@@ -111,7 +111,7 @@ def check_git_config(func):
 
         if conservator.config.key != split_result.password:
             click.echo(
-                "Your currently configures API key does not match\
+                "Your currently configured API key does not match\
                     the API key used to check out this dataset"
             )
             click.echo("Run ", nl=False)
@@ -205,7 +205,11 @@ def is_image_file(ctx, param, value):
 @pass_valid_local_dataset
 @check_git_config
 def stage_image(local_dataset, paths):
-    local_dataset.stage_local_images(paths)
+    if len(paths) == 0:
+        click.echo("No images to stage!")
+        return
+    new_image_count = local_dataset.stage_local_images(paths)
+    click.echo(f"{new_image_count} images staged for upload")
 
 
 @main.command("unstage-image", help="Un-stage images for uploading")
@@ -388,7 +392,15 @@ def validate(local_dataset, skip_index):
 @pass_valid_local_dataset
 @check_git_config
 def upload_images(local_dataset, skip_copy, tries):
-    local_dataset.push_staged_images(copy_to_data=not skip_copy, tries=tries)
+    new_frame_count = local_dataset.push_staged_images(
+        copy_to_data=not skip_copy, tries=tries
+    )
+    file_name = "index.json"
+    if not local_dataset.is_index_usable():
+        file_name = "frames.jsonl"
+    click.echo(
+        f"Uploaded {new_frame_count} images and added {new_frame_count} frames to {file_name}"
+    )
 
 
 @main.command(
@@ -460,16 +472,16 @@ def update_identity(local_dataset):
 
 @main.command(
     "add",
-    help="The add command has been deprecated in favor of stage-image",
+    help="Deprecated; use stage-image instead.",
 )
 @click.argument("paths", type=click.Path(exists=True), nargs=-1, required=False)
 def add(paths):
-    click.echo("The add command has been deprecated in favor of stage-image")
+    click.echo("Deprecated; use stage-image instead.")
 
 
 @main.command(
     "upload",
-    help="The upload command has been deprecated in favor of upload-images",
+    help="Deprecated; use upload-images instead.",
 )
 @click.option(
     "--skip-copy",
@@ -484,7 +496,7 @@ def add(paths):
     required=False,
 )
 def upload(skip_copy, tries):
-    click.echo("The upload command has been deprecated in favor of upload-images")
+    click.echo("Deprecated; use upload-images instead.")
 
 
 @click.group(help="Commands for manipulating local datasets")

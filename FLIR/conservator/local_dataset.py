@@ -461,6 +461,8 @@ class LocalDataset:
         if self.is_index_usable():
             jsonl_update = False
 
+        new_frames = 0
+
         dataset_frames = self.get_frames()
 
         next_index = LocalDataset.get_max_frame_index(dataset_frames) + 1
@@ -531,6 +533,7 @@ class LocalDataset:
                     },
                 }
                 dataset_frames.append(new_frame)
+                new_frames += 1
                 logger.debug("Added new DatasetFrame with id %s", frame_id)
 
                 if copy_to_data:
@@ -564,6 +567,8 @@ class LocalDataset:
                 )
         with open(self.staging_path, "w", encoding="UTF-8") as staging_file:
             json.dump([], staging_file)
+
+        return new_frames
 
     def upload_image(self, path, md5, tries=5):
         url = self.conservator.get_dvc_hash_url(md5)
@@ -674,14 +679,17 @@ class LocalDataset:
                 return
 
         # Then add absolute paths to staging file
+        new_image_count = 0
         staged_images = self.get_staged_images()
         for image_path in image_paths:
             abspath = os.path.abspath(image_path)
             if abspath not in staged_images:
                 logger.info("Adding '%s' to staging file.", abspath)
                 staged_images.append(abspath)
+                new_image_count += 1
         with open(self.staging_path, "w", encoding="UTF-8") as staging_file:
             json.dump(staged_images, staging_file)
+        return new_image_count
 
     def unstage_local_images(self, image_paths):
         """
