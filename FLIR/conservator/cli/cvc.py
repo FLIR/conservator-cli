@@ -1,5 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
+# pylint: disable=broad-except
 import functools
 import os
 import subprocess
@@ -45,12 +46,10 @@ def check_git_config(func):
         ctx_obj = get_current_context().obj
 
         if "conservator" in ctx_obj:
-            print("conservator is in ctx_obj!")
             conservator = ctx_obj["conservator"]
         else:
             path = ctx_obj["cvc_local_path"]
             conservator = Conservator.create(ctx_obj["config_name"])
-            print("Setting conservator in context obj")
             ctx_obj["conservator"] = conservator
 
         logging.disable(logging.CRITICAL)
@@ -90,7 +89,8 @@ def check_git_config(func):
 
         if not conservator.get_email() == split_result.username:
             click.echo(
-                f"This dataset was checked out as {split_result.username}, not {conservator.get_email()}!"
+                f"This dataset was checked out as {split_result.username},\
+                    not {conservator.get_email()}!"
             )
             click.echo("Run ", nl=False)
             click.echo(click.style("conservator config view", bold=True), nl=False)
@@ -111,7 +111,8 @@ def check_git_config(func):
 
         if conservator.config.key != split_result.password:
             click.echo(
-                "Your currently configures API key does not match the API key used to check out this dataset"
+                "Your currently configured API key does not match\
+                    the API key used to check out this dataset"
             )
             click.echo("Run ", nl=False)
             click.echo(click.style("conservator config view", bold=True), nl=False)
@@ -199,14 +200,24 @@ def is_image_file(ctx, param, value):
     return value
 
 
-@main.command(
-    help="Stage images for uploading and adding to frames.jsonl or index.json"
-)
+@main.command("stage-image", help="Stage images for uploading")
 @click.argument("paths", type=click.Path(exists=True), callback=is_image_file, nargs=-1)
 @pass_valid_local_dataset
 @check_git_config
-def add(local_dataset, paths):
-    local_dataset.stage_local_images(paths)
+def stage_image(local_dataset, paths):
+    if len(paths) == 0:
+        click.echo("No images to stage!")
+        return
+    new_image_count = local_dataset.stage_local_images(paths)
+    click.echo(f"{new_image_count} images staged for upload")
+
+
+@main.command("unstage-image", help="Un-stage images for uploading")
+@click.argument("paths", type=click.Path(exists=True), callback=is_image_file, nargs=-1)
+@pass_valid_local_dataset
+@check_git_config
+def unstage_image(local_dataset, paths):
+    local_dataset.unstage_local_images(paths)
 
 
 @main.command(
@@ -286,7 +297,7 @@ def status(local_dataset):
     for image_path in images:
         click.echo(f"Staged: {image_path}")
     click.echo(
-        "Use 'cvc upload' to upload these images and add them to frames.jsonl or index.json"
+        "Use 'cvc upload-images' to upload these images and add them to frames.jsonl or index.json"
     )
 
 
@@ -354,14 +365,17 @@ def validate(local_dataset, skip_index):
 
     if os.path.exists(local_dataset.frames_path):
         if local_dataset.validate_jsonl():
-            click.secho("frames.jsonl Valid", fg="green")
+            click.secho("JSONL Files Valid", fg="green")
         else:
-            click.secho("frames.jsonl Invalid", fg="red")
+            click.secho("JSONL Files Invalid", fg="red")
     elif skip_index:
         click.echo("No .jsonl files found.")
 
 
-@main.command(help="Upload staged images and add them to frames.jsonl or index.json")
+@main.command(
+    "upload-images",
+    help="Upload staged images and add them to frames.jsonl or index.json",
+)
 @click.option(
     "--skip-copy",
     is_flag=True,
@@ -377,13 +391,22 @@ def validate(local_dataset, skip_index):
 )
 @pass_valid_local_dataset
 @check_git_config
-def upload(local_dataset, skip_copy, tries):
-    local_dataset.push_staged_images(copy_to_data=not skip_copy, tries=tries)
+def upload_images(local_dataset, skip_copy, tries):
+    new_frame_count = local_dataset.push_staged_images(
+        copy_to_data=not skip_copy, tries=tries
+    )
+    file_name = "index.json"
+    if not local_dataset.is_index_usable():
+        file_name = "frames.jsonl"
+    click.echo(
+        f"Uploaded {new_frame_count} images and added {new_frame_count} frames to {file_name}"
+    )
 
 
 @main.command(
-    help="Upload staged images (if any), commit all changes to metadata (frames.jsonl or index.json) "
-    "and/or associated files (files inside associated_files/), and push to server with given message. "
+    help="Upload staged images (if any), commit all changes to metadata "
+    "(frames.jsonl or index.json) and/or associated files (files inside associated_files/), "
+    "and push to server with given message. "
     "Note that associated files can be added by putting them into associated_files/ subdir "
     "before running 'publish'."
 )
@@ -410,7 +433,8 @@ def publish(local_dataset, message, skip_validation, tries):
 
 @main.command(
     "update-identity",
-    help="Updates the configuration of the selected dataset to match current conservator-cli configuration",
+    help="Updates the configuration of the selected dataset\
+        to match current conservator-cli configuration",
 )
 @pass_valid_local_dataset
 def update_identity(local_dataset):
@@ -441,9 +465,38 @@ def update_identity(local_dataset):
 
     git_config.set("user", "email", conservator.email)
 
-    with open(git_config_file, "w") as config_file:
+    with open(git_config_file, "w", encoding="UTF-8") as config_file:
         git_config.write(config_file)
         click.echo(f"Updated config file {git_config_file}")
+
+
+@main.command(
+    "add",
+    help="Deprecated; use stage-image instead.",
+)
+@click.argument("paths", type=click.Path(exists=True), nargs=-1, required=False)
+def add(paths):
+    click.echo("Deprecated; use stage-image instead.")
+
+
+@main.command(
+    "upload",
+    help="Deprecated; use upload-images instead.",
+)
+@click.option(
+    "--skip-copy",
+    is_flag=True,
+    required=False,
+)
+@click.option(
+    "-t",
+    "--tries",
+    type=int,
+    default=5,
+    required=False,
+)
+def upload(skip_copy, tries):
+    click.echo("Deprecated; use upload-images instead.")
 
 
 @click.group(help="Commands for manipulating local datasets")

@@ -26,18 +26,18 @@ the Conservator CLI library by following the :doc:`installation` guide.
     - Add/edit custom dataset/frame metadata
     - Adding, removing, or changing associated files
 
-.. note::
-    The ``--help`` option only provides subcommands and options for the command
-    it immediately follows. To get the options of a subcommand, you must explicitly
-    type it. For instance: ``cvc upload --help``.
+   The ``--help`` option only provides subcommands and options for the command
+   it immediately follows. To get the options of a subcommand, you must explicitly
+   type it. For example: ``cvc upload --help``.
 
 Overview
 --------
 
 The basic workflow to clone and download a dataset::
 
-    $ cvc clone DATASET_ID   # clone's the dataset repo into a subdirectory
-    $ cd "DATASET NAME/"     # the default directory is the name of the dataset
+    $ cvc clone DATASET_ID   # clones the dataset repo into a subdirectory
+    $ cd "DATASET NAME/"     # the dataset is cloned into a directory with the same name,
+                             # in the current working directory
     $ cvc download           # download media
 
 Now, you can make modifications to ``index.json`` or ``associated_files``. In
@@ -75,18 +75,28 @@ by editing JSONL, to ensure that you do not add any additional linebreaks.
 .. note::
     - If your dataset does not have JSONL files, committing it via the Conservator UI will generate those files, and they will be available the next time you clone or pull the dataset.
     - Any changes pushed to a dataset via ``cvc`` will be reflected in both ``index.json`` and the relevant JSONL file after the dataset has been pulled.
-    - If you try to commit and push changes to both ``index.json`` and one of the JSONL files at the same time, it will fail. You can only make changes to ``index.json`` or one of the JSONL files, but not to both at the same time.
+    - If you try to commit and push changes to both ``index.json`` and one of the JSONL files at the same time, it will fail. You cannot push changes to ``index.json`` and one of the JSONL files at the same time.
 
 
 Adding Frames
 ^^^^^^^^^^^^^
 
-You can stage new frames to be uploaded to a dataset using the ``add`` command::
+You can stage new frames to be uploaded to a dataset using the ``stage-image`` command::
 
-    $ cvc add path/to/some/file.jpg ../some/other/path.jpg etc.jpg
-    $ cvc add ./someimages/*.jpg
+    $ cvc stage-image path/to/some/file.jpg ../some/other/path.jpg etc.jpg
+    $ cvc stage-image ./someimages/*.jpg
 
-Then, upload and publish your new frames::
+This can be reverted using the ``unstage-image`` command::
+
+    $ cvc unstage-image path/to/some/file.jpg ../some/other/path.jpg etc.jpg
+
+To upload the images, use the ``upload-images`` command::
+
+    $ cvc upload-images
+
+This will upload the images to Conservator, and add frame data to your local ``index.json`` or ``frames.jsonl`` file.
+You can edit that data (to add e.g. tags, location, etc.) before committing and pushing it; or, you can upload your images,
+commit the changes to ``index.json`` or ``frames.jsonl``, and push them to Conservator in a single step using the ``publish`` command::
 
     $ cvc publish "Uploaded new frames"
 
@@ -95,17 +105,18 @@ will commit and push the changes to ``frames.jsonl``
 
 .. note::
    Uploading will also copy staged images alongside other downloaded dataset frames
-   in ``data/``. Pass ``--skip-copy`` to not copy frames.
-   Also note that, after adding frames, the new frame data will be available in both ``frames.jsonl`` __and__ ``index.json``.
+   into the ``data/`` folder. Use the ``--skip-copy`` option to not copy frames.
+   Do not move images manually into the dataset folder, or the data folder.
+   Also note that, after adding frames, the new frame data will be reflected in both ``frames.jsonl`` *and* ``index.json``.
 
 Additional Reference
 --------------------
 
-For information on any command, pass ``--help`` *after the command*. For instance::
+For information on any command, use the ``--help`` option *after the command*. For example::
 
     $ cvc download --help
 
-You can use the ``--log`` option before any command to set the log-level. For instance,
+You can use the ``--log`` option before any command to set the log-level. For example,
 to see debug prints while uploading some frames::
 
     $ cvc --log DEBUG upload
@@ -182,6 +193,7 @@ There are some limitations with datasets cloned with this method, as they are no
 full git repositories. In general, the only command that will work without error is
 ``cvc download``.
 
+
 Downloading Frames
 ^^^^^^^^^^^^^^^^^^
 
@@ -199,7 +211,7 @@ You can also include analytic data::
 This will be downloaded to ``analyticsData/``.
 
 By default, CVC performs 10 downloads in parallel at a time. For faster connections,
-you can increase this number by passing ``--pool-size`` (``-p`` for short)::
+you can increase this number by using the ``--pool-size`` option (``-p`` for short); for example::
 
     $ cvc download --pool-size 50  # download 50 frames at a time
 
@@ -221,7 +233,7 @@ Checkout a commit hash::
 
     $ cvc checkout COMMIT_HASH
 
-You can also use relative commit references. For instance, to
+You can also use relative commit references. For example, to
 reset to the most recent commit (such as when you want to return after
 checking out some other commit)::
 
@@ -263,13 +275,17 @@ Show changes in ``index.json`` and ``associated_files`` since last commit::
 Staging New Images
 ^^^^^^^^^^^^^^^^^^
 
-Stage images for uploading and adding to ``index.json``::
+Stage images for uploading::
 
-    $ cvc add some/path/to/a.jpg
+    $ cvc stage-image some/path/to/a.jpg
 
 All files must be valid JPEG images. You can specify as many paths
 as you want, including path wildcards. These images can be uploaded
-using the ``cvc upload`` or ``cvc publish`` commands.
+using the ``cvc upload-images`` or ``cvc publish`` commands.
+
+Images can be un-staged using the ``unstage-images`` command::
+
+    $ cvc unstage-image some/path/to/a.jpg
 
 
 Uploading and Adding Staged Images
@@ -277,11 +293,11 @@ Uploading and Adding Staged Images
 
 Upload any staged images, and add them to ``frames.jsonl``::
 
-    $ cvc upload
+    $ cvc upload-images
 
 By default, the staged images will also be copied to the local dataset's ``data/``
 directory. This way, you don't need to re-download the frames. To disable the copy,
-pass ``--skip-copy``.
+use the ``--skip-copy`` option.
 
 
 Validating Changes
