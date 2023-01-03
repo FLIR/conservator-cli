@@ -200,7 +200,7 @@ or::
 
     $ cvc download --include-raw
 
-This will be downloaded to ``rawData/``.
+This will download raw tiff images to ``rawData/``, if they exist for the dataset.
 
 By default, CVC performs 10 downloads in parallel at a time. For faster connections,
 you can increase this number by passing ``--pool-size`` (``-p`` for short)::
