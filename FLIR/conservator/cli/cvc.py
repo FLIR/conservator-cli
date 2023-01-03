@@ -291,7 +291,7 @@ def status(local_dataset):
 
 
 @main.command(help="Download media files from frames.jsonl or index.json")
-@click.option("-a", "--include-analytics", is_flag=True)
+@click.option("-r", "--include-raw", is_flag=True)
 @click.option(
     "-p",
     "--pool-size",
@@ -316,7 +316,7 @@ def status(local_dataset):
 )
 @pass_valid_local_dataset
 @check_git_config
-def download(local_dataset, include_analytics, pool_size, symlink, tries):
+def download(local_dataset, include_raw, pool_size, symlink, tries):
     if pool_size == 10:  # default
         yellow = "\x1b[33;21m"
         cyan = "\x1b[36;21m"
@@ -327,7 +327,7 @@ def download(local_dataset, include_analytics, pool_size, symlink, tries):
             f"For instance: {cyan}cvc download -p 50{reset}"
         )
     download_status = local_dataset.download(
-        include_analytics=include_analytics,
+        include_raw=include_raw,
         include_eight_bit=True,
         process_count=pool_size,
         use_symlink=symlink,
