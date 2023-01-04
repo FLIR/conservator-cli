@@ -1,36 +1,409 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   
+  <title>API Reference &mdash; Conservator CLI  documentation</title>
+  
+    
+    <meta name="robots" content="noindex">
+  
 
-    <title>API Reference &#8212; Conservator CLI  documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
-    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Conservator Upload Guide" href="usage/upload_script.html" />
+    <link rel="prev" title="Conservator Upload Guide" href="usage/upload_script.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="index.html" class="icon icon-home"> Conservator CLI
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/cli_quickstart.html">CLI Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/api_advanced.html">Advanced Python API Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage/upload_script.html">Conservator Upload Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.default"><code class="docutils literal notranslate"><span class="pre">Config.default()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.default_config_path"><code class="docutils literal notranslate"><span class="pre">Config.default_config_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.delete_saved_default_config"><code class="docutils literal notranslate"><span class="pre">Config.delete_saved_default_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.delete_saved_named_config"><code class="docutils literal notranslate"><span class="pre">Config.delete_saved_named_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.from_default_config_file"><code class="docutils literal notranslate"><span class="pre">Config.from_default_config_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.from_environ"><code class="docutils literal notranslate"><span class="pre">Config.from_environ()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.from_file"><code class="docutils literal notranslate"><span class="pre">Config.from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.from_input"><code class="docutils literal notranslate"><span class="pre">Config.from_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.named_config_path"><code class="docutils literal notranslate"><span class="pre">Config.named_config_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.save_to_default_config"><code class="docutils literal notranslate"><span class="pre">Config.save_to_default_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.save_to_file"><code class="docutils literal notranslate"><span class="pre">Config.save_to_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.config.Config.save_to_named_config"><code class="docutils literal notranslate"><span class="pre">Config.save_to_named_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.config.ConfigError"><code class="docutils literal notranslate"><span class="pre">ConfigError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator"><code class="docutils literal notranslate"><span class="pre">Conservator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator.create"><code class="docutils literal notranslate"><span class="pre">Conservator.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator.default"><code class="docutils literal notranslate"><span class="pre">Conservator.default()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator.generate_id"><code class="docutils literal notranslate"><span class="pre">Conservator.generate_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator.get_media_instance_from_id"><code class="docutils literal notranslate"><span class="pre">Conservator.get_media_instance_from_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator.get_user"><code class="docutils literal notranslate"><span class="pre">Conservator.get_user()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.conservator.UnknownMediaIdException"><code class="docutils literal notranslate"><span class="pre">UnknownMediaIdException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.dvc_hash_exists"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.dvc_hash_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_authenticated_url"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_authenticated_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_collection_url"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_collection_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_domain"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_domain()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_dvc_hash_url"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_dvc_hash_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_dvc_url"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_dvc_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_email"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_email()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_url"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.get_url_encoded_user"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.get_url_encoded_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.query"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.query()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection.run"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorGraphQLServerError"><code class="docutils literal notranslate"><span class="pre">ConservatorGraphQLServerError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorMalformedQueryException"><code class="docutils literal notranslate"><span class="pre">ConservatorMalformedQueryException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.file_transfers">File Transfers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download_if_missing"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers.download_if_missing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.download_many"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers.download_many()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.full_url"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers.full_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers.upload()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers.upload_many"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers.upload_many()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.DownloadRequest"><code class="docutils literal notranslate"><span class="pre">DownloadRequest</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileDownloadException"><code class="docutils literal notranslate"><span class="pre">FileDownloadException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileTransferException"><code class="docutils literal notranslate"><span class="pre">FileTransferException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileUploadException"><code class="docutils literal notranslate"><span class="pre">FileUploadException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.UploadRequest"><code class="docutils literal notranslate"><span class="pre">UploadRequest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.fields_manager.FieldsManager"><code class="docutils literal notranslate"><span class="pre">FieldsManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_manager.FieldsManager.select_default_fields"><code class="docutils literal notranslate"><span class="pre">FieldsManager.select_default_fields()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest"><code class="docutils literal notranslate"><span class="pre">FieldsRequest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest.create"><code class="docutils literal notranslate"><span class="pre">FieldsRequest.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest.exclude"><code class="docutils literal notranslate"><span class="pre">FieldsRequest.exclude()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest.exclude_field"><code class="docutils literal notranslate"><span class="pre">FieldsRequest.exclude_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest.exclude_fields"><code class="docutils literal notranslate"><span class="pre">FieldsRequest.exclude_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest.include"><code class="docutils literal notranslate"><span class="pre">FieldsRequest.include()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest.include_field"><code class="docutils literal notranslate"><span class="pre">FieldsRequest.include_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest.include_fields"><code class="docutils literal notranslate"><span class="pre">FieldsRequest.include_fields()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.type_proxy">TypeProxy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.ListTypeProxy"><code class="docutils literal notranslate"><span class="pre">ListTypeProxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.MissingFieldException"><code class="docutils literal notranslate"><span class="pre">MissingFieldException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.TypeProxy"><code class="docutils literal notranslate"><span class="pre">TypeProxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.type_proxy.requires_fields"><code class="docutils literal notranslate"><span class="pre">requires_fields()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.queryable">Queryable</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.queryable.InvalidIdException"><code class="docutils literal notranslate"><span class="pre">InvalidIdException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.queryable.QueryableType"><code class="docutils literal notranslate"><span class="pre">QueryableType</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.project">Project</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.project.Project"><code class="docutils literal notranslate"><span class="pre">Project</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.collection">Collection</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.collection.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.collection.InvalidRemotePathException"><code class="docutils literal notranslate"><span class="pre">InvalidRemotePathException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.collection.RemotePathExistsException"><code class="docutils literal notranslate"><span class="pre">RemotePathExistsException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.dataset">Dataset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.media">Media</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.media.MediaCompare"><code class="docutils literal notranslate"><span class="pre">MediaCompare</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.media.MediaType"><code class="docutils literal notranslate"><span class="pre">MediaType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.media.MediaUploadException"><code class="docutils literal notranslate"><span class="pre">MediaUploadException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.media.MediaUploadRequest"><code class="docutils literal notranslate"><span class="pre">MediaUploadRequest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.image">Image</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.image.Image"><code class="docutils literal notranslate"><span class="pre">Image</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.video">Video</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.video.Video"><code class="docutils literal notranslate"><span class="pre">Video</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.frame">Frame</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.frame.Frame"><code class="docutils literal notranslate"><span class="pre">Frame</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.dataset_frame">DatasetFrame</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame"><code class="docutils literal notranslate"><span class="pre">DatasetFrame</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.metadata">Metadata</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.metadata.MetadataType"><code class="docutils literal notranslate"><span class="pre">MetadataType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.metadata.MetadataUploadException"><code class="docutils literal notranslate"><span class="pre">MetadataUploadException</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.file_locker">FileLocker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerType"><code class="docutils literal notranslate"><span class="pre">FileLockerType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.wrappers.file_locker.FileLockerUploadException"><code class="docutils literal notranslate"><span class="pre">FileLockerUploadException</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager"><code class="docutils literal notranslate"><span class="pre">CollectionManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.create_from_parent_id"><code class="docutils literal notranslate"><span class="pre">CollectionManager.create_from_parent_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.create_from_path"><code class="docutils literal notranslate"><span class="pre">CollectionManager.create_from_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.create_from_remote_path"><code class="docutils literal notranslate"><span class="pre">CollectionManager.create_from_remote_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.create_root"><code class="docutils literal notranslate"><span class="pre">CollectionManager.create_root()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.from_remote_path"><code class="docutils literal notranslate"><span class="pre">CollectionManager.from_remote_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.from_string"><code class="docutils literal notranslate"><span class="pre">CollectionManager.from_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager.upload"><code class="docutils literal notranslate"><span class="pre">CollectionManager.upload()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.DatasetManager"><code class="docutils literal notranslate"><span class="pre">DatasetManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.DatasetManager.create"><code class="docutils literal notranslate"><span class="pre">DatasetManager.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.DatasetManager.from_local_path"><code class="docutils literal notranslate"><span class="pre">DatasetManager.from_local_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.DatasetManager.from_string"><code class="docutils literal notranslate"><span class="pre">DatasetManager.from_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.ImageManager"><code class="docutils literal notranslate"><span class="pre">ImageManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.ImageManager.from_string"><code class="docutils literal notranslate"><span class="pre">ImageManager.from_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.ProjectManager"><code class="docutils literal notranslate"><span class="pre">ProjectManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.ProjectManager.create"><code class="docutils literal notranslate"><span class="pre">ProjectManager.create()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.VideoManager"><code class="docutils literal notranslate"><span class="pre">VideoManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.VideoManager.from_string"><code class="docutils literal notranslate"><span class="pre">VideoManager.from_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.type_manager">TypeManager</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.type_manager.AmbiguousIdentifierException"><code class="docutils literal notranslate"><span class="pre">AmbiguousIdentifierException</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.type_manager.TypeManager"><code class="docutils literal notranslate"><span class="pre">TypeManager</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.searchable">SearchableTypeManager</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.searchable.SearchableTypeManager"><code class="docutils literal notranslate"><span class="pre">SearchableTypeManager</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.media">MediaTypeManager</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.media.MediaTypeManager"><code class="docutils literal notranslate"><span class="pre">MediaTypeManager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.managers.media.ProcessingTimeoutError"><code class="docutils literal notranslate"><span class="pre">ProcessingTimeoutError</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.paginated_query.ConcurrentQueryModificationException"><code class="docutils literal notranslate"><span class="pre">ConcurrentQueryModificationException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.excluding"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.excluding()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.excluding_fields"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.excluding_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.filtered_by"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.filtered_by()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.first"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.first()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.including"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.including()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.including_all_fields"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.including_all_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.including_fields"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.including_fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.page_size"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.page_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery.with_fields"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery.with_fields()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.local_dataset">LocalDataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.local_dataset.InvalidLocalDatasetPath"><code class="docutils literal notranslate"><span class="pre">InvalidLocalDatasetPath</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset"><code class="docutils literal notranslate"><span class="pre">LocalDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.add_local_changes"><code class="docutils literal notranslate"><span class="pre">LocalDataset.add_local_changes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.checkout"><code class="docutils literal notranslate"><span class="pre">LocalDataset.checkout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.clone"><code class="docutils literal notranslate"><span class="pre">LocalDataset.clone()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.commit"><code class="docutils literal notranslate"><span class="pre">LocalDataset.commit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.download"><code class="docutils literal notranslate"><span class="pre">LocalDataset.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_dataset_info"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_dataset_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_frames"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_frames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_image_info"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_image_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_index"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_jsonl_data"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_jsonl_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_max_frame_index"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_max_frame_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_staged_images"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_staged_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_videos"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_videos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.git_branch"><code class="docutils literal notranslate"><span class="pre">LocalDataset.git_branch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.git_status"><code class="docutils literal notranslate"><span class="pre">LocalDataset.git_status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.pull"><code class="docutils literal notranslate"><span class="pre">LocalDataset.pull()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.push_commits"><code class="docutils literal notranslate"><span class="pre">LocalDataset.push_commits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images"><code class="docutils literal notranslate"><span class="pre">LocalDataset.push_staged_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.stage_local_images"><code class="docutils literal notranslate"><span class="pre">LocalDataset.stage_local_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.unstage_local_images"><code class="docutils literal notranslate"><span class="pre">LocalDataset.unstage_local_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.validate_index"><code class="docutils literal notranslate"><span class="pre">LocalDataset.validate_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.validate_jsonl"><code class="docutils literal notranslate"><span class="pre">LocalDataset.validate_jsonl()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.write_frames_to_jsonl"><code class="docutils literal notranslate"><span class="pre">LocalDataset.write_frames_to_jsonl()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Conservator CLI</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>API Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <section id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">¶</a></h1>
@@ -2348,151 +2721,254 @@ Schema.</p>
 </section>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="usage/upload_script.html" class="btn btn-neutral float-left" title="Conservator Upload Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, Teledyne FLIR LLC.
+
+    </p>
+  </div> 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/logo.webp" alt="Logo"/>
-            </a></p>
-<h1 class="logo"><a href="index.html">Conservator CLI</a></h1>
 
+    </section>
 
+  </div>
+  
 
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
 
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="usage/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/cli_quickstart.html">CLI Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/api_quickstart.html">Python API Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/api_advanced.html">Advanced Python API Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/cvc_guide.html">CVC Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage/upload_script.html">Conservator Upload Guide</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.config">Config</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.config.ConfigError"><code class="docutils literal notranslate"><span class="pre">ConfigError</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.conservator">Conservator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.conservator.Conservator"><code class="docutils literal notranslate"><span class="pre">Conservator</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.conservator.UnknownMediaIdException"><code class="docutils literal notranslate"><span class="pre">UnknownMediaIdException</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.connection">Conservator Connection</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorConnection"><code class="docutils literal notranslate"><span class="pre">ConservatorConnection</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorGraphQLServerError"><code class="docutils literal notranslate"><span class="pre">ConservatorGraphQLServerError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.connection.ConservatorMalformedQueryException"><code class="docutils literal notranslate"><span class="pre">ConservatorMalformedQueryException</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.file_transfers">File Transfers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.ConservatorFileTransfers"><code class="docutils literal notranslate"><span class="pre">ConservatorFileTransfers</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.DownloadRequest"><code class="docutils literal notranslate"><span class="pre">DownloadRequest</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileDownloadException"><code class="docutils literal notranslate"><span class="pre">FileDownloadException</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileTransferException"><code class="docutils literal notranslate"><span class="pre">FileTransferException</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.FileUploadException"><code class="docutils literal notranslate"><span class="pre">FileUploadException</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.file_transfers.UploadRequest"><code class="docutils literal notranslate"><span class="pre">UploadRequest</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_manager">Fields Manager</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.fields_manager.FieldsManager"><code class="docutils literal notranslate"><span class="pre">FieldsManager</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.fields_request">Fields Request</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.fields_request.FieldsRequest"><code class="docutils literal notranslate"><span class="pre">FieldsRequest</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.wrappers">Wrappers and TypeProxies</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.type_proxy">TypeProxy</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.queryable">Queryable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.project">Project</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.collection">Collection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.dataset">Dataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.media">Media</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.image">Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.video">Video</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.frame">Frame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.dataset_frame">DatasetFrame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.metadata">Metadata</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.wrappers.file_locker">FileLocker</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.managers">Managers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.CollectionManager"><code class="docutils literal notranslate"><span class="pre">CollectionManager</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.DatasetManager"><code class="docutils literal notranslate"><span class="pre">DatasetManager</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.ImageManager"><code class="docutils literal notranslate"><span class="pre">ImageManager</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.ProjectManager"><code class="docutils literal notranslate"><span class="pre">ProjectManager</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.managers.VideoManager"><code class="docutils literal notranslate"><span class="pre">VideoManager</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.type_manager">TypeManager</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.searchable">SearchableTypeManager</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-FLIR.conservator.managers.media">MediaTypeManager</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.paginated_query">PaginatedQuery</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.paginated_query.ConcurrentQueryModificationException"><code class="docutils literal notranslate"><span class="pre">ConcurrentQueryModificationException</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.paginated_query.PaginatedQuery"><code class="docutils literal notranslate"><span class="pre">PaginatedQuery</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-FLIR.conservator.local_dataset">LocalDataset</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.local_dataset.InvalidLocalDatasetPath"><code class="docutils literal notranslate"><span class="pre">InvalidLocalDatasetPath</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset"><code class="docutils literal notranslate"><span class="pre">LocalDataset</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="usage/upload_script.html" title="previous chapter">Conservator Upload Guide</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2022, Teledyne FLIR LLC.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.0.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="_sources/api.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
+  
+  
     
-
     
-  </body>
+  <link rel="stylesheet" href="_static/fonts.css">
+  <link rel="stylesheet" href="../_static/fonts.css">
+  <style>
+    /*
+     Sidebar header (and topbar for mobile)
+     Teledyne FLIR blue
+    */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #0077c0;
+    }
+    /*!* Sidebar *!*/
+    .wy-nav-side {
+      background: #404040;
+    }
+
+    .rst-content .toctree-wrapper>p.caption, h1, h2, h3, h4, h5, h6, legend {
+        margin-top: 0;
+        font-weight: 700;
+        font-family: "Nunito Sans Regular",Arial,sans-serif;
+    }
+
+    .wy-side-nav-search .wy-dropdown>a, .wy-side-nav-search>a {
+        padding: 0;
+        margin-bottom: .2em;
+    }
+
+    .wy-nav-content {
+        max-width: 1100px;
+    }
+
+    /* Give the nav items a slightly bigger font */
+    .wy-menu-vertical a {
+      font-size: 105%;
+    }
+
+    .wy-side-nav-search>a img.logo {
+        width: 240px;
+    }
+
+    html {
+      font-family: "Nunito Sans Regular",Arial,sans-serif;
+      font-size: 14px;
+    }
+
+    p {
+      font-family: "Nunito Sans Regular",Arial,sans-serif;
+      font-size: 14px;
+    }
+
+    body {
+      font-family: "Nunito Sans Regular",Arial,sans-serif;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    h2 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    h3 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    h4 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    h5 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    h6 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    table {
+      width: auto;
+      max-width: 900px;
+    }
+
+    td:nth-child(even) {
+      max-width: 70%;
+      white-space: normal !important;
+    }
+
+    /* Slightly increase font on inline conde snippets (``my variable``). Default is 75% */
+    .rst-content code, .rst-content tt {
+        font-size: 80%;
+        padding-top: 3px;
+        padding-bottom: 2px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    /*
+     Teledyne FLIR blue
+    */
+    .wy-nav-content a, .wy-nav-content a:visited {
+      color: #0077c0;
+    }
+
+    .rst-content .section ul li>*, .rst-content .section ul.simple li ul, .rst-content .section ul, .rst-content .section ul li li {
+      margin-top: 4px;
+    }
+
+    .rst-content .line-block {
+      margin-bottom: 0;
+    }
+
+    /* Create three equal columns that floats next to each other */
+    .column {
+      float: left;
+      width: 33.33%;
+      padding-bottom: 10px;
+      padding-right: 4px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    /* Hide breadcrumbs because they do not seem to have any real function */
+    body > div > section > div > div > div:nth-child(1) {
+        display: none;
+    }
+
+    p.caption {
+        margin-top: 10px;
+    }
+
+    /* Collapsible elements */
+    details {
+        margin-top: 6px;
+        cursor: pointer;
+        font-size: 105%;
+    }
+
+    :root {
+        --sd-color-primary: #0f4b81;
+        --sd-color-secondary: #6c757d;
+        --sd-color-success: #28a745;
+        --sd-color-info: #17a2b8;
+        --sd-color-warning: #f0b37e;
+        --sd-color-danger: #dc3545;
+        --sd-color-light: #f8f9fa;
+        --sd-color-muted: #6c757d;
+        --sd-color-dark: #212529;
+        --sd-color-primary-highlight: #0069d9;
+        --sd-color-secondary-highlight: #5c636a;
+        --sd-color-success-highlight: #228e3b;
+        --sd-color-info-highlight: #148a9c;
+        --sd-color-warning-highlight: #cc986b;
+        --sd-color-danger-highlight: #bb2d3b;
+        --sd-color-light-highlight: #d3d4d5;
+        --sd-color-muted-highlight: #5c636a;
+        --sd-color-dark-highlight: #1c1f23;
+        --sd-color-primary-text: #fff;
+        --sd-color-secondary-text: #fff;
+        --sd-color-success-text: #fff;
+        --sd-color-info-text: #fff;
+        --sd-color-warning-text: #212529;
+        --sd-color-danger-text: #fff;
+        --sd-color-light-text: #212529;
+        --sd-color-muted-text: #fff;
+        --sd-color-dark-text: #fff;
+        --sd-color-shadow: rgba(0, 0, 0, 0.15);
+        --sd-color-card-border: rgba(0, 0, 0, 0.125);
+        --sd-color-card-border-hover: #0f4b81;
+        --sd-color-card-background: transparent;
+        --sd-color-card-text: inherit;
+        --sd-color-card-header: transparent;
+        --sd-color-card-footer: transparent;
+        --sd-color-tabs-label-active: #0077c0;
+        --sd-color-tabs-label-hover: #0077c0;
+        --sd-color-tabs-label-inactive: hsl(0, 0%, 66%);
+        --sd-color-tabs-underline-active: #0077c0;
+        --sd-color-tabs-underline-hover: rgba(178, 206, 245, 0.62);
+        --sd-color-tabs-underline-inactive: transparent;
+        --sd-color-tabs-overline: rgb(222, 222, 222);
+        --sd-color-tabs-underline: rgb(222, 222, 222);
+        --sd-fontsize-tabs-label: 14px
+    }
+
+    .sd-tab-set>label {
+        font-weight: 400;
+    }
+
+    /*.rst-content .toctree-wrapper ul {*/
+    /*  padding-bottom: 12px;*/
+    /*}*/
+
+  </style>
+  </style>
+
+
+</body>
 </html>
