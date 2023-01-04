@@ -848,8 +848,8 @@ class LocalDataset:
                 hash_links.append(path)
                 frame_count += 1
 
-            if include_raw and ("rawMd5" in frame):
-                md5 = frame["rawMd5"]
+            if include_raw and ("rawMd5" in frame or "analyticsMd5" in frame):
+                md5 = frame["rawMd5"] if "rawMd5" in frame else frame["analyticsMd5"]
                 name = (
                     f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
                 )
