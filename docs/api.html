@@ -10,9 +10,6 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -2147,14 +2144,14 @@ immediately available.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.download">
-<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_analytics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_eight_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_symlink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_eight_bit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_symlink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_meter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the files listed in <cite>frames.jsonl</cite> or <cite>index.json</cite> of the
 local dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>include_analytics</strong> – If <cite>True</cite>, download analytic data to
-<cite>analyticsData/</cite>.</p></li>
+<li><p><strong>include_raw</strong> – If <cite>True</cite>, download raw image data to
+<cite>rawData/</cite>.</p></li>
 <li><p><strong>include_eight_bit</strong> – If <cite>True</cite>, download eight-bit images to
 <cite>data/</cite>.</p></li>
 <li><p><strong>process_count</strong> – Number of concurrent download processes. Passing
@@ -2321,6 +2318,12 @@ downloading the images back from conservator (but without downloading).</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.unstage_local_images">
+<span class="sig-name descname"><span class="pre">unstage_local_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_paths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.unstage_local_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove image paths from the staging file.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.validate_index">
 <span class="sig-name descname"><span class="pre">validate_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.validate_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validates that the given <code class="docutils literal notranslate"><span class="pre">index.json</span></code> matches the expected JSON
@@ -2330,8 +2333,7 @@ Schema.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.validate_jsonl">
 <span class="sig-name descname"><span class="pre">validate_jsonl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.validate_jsonl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert the contents of the .jsonl files into <cite>index.json</cite> format and
-validate the result.</p>
+<dd><p>Validate jsonl files line-by-line</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2481,7 +2483,7 @@ validate the result.</p>
       &copy;2022, Teledyne FLIR LLC.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.0.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
