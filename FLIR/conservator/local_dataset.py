@@ -61,7 +61,7 @@ class LocalDataset:
         self.videos_path = os.path.join(self.path, "videos.jsonl")
         self.dataset_info_path = os.path.join(self.path, "dataset.jsonl")
         self.data_path = os.path.join(self.path, "data")
-        self.analytics_path = os.path.join(self.path, "analyticsData")
+        self.raw_data_path = os.path.join(self.path, "rawData")
         self.cvc_path = os.path.join(self.path, ".cvc")
         self.staging_path = os.path.join(self.cvc_path, ".staging.json")
         self.cache_path = conservator.config.cvc_cache_path
@@ -797,7 +797,7 @@ class LocalDataset:
 
     def download(
         self,
-        include_analytics=False,
+        include_raw=False,
         include_eight_bit=True,
         process_count=10,
         use_symlink=False,
@@ -808,8 +808,8 @@ class LocalDataset:
         Downloads the files listed in `frames.jsonl` or `index.json` of the
         local dataset.
 
-        :param include_analytics: If `True`, download analytic data to
-            `analyticsData/`.
+        :param include_raw: If `True`, download raw image data to
+            `rawData/`.
         :param include_eight_bit: If `True`, download eight-bit images to
             `data/`.
         :param process_count: Number of concurrent download processes. Passing
@@ -824,8 +824,8 @@ class LocalDataset:
         if include_eight_bit:
             os.makedirs(self.data_path, exist_ok=True)
 
-        if include_analytics:
-            os.makedirs(self.analytics_path, exist_ok=True)
+        if include_raw:
+            os.makedirs(self.raw_data_path, exist_ok=True)
 
         logger.info("Getting frames from frames.jsonl / index.json...")
         frame_count = 0
@@ -848,12 +848,12 @@ class LocalDataset:
                 hash_links.append(path)
                 frame_count += 1
 
-            if include_analytics and ("analyticsMd5" in frame):
-                md5 = frame["analyticsMd5"]
+            if include_raw and ("rawMd5" in frame):
+                md5 = frame["rawMd5"]
                 name = (
                     f"video-{video_id}-frame-{frame_index:06d}-{dataset_frame_id}.tiff"
                 )
-                path = os.path.join(self.analytics_path, name)
+                path = os.path.join(self.raw_data_path, name)
 
                 hash_links = hashes_required.setdefault(md5, [])
                 hash_links.append(path)

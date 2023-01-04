@@ -502,8 +502,8 @@ class CreateDatasetFrameInput(sgqlc.types.Input):
         "spectrum",
         "md5",
         "file_size",
-        "analytics_md5",
-        "analytics_file_size",
+        "raw_md5",
+        "raw_file_size",
         "preview_md5",
         "preview_file_size",
         "custom_metadata",
@@ -537,8 +537,8 @@ class CreateDatasetFrameInput(sgqlc.types.Input):
     spectrum = sgqlc.types.Field(Spectrum, graphql_name="spectrum")
     md5 = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="md5")
     file_size = sgqlc.types.Field(sgqlc.types.non_null(Float), graphql_name="fileSize")
-    analytics_md5 = sgqlc.types.Field(String, graphql_name="analyticsMd5")
-    analytics_file_size = sgqlc.types.Field(Float, graphql_name="analyticsFileSize")
+    raw_md5 = sgqlc.types.Field(String, graphql_name="rawMd5")
+    raw_file_size = sgqlc.types.Field(Float, graphql_name="rawFileSize")
     preview_md5 = sgqlc.types.Field(
         sgqlc.types.non_null(String), graphql_name="previewMd5"
     )
@@ -2128,8 +2128,8 @@ class DatasetFrame(sgqlc.types.Type):
         "qa_status_note",
         "md5",
         "preview_md5",
-        "analytics_md5",
-        "analytics_file_size",
+        "raw_md5",
+        "raw_file_size",
         "location",
         "description",
         "spectrum",
@@ -2221,8 +2221,8 @@ class DatasetFrame(sgqlc.types.Type):
     qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
     md5 = sgqlc.types.Field(String, graphql_name="md5")
     preview_md5 = sgqlc.types.Field(String, graphql_name="previewMd5")
-    analytics_md5 = sgqlc.types.Field(String, graphql_name="analyticsMd5")
-    analytics_file_size = sgqlc.types.Field(Float, graphql_name="analyticsFileSize")
+    raw_md5 = sgqlc.types.Field(String, graphql_name="rawMd5")
+    raw_file_size = sgqlc.types.Field(Float, graphql_name="rawFileSize")
     location = sgqlc.types.Field(String, graphql_name="location")
     description = sgqlc.types.Field(String, graphql_name="description")
     spectrum = sgqlc.types.Field(String, graphql_name="spectrum")
@@ -2285,8 +2285,8 @@ class DatasetFrameOnly(sgqlc.types.Type):
         "qa_status_note",
         "md5",
         "preview_md5",
-        "analytics_md5",
-        "analytics_file_size",
+        "raw_md5",
+        "raw_file_size",
         "dataset_frame_name",
         "attributes",
     )
@@ -2355,8 +2355,8 @@ class DatasetFrameOnly(sgqlc.types.Type):
     qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
     md5 = sgqlc.types.Field(String, graphql_name="md5")
     preview_md5 = sgqlc.types.Field(String, graphql_name="previewMd5")
-    analytics_md5 = sgqlc.types.Field(String, graphql_name="analyticsMd5")
-    analytics_file_size = sgqlc.types.Field(Float, graphql_name="analyticsFileSize")
+    raw_md5 = sgqlc.types.Field(String, graphql_name="rawMd5")
+    raw_file_size = sgqlc.types.Field(Float, graphql_name="rawFileSize")
     dataset_frame_name = sgqlc.types.Field(
         sgqlc.types.non_null(String), graphql_name="datasetFrameName"
     )
@@ -2554,7 +2554,7 @@ class Frame(sgqlc.types.Type):
         "annotation_label_data",
         "md5",
         "preview_md5",
-        "analytics_md5",
+        "raw_md5",
         "attributes",
         "is_flagged",
         "dataset_frames",
@@ -2637,7 +2637,7 @@ class Frame(sgqlc.types.Type):
     )
     md5 = sgqlc.types.Field(String, graphql_name="md5")
     preview_md5 = sgqlc.types.Field(String, graphql_name="previewMd5")
-    analytics_md5 = sgqlc.types.Field(String, graphql_name="analyticsMd5")
+    raw_md5 = sgqlc.types.Field(String, graphql_name="rawMd5")
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of(Attribute), graphql_name="attributes"
     )
@@ -2855,7 +2855,7 @@ class Image(sgqlc.types.Type):
         "readme",
         "image_md5",
         "image_preview_md5",
-        "image_analytics_md5",
+        "image_raw_md5",
         "owner",
         "has_write_access",
         "has_admin_access",
@@ -2946,7 +2946,7 @@ class Image(sgqlc.types.Type):
     readme = sgqlc.types.Field(String, graphql_name="readme")
     image_md5 = sgqlc.types.Field(String, graphql_name="imageMd5")
     image_preview_md5 = sgqlc.types.Field(String, graphql_name="imagePreviewMd5")
-    image_analytics_md5 = sgqlc.types.Field(String, graphql_name="imageAnalyticsMd5")
+    image_raw_md5 = sgqlc.types.Field(String, graphql_name="imageRawMd5")
     owner = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="owner")
     has_write_access = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean), graphql_name="hasWriteAccess"
