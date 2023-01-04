@@ -302,7 +302,12 @@ def status(local_dataset):
 
 
 @main.command(help="Download media files from frames.jsonl or index.json")
-@click.option("-r", "--include-raw", is_flag=True)
+@click.option(
+    "-r", "--include-raw", is_flag=True, help="Include raw TIFF images, if available"
+)
+@click.option(
+    "-a", "--include-analytics", is_flag=True, help="Deprecated; use -r option instead"
+)
 @click.option(
     "-p",
     "--pool-size",
@@ -327,7 +332,7 @@ def status(local_dataset):
 )
 @pass_valid_local_dataset
 @check_git_config
-def download(local_dataset, include_raw, pool_size, symlink, tries):
+def download(local_dataset, include_raw, include_analytics, pool_size, symlink, tries):
     if pool_size == 10:  # default
         yellow = "\x1b[33;21m"
         cyan = "\x1b[36;21m"
@@ -337,8 +342,10 @@ def download(local_dataset, include_raw, pool_size, symlink, tries):
             f"this up by rerunning with the -p (--process_count) option. "
             f"For instance: {cyan}cvc download -p 50{reset}"
         )
+    if include_analytics:
+        click.echo("The -a option has been deprecated; please use -r instead.")
     download_status = local_dataset.download(
-        include_raw=include_raw,
+        include_raw=include_raw or include_analytics,
         include_eight_bit=True,
         process_count=pool_size,
         use_symlink=symlink,
