@@ -204,11 +204,15 @@ Download all frames from ``index.json``::
 Frames will be downloaded to the ``data/`` directory within
 the dataset.
 
-You can also include analytic data::
+You can also include raw image data::
 
-    $ cvc download -a
+    $ cvc download -r
 
-This will be downloaded to ``analyticsData/``.
+or::
+
+    $ cvc download --include-raw
+
+This will download raw tiff images to ``rawData/``, if they exist for the dataset.
 
 By default, CVC performs 10 downloads in parallel at a time. For faster connections,
 you can increase this number by using the ``--pool-size`` option (``-p`` for short); for example::
