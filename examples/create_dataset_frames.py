@@ -38,7 +38,6 @@ def upload_image_and_return_metadata(upload_image_path, image_frame_index=0):
 
         headers = {
             "Content-type": "image/jpeg",
-            "x-amz-meta-originalfilename": file_name,
         }
         print(f"Uploading {upload_image_path}.")
         retry_count = 0

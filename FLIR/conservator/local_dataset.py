@@ -2,7 +2,8 @@
 # pylint: disable=missing-function-docstring
 # pylint: disable=missing-class-docstring
 # pylint: disable=super-init-not-called
-# pylint: disable=unspecified-encoding
+# pylint: disable=broad-except
+# pylint: disable=too-many-lines
 import collections
 import multiprocessing
 import subprocess
@@ -11,7 +12,6 @@ import json
 import shutil
 import logging
 import sys
-import tempfile
 import time
 import functools
 import requests
@@ -22,7 +22,6 @@ from PIL import Image
 from FLIR.conservator.file_transfers import FileDownloadException
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.util import md5sum_file, chunks
-from FLIR.conservator.jsonl_to_index_json import jsonl_to_json
 from FLIR.conservator.wrappers.dataset import Dataset
 
 logger = logging.getLogger(__name__)
@@ -74,8 +73,8 @@ class LocalDataset:
         if not os.path.exists(self.cvc_path):
             os.makedirs(self.cvc_path)
         if not os.path.exists(self.staging_path):
-            with open(self.staging_path, "w+") as f:
-                json.dump([], f)
+            with open(self.staging_path, "w+", encoding="UTF-8") as staging_file:
+                json.dump([], staging_file)
         logger.debug("Opened local dataset at %s", self.path)
 
     def pull(self, verbose=True):
@@ -107,13 +106,29 @@ class LocalDataset:
 
     def validate_jsonl(self):
         """
-        Convert the contents of the .jsonl files into `index.json` format and
-        validate the result.
+        Validate jsonl files line-by-line
         """
         jsonl_valid = True
-        with tempfile.NamedTemporaryFile(suffix=".json") as tmp_index:
-            jsonl_to_json(self.path, tmp_index.name)
-            jsonl_valid = self.validate_index(tmp_index.name)
+
+        jsonl_files = [
+            self.dataset_info_path,
+            self.frames_path,
+        ]
+
+        if os.path.exists(self.videos_path):
+            jsonl_files.append(self.videos_path)
+
+        schema_json = self.conservator.query(Query.validation_schema)
+        validation_schema = json.loads(schema_json)
+
+        for jsonl_file in jsonl_files:
+            with open(jsonl_file, "r", encoding="UTF-8") as jsonl_f:
+                for jsonl_line in jsonl_f:
+                    json_obj = json.loads(jsonl_line)
+                    jsonschema.validate(json_obj, validation_schema)
+                file_name = os.path.basename(jsonl_file)
+                print(f"{file_name} is valid")
+
         return jsonl_valid
 
     @staticmethod
@@ -122,7 +137,7 @@ class LocalDataset:
         Create a single JSON list object from a JSONL source file.
         """
         data_array = []
-        with open(jsonl_file, "r") as jsonl_f:
+        with open(jsonl_file, "r", encoding="UTF-8") as jsonl_f:
             for jsonl_line in jsonl_f:
                 data_array.append(json.loads(jsonl_line))
         return data_array
@@ -134,9 +149,9 @@ class LocalDataset:
         if not os.path.exists(self.dataset_info_path):
             logger.info("Skip write to frames.jsonl: Repository missing dataset.jsonl")
             return
-        with open(self.frames_path, "w") as f:
+        with open(self.frames_path, "w", encoding="UTF-8") as jsonl_frames:
             for frame in frames_list:
-                f.write(f"{json.dumps(frame, separators=(',', ':'))}\n")
+                jsonl_frames.write(f"{json.dumps(frame, separators=(',', ':'))}\n")
 
     def git_branch(self):
         """
@@ -440,19 +455,19 @@ class LocalDataset:
             )
             return
 
-        # Editing the `frames.jsonl` file is the preferred method.  For
-        # datasets committed prior to JSONL support, fall back to editing
-        # the `index.json` file.
+        # Editing the `index.json` file is the preferred method. If `index.json`
+        # is not correctly populated, use `frames.jsonl`
         jsonl_update = True
-        index = None
-        dataset_info = self.get_dataset_info()
-        if os.path.exists(self.dataset_info_path):
-            dataset_frames = self.get_frames()
-        else:
+        if self.is_index_usable():
             jsonl_update = False
-            index = self.get_index()
-            dataset_frames = index.get("frames", [])
+
+        new_frames = 0
+
+        dataset_frames = self.get_frames()
+
         next_index = LocalDataset.get_max_frame_index(dataset_frames) + 1
+
+        dataset_info = self.get_dataset_info()
 
         video_id = dataset_info["datasetId"]
 
@@ -518,6 +533,7 @@ class LocalDataset:
                     },
                 }
                 dataset_frames.append(new_frame)
+                new_frames += 1
                 logger.debug("Added new DatasetFrame with id %s", frame_id)
 
                 if copy_to_data:
@@ -543,17 +559,22 @@ class LocalDataset:
         if jsonl_update:
             self.write_frames_to_jsonl(dataset_frames)
         else:
-            with open(self.index_path, "w") as f:
-                json.dump(index, f, indent=1, sort_keys=True, separators=(",", ": "))
-        with open(self.staging_path, "w") as f:
-            json.dump([], f)
+            index = self.get_index()
+            index["frames"] = dataset_frames
+            with open(self.index_path, "w", encoding="UTF-8") as index_json:
+                json.dump(
+                    index, index_json, indent=1, sort_keys=True, separators=(",", ": ")
+                )
+        with open(self.staging_path, "w", encoding="UTF-8") as staging_file:
+            json.dump([], staging_file)
+
+        return new_frames
 
     def upload_image(self, path, md5, tries=5):
         url = self.conservator.get_dvc_hash_url(md5)
         filename = os.path.split(path)[1]
         headers = {
             "Content-type": "image/jpeg",
-            "x-amz-meta-originalfilename": filename,
         }
         logger.info("Uploading '%s'.", path)
         retry_count = 0
@@ -568,6 +589,8 @@ class LocalDataset:
                     continue
             else:
                 break
+        logger.info("response status code is %s", put_response.status_code)
+        logger.info(put_response)
         assert put_response.status_code == 200
         assert put_response.headers["ETag"] == f'"{md5}"'
 
@@ -575,8 +598,8 @@ class LocalDataset:
         """
         Returns the object in ``index.json``.
         """
-        with open(self.index_path, "r") as f:
-            return json.load(f)
+        with open(self.index_path, "r", encoding="UTF-8") as index_json:
+            return json.load(index_json)
 
     def get_frames(self):
         """
@@ -586,7 +609,7 @@ class LocalDataset:
         using the `index.json` file.
         """
         dataset_frames = []
-        if os.path.exists(self.dataset_info_path):
+        if os.path.exists(self.frames_path):
             # An empty dataset won't have "frames.jsonl".
             if os.path.exists(self.frames_path):
                 dataset_frames = LocalDataset.get_jsonl_data(self.frames_path)
@@ -604,7 +627,7 @@ class LocalDataset:
         """
         dataset_info = {}
         if os.path.exists(self.dataset_info_path):
-            with open(self.dataset_info_path) as ds_f:
+            with open(self.dataset_info_path, encoding="UTF-8") as ds_f:
                 dataset_info = json.load(ds_f)
         else:
             index = self.get_index()
@@ -637,8 +660,8 @@ class LocalDataset:
         """
         Returns the staged image paths from the staging file.
         """
-        with open(self.staging_path, "r") as f:
-            return json.load(f)
+        with open(self.staging_path, "r", encoding="UTF-8") as staging_file:
+            return json.load(staging_file)
 
     def stage_local_images(self, image_paths):
         """
@@ -656,14 +679,30 @@ class LocalDataset:
                 return
 
         # Then add absolute paths to staging file
+        new_image_count = 0
         staged_images = self.get_staged_images()
         for image_path in image_paths:
             abspath = os.path.abspath(image_path)
             if abspath not in staged_images:
                 logger.info("Adding '%s' to staging file.", abspath)
                 staged_images.append(abspath)
-        with open(self.staging_path, "w") as f:
-            json.dump(staged_images, f)
+                new_image_count += 1
+        with open(self.staging_path, "w", encoding="UTF-8") as staging_file:
+            json.dump(staged_images, staging_file)
+        return new_image_count
+
+    def unstage_local_images(self, image_paths):
+        """
+        Remove image paths from the staging file.
+        """
+        staged_images = self.get_staged_images()
+        for image_path in image_paths:
+            abspath = os.path.abspath(image_path)
+            if abspath in staged_images:
+                logger.info("Removing '%s' from staging file.", abspath)
+                staged_images.remove(abspath)
+        with open(self.staging_path, "w", encoding="UTF-8") as staging_file:
+            json.dump(staged_images, staging_file)
 
     @staticmethod
     def get_image_info(path):
@@ -998,4 +1037,14 @@ class LocalDataset:
         except jsonschema.exceptions.ValidationError as validation_error:
             logger.error(validation_error.message)
             logger.debug(validation_error)
+        return False
+
+    def is_index_usable(self):
+        try:
+            index_data = self.get_index()
+            if "error" in index_data:
+                return False
+            return True
+        except Exception as ex:
+            logger.error(ex)
         return False

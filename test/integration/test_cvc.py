@@ -47,7 +47,7 @@ def test_publish_image(default_conservator, test_data):
     assert os.path.exists("Publish Image Dataset")
     os.chdir("Publish Image Dataset")
 
-    cvc_output = cvc("add", test_data / "jpg" / "cat_0.jpg")
+    cvc_output = cvc("stage-image", test_data / "jpg" / "cat_0.jpg")
     assert cvc_output.returncode == 0
     cvc_output = cvc("publish", "publish image test commit")
     assert cvc_output.returncode == 0
