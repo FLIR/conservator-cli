@@ -34,14 +34,13 @@ def test_add_commit_push_frame(conservator, test_data):
     assert local_path in staged_paths and len(staged_paths) == 1
 
     local_dset.push_staged_images()
-    assert os.path.exists(local_dset.frames_path)
     frames = local_dset.get_frames()
     assert len(frames) == 1
     assert len(local_dset.get_staged_images()) == 0
 
     local_dset.add_local_changes()
     status = local_dset.git_status()
-    assert os.path.basename(local_dset.frames_path) in status["added"]["staged"]
+    assert os.path.basename(local_dset.index_path) in status["modified"]["staged"]
 
     local_dset.commit("Test commit", verbose=False)
     status = local_dset.git_status()
