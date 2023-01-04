@@ -147,7 +147,7 @@ You can run tests manually::
     $ pytest test/integration
 
 .. note::
-    Integration tests require a local running instance of FLIR Conservator.
+    Integration tests require a local running instance of Conservator.
     For more info, see the ``README`` in the test directory.
 
 You can also build the docs manually::
