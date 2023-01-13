@@ -3171,6 +3171,7 @@ class Mutation(sgqlc.types.Type):
         "update_qa_status_note_annotation",
         "sign_in",
         "sign_out",
+        "forgot_password",
         "create_collection",
         "update_collection",
         "delete_collection",
@@ -3693,6 +3694,20 @@ class Mutation(sgqlc.types.Type):
                         sgqlc.types.non_null(String),
                         graphql_name="sessionId",
                         default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    forgot_password = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean),
+        graphql_name="forgotPassword",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "email",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String), graphql_name="email", default=None
                     ),
                 ),
             )
