@@ -1,0 +1,219 @@
+{% extends "!layout.html" %}
+  {% block htmltitle %} {{ super() }}
+    {# While in Beta we don't want this to be index, but remove this when we're public!! #}
+    <meta name="robots" content="noindex">
+  {% endblock %}
+
+  {% block footer %} {{ super() }}
+  <link rel="stylesheet" href="_static/fonts.css">
+  <link rel="stylesheet" href="../_static/fonts.css">
+  <style>
+    /*
+     Sidebar header (and topbar for mobile)
+     Teledyne FLIR blue
+    */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #0077c0;
+    }
+    /*!* Sidebar *!*/
+    .wy-nav-side {
+      background: #404040;
+    }
+
+    .rst-content .toctree-wrapper>p.caption, h1, h2, h3, h4, h5, h6, legend {
+        margin-top: 0;
+        font-weight: 700;
+        font-family: "Nunito Sans Regular",Arial,sans-serif;
+    }
+
+    .wy-side-nav-search .wy-dropdown>a, .wy-side-nav-search>a {
+        padding: 0;
+        margin-bottom: .2em;
+    }
+
+    .wy-nav-content {
+        max-width: 1100px;
+    }
+
+    /* Give the nav items a slightly bigger font */
+    .wy-menu-vertical a {
+      font-size: 105%;
+    }
+
+    .wy-side-nav-search>a img.logo {
+        width: 240px;
+    }
+
+    html {
+      font-family: "Nunito Sans Regular",Arial,sans-serif;
+      font-size: 14px;
+    }
+
+    p {
+      font-family: "Nunito Sans Regular",Arial,sans-serif;
+      font-size: 14px;
+    }
+
+    body {
+      font-family: "Nunito Sans Regular",Arial,sans-serif;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    h2 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    h3 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    h4 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    h5 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    h6 {
+      font-family: "Industry Book","Arial",sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    table {
+      width: auto;
+      max-width: 900px;
+    }
+
+    td:nth-child(even) {
+      max-width: 70%;
+      white-space: normal !important;
+    }
+
+    /* Slightly increase font on inline conde snippets (``my variable``). Default is 75% */
+    .rst-content code, .rst-content tt {
+        font-size: 80%;
+        padding-top: 3px;
+        padding-bottom: 2px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    /*
+     Teledyne FLIR blue
+    */
+    .wy-nav-content a, .wy-nav-content a:visited {
+      color: #0077c0;
+    }
+
+    .rst-content .section ul li>*, .rst-content .section ul.simple li ul, .rst-content .section ul, .rst-content .section ul li li {
+      margin-top: 4px;
+    }
+
+    .rst-content .line-block {
+      margin-bottom: 0;
+    }
+
+    /* Create three equal columns that floats next to each other */
+    .column {
+      float: left;
+      width: 33.33%;
+      padding-bottom: 10px;
+      padding-right: 4px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    /* Hide breadcrumbs because they do not seem to have any real function */
+    body > div > section > div > div > div:nth-child(1) {
+        display: none;
+    }
+
+    p.caption {
+        margin-top: 10px;
+    }
+
+    /* Collapsible elements */
+    details {
+        margin-top: 6px;
+        cursor: pointer;
+        font-size: 105%;
+    }
+
+    :root {
+        --sd-color-primary: #0f4b81;
+        --sd-color-secondary: #6c757d;
+        --sd-color-success: #28a745;
+        --sd-color-info: #17a2b8;
+        --sd-color-warning: #f0b37e;
+        --sd-color-danger: #dc3545;
+        --sd-color-light: #f8f9fa;
+        --sd-color-muted: #6c757d;
+        --sd-color-dark: #212529;
+        --sd-color-primary-highlight: #0069d9;
+        --sd-color-secondary-highlight: #5c636a;
+        --sd-color-success-highlight: #228e3b;
+        --sd-color-info-highlight: #148a9c;
+        --sd-color-warning-highlight: #cc986b;
+        --sd-color-danger-highlight: #bb2d3b;
+        --sd-color-light-highlight: #d3d4d5;
+        --sd-color-muted-highlight: #5c636a;
+        --sd-color-dark-highlight: #1c1f23;
+        --sd-color-primary-text: #fff;
+        --sd-color-secondary-text: #fff;
+        --sd-color-success-text: #fff;
+        --sd-color-info-text: #fff;
+        --sd-color-warning-text: #212529;
+        --sd-color-danger-text: #fff;
+        --sd-color-light-text: #212529;
+        --sd-color-muted-text: #fff;
+        --sd-color-dark-text: #fff;
+        --sd-color-shadow: rgba(0, 0, 0, 0.15);
+        --sd-color-card-border: rgba(0, 0, 0, 0.125);
+        --sd-color-card-border-hover: #0f4b81;
+        --sd-color-card-background: transparent;
+        --sd-color-card-text: inherit;
+        --sd-color-card-header: transparent;
+        --sd-color-card-footer: transparent;
+        --sd-color-tabs-label-active: #0077c0;
+        --sd-color-tabs-label-hover: #0077c0;
+        --sd-color-tabs-label-inactive: hsl(0, 0%, 66%);
+        --sd-color-tabs-underline-active: #0077c0;
+        --sd-color-tabs-underline-hover: rgba(178, 206, 245, 0.62);
+        --sd-color-tabs-underline-inactive: transparent;
+        --sd-color-tabs-overline: rgb(222, 222, 222);
+        --sd-color-tabs-underline: rgb(222, 222, 222);
+        --sd-fontsize-tabs-label: 14px
+    }
+
+    .sd-tab-set>label {
+        font-weight: 400;
+    }
+
+    /*.rst-content .toctree-wrapper ul {*/
+    /*  padding-bottom: 12px;*/
+    /*}*/
+
+  </style>
+  </style>
+{% endblock %}

@@ -11,7 +11,7 @@ just getting started, take a look at the :doc:`api_quickstart`, or check out
 GraphQL and SGQLC
 -----------------
 
-FLIR Conservator uses GraphQL. GraphQL is very useful in that it lets
+Conservator uses GraphQL. GraphQL is very useful in that it lets
 an API call specify what information it is interested in. For instance, if you
 want a list of all of the names of the `Projects` on Conservator, you don't
 need to also be sent the `metadata`, `file urls`, etc--You can just request the

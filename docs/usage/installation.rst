@@ -1,8 +1,8 @@
 Installation
 ============
 
-Basic Install
--------------
+Installation on Linux
+---------------------
 
 The easiest way to install Conservator CLI is with ``pip``::
 
@@ -17,14 +17,20 @@ your current Python Environment.
     on any currently open shells in order to fix your PATH
     https://github.com/FLIR/conservator-cli/issues/281
 
+
+.. _configuring_cli:
+
+Configuring Conservator-CLI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Before you can use the command, you need to tell Conservator-CLI your API key and
 other settings. Log in to your conservator instance, and find your API key. Then run::
 
     $ conservator config create default
 
-Conservator CLI will ask you for your API key, and some other settings.
-The defaults should work for most users. These settings will be
-saved in a config file for future use. To verify that they're correct, run::
+Conservator CLI will ask you for your API key, the URL you use to access Conservator,
+and some other settings. These settings will be saved in a config file for future use.
+To verify that they're correct, run::
 
     $ conservator whoami
 
@@ -38,8 +44,65 @@ If you want to change credentials, you can edit your config by running::
 For developers working with multiple conservator instances, you can add
 multiple configs. Conservator CLI stores its configurations as json files in ``~/.config/conservator-cli``.
 For example, the default configuration will located at ``~/.config/conservator-cli/default.json``.
-See ``conservator config --help`` for more info.
+See ``conservator config --help`` for more information.
 
+
+Installation on Windows
+-----------------------
+
+Pre-installation
+^^^^^^^^^^^^^^^^
+
+ - Ensure that your Windows installation meets the mininum requirements detailed `here <https://learn.microsoft.com/en-us/windows/wsl/install>`_
+ - Ensure that virtualization is enabled on your system. Consult your vendor documentation for details.
+
+Installing Windows Subsystem for Linux (WSL)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ - Open the Start menu, and type in "powershell".
+ - Right-click on the PowerShell icon, and select "Run as Administrator" from the menu.
+ - In the shell, type:
+   ::
+
+        $ wsl --install
+
+   This will start the WSL installation process. Once it is complete, you will be prompted to reboot,
+   which will finish the installation process.
+ - After Windows has restarted, and you have logged back in, an Ubuntu command prompt should open automatically.
+   If it doesn't, open the Start menu, and type in "ubuntu"; clicking the displayed icon will open the Ubuntu terminal.
+ - See the `Microsoft WSL Troubleshooting Guide <https://docs.microsoft.com/en-us/windows/wsl/troubleshooting#installation-issues>`_
+   for any issues with WSL installation.
+
+
+Configuring Ubuntu and Installing Conservator-CLI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the Ubuntu shell:
+ - When prompted, enter a username and password to use with Ubuntu.
+ - Enter the following commands:
+   ::
+
+        $ sudo apt update
+        $ sudo ln -s /usr/bin/python3 /usr/local/bin/python
+        $ sudo apt install -y python3-pip
+        $ pip install conservator-cli
+        $ source ~/.profile
+
+   These commands will configure Python3, and install Conservator-CLI on your system.
+
+
+Configuring Git
+^^^^^^^^^^^^^^^
+
+To configure Git on WSL, use the following commands::
+
+    $ git config --global user.email "you@example.com"
+    $ git config --global user.name "Your Name"
+
+Replace "you@example.com" with the email address you use to log in to Conservator, and "Your Name" with your name.
+
+Once Git has been configured on your WSL system, you can follow the instructions in :ref:`configuring_cli` to configure
+Conservator-CLI.
 
 Developers
 ----------
@@ -84,7 +147,7 @@ You can run tests manually::
     $ pytest test/integration
 
 .. note::
-    Integration tests require a local running instance of FLIR Conservator.
+    Integration tests require a local running instance of Conservator.
     For more info, see the ``README`` in the test directory.
 
 You can also build the docs manually::

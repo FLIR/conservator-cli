@@ -1,0 +1,9 @@
+{
+  "#description": "Lexus IS350 Sedan",
+  "#cam_pos_WF": "Camera Position World Frame (WF). X,Y,Z, -> Z is up, X is right, Y is forward. (X-Y plane is ground plane)",
+  "#rpy_deg": "rpy = roll pitch yaw in degrees. Camera Frame (CF): x is right, y is down, and z is forward",
+  "##rpy_deg": "It is best to overestimate the height of the horizon (higher horizon means more feature points will be used for background registration)",
+  "cam_pos_WF": [0, 0, 1.42],
+  "rpy_deg": [100, 0, 0],
+  "zoom_setting": 0.00
+}

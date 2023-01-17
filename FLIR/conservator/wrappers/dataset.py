@@ -388,6 +388,18 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
 
         return got_new_commit
 
+    def wait_for_dataset_commit(self):
+        """Wait for the server to create the first commit to a new dataset."""
+        done = False
+        for _ in range(60):
+            time.sleep(1)
+            dset = self._conservator.datasets.from_id(self.id)
+            dset.populate(["git_commit_state"])
+            if dset and dset.git_commit_state == "completed":
+                done = True
+                break
+        return done
+
     @classmethod
     def from_local_path(cls, conservator, path="."):
         """Returns a new Dataset instance using the ID found in ``index.json``

@@ -1,7 +1,11 @@
 # NOTE: If a package is required for conservator-cli to run, also include it in setup.py
+graphql-core == 3.2.1; python_version<'3.7'
 wheel
 sphinx
-sgqlc >= 13
+sphinx_rtd_theme
+myst-parser
+sgqlc >= 13; python_version>='3.7'
+sgqlc == 16.0; python_version<'3.7'
 click >= 8
 tqdm
 pytest
@@ -13,3 +17,4 @@ dataclasses; python_version<'3.7'
 pymongo
 # docker is for building conservator image from inside jenkins pipeline
 docker
+semver == 2.13.0

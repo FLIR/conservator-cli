@@ -17,7 +17,6 @@ from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.wrappers.file_locker import FileLockerType
-from FLIR.conservator.wrappers.queryable import QueryableType
 
 
 logger = logging.getLogger(__name__)
@@ -238,6 +237,7 @@ class Collection(QueryableType, FileLockerType):
         return datasets
 
     def create_dataset(self, name, fields=None):
+        """Creates a dataset in the current folder/project"""
         return self._conservator.datasets.create(
             name, collections=[self], fields=fields
         )

@@ -1,21 +1,21 @@
-import logging
-
+"""
+Example of how to upload multiple videos to a folder in parallel
+"""
 from FLIR.conservator.conservator import Conservator
 
-logging.basicConfig(level="INFO")
 conservator = Conservator.default()
 
 # Conservator collection path
-remote_path = f"/CLI Examples/Upload Many Videos"
+FOLDER_PATH = "/CLI Examples/Upload Many Videos"
 
 # Local path. This example will upload the file at this path 10 times.
-local_path = "~/datasets/flir-data/unit-test-data/videos/adas_test.mp4"
-number_of_copies = 10
+FILE_PATH = "~/datasets/flir-data/unit-test-data/videos/adas_test.mp4"
+NO_OF_COPIES = 10
 
 # Get collection:
 print("Getting collection")
 collection = conservator.collections.from_remote_path(
-    remote_path, make_if_no_exist=True, fields="id"
+    FOLDER_PATH, make_if_no_exist=True, fields="id"
 )
 assert collection is not None
 
@@ -25,7 +25,7 @@ assert collection is not None
 # The first option will use the local file name for the remote name, and
 # is probably perfect for most use cases. However in this example we want
 # our remote names to be unique:
-upload_tuples = [(local_path, f"upload_many_test_{i}") for i in range(number_of_copies)]
+upload_tuples = [(FILE_PATH, f"upload_many_test_{i}") for i in range(NO_OF_COPIES)]
 
 print("Starting upload")
 media_ids = conservator.videos.upload_many_to_collection(

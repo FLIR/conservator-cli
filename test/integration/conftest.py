@@ -4,6 +4,7 @@ import os
 import secrets
 import shutil
 import subprocess
+import socket
 
 import pytest
 import pymongo
@@ -12,6 +13,10 @@ from FLIR.conservator.config import Config
 from FLIR.conservator.conservator import Conservator
 
 ADMIN_ROLE = "Conservator Administrator"
+
+PATH = os.path.dirname(os.path.realpath(__file__))
+DATA_FOLDER = os.path.realpath(os.path.join(PATH, "..", "data"))
+MP4_FOLDER = os.path.join(DATA_FOLDER, "mp4")
 
 
 @dataclasses.dataclass
@@ -35,6 +40,27 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
+
+    lfs_is_ok = check_git_lfs()
+
+    if not lfs_is_ok:
+        error_msg = """
+            git-lfs is not installed, or the repository was not initialized correctly
+            Please ensure that git-lfs is installed on your system, and then run `git lfs pull`
+            to ensure all binary files are checked out correctly
+            """
+        pytest.exit(error_msg)
+
+    mongo_dns_is_ok = check_conservator_mongo()
+
+    if not mongo_dns_is_ok:
+        error_msg = """
+            `conservator-mongo` is not configured as a host.
+            Please edit your `/etc/hosts` file to contain the following entry:
+            `127.0.0.1        conservator-mongo`
+            """
+        pytest.exit(error_msg)
+
     # deployment type of Conservator server comes from command-line parser
     test_settings.server_deployment = config.option.server_deployment
 
@@ -120,7 +146,7 @@ def mongo_client():
             "--insecure-skip-tls-verify",
             "port-forward",
             "service/conservator-mongo",
-            f"27017:27017",
+            "27017:27017",
         ]
     )
 
@@ -140,7 +166,7 @@ def db(mongo_client):
 
 @pytest.fixture(scope="class")
 def empty_db(db):
-    PRESERVED_COLLECTIONS = ["groups", "organizations", "allowedDomains"]
+    PRESERVED_COLLECTIONS = ["users", "groups", "organizations", "allowedDomains"]
     for name in db.list_collection_names():
         if name.startswith("system."):
             continue
@@ -171,16 +197,27 @@ def conservator(empty_db):
     else:
         admin_email = "admin@example.com"
 
-    empty_db.users.insert_one(
-        {
-            "_id": Conservator.generate_id(),
-            "role": ADMIN_ROLE,
-            "name": "admin user",
-            "email": admin_email,
-            "apiKey": api_key,
-            "organizationId": organization["_id"],
-        }
-    )
+    user = empty_db.users.find_one({"email": admin_email})
+    if user:
+        if "apiKey" not in user or (
+            "TEST_API_KEY" in os.environ and user["apiKey"] != api_key
+        ):
+            empty_db.users.update_one(
+                {"_id": user["_id"]}, {"$set": {"apiKey": api_key}}
+            )
+        else:
+            api_key = user["apiKey"]
+    else:
+        empty_db.users.insert_one(
+            {
+                "_id": Conservator.generate_id(),
+                "role": ADMIN_ROLE,
+                "name": "admin user",
+                "email": admin_email,
+                "apiKey": api_key,
+                "organizationId": organization["_id"],
+            }
+        )
     config = Config(
         CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=test_settings.conservator_url
     )
@@ -246,3 +283,29 @@ def upload_media(conservator, media):
         )
         media_ids.append(media_id)
     conservator.media.wait_for_processing(media_ids)
+
+
+def check_git_lfs():
+    which_result = subprocess.call(["which", "git-lfs"], stdout=subprocess.DEVNULL)
+
+    print(f"which result is: {which_result}")
+
+    if which_result != 0:
+        return False
+
+    mp4_file = os.path.join(MP4_FOLDER, "tower_gimbal.mp4")
+
+    result = str(subprocess.check_output(["file", mp4_file]))
+
+    if result.find("ASCII") != -1:
+        return False
+
+    return True
+
+
+def check_conservator_mongo():
+    try:
+        socket.gethostbyname("conservator-mongo")
+    except Exception:
+        return False
+    return True

@@ -1,7 +1,16 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
 import hashlib
 import logging
+import platform
+import sys
 
 from itertools import zip_longest
+
+import semver
+import requests
+
+from FLIR.conservator.version import version as cli_ver
 
 logger = logging.getLogger(__name__)
 
@@ -77,3 +86,46 @@ def chunks(list, size):
     .. note:: Adapted from  https://stackoverflow.com/a/312644
     """
     return zip_longest(*[iter(list)] * size, fillvalue=None)
+
+
+def get_conservator_cli_version():
+    # Get latest version from PyPi programatically
+    # See https://stackoverflow.com/a/62571316
+    response = requests.get("https://pypi.org/pypi/conservator-cli/json")
+    return response.json()["info"]["version"]
+
+
+def compare_conservator_cli_version():
+    current_version = semver.VersionInfo.parse(cli_ver)
+    latest_version = semver.VersionInfo.parse(get_conservator_cli_version())
+
+    if latest_version == current_version:
+        return True
+    if latest_version < current_version:
+        logger.warning("You are using Conservator-cli version %s", current_version)
+        logger.warning("Please upgrade to the latest version %s", latest_version)
+        return False
+    if latest_version > current_version:
+        logger.warning(
+            "You are using an unreleased version of Conservator-cli (%s)",
+            current_version,
+        )
+        logger.warning(
+            "Please be aware that this version may not be supported in the future"
+        )
+        logger.warning(
+            "For reference, the current supported version of Conservator-cli is %s",
+            latest_version,
+        )
+        return False
+
+
+def check_platform():
+    current_platform = platform.system()
+
+    if current_platform.lower() == "windows":
+        print("Conservator-CLI is currently only supported on Windows through WSL.")
+        print(
+            "Please see https://flir.github.io/conservator-cli/usage/installation.html#installation-on-windows for details"
+        )
+        sys.exit(1)

@@ -1,3 +1,6 @@
+"""
+Demonstrates QA actions on a video/image annotation
+"""
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated.schema import Mutation, UpdateQaStatusNoteInput
 
@@ -22,3 +25,15 @@ annotation = conservator.query(
 print("Note has been added!")
 
 print(annotation)
+
+# To approve an annotation:
+# annotation = conservator.query(
+#     Mutation.approve_annotation,
+#     id=annotation_id,
+# )
+
+# To unset qa status on an annotation:
+# annotation = conservator.query(
+#     Mutation.unset_qa_status_annotation,
+#     id=annotation_id,
+# )

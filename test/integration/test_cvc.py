@@ -1,3 +1,5 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
 """
 This tests the *actual* cvc CLI, no faking it with LocalDataset.
 
@@ -7,6 +9,7 @@ as used by the CLI commands.
 import os
 import subprocess
 from time import sleep
+import pytest
 
 
 def cvc(*args):
@@ -14,15 +17,18 @@ def cvc(*args):
         ["cvc", *map(str, args)],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        check=True,
     )
 
 
-def test_empty_clone(default_conservator, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_empty_clone(default_conservator):
     dataset = default_conservator.datasets.create("My dataset")
     assert dataset is not None
+    assert dataset.wait_for_dataset_commit()
 
-    p = cvc("clone", dataset.id)
-    assert p.returncode == 0
+    clone_output = cvc("clone", dataset.id)
+    assert clone_output.returncode == 0
     assert os.path.exists("My dataset")
 
     # We can check the right thing was downloaded by comparing the IDs
@@ -30,23 +36,25 @@ def test_empty_clone(default_conservator, tmp_cwd):
     assert cloned_dataset.id == dataset.id
 
 
-def test_publish_image(default_conservator, tmp_cwd, test_data):
-    dataset = default_conservator.datasets.create("My dataset")
+@pytest.mark.usefixtures("tmp_cwd")
+def test_publish_image(default_conservator, test_data):
+    dataset = default_conservator.datasets.create("Publish Image Dataset")
     assert dataset is not None
+    assert dataset.wait_for_dataset_commit()
 
-    p = cvc("clone", dataset.id)
-    assert p.returncode == 0
-    assert os.path.exists("My dataset")
-    os.chdir("My dataset")
+    cvc_output = cvc("clone", dataset.id)
+    assert cvc_output.returncode == 0
+    assert os.path.exists("Publish Image Dataset")
+    os.chdir("Publish Image Dataset")
 
-    p = cvc("add", test_data / "jpg" / "cat_0.jpg")
-    assert p.returncode == 0
-    p = cvc("publish", "My test commit")
-    assert p.returncode == 0
+    cvc_output = cvc("stage-image", test_data / "jpg" / "cat_0.jpg")
+    assert cvc_output.returncode == 0
+    cvc_output = cvc("publish", "publish image test commit")
+    assert cvc_output.returncode == 0
 
     dataset.wait_for_history_len(3, max_tries=100)
     latest_commit = dataset.get_commit_by_id("HEAD")
-    assert latest_commit.short_message == "My test commit"
+    assert latest_commit.short_message == "publish image test commit"
 
     # Load new values
     dataset.populate()
@@ -61,19 +69,21 @@ def test_publish_image(default_conservator, tmp_cwd, test_data):
     assert uploaded_frame.height == 375
 
 
-def test_cvc_clone_download(default_conservator, tmp_cwd, test_data):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_cvc_clone_download(default_conservator, test_data):
     dataset = default_conservator.datasets.create("My dataset")
+    assert dataset.wait_for_dataset_commit()
     media_id = default_conservator.media.upload(test_data / "mp4" / "adas_thermal.mp4")
     default_conservator.media.wait_for_processing(media_id)
     video = default_conservator.get_media_instance_from_id(media_id)
-    video.populate("frames")
-    dataset.add_frames(video.frames)
+    frames = video.get_frames()
+    dataset.add_frames(frames)
     commit_message = "Add video frames to dataset"
     dataset.commit(commit_message)
 
     # wait up to 30 sec for commit to appear.
     history = []
-    for i in range(30):
+    for _ in range(30):
         sleep(1)
         history = dataset.get_commit_history(fields="short_message")
         if history[0].short_message == commit_message:
@@ -84,10 +94,10 @@ def test_cvc_clone_download(default_conservator, tmp_cwd, test_data):
     cvc("clone", dataset.id)
     os.chdir("My dataset")
 
-    p = cvc("download")
-    assert p.returncode == 0
+    download_output = cvc("download")
+    assert download_output.returncode == 0
 
     assert os.path.exists("data")
     assert os.path.isdir("data")
     files = os.listdir("data")
-    assert len(files) == len(video.frames)
+    assert len(files) == len(frames)
