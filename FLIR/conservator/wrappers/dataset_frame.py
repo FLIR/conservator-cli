@@ -121,6 +121,8 @@ class DatasetFrame(QueryableType):
                 input=annotation_create_input,
                 fields=fields,
             )
+        # If supplied an empty list, return the same.
+        return []
 
     def set_dataset_annotation_metadata(
         self, annotation_id: str, annotation_metadata: str, fields=None
