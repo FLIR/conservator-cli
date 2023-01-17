@@ -139,10 +139,10 @@ class DatasetFrame(QueryableType):
             fields=fields,
         )
 
-    def update_dataset_annotation(self, annotation, fields=None):
+    def update_dataset_annotation(self, annotation_input, annotation_id, fields=None):
         """
-        Updates existing annotation using the specified `UpdateDatasetAnnotationInput`
-        object.
+        Update existing annotation with ID annotation_id, using the specified
+        `UpdateAnnotationInput` object.
 
         Returns updated annotation with the specified `fields`.
         """
@@ -150,7 +150,8 @@ class DatasetFrame(QueryableType):
             Mutation.update_dataset_annotation,
             fields=fields,
             dataset_frame_id=self.id,
-            input=annotation,
+            dataset_annotation_id=annotation_id,
+            input=annotation_input,
         )
 
     def approve_dataset_annotation(self, annotation_id):
