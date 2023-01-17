@@ -66,7 +66,13 @@ def upload_dataset_metadata(conservator_cli, local_dir, commit_msg):
                 remote_anno.to_json()
             )  # turn into normal dict for field compare
 
-            for ignore_field in ("attributes", "custom_metadata", "custom", "source", "boundingBox"):
+            for ignore_field in (
+                "attributes",
+                "custom_metadata",
+                "custom",
+                "source",
+                "boundingBox",
+            ):
                 remote_anno.pop(ignore_field, None)
                 local_anno.pop(ignore_field, None)
 
@@ -79,7 +85,7 @@ def upload_dataset_metadata(conservator_cli, local_dir, commit_msg):
                 continue
 
             # yes need to make changes for this annotation; pack the fields into needed format
-            dataset_annotation_id = local_anno['id']
+            dataset_annotation_id = local_anno["id"]
             local_anno.pop("id")
             update_fields = {}
             for (key, value) in local_anno.items():
@@ -87,7 +93,9 @@ def upload_dataset_metadata(conservator_cli, local_dir, commit_msg):
                 update_fields[sgqlc.types.BaseItem._to_python_name(key)] = value
 
             update_anno_input = UpdateAnnotationInput(**update_fields)
-            dset_frame.update_dataset_annotation(update_anno_input, dataset_annotation_id)
+            dset_frame.update_dataset_annotation(
+                update_anno_input, dataset_annotation_id
+            )
 
         if "qaStatus" in local_frame.keys():
             if local_frame["qaStatus"] == "approved":
