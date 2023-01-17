@@ -89,7 +89,7 @@ def upload_dataset_metadata(conservator_cli, local_dir, commit_msg):
                 update_fields[sgqlc.types.BaseItem._to_python_name(key)] = value
 
             update_anno_input = UpdateDatasetAnnotationInput(**update_fields)
-            dset_frame.update_annotation(update_anno_input)
+            dset_frame.update_dataset_annotation(update_anno_input)
 
         if "qaStatus" in local_frame.keys():
             if local_frame["qaStatus"] == "approved":
