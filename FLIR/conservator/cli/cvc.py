@@ -176,7 +176,7 @@ def main(ctx, log, path, config):
 @click.pass_context
 def clone(ctx, identifier, path, checkout):
     if not check_dir_access(os.getcwd()):
-        click.echo(f"Cannot clone to directory {os.getcwd()}!")
+        click.secho(f"Cannot clone to directory {os.getcwd()}!", fg="red", bold=True)
         sys.exit(1)
     conservator = Conservator.create(ctx.obj["config_name"])
     dataset = conservator.datasets.from_string(identifier)
@@ -337,15 +337,19 @@ def status(local_dataset):
 @check_git_config
 def download(local_dataset, include_raw, include_analytics, pool_size, symlink, tries):
     if include_raw and not check_dir_access(local_dataset.data_path):
-        click.echo(f"Cannot write to {local_dataset.data_path}!")
+        click.secho(f"Cannot write to {local_dataset.data_path}!", fg="red", bold=True)
         sys.exit(1)
 
     if include_analytics and not check_dir_access(local_dataset.raw_data_path):
-        click.echo(f"Cannot write to {local_dataset.data_path}!")
+        click.secho(f"Cannot write to {local_dataset.data_path}!", fg="red", bold=True)
         sys.exit(1)
 
     if not check_dir_access(local_dataset.cache_path):
-        click.echo(f"Cannot write to cache directory ({local_dataset.cache_path})!")
+        click.secho(
+            f"Cannot write to cache directory ({local_dataset.cache_path})!",
+            fg="red",
+            bold=True,
+        )
         sys.exit(1)
 
     if pool_size == 10:  # default
