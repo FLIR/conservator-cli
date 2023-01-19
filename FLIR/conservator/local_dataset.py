@@ -75,6 +75,8 @@ class LocalDataset:
         if not os.path.exists(self.staging_path):
             with open(self.staging_path, "w+", encoding="UTF-8") as staging_file:
                 json.dump([], staging_file)
+        if not os.path.exists(self.cache_path):
+            os.makedirs(self.cache_path)
         logger.debug("Opened local dataset at %s", self.path)
 
     def pull(self, verbose=True):
