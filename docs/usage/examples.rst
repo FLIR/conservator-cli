@@ -63,6 +63,5 @@ The ``examples/upload_videos`` folder includes a script that can be used to uplo
 * ``video_annotation_qa.py``:
    A runnable script that demonstrates how to perform QA operations on a video annotation.
 
-* ``upload_dataset_metadata.py``:
-   Upload an index.json file from a dataset directory to commit local dataset frame annotation changes, including QA
-   status changes.
+* ``dataset_frame_annotation_qa_from_json.py``:
+   Apply a set of dataset frame annotation changes and QA settings from an input JSON file.
