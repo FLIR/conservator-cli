@@ -6,6 +6,7 @@ import os
 import platform
 import sys
 
+from pathlib import Path
 from itertools import zip_longest
 
 import semver
@@ -135,4 +136,6 @@ def check_platform():
 def check_dir_access(path_to_check):
     if os.path.exists(path_to_check):
         return os.access(path_to_check, os.W_OK)
-    return False
+    else:
+        parent_path = Path(path_to_check).parent
+        return os.access(parent_path, os.W_OK)
