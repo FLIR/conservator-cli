@@ -40,7 +40,6 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-
     lfs_is_ok = check_git_lfs()
 
     if not lfs_is_ok:

@@ -1,12 +1,10 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-module-docstring
 class DefaultMetadata:
-
     name: str
     cameras: dict
 
     def __init__(self, metadata: dict, name: str):
-
         self.name = name
         self.metadata = metadata
 
