@@ -1805,6 +1805,12 @@ objects.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.approve_dataset_annotation">
+<span class="sig-name descname"><span class="pre">approve_dataset_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.approve_dataset_annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approve an annotation within dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.flag">
 <span class="sig-name descname"><span class="pre">flag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.flag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flag the dataset frame.</p>
@@ -1820,6 +1826,12 @@ objects.</p>
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.request_changes">
 <span class="sig-name descname"><span class="pre">request_changes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.request_changes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Request changes to the dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.request_changes_annotation">
+<span class="sig-name descname"><span class="pre">request_changes_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.request_changes_annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request changes to an annotation within dataset frame.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1853,9 +1865,29 @@ objects.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.unset_qa_status_annotation">
+<span class="sig-name descname"><span class="pre">unset_qa_status_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.unset_qa_status_annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unset the QA status of an annotation within dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_dataset_annotation">
+<span class="sig-name descname"><span class="pre">update_dataset_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_dataset_annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update existing annotation with ID annotation_id, using the specified
+<cite>UpdateAnnotationInput</cite> object.</p>
+<p>Returns updated annotation with the specified <cite>fields</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_qa_status_note">
 <span class="sig-name descname"><span class="pre">update_qa_status_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qa_status_note</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_qa_status_note" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change the QA status note for a dataset frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_qa_status_note_annotation">
+<span class="sig-name descname"><span class="pre">update_qa_status_note_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qa_status_note</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.wrappers.dataset_frame.DatasetFrame.update_qa_status_note_annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the QA status note for an annotation within dataset frame.</p>
 </dd></dl>
 
 </dd></dl>
