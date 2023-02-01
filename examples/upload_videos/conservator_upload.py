@@ -148,7 +148,6 @@ def _update_custom_video_helper(
             != existing_destination["point_br"]
             or upload_rgbt["rectify"].get("apply_undistort") != existing_apply_undistort
         ):
-
             video_metadata["custom"]["rgbt"] = upload_rgbt
             has_updates = True
 
@@ -181,7 +180,6 @@ def update_video_meta_data(
     stats: Stats,
     dry_run: bool = True,
 ) -> bool:
-
     # ----------------------------------
     #     Preprocess Description
     # ----------------------------------
@@ -315,7 +313,6 @@ def upload_video_helper(local_path: str, remote_name: str, collection: Collectio
 
 
 def get_video_and_collection(filename: str, conservator_location: str):
-
     video = None
 
     try:
@@ -631,7 +628,6 @@ def upload_prism_capture(
             stats.upload_video_count += 1
     else:
         if _conservator.videos.is_uploaded_media_id_processed(thermal_video.id):
-
             if dry_run is False:
                 # When in dry run mode we only check location (no meta data)
 
@@ -693,7 +689,6 @@ def upload_prism_capture(
             stats.upload_video_count += 1
     else:
         if _conservator.videos.is_uploaded_media_id_processed(visible_video.id):
-
             if dry_run is False:
                 # When in dry run mode we only check location (no meta data)
 

@@ -300,7 +300,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             query_fields.append("frames")
 
         while True:
-
             frames = self._conservator.query(
                 query=Query.frames,
                 filter=frame_filter,
