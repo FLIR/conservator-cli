@@ -87,6 +87,11 @@ directory::
 
     $ conservator collections download ID -r -d -v -f -m
 
+Due to the potentially large number of files that may be present in a collection, if the
+download is interrupted before it can complete, running the same command again will
+resume the download where it left off.  Files that were partially downloaded or
+corrupted will be downloaded again.
+
 Downloading Media
 ------------------
 

@@ -163,7 +163,14 @@ def get_manager_command(type_manager, sgqlc_type, name):
             return True
 
         @group.command(
-            help="Download a Collection to the current directory, or the specified path."
+            help="""
+            Download a Collection to the current directory, or to the specified
+            path.
+
+            If this operation is interrupted, repeat the command to resume
+            where the previous run left off.  Partially-downloaded or
+            corrupted files will be downloaded again.
+            """
         )
         @click.argument("identifier")
         @click.argument("localpath", default=".")
