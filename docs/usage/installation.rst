@@ -46,6 +46,24 @@ multiple configs. Conservator CLI stores its configurations as json files in ``~
 For example, the default configuration will located at ``~/.config/conservator-cli/default.json``.
 See ``conservator config --help`` for more information.
 
+.. error::
+    If you get an error message when using Conservator-CLI on **OSX** such as::
+
+        Error: invalid API Key, please try again
+
+    or a stack trace ending with the message::
+
+        <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:992)>
+
+    It may be an issue with Python not having the correct SSL certificates installed. To fix it:
+
+        - Open Finder, and navigate to the `Applications` folder, in the root of your hard drive.
+        - Open the `Python 3.x` folder, where 3.x corresponds to the Python version you are using
+        - Double-click on the `Install Certificates.command` scripting
+
+    This should install the missing SSL certificates, and allow you to use Conservator-CLI as normal.
+
+
 
 Installation on Windows
 -----------------------
