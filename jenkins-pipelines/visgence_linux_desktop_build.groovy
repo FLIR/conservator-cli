@@ -3,7 +3,7 @@ pipeline {
     dockerfile {
       dir "test"
       label "visgence"
-      additionalBuildArgs "-t conservator-cli/test --no-cache"
+      additionalBuildArgs "-t conservator-cli/test"
       args "-u root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
