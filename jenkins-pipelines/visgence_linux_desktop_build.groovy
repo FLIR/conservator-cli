@@ -14,7 +14,7 @@ pipeline {
     stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
-        sh "echo 2.8.0 > conservator_cli/RELEASE-VERSION"
+        sh "echo 2.8.0 > RELEASE-VERSION"
         sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
       }
