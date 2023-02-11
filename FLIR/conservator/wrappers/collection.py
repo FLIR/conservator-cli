@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import shutil
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.file_transfers import DownloadRequest
@@ -282,6 +283,7 @@ class Collection(QueryableType, FileLockerType):
         include_metadata=False,
         include_associated_files=False,
         include_media=False,
+        overwrite_datasets=False,
         preview_videos=False,
         recursive=False,
     ):
@@ -302,7 +304,7 @@ class Collection(QueryableType, FileLockerType):
         if include_media:
             self.download_media(path, preview_videos=preview_videos)
         if include_datasets:
-            self.download_datasets(path)
+            self.download_datasets(path, overwrite=overwrite_datasets)
         if recursive:
             for id_ in self.child_ids:
                 child = Collection.from_id(self._conservator, id_)
@@ -314,6 +316,8 @@ class Collection(QueryableType, FileLockerType):
                     include_metadata,
                     include_associated_files,
                     include_media,
+                    overwrite_datasets,
+                    preview_videos,
                     recursive,
                 )
 
@@ -378,12 +382,24 @@ class Collection(QueryableType, FileLockerType):
             downloads.append(download)
         self._conservator.files.download_many(downloads, no_meter=no_meter)
 
-    def download_datasets(self, path, no_meter=False):
+    def download_datasets(self, path, no_meter=False, overwrite=False):
         """Clones and pulls all datasets in the collection."""
         fields = FieldsRequest()
         fields.include_field("name", "repository.master")
         datasets = self.get_datasets(fields=fields)
         for dataset in datasets:
             clone_path = os.path.join(path, dataset.name)
+            if os.path.exists(clone_path):
+                if not os.path.isdir(clone_path):
+                    logger.error(
+                        "The file at '%s' has the same name as a dataset, please remove or rename it.",
+                        clone_path)
+                    continue
+                if overwrite:
+                    logger.warning("Replacing existing dataset at %s", clone_path)
+                    shutil.rmtree(clone_path)
+                else:
+                    logger.warning("Skipping existing dataset at %s", clone_path)
+                    continue
             lds = LocalDataset.clone(dataset, clone_path=clone_path)
             lds.download(no_meter=no_meter)
