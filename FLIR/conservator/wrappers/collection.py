@@ -393,7 +393,8 @@ class Collection(QueryableType, FileLockerType):
                 if not os.path.isdir(clone_path):
                     logger.error(
                         "The file at '%s' has the same name as a dataset, please remove or rename it.",
-                        clone_path)
+                        clone_path,
+                    )
                     continue
                 if overwrite:
                     logger.warning("Replacing existing dataset at %s", clone_path)

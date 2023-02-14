@@ -170,7 +170,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             If this operation is interrupted, repeat the command to resume
             where the previous run left off.  Partially-downloaded or
             corrupted files will be downloaded again.  Datasets will only be
-            re-downloaded if the `--overwrite_datasets` option is supplied.
+            re-downloaded if the `--overwrite-datasets` option is supplied.
             """
         )
         @click.argument("identifier")
@@ -178,10 +178,12 @@ def get_manager_command(type_manager, sgqlc_type, name):
         @click.option("-d", "--datasets", is_flag=True, help="Pull datasets")
         @click.option(
             "-o",
-            "--overwrite_datasets",
+            "--overwrite-datasets",
             is_flag=True,
-            help=("When pulling datasets, remove any existing cloned datasets at the destination path" +
-                  " and re-download them (BEWARE possible data loss!)")
+            help=(
+                "When pulling datasets, remove any existing cloned datasets at the destination path"
+                + " and re-download them (BEWARE possible data loss!)"
+            ),
         )
         @click.option(
             "-v",
