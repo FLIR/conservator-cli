@@ -178,6 +178,13 @@ directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ conservator collections download ID -r -d -v -f -m
 </pre></div>
 </div>
+<p>Due to the potentially large number of files that may be present in a collection, if the
+download is interrupted before it can complete, running the same command again will
+resume the download where it left off.  Files that were partially downloaded or
+corrupted will be downloaded again.  Any existing dataset directories found in the target
+directory will not be downloaded again, unless the <cite>–overwrite-datasets</cite> option is
+supplied, in which case the dataset directories will be removed and re-downloaded (beware
+the risk of data loss when using this option).</p>
 </section>
 <section id="downloading-media">
 <h2>Downloading Media<a class="headerlink" href="#downloading-media" title="Permalink to this heading"></a></h2>
