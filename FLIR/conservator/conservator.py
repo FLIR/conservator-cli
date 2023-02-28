@@ -46,7 +46,7 @@ class Conservator(ConservatorConnection):
         self.videos = VideoManager(self)
         self.images = ImageManager(self)
         self.media = MediaTypeManager(self)
-        logger.debug(f"Created new Conservator with config '{config}'")
+        logger.debug("Created new Conservator with config '%s'", config)
 
     def __repr__(self):
         return f"<Conservator at {self.config.url}>"
@@ -68,8 +68,8 @@ class Conservator(ConservatorConnection):
         The beginning of the ID is based on the current time, and the remaining
         characters are random.
         """
-        t = time.time()
-        time_digits = base_convert(Conservator.ID_CHARSET_SIZE, t)[::-1]
+        now = time.time()
+        time_digits = base_convert(Conservator.ID_CHARSET_SIZE, now)[::-1]
         id_ = [Conservator.ID_CHARSET[i] for i in time_digits]
         remaining_digits = Conservator.ID_LENGTH - len(id_)
         id_ += random.sample(Conservator.ID_CHARSET, remaining_digits)
@@ -77,6 +77,9 @@ class Conservator(ConservatorConnection):
 
     @staticmethod
     def is_valid_id(id_):
+        """
+        Validate that the supplied ID is valid
+        """
         return re.fullmatch(
             r"^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$", id_
         )
@@ -87,6 +90,22 @@ class Conservator(ConservatorConnection):
         Returns a :class:`Conservator` using :meth:`Config.default() <FLIR.conservator.config.Config.default>`.
         """
         return Conservator(Config.default(save=save))
+
+    @staticmethod
+    def from_config_dict(config_dict):
+        """
+        Returns a :class:`Conservator` using a config constructed from
+        the supplied dict
+        """
+        conservator = None
+        try:
+            conservator = Conservator(Config.from_dict(config_dict))
+        except AttributeError:
+            raise RuntimeError(
+                "Could not connect using the supplied parameters!"
+            ) from None
+
+        return conservator
 
     @staticmethod
     def create(config_name=None, save=True):
@@ -134,5 +153,3 @@ class UnknownMediaIdException(Exception):
     """
     Raised when a media ID cannot be resolved to a Video or Image.
     """
-
-    pass

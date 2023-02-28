@@ -26,6 +26,14 @@ def pass_valid_local_dataset(func):
 
         if "conservator" in ctx_obj:
             conservator = ctx_obj["conservator"]
+        elif "url" in ctx_obj and "api_key" in ctx_obj:
+            path = ctx_obj["cvc_local_path"]
+            config_dict = {
+                "CONSERVATOR_URL": ctx_obj["url"],
+                "CONSERVATOR_API_KEY": ctx_obj["api_key"],
+            }
+            conservator = Conservator.from_config_dict(config_dict)
+            ctx_obj["conservator"] = conservator
         else:
             path = ctx_obj["cvc_local_path"]
             conservator = Conservator.create(ctx_obj["config_name"])
@@ -143,9 +151,11 @@ def check_git_config(func):
 @click.option(
     "-p", "--path", default=".", help="Path to dataset, defaults to current directory"
 )
+@click.option("-u", "--url", help="URL of Conservator instance to connect to")
+@click.option("-k", "--api-key", help="API Key to use when connecting to Conservator")
 @click.version_option(prog_name="conservator-cli", package_name="conservator-cli")
 @click.pass_context
-def main(ctx, log, path, config):
+def main(ctx, log, path, config, url, api_key):
     check_platform()
     levels = {
         "DEBUG": logging.DEBUG,
@@ -159,6 +169,16 @@ def main(ctx, log, path, config):
     ctx.ensure_object(dict)
     ctx.obj["config_name"] = config
     ctx.obj["cvc_local_path"] = path
+    if url is None and api_key is not None:
+        click.secho("Must provide either both url and api_key, or neither!", fg="red")
+        sys.exit(1)
+    if url is not None and api_key is None:
+        click.secho("Must provide either both url and api_key, or neither!", fg="red")
+        sys.exit(1)
+    if url is not None:
+        ctx.obj["url"] = url
+    if api_key is not None:
+        ctx.obj["api_key"] = api_key
 
 
 @main.command(help="Clone a dataset by id, path, or name (if unique)")
@@ -173,9 +193,16 @@ def main(ctx, log, path, config):
 @click.option(
     "-c", "--checkout", help="If specified, a commit hash to checkout after cloning"
 )
+@click.option("-u", "--url", help="URL of Conservator instance to connect to")
+@click.option("-k", "--api-key", help="API Key to use when connecting to Conservator")
 @click.pass_context
-def clone(ctx, identifier, path, checkout):
-    conservator = Conservator.create(ctx.obj["config_name"])
+def clone(ctx, identifier, path, checkout, url, api_key):
+    if url is not None and api_key is not None:
+        config_dict = {"CONSERVATOR_URL": url, "CONSERVATOR_API_KEY": api_key}
+        conservator = Conservator.from_config_dict(config_dict)
+    else:
+        conservator = Conservator.create(ctx.obj["config_name"])
+
     dataset = conservator.datasets.from_string(identifier)
     cloned = LocalDataset.clone(dataset, path)
     if checkout is not None:

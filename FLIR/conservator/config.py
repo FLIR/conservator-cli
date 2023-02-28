@@ -31,17 +31,13 @@ class ConfigAttribute:
         self.validator = validator
 
 
-"""
-validators for config fields
-
-input argument 'd' is dict of config data containing the field of interest
-"""
-
-
-def validate_max_retries(d):
+def validate_max_retries(config_dict):
+    """
+    Validates max retries value in a config
+    """
     retries_ok = False
     try:
-        max_retries = int(d["CONSERVATOR_MAX_RETRIES"])
+        max_retries = int(config_dict["CONSERVATOR_MAX_RETRIES"])
         if max_retries > 0:
             retries_ok = True
         else:
@@ -51,8 +47,11 @@ def validate_max_retries(d):
     return retries_ok
 
 
-def validate_cache_path(d):
-    cache_path = d["CONSERVATOR_CVC_CACHE_PATH"]
+def validate_cache_path(config_dict):
+    """
+    Validates cache path value in a config
+    """
+    cache_path = config_dict["CONSERVATOR_CVC_CACHE_PATH"]
     dir_ok = False
     try:
         os.makedirs(cache_path, exist_ok=True)
@@ -63,13 +62,16 @@ def validate_cache_path(d):
     return dir_ok
 
 
-def validate_url(d):
+def validate_url(config_dict):
+    """
+    Validates URL value in a config
+    """
     url_ok = False
     try:
         # does url have graphql endpoint?
-        check_url = ConservatorConnection.to_graphql_url(d["CONSERVATOR_URL"])
-        r = requests.head(check_url)
-        if r.status_code == 405:
+        check_url = ConservatorConnection.to_graphql_url(config_dict["CONSERVATOR_URL"])
+        response = requests.head(check_url, timeout=10)
+        if response.status_code == 405:
             url_ok = True
     except Exception:
         pass
@@ -79,11 +81,14 @@ def validate_url(d):
     return url_ok
 
 
-def validate_key(d):
+def validate_key(config_dict):
+    """
+    Validates API Key value in a config
+    """
     key_ok = False
 
     # check whether this is a valid config
-    config = Config.from_dict(d)
+    config = Config.from_dict(config_dict)
 
     # is API key accepted by server?
     connection = ConservatorConnection(config)
@@ -142,18 +147,21 @@ class Config:
 
     def __init__(self, **kwargs):
         for name, attr in Config.ATTRIBUTES.items():
-            v = kwargs.get(attr.internal_name, None)
-            if v is not None:
-                v = attr.type_(v)
-            if v is None:
-                v = attr.default
-            if v is None:
+            value = kwargs.get(attr.internal_name, None)
+            if value is not None:
+                value = attr.type_(value)
+            if value is None:
+                value = attr.default
+            if value is None:
                 raise ConfigError(f"Missing value for '{name}'")
-            assert type(v) == attr.type_
-            setattr(self, name, v)
+            assert isinstance(value, attr.type_)
+            setattr(self, name, value)
 
     @staticmethod
     def from_dict(data):
+        """
+        Construct a Config object from a dict
+        """
         return Config(**data)
 
     @staticmethod
@@ -172,28 +180,28 @@ class Config:
         # just show prompts, not errors from functions used to validate config
         logging.disable(logging.CRITICAL)
 
-        d = {}
+        config_dict = {}
         for name, attr in Config.ATTRIBUTES.items():
             # loop until user supplies a config that actually works
             while True:
                 if attr.default is None:
-                    v = input(f"{attr.friendly_name}: ")
+                    value = input(f"{attr.friendly_name}: ")
                 else:
-                    v = input(
+                    value = input(
                         f"{attr.friendly_name} (leave empty for {attr.default}): "
                     )
-                v = v.strip()
-                if len(v) == 0:
-                    v = attr.default
-                d[attr.internal_name] = v
+                value = value.strip()
+                if len(value) == 0:
+                    value = attr.default
+                config_dict[attr.internal_name] = value
                 # move on to next field if validator passes
-                if attr.validator(d):
+                if attr.validator(config_dict):
                     break
 
         # restore logging level to normal
         logging.disable(logging.NOTSET)
 
-        return Config.from_dict(d)
+        return Config.from_dict(config_dict)
 
     @staticmethod
     def from_file(path):
@@ -205,7 +213,7 @@ class Config:
         :param path: The path to the JSON config file.
         """
         try:
-            with open(path, "r") as config:
+            with open(path, "r", encoding="utf-8") as config:
                 data = json.load(config)
             if os.stat(path).st_mode & 0o777 != 0o600:
                 logger.warning("Changing config file mode to 0600.")
@@ -216,10 +224,16 @@ class Config:
 
     @classmethod
     def from_named_config_file(cls, name):
+        """
+        Create a config object from a named config file
+        """
         return Config.from_file(Config.named_config_path(name))
 
     @staticmethod
     def from_name(name):
+        """
+        Create a config object by config name
+        """
         return Config.from_named_config_file(name)
 
     @staticmethod
@@ -253,13 +267,16 @@ class Config:
         """
         directory = os.path.split(path)[0]
         os.makedirs(directory, exist_ok=True)
-        with open(path, "w") as f:
-            json.dump(self.to_dict(), f)
+        with open(path, "w", encoding="utf-8") as json_file:
+            json.dump(self.to_dict(), json_file)
         if os.stat(path).st_mode & 0o777 != 0o600:
             logger.warning("Changing config file mode to 600.")
             os.chmod(path, 0o600)
 
     def to_dict(self):
+        """
+        Return config object as a dict
+        """
         return {
             attr.internal_name: getattr(self, name)
             for name, attr in self.ATTRIBUTES.items()
@@ -298,6 +315,9 @@ class Config:
 
     @staticmethod
     def saved_config_names():
+        """
+        Returns a list of config names
+        """
         root_path = os.path.join(os.path.expanduser("~"), ".config", "conservator-cli")
         files = os.listdir(root_path)
         return [file[: -len(".json")] for file in files]
@@ -343,7 +363,7 @@ class Config:
             except Exception:
                 pass
             if creds is not None:
-                logger.debug(f"Created config from source: {source}")
+                logger.debug("Created config from source: %s", source)
                 if save and source == Config.from_input:
                     creds.save_to_default_config()
                 return creds
