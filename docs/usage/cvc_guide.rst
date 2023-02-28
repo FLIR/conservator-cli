@@ -54,6 +54,20 @@ If you need to pull remote changes::
 Note that an updated ``index.json`` file may reference new frames that will have
 to be downloaded (using ``cvc download``).
 
+Using CVC without configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to use CVC without creating a configuration, you can provide the
+Conservator instance URL and your API key on the command like, like so::
+
+    $ cvc clone DATASET_ID --url <CONSERVATOR_URL> --api-key <API_KEY>
+    $ cd "DATASET NAME/"
+    $ cvc --url <CONSERVATOR_URL> --api-key <API_KEY> download
+
+Note that, when cloning a dataset, the URL and API key must be provided *after* the dataset id;
+for all other operations, they must be *before* any other parameters, including the command name.
+
+
 ``index.json`` vs JSONL Files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
