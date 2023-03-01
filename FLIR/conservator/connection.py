@@ -1,3 +1,6 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=broad-except
+# pylint: disable=unnecessary-pass
 import re
 import urllib.parse
 import logging
@@ -30,6 +33,8 @@ class ConservatorMalformedQueryException(Exception):
     There was a problem with a GraphQL query, and it's the client's
     fault.
     """
+
+    pass
 
 
 class ConservatorGraphQLServerError(Exception):

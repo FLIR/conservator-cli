@@ -1,3 +1,6 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=broad-except
+# pylint: disable=unnecessary-pass
 import logging
 import random
 import re
@@ -153,3 +156,5 @@ class UnknownMediaIdException(Exception):
     """
     Raised when a media ID cannot be resolved to a Video or Image.
     """
+
+    pass
