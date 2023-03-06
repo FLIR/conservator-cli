@@ -1434,7 +1434,14 @@ class AttributePrototype(sgqlc.types.Type):
 
 class AuthPayload(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("session_id", "user", "error", "error_args", "initial_sign_in")
+    __field_names__ = (
+        "session_id",
+        "user",
+        "error",
+        "error_args",
+        "initial_sign_in",
+        "reset_password",
+    )
     session_id = sgqlc.types.Field(String, graphql_name="sessionId")
     user = sgqlc.types.Field("User", graphql_name="user")
     error = sgqlc.types.Field(String, graphql_name="error")
@@ -1442,6 +1449,9 @@ class AuthPayload(sgqlc.types.Type):
         sgqlc.types.list_of("ErrorArg"), graphql_name="errorArgs"
     )
     initial_sign_in = sgqlc.types.Field(Boolean, graphql_name="initialSignIn")
+    reset_password = sgqlc.types.Field(
+        sgqlc.types.list_of("ResetPassword"), graphql_name="resetPassword"
+    )
 
 
 class BoundingBox(sgqlc.types.Type):
@@ -3172,6 +3182,7 @@ class Mutation(sgqlc.types.Type):
         "sign_in",
         "sign_out",
         "forgot_password",
+        "reset_local_password_with_token",
         "create_collection",
         "update_collection",
         "delete_collection",
@@ -3708,6 +3719,28 @@ class Mutation(sgqlc.types.Type):
                     "email",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(String), graphql_name="email", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    reset_local_password_with_token = sgqlc.types.Field(
+        sgqlc.types.non_null("User"),
+        graphql_name="resetLocalPasswordWithToken",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "token",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String), graphql_name="token", default=None
+                    ),
+                ),
+                (
+                    "new_password",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="newPassword",
+                        default=None,
                     ),
                 ),
             )
@@ -8193,6 +8226,7 @@ class Query(sgqlc.types.Type):
     __field_names__ = (
         "annotations_by_video_id",
         "annotations_by_frame_id",
+        "get_email_from_reset_password_token",
         "collections",
         "collections_query_count",
         "collections_by_video_id",
@@ -8313,6 +8347,20 @@ class Query(sgqlc.types.Type):
                         sgqlc.types.non_null(GraphqlID),
                         graphql_name="frameId",
                         default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    get_email_from_reset_password_token = sgqlc.types.Field(
+        "ResetPassword",
+        graphql_name="getEmailFromResetPasswordToken",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "token",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String), graphql_name="token", default=None
                     ),
                 ),
             )
@@ -9807,6 +9855,23 @@ class Repository(sgqlc.types.Type):
     )
 
 
+class ResetPassword(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("email", "token")
+    email = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="email")
+    token = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="token")
+
+
+class ResetPasswordToken(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("id", "user_id", "created_at")
+    id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
+    user_id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="userId")
+    created_at = sgqlc.types.Field(
+        sgqlc.types.non_null(Float), graphql_name="createdAt"
+    )
+
+
 class SavedSearch(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
@@ -9921,6 +9986,7 @@ class User(sgqlc.types.Type):
         "user_data_stats",
         "user_data_stats_running",
         "user_data_usage",
+        "current_reset_password_email",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     email = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="email")
@@ -9949,6 +10015,9 @@ class User(sgqlc.types.Type):
         Boolean, graphql_name="userDataStatsRunning"
     )
     user_data_usage = sgqlc.types.Field(Float, graphql_name="userDataUsage")
+    current_reset_password_email = sgqlc.types.Field(
+        Boolean, graphql_name="currentResetPasswordEmail"
+    )
 
 
 class UserDataStats(sgqlc.types.Type):
