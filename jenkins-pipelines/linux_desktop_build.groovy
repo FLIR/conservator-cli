@@ -14,7 +14,7 @@ pipeline {
     stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
-        // sh "python setup.py --version"
+        sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
       }
     }
