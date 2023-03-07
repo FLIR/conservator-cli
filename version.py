@@ -42,7 +42,7 @@ def call_git_describe(abbrev):
         p = Popen(
             ["git", "describe", "--match", "[0-9]*", "--abbrev=%d" % abbrev],
             stdout=PIPE,
-            stderr=PIPE,
+            # stderr=PIPE,
         )
         p.stderr.close()
         line = p.stdout.readlines()[0]
