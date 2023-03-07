@@ -163,11 +163,28 @@ def get_manager_command(type_manager, sgqlc_type, name):
             return True
 
         @group.command(
-            help="Download a Collection to the current directory, or the specified path."
+            help="""
+            Download a Collection to the current directory, or to the specified
+            path.
+
+            If this operation is interrupted, repeat the command to resume
+            where the previous run left off.  Partially-downloaded or
+            corrupted files will be downloaded again.  Datasets will only be
+            re-downloaded if the `--overwrite-datasets` option is supplied.
+            """
         )
         @click.argument("identifier")
         @click.argument("localpath", default=".")
         @click.option("-d", "--datasets", is_flag=True, help="Pull datasets")
+        @click.option(
+            "-o",
+            "--overwrite-datasets",
+            is_flag=True,
+            help=(
+                "When pulling datasets, remove any existing cloned datasets at the destination path"
+                + " and re-download them (BEWARE possible data loss!)"
+            ),
+        )
         @click.option(
             "-v",
             "--video-metadata",
@@ -199,6 +216,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             identifier,
             localpath,
             datasets,
+            overwrite_datasets,
             video_metadata,
             associated_files,
             media,
@@ -213,6 +231,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 video_metadata,
                 associated_files,
                 media,
+                overwrite_datasets,
                 preview_videos,
                 recursive,
             )
