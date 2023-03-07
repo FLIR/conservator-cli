@@ -45,4 +45,9 @@ RUN curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.
 #    && unzip awscliv2.zip \
 #    && ./aws/install
 
+RUN useradd --uid 1000 --gid 999 tester
+RUN mkdir /home/tester
+RUN chown tester:docker /home/tester
+USER tester
+
 ENV RUNNING_IN_CLI_TESTING_DOCKER=True
