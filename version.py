@@ -44,7 +44,7 @@ def call_git_describe(abbrev):
             stdout=PIPE,
             # stderr=PIPE,
         )
-        p.stderr.close()
+        # p.stderr.close()
         line = p.stdout.readlines()[0]
         version = line.strip().decode("utf-8")
         # Find the second -, replace it with + - otherwise pip just break
