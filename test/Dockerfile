@@ -52,3 +52,8 @@ USER tester
 
 ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/home/tester/.local/bin
 ENV RUNNING_IN_CLI_TESTING_DOCKER=True
+
+# address "host key verification error" on clone
+RUN mkdir ~/.ssh
+RUN chmod 700 ~/.ssh
+RUN ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
