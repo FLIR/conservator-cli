@@ -50,4 +50,5 @@ RUN mkdir /home/tester
 RUN chown tester:docker /home/tester
 USER tester
 
+ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/home/tester/.local/bin
 ENV RUNNING_IN_CLI_TESTING_DOCKER=True
