@@ -4,7 +4,7 @@ pipeline {
       dir "test"
       label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "--init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
   environment {
