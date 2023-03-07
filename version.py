@@ -52,7 +52,8 @@ def call_git_describe(abbrev):
         version = version.replace("-", "+", 2)
         version = version.replace("+", "-", 1)
         return version
-    except:
+    except Exception as exc:
+        print(f"git describe exception: {exc}")
         return None
 
 
