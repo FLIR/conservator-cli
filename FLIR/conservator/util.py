@@ -2,9 +2,11 @@
 # pylint: disable=missing-function-docstring
 import hashlib
 import logging
+import os
 import platform
 import sys
 
+from pathlib import Path
 from itertools import zip_longest
 
 import semver
@@ -66,7 +68,7 @@ def base_convert(b, n):
     return output
 
 
-def chunks(list, size):
+def chunks(list_to_chunk, chunk_size):
     """
     Simple one-line function to divide a list of items into chunks
     of a specified size.
@@ -85,13 +87,13 @@ def chunks(list, size):
 
     .. note:: Adapted from  https://stackoverflow.com/a/312644
     """
-    return zip_longest(*[iter(list)] * size, fillvalue=None)
+    return zip_longest(*[iter(list_to_chunk)] * chunk_size, fillvalue=None)
 
 
 def get_conservator_cli_version():
     # Get latest version from PyPi programatically
     # See https://stackoverflow.com/a/62571316
-    response = requests.get("https://pypi.org/pypi/conservator-cli/json")
+    response = requests.get("https://pypi.org/pypi/conservator-cli/json", timeout=10)
     return response.json()["info"]["version"]
 
 
@@ -129,3 +131,11 @@ def check_platform():
             "Please see https://flir.github.io/conservator-cli/usage/installation.html#installation-on-windows for details"
         )
         sys.exit(1)
+
+
+def check_dir_access(path_to_check):
+    if os.path.exists(path_to_check):
+        return os.access(path_to_check, os.W_OK)
+    else:
+        parent_path = Path(path_to_check).parent
+        return os.access(parent_path, os.W_OK)

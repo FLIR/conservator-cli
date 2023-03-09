@@ -16,7 +16,7 @@ from click import get_current_context
 
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.local_dataset import LocalDataset
-from FLIR.conservator.util import check_platform
+from FLIR.conservator.util import check_platform, check_dir_access
 
 
 def pass_valid_local_dataset(func):
@@ -175,6 +175,9 @@ def main(ctx, log, path, config):
 )
 @click.pass_context
 def clone(ctx, identifier, path, checkout):
+    if not check_dir_access(os.getcwd()):
+        click.secho(f"Cannot clone to directory {os.getcwd()}!", fg="red", bold=True)
+        sys.exit(1)
     conservator = Conservator.create(ctx.obj["config_name"])
     dataset = conservator.datasets.from_string(identifier)
     cloned = LocalDataset.clone(dataset, path)
@@ -333,6 +336,22 @@ def status(local_dataset):
 @pass_valid_local_dataset
 @check_git_config
 def download(local_dataset, include_raw, include_analytics, pool_size, symlink, tries):
+    if include_raw and not check_dir_access(local_dataset.data_path):
+        click.secho(f"Cannot write to {local_dataset.data_path}!", fg="red", bold=True)
+        sys.exit(1)
+
+    if include_analytics and not check_dir_access(local_dataset.raw_data_path):
+        click.secho(f"Cannot write to {local_dataset.data_path}!", fg="red", bold=True)
+        sys.exit(1)
+
+    if not check_dir_access(local_dataset.cache_path):
+        click.secho(
+            f"Cannot write to cache directory ({local_dataset.cache_path})!",
+            fg="red",
+            bold=True,
+        )
+        sys.exit(1)
+
     if pool_size == 10:  # default
         yellow = "\x1b[33;21m"
         cyan = "\x1b[36;21m"
