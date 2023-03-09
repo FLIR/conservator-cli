@@ -87,6 +87,14 @@ directory::
 
     $ conservator collections download ID -r -d -v -f -m
 
+Due to the potentially large number of files that may be present in a collection, if the
+download is interrupted before it can complete, running the same command again will
+resume the download where it left off.  Files that were partially downloaded or
+corrupted will be downloaded again.  Any existing dataset directories found in the target
+directory will not be downloaded again, unless the `--overwrite-datasets` option is
+supplied, in which case the dataset directories will be removed and re-downloaded (beware
+the risk of data loss when using this option).
+
 Downloading Media
 ------------------
 

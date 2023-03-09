@@ -497,7 +497,6 @@ class LocalDataset:
             )
 
             for result in md5_check_result:
-
                 logger.debug(result)
 
                 image_data = file_dict[result.md5]

@@ -140,3 +140,69 @@ class DatasetFrame(QueryableType):
             dataset_annotation_id=annotation_id,
             fields=fields,
         )
+
+    def update_dataset_annotation(self, annotation_input, annotation_id, fields=None):
+        """
+        Update existing annotation with ID annotation_id, using the specified
+        `UpdateAnnotationInput` object.
+
+        Returns updated annotation with the specified `fields`.
+        """
+        return self._conservator.query(
+            Mutation.update_dataset_annotation,
+            fields=fields,
+            dataset_frame_id=self.id,
+            dataset_annotation_id=annotation_id,
+            input=annotation_input,
+        )
+
+    def approve_dataset_annotation(self, dataset_id, annotation_id):
+        """
+        Approve an annotation within dataset frame.
+        """
+        return self._conservator.query(
+            Mutation.approve_dataset_annotation,
+            fields=("id", "qa_status"),
+            dataset_id=dataset_id,
+            dataset_frame_id=self.id,
+            annotation_id=annotation_id,
+        )
+
+    def request_changes_annotation(self, dataset_id, annotation_id):
+        """
+        Request changes to an annotation within dataset frame.
+        """
+        return self._conservator.query(
+            Mutation.request_changes_dataset_annotation,
+            fields=("id", "qa_status"),
+            dataset_id=dataset_id,
+            dataset_frame_id=self.id,
+            annotation_id=annotation_id,
+        )
+
+    def unset_qa_status_annotation(self, dataset_id, annotation_id):
+        """
+        Unset the QA status of an annotation within dataset frame.
+        """
+        return self._conservator.query(
+            Mutation.unset_qa_status_dataset_annotation,
+            fields=("id", "qa_status"),
+            dataset_id=dataset_id,
+            dataset_frame_id=self.id,
+            annotation_id=annotation_id,
+        )
+
+    def update_qa_status_note_annotation(
+        self, dataset_id, qa_status_note: str, annotation_id
+    ):
+        """
+        Change the QA status note for an annotation within dataset frame.
+        """
+        return self._conservator.query(
+            Mutation.update_qa_status_note_dataset_annotation,
+            fields=("id", "qa_status"),
+            dataset_id=dataset_id,
+            dataset_frame_id=self.id,
+            annotation_id=annotation_id,
+            qa_status_note=qa_status_note,
+        )

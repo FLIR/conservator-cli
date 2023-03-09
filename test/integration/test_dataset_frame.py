@@ -4,7 +4,10 @@
 import json
 import pytest
 
-from FLIR.conservator.generated.schema import CreateDatasetAnnotationInput
+from FLIR.conservator.generated.schema import (
+    CreateDatasetAnnotationInput,
+    UpdateAnnotationInput,
+)
 
 
 class TestDatasetFrame:
@@ -197,3 +200,107 @@ class TestDatasetFrame:
 
         assert created_metadata is not None
         assert json.loads(created_metadata) == annotation_metadata
+
+    def test_update_dataset_annotations(self, conservator):
+        dataset = conservator.datasets.all().first()
+        frames = dataset.get_frames()
+        assert len(frames) == 1
+        dataset_frame = frames.first()
+
+        fields = ["annotations.id", "annotations.labels"]
+
+        dataset_frame.populate(fields)
+
+        assert len(dataset_frame.annotations) == 1
+        annotation = dataset_frame.annotations[0]
+        assert annotation.labels == ["bottle"]
+        annotation_update = UpdateAnnotationInput(labels=["person"])
+        dataset_frame.update_dataset_annotation(annotation_update, annotation.id)
+        dataset_frame.populate(fields)
+
+        annotation = dataset_frame.annotations[0]
+        assert annotation.labels == ["person"]
+
+    def test_approve_dataset_annotation(self, conservator):
+        dataset = conservator.datasets.all().first()
+        frames = dataset.get_frames()
+        assert len(frames) == 1
+        dataset_frame = frames.first()
+
+        fields = ["annotations.id", "annotations.labels", "annotations.qa_status"]
+
+        dataset_frame.populate(fields)
+
+        assert len(dataset_frame.annotations) == 1
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status is None
+        dataset_frame.approve_dataset_annotation(dataset.id, annotation.id)
+
+        dataset_frame.populate(fields)
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status == "approved"
+
+    def test_unset_qa_status_annotation(self, conservator):
+        dataset = conservator.datasets.all().first()
+        frames = dataset.get_frames()
+        assert len(frames) == 1
+        dataset_frame = frames.first()
+
+        fields = ["annotations.id", "annotations.labels", "annotations.qa_status"]
+
+        dataset_frame.populate(fields)
+
+        assert len(dataset_frame.annotations) == 1
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status == "approved"
+        dataset_frame.unset_qa_status_annotation(dataset.id, annotation.id)
+
+        dataset_frame.populate(fields)
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status is None
+
+    def test_request_changes_annotation(self, conservator):
+        dataset = conservator.datasets.all().first()
+        frames = dataset.get_frames()
+        assert len(frames) == 1
+        dataset_frame = frames.first()
+
+        fields = ["annotations.id", "annotations.labels", "annotations.qa_status"]
+
+        dataset_frame.populate(fields)
+
+        assert len(dataset_frame.annotations) == 1
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status is None
+        dataset_frame.request_changes_annotation(dataset.id, annotation.id)
+
+        dataset_frame.populate(fields)
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status == "changesRequested"
+
+    def test_update_qa_status_note_annotation(self, conservator):
+        dataset = conservator.datasets.all().first()
+        frames = dataset.get_frames()
+        assert len(frames) == 1
+        dataset_frame = frames.first()
+
+        fields = [
+            "annotations.id",
+            "annotations.labels",
+            "annotations.qa_status",
+            "annotations.qa_status_note",
+        ]
+
+        dataset_frame.populate(fields)
+
+        status_note = "test qa status note"
+        assert len(dataset_frame.annotations) == 1
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status_note is None
+        dataset_frame.update_qa_status_note_annotation(
+            dataset.id, status_note, annotation.id
+        )
+
+        dataset_frame.populate(fields)
+        annotation = dataset_frame.annotations[0]
+        assert annotation.qa_status_note == status_note
