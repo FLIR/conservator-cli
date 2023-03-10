@@ -45,4 +45,15 @@ RUN curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.
 #    && unzip awscliv2.zip \
 #    && ./aws/install
 
+RUN useradd --uid 1000 --gid 999 tester
+RUN mkdir /home/tester
+RUN chown tester:docker /home/tester
+USER tester
+
+ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/home/tester/.local/bin
 ENV RUNNING_IN_CLI_TESTING_DOCKER=True
+
+# address "host key verification error" on clone
+RUN mkdir ~/.ssh
+RUN chmod 700 ~/.ssh
+RUN ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
