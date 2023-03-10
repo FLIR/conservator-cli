@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api_advanced.html">Advanced Python API Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">CVC Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-cvc-without-configuration">Using CVC without configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#index-json-vs-jsonl-files"><code class="docutils literal notranslate"><span class="pre">index.json</span></code> vs JSONL Files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#adding-frames">Adding Frames</a></li>
 </ul>
@@ -160,6 +161,18 @@ Then, publish your changes:</p>
 </div>
 <p>Note that an updated <code class="docutils literal notranslate"><span class="pre">index.json</span></code> file may reference new frames that will have
 to be downloaded (using <code class="docutils literal notranslate"><span class="pre">cvc</span> <span class="pre">download</span></code>).</p>
+<section id="using-cvc-without-configuration">
+<h3>Using CVC without configuration<a class="headerlink" href="#using-cvc-without-configuration" title="Permalink to this heading"></a></h3>
+<p>If you want to use CVC without creating a configuration, you can provide the
+Conservator instance URL and your API key on the command like, like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc clone DATASET_ID --url &lt;CONSERVATOR_URL&gt; --api-key &lt;API_KEY&gt;
+$ cd &quot;DATASET NAME/&quot;
+$ cvc --url &lt;CONSERVATOR_URL&gt; --api-key &lt;API_KEY&gt; download
+</pre></div>
+</div>
+<p>Note that, when cloning a dataset, the URL and API key must be provided <em>after</em> the dataset id;
+for all other operations, they must be <em>before</em> any other parameters, including the command name.</p>
+</section>
 <section id="index-json-vs-jsonl-files">
 <h3><code class="docutils literal notranslate"><span class="pre">index.json</span></code> vs JSONL Files<a class="headerlink" href="#index-json-vs-jsonl-files" title="Permalink to this heading"></a></h3>
 <p>Cloning a dataset using <code class="docutils literal notranslate"><span class="pre">cvc</span></code> will create four files that contain the dataset’s metadata:</p>
