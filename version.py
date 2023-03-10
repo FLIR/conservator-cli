@@ -42,9 +42,9 @@ def call_git_describe(abbrev):
         p = Popen(
             ["git", "describe", "--match", "[0-9]*", "--abbrev=%d" % abbrev],
             stdout=PIPE,
-            stderr=PIPE,
+            # stderr=PIPE,
         )
-        p.stderr.close()
+        # p.stderr.close()
         line = p.stdout.readlines()[0]
         version = line.strip().decode("utf-8")
         # Find the second -, replace it with + - otherwise pip just break
@@ -52,7 +52,8 @@ def call_git_describe(abbrev):
         version = version.replace("-", "+", 2)
         version = version.replace("+", "-", 1)
         return version
-    except:
+    except Exception as exc:
+        print(f"git describe exception: {exc}")
         return None
 
 
