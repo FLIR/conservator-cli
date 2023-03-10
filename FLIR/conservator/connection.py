@@ -1,3 +1,6 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=broad-except
+# pylint: disable=unnecessary-pass
 import re
 import urllib.parse
 import logging
@@ -99,14 +102,14 @@ class ConservatorConnection:
         """
         Returns the base URL for Conservator.
         """
-        r = urllib.parse.urlparse(self.config.url)
-        return f"{r.scheme}://{r.netloc}"
+        parsed_url = urllib.parse.urlparse(self.config.url)
+        return f"{parsed_url.scheme}://{parsed_url.netloc}"
 
     def get_collection_url(self, collection):
         """
         Returns a URL for viewing `collection`.
         """
-        return self.get_url() + f"/projects/{collection.id}"
+        return f"{self.get_url()}/projects/{collection.id}"
 
     def get_domain(self):
         """
@@ -120,8 +123,10 @@ class ConservatorConnection:
 
         This URL is used when downloading files and repositories.
         """
-        r = urllib.parse.urlparse(self.config.url)
-        return f"{r.scheme}://{self.get_url_encoded_user()}@{r.netloc}"
+        parsed_url = urllib.parse.urlparse(self.config.url)
+        return (
+            f"{parsed_url.scheme}://{self.get_url_encoded_user()}@{parsed_url.netloc}"
+        )
 
     def get_dvc_url(self):
         """
@@ -141,12 +146,16 @@ class ConservatorConnection:
         """
         hash_url = self.get_dvc_hash_url(md5)
         # We only care about the status code, so we use .head
-        r = requests.head(hash_url)
+        response = requests.head(hash_url, timeout=10)
         # 302 means the file was found.
-        return r.status_code == 302
+        return response.status_code == 302
 
     @staticmethod
     def to_graphql_url(url):
+        """
+        Ensure a URL is formatted correctly
+        (i.e. ends with "/graphql")
+        """
         if url.endswith("/"):
             url = url[:-1]
         if not url.endswith("graphql"):
@@ -165,7 +174,7 @@ class ConservatorConnection:
         gql = operation.__to_graphql__(auto_select_depth=5)
         gql = re.sub(r"\w* {\s*}\s*", "", gql)
         json_response = self.endpoint(gql, variables)
-        logger.debug("Response: " + str(json_response))
+        logger.debug("Response: %s", str(json_response))
         errors = json_response.get("errors", None)
         if errors is not None:
             raise ConservatorGraphQLServerError(gql, errors)
@@ -190,8 +199,8 @@ class ConservatorConnection:
         while True:
             try:
                 return self._query(query, fields, **kwargs)
-            except ConservatorGraphQLServerError as e:
-                exception = e.errors[0].get("exception", None)
+            except ConservatorGraphQLServerError as graphql_error:
+                exception = graphql_error.errors[0].get("exception", None)
                 if exception is None:
                     # This is a graphql error sent by the server.
                     # The query shouldn't be retried.
@@ -202,20 +211,22 @@ class ConservatorConnection:
                 tries += 1
                 if tries > self.config.max_retries:
                     raise
-                logger.warning("Retrying request after exception: " + str(e))
-                logger.warning("Retry #" + str(tries))
+                logger.warning(
+                    "Retrying request after exception: %s", str(graphql_error)
+                )
+                logger.warning("Retry #%s", str(tries))
 
     def _query(self, query, fields, **kwargs):
         type_ = query.type
-        op = Operation(query.container)
+        gql_op = Operation(query.container)
         query_name = query.name
-        query = getattr(op, query_name)
+        query = getattr(gql_op, query_name)
         query(**kwargs)
 
-        fr = FieldsRequest.create(fields)
-        fr.prepare_query(query)
+        field_req = FieldsRequest.create(fields)
+        field_req.prepare_query(query)
 
-        result = self.run(op)
+        result = self.run(gql_op)
         value = getattr(result, query_name)
 
         return TypeProxy.wrap(self, type_, value)
