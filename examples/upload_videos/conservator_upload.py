@@ -18,6 +18,7 @@ from utils.load_json import load_json
 from utils.default_metadata import DefaultMetadata
 from utils.prism_capture import get_first_meta
 from utils.config_reader import read_subfolder_config
+from utils.color_logging import CustomFormatter
 
 import FLIR.conservator.conservator
 from FLIR.conservator.conservator import Conservator
@@ -41,7 +42,7 @@ os.environ["BASE_DIR"] = osp.dirname(osp.realpath(__file__))
 _logger = logging.getLogger("upload")
 _logger.setLevel(logging.INFO)
 _ch = logging.StreamHandler()
-# _ch.setFormatter(CustomFormatter())
+_ch.setFormatter(CustomFormatter())
 _logger.addHandler(_ch)
 FLIR.conservator.conservator.logger.setLevel(logging.DEBUG)
 
@@ -306,7 +307,8 @@ def upload_video_helper(local_path: str, remote_name: str, collection: Collectio
         _logger.error("Upload failed")
 
     # You can wait for processing in this manner (not required).
-    # This script is designed to run multiples times
+    # This script is designed to run multiples times to let Conservator process the upload.
+    # Afterwards metadata is updated.
     # print("Waiting for processing")
     # _conservator.videos.wait_for_processing(video_id)
     return video_id
@@ -353,7 +355,7 @@ def upload_video(
     :return:
     """
     if not osp.exists(full_file_path):
-        print(f"File DOES NOT EXIST: {full_file_path}")
+        _logger.error(f"File DOES NOT EXIST: {full_file_path}")
         return False
 
     try:
@@ -461,7 +463,7 @@ def upload_video_capture(
     else:
         if _conservator.videos.is_uploaded_media_id_processed(video.id):
             if dry_run is False:
-                # When in dry run mode we only check location (no meta data)
+                # When in dry run mode we only check location (no metadata)
 
                 # Processing is done and we can not update the metadata
                 video.download_metadata(osp.dirname(meta_data_path))
@@ -558,7 +560,7 @@ def upload_prism_capture(
         meta = get_first_meta(thermal_meta_path)
     except Exception as meta_error:
         stats.upload_entry_invalid_count += 1
-        print(meta_error)
+
         _logger.warning(
             'Could not read the first thermal meta file at "%s" (skipping entry).\
                 Please make sure this is a valid Prism recording...',
@@ -629,7 +631,7 @@ def upload_prism_capture(
     else:
         if _conservator.videos.is_uploaded_media_id_processed(thermal_video.id):
             if dry_run is False:
-                # When in dry run mode we only check location (no meta data)
+                # When in dry run mode we only check location (no metadata)
 
                 # Processing is done and we can not update the metadata
                 thermal_video.download_metadata(osp.dirname(thermal_meta_data_path))
@@ -663,7 +665,7 @@ def upload_prism_capture(
 
         stats.would_upload_video_count += 1
         if not osp.exists(visible_zip_path):
-            # Important: this command is slightly different than above: -0 means no compression
+            # Important: this command is slightly different from above: -0 means no compression
             cmd = f"cd {upload_root_path} && zip -0 -q -j\
                 {visible_zip_filename} {visible_input_path}/*"
             _logger.info(
@@ -690,7 +692,7 @@ def upload_prism_capture(
     else:
         if _conservator.videos.is_uploaded_media_id_processed(visible_video.id):
             if dry_run is False:
-                # When in dry run mode we only check location (no meta data)
+                # When in dry run mode we only check location (no metadata)
 
                 # Processing is done and we can not update the metadata
                 visible_video.download_metadata(osp.dirname(visible_meta_data_path))
@@ -769,7 +771,7 @@ def upload_prism_capture(
 def show_help(default_config_path: str, config_filename: str) -> None:
     """
     :param default_config_path: root path to configs
-    :param config_filename:
+    :param config_filename: name of config file
     :return: None
     """
     help_table = PrettyTable(["Config", "Description"])
@@ -788,7 +790,11 @@ def show_help(default_config_path: str, config_filename: str) -> None:
             continue
 
         with open(config_path, encoding="UTF-8") as config_file:
-            config_data = json.load(config_file)
+            try:
+                config_data = json.load(config_file)
+            except json.decoder.JSONDecodeError as e:
+                _logger.warning(f'Could not parse JSON file: "{config_path}" with error: {e}')
+
             help_table.add_row([config_folder, config_data.get("description", "")])
     print(help_table)
     sys.exit(1)
@@ -842,7 +848,7 @@ def main():
 
     config_filename = "upload.json"
     config_path = read_subfolder_config(
-        args, upload_config_root, config_filename, show_help=show_help
+        args, upload_config_root, config_filename, show_help=show_help, logger=_logger
     )
     upload_config_name = osp.basename(osp.dirname(config_path))
 
@@ -936,11 +942,11 @@ def main():
     print(stats)
 
     if dry_run:
-        print(
+        _logger.info(
             "---------------------------------------------------------------------------"
         )
-        print(" NOTE: No data was uploaded. Set --dry_run=false to upload")
-        print(
+        _logger.info(" NOTE: No data was uploaded. Set --dry_run=false to upload")
+        _logger.info(
             "---------------------------------------------------------------------------"
         )
 

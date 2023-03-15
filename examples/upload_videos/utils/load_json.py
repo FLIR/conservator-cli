@@ -38,7 +38,10 @@ def load_json(path):
         raise Exception(f'Path is not a valid file: "{path}" ({expanded_path})')
 
     with open(expanded_path, encoding="UTF-8") as json_file:
-        obj = json.load(json_file)
+        try:
+            obj = json.load(json_file)
+        except json.decoder.JSONDecodeError as e:
+            raise Exception(f'Could not parse JSON file: "{path}" ({expanded_path})') from e
         return flatten_refs(obj)
 
 
