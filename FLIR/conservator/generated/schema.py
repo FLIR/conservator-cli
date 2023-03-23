@@ -406,12 +406,6 @@ class AnnotationSourceMetaInput(sgqlc.types.Input):
     user = sgqlc.types.Field(GraphqlID, graphql_name="user")
 
 
-class ArchiveDatasetInput(sgqlc.types.Input):
-    __schema__ = schema
-    __field_names__ = ("id",)
-    id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
-
-
 class BoundingBoxInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("x", "y", "w", "h")
@@ -1664,6 +1658,9 @@ class Commit(sgqlc.types.Type):
         "version_note",
         "has_datasheets",
         "is_datasheet_job_running",
+        "archive_url",
+        "archived_at",
+        "archive_state",
     )
     _id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="_id")
     author_name = sgqlc.types.Field(
@@ -1691,6 +1688,9 @@ class Commit(sgqlc.types.Type):
     is_datasheet_job_running = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean), graphql_name="isDatasheetJobRunning"
     )
+    archive_url = sgqlc.types.Field(String, graphql_name="archiveUrl")
+    archived_at = sgqlc.types.Field(Date, graphql_name="archivedAt")
+    archive_state = sgqlc.types.Field(String, graphql_name="archiveState")
 
 
 class ConservatorStats(sgqlc.types.Type):
@@ -1803,10 +1803,6 @@ class Dataset(sgqlc.types.Type):
         "frame_count",
         "video_count",
         "notes",
-        "archive_url",
-        "archived_at",
-        "archive_state",
-        "archive_progress",
         "created_at",
         "modified_at",
         "last_modified_by_user",
@@ -1847,6 +1843,7 @@ class Dataset(sgqlc.types.Type):
         "annotated_frames",
         "empty_frames",
         "un_annotated_frames",
+        "attribute_frames",
         "owner",
         "owner_email",
         "qa_change_requested_frames",
@@ -1895,14 +1892,6 @@ class Dataset(sgqlc.types.Type):
         sgqlc.types.non_null(Int), graphql_name="videoCount"
     )
     notes = sgqlc.types.Field(String, graphql_name="notes")
-    archive_url = sgqlc.types.Field(String, graphql_name="archiveUrl")
-    archived_at = sgqlc.types.Field(Date, graphql_name="archivedAt")
-    archive_state = sgqlc.types.Field(
-        sgqlc.types.non_null(String), graphql_name="archiveState"
-    )
-    archive_progress = sgqlc.types.Field(
-        sgqlc.types.non_null(Int), graphql_name="archiveProgress"
-    )
     created_at = sgqlc.types.Field(sgqlc.types.non_null(Date), graphql_name="createdAt")
     modified_at = sgqlc.types.Field(Date, graphql_name="modifiedAt")
     last_modified_by_user = sgqlc.types.Field(String, graphql_name="lastModifiedByUser")
@@ -1996,6 +1985,9 @@ class Dataset(sgqlc.types.Type):
     )
     un_annotated_frames = sgqlc.types.Field(
         sgqlc.types.non_null(Int), graphql_name="unAnnotatedFrames"
+    )
+    attribute_frames = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="attributeFrames"
     )
     owner = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="owner")
     owner_email = sgqlc.types.Field(String, graphql_name="ownerEmail")
@@ -3025,6 +3017,7 @@ class Job(sgqlc.types.Type):
         "log_message",
         "duration",
         "object_link",
+        "redelivery_count",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="type")
@@ -3048,6 +3041,9 @@ class Job(sgqlc.types.Type):
     log_message = sgqlc.types.Field(String, graphql_name="logMessage")
     duration = sgqlc.types.Field(sgqlc.types.non_null(Float), graphql_name="duration")
     object_link = sgqlc.types.Field(String, graphql_name="objectLink")
+    redelivery_count = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="redeliveryCount"
+    )
 
 
 class Jobs(sgqlc.types.Type):
@@ -3198,7 +3194,6 @@ class Mutation(sgqlc.types.Type):
         "lock_datasets",
         "unlock_datasets",
         "delete_dataset",
-        "archive_dataset",
         "add_segments_to_dataset",
         "add_videos_to_dataset",
         "add_frames_to_dataset",
@@ -3281,6 +3276,7 @@ class Mutation(sgqlc.types.Type):
         "unset_qa_status_frame",
         "update_qa_status_note",
         "add_video_frame_attribute",
+        "copy_attributes_to_all_video_frames",
         "remove_video_frame_attribute",
         "modify_video_frame_attribute",
         "add_video_annotation_attribute",
@@ -3376,6 +3372,7 @@ class Mutation(sgqlc.types.Type):
         "update_saved_search",
         "share_saved_search",
         "update_commit_version_note",
+        "archive_dataset_commit",
         "create_project",
         "update_project",
         "delete_project",
@@ -4021,22 +4018,6 @@ class Mutation(sgqlc.types.Type):
                     "input",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(DeleteDatasetInput),
-                        graphql_name="input",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
-    archive_dataset = sgqlc.types.Field(
-        sgqlc.types.non_null(Dataset),
-        graphql_name="archiveDataset",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(ArchiveDatasetInput),
                         graphql_name="input",
                         default=None,
                     ),
@@ -5895,6 +5876,22 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(AddAttributeInput),
                         graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    copy_attributes_to_all_video_frames = sgqlc.types.Field(
+        sgqlc.types.non_null(Int),
+        graphql_name="copyAttributesToAllVideoFrames",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="frameId",
                         default=None,
                     ),
                 ),
@@ -7905,6 +7902,28 @@ class Mutation(sgqlc.types.Type):
                         sgqlc.types.non_null(GraphqlID),
                         graphql_name="datasetId",
                         default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    archive_dataset_commit = sgqlc.types.Field(
+        sgqlc.types.non_null(Commit),
+        graphql_name="archiveDatasetCommit",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "commit_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="commitId", default=None
                     ),
                 ),
             )
@@ -10117,6 +10136,7 @@ class Video(sgqlc.types.Type):
         "annotated_frames",
         "un_annotated_frames",
         "empty_frames",
+        "attribute_frames",
         "key_frames",
         "owner",
         "qa_change_requested_frames",
@@ -10235,6 +10255,7 @@ class Video(sgqlc.types.Type):
     annotated_frames = sgqlc.types.Field(Int, graphql_name="annotatedFrames")
     un_annotated_frames = sgqlc.types.Field(Int, graphql_name="unAnnotatedFrames")
     empty_frames = sgqlc.types.Field(Int, graphql_name="emptyFrames")
+    attribute_frames = sgqlc.types.Field(Int, graphql_name="attributeFrames")
     key_frames = sgqlc.types.Field(Int, graphql_name="keyFrames")
     owner = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="owner")
     qa_change_requested_frames = sgqlc.types.Field(
