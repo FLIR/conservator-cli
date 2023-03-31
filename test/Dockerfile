@@ -9,7 +9,7 @@ RUN git config --global user.name "FLIR QA SERVICE" \
     && git config --global user.email flir-qa-service@muncasterconsulting.com
 
 # Add GitHub to known_hosts so we can push via ssh
-RUN mkdir ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+RUN mkdir -p ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
 # Install docker
 RUN curl -fsSL https://get.docker.com | sh
