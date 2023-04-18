@@ -1503,7 +1503,7 @@ class Collection(sgqlc.types.Type):
         "readme",
         "is_favorite",
         "favorite_count",
-        "owner",
+        "owner_name",
         "owner_email",
         "has_write_access",
         "has_admin_access",
@@ -1572,7 +1572,9 @@ class Collection(sgqlc.types.Type):
     favorite_count = sgqlc.types.Field(
         sgqlc.types.non_null(Int), graphql_name="favoriteCount"
     )
-    owner = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="owner")
+    owner_name = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="ownerName"
+    )
     owner_email = sgqlc.types.Field(String, graphql_name="ownerEmail")
     has_write_access = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean), graphql_name="hasWriteAccess"
@@ -2787,6 +2789,7 @@ class HUNK(sgqlc.types.Type):
         "new_lines",
         "lines",
         "linedelimiters",
+        "diff_too_large",
     )
     old_start = sgqlc.types.Field(Int, graphql_name="oldStart")
     old_lines = sgqlc.types.Field(Int, graphql_name="oldLines")
@@ -2796,6 +2799,7 @@ class HUNK(sgqlc.types.Type):
     linedelimiters = sgqlc.types.Field(
         sgqlc.types.list_of(String), graphql_name="linedelimiters"
     )
+    diff_too_large = sgqlc.types.Field(Boolean, graphql_name="diffTooLarge")
 
 
 class HumanAnnotationStats(sgqlc.types.Type):
@@ -3013,6 +3017,7 @@ class Job(sgqlc.types.Type):
         "object_type",
         "created_at",
         "modified_at",
+        "started_at",
         "ecs_task_link",
         "log_message",
         "duration",
@@ -3037,6 +3042,7 @@ class Job(sgqlc.types.Type):
     modified_at = sgqlc.types.Field(
         sgqlc.types.non_null(Float), graphql_name="modifiedAt"
     )
+    started_at = sgqlc.types.Field(Float, graphql_name="startedAt")
     ecs_task_link = sgqlc.types.Field(String, graphql_name="ecsTaskLink")
     log_message = sgqlc.types.Field(String, graphql_name="logMessage")
     duration = sgqlc.types.Field(sgqlc.types.non_null(Float), graphql_name="duration")
@@ -8168,6 +8174,7 @@ class Project(sgqlc.types.Type):
         "user_id_name",
         "created_by",
         "created_by_name",
+        "owner_name",
         "created_at",
         "modified_at",
         "video_count",
@@ -8199,6 +8206,9 @@ class Project(sgqlc.types.Type):
     user_id_name = sgqlc.types.Field(String, graphql_name="userIdName")
     created_by = sgqlc.types.Field(String, graphql_name="createdBy")
     created_by_name = sgqlc.types.Field(String, graphql_name="createdByName")
+    owner_name = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="ownerName"
+    )
     created_at = sgqlc.types.Field(Float, graphql_name="createdAt")
     modified_at = sgqlc.types.Field(Float, graphql_name="modifiedAt")
     video_count = sgqlc.types.Field(Int, graphql_name="videoCount")
@@ -9574,6 +9584,10 @@ class Query(sgqlc.types.Type):
                         graphql_name="datasetId",
                         default=None,
                     ),
+                ),
+                (
+                    "truncate",
+                    sgqlc.types.Arg(Boolean, graphql_name="truncate", default=None),
                 ),
             )
         ),
