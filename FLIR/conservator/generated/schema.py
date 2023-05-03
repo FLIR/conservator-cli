@@ -3191,6 +3191,8 @@ class Mutation(sgqlc.types.Type):
         "delete_project",
         "update_project_acl",
         "remove_project_acl",
+        "set_reprocess_jobs",
+        "set_jobs_admin_failed",
     )
     generate_signed_metadata_upload_url = sgqlc.types.Field(
         sgqlc.types.non_null("SignedUrl"),
@@ -7529,6 +7531,38 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(AclInput),
                         graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    set_reprocess_jobs = sgqlc.types.Field(
+        sgqlc.types.non_null(Int),
+        graphql_name="setReprocessJobs",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "job_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(sgqlc.types.list_of(String)),
+                        graphql_name="jobIds",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    set_jobs_admin_failed = sgqlc.types.Field(
+        sgqlc.types.non_null(Int),
+        graphql_name="setJobsAdminFailed",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "job_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(sgqlc.types.list_of(String)),
+                        graphql_name="jobIds",
                         default=None,
                     ),
                 ),
