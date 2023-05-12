@@ -4,7 +4,12 @@ import traceback
 from dataclasses import dataclass
 
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.generated.schema import Mutation, Query, FrameFilter
+from FLIR.conservator.generated.schema import (
+    Mutation,
+    Query,
+    FrameFilter,
+    MetadataInput,
+)
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.file_locker import FileLockerType
@@ -204,28 +209,34 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         assert isinstance(upload_request, MediaUploadRequest)
         file_path = upload_request.file_path
+        original_name = os.path.split(file_path)[-1]
         remote_name = upload_request.remote_name
         collection_id = upload_request.collection_id or None
 
         file_path = os.path.expanduser(file_path)
         assert os.path.isfile(file_path)
         if remote_name is None:
-            remote_name = os.path.split(file_path)[-1]
+            remote_name = original_name
 
         media = None
         try:
-            media = MediaType._create(conservator, remote_name, collection_id)
-            upload_id = media._initiate_upload(remote_name)
+            media = MediaType._create(conservator, original_name, collection_id)
+            upload_id = media._initiate_upload(original_name)
 
             url = media._generate_signed_upload_url(upload_id)
             response = conservator.files.upload(url=url, local_path=file_path)
             completion_tag = response.headers["ETag"]
 
             media._complete_upload(
-                remote_name, upload_id, completion_tags=[completion_tag]
+                original_name, upload_id, completion_tags=[completion_tag]
             )
             media._trigger_processing()
 
+            if original_name != remote_name:
+                mdata = MetadataInput(name=remote_name)
+                conservator.query(
+                    Mutation.update_video, fields="id", id=media.id, metadata=mdata
+                )
             upload_request.complete = True
             upload_request.error_message = ""
             upload_request.media_id = media.id
