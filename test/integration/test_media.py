@@ -307,16 +307,16 @@ class TestDownloadMedia:
 
     @pytest.mark.usefixtures("tmp_cwd")
     def test_download(self, conservator):
-        image = conservator.images.by_exact_name("My cat.jpg").first()
+        image = conservator.images.by_exact_name("cat_2.jpg").first()
         image.download(".")
-        assert os.path.exists("My cat.jpg")
-        assert os.path.isfile("My cat.jpg")
-        assert md5sum_file("My cat.jpg") == image.md5
+        assert os.path.exists("cat_2.jpg")
+        assert os.path.isfile("cat_2.jpg")
+        assert md5sum_file("cat_2.jpg") == image.md5
 
     @pytest.mark.usefixtures("tmp_cwd")
     def test_download_path(self, conservator):
-        image = conservator.images.by_exact_name("My cat.jpg").first()
+        image = conservator.images.by_exact_name("cat_2.jpg").first()
         image.download("Some/Path")
-        assert os.path.exists("Some/Path/My cat.jpg")
-        assert os.path.isfile("Some/Path/My cat.jpg")
-        assert md5sum_file("Some/Path/My cat.jpg") == image.md5
+        assert os.path.exists("Some/Path/cat_2.jpg")
+        assert os.path.isfile("Some/Path/cat_2.jpg")
+        assert md5sum_file("Some/Path/cat_2.jpg") == image.md5
