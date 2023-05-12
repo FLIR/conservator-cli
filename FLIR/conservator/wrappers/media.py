@@ -215,13 +215,11 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
 
         file_path = os.path.expanduser(file_path)
         assert os.path.isfile(file_path)
-        if remote_name is None:
-            remote_name = original_name
 
         media = None
         try:
             media = MediaType._create(conservator, original_name, collection_id)
-            if remote_name and (original_name != remote_name):
+            if remote_name:
                 mdata = MetadataInput(name=remote_name)
                 conservator.query(
                     Mutation.update_video, fields="id", id=media.id, metadata=mdata
