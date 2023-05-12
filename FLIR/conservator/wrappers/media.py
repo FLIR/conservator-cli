@@ -221,6 +221,11 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         media = None
         try:
             media = MediaType._create(conservator, original_name, collection_id)
+            if remote_name and (original_name != remote_name):
+                mdata = MetadataInput(name=remote_name)
+                conservator.query(
+                    Mutation.update_video, fields="id", id=media.id, metadata=mdata
+                )
             upload_id = media._initiate_upload(original_name)
 
             url = media._generate_signed_upload_url(upload_id)
@@ -232,11 +237,6 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             )
             media._trigger_processing()
 
-            if original_name != remote_name:
-                mdata = MetadataInput(name=remote_name)
-                conservator.query(
-                    Mutation.update_video, fields="id", id=media.id, metadata=mdata
-                )
             upload_request.complete = True
             upload_request.error_message = ""
             upload_request.media_id = media.id
