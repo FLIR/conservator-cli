@@ -376,12 +376,12 @@ class TestCollectionsWithMedia:
     def test_get_videos(self, conservator):
         collection = conservator.collections.from_remote_path("/Flight/Thermal")
         videos = collection.get_videos()
-        assert len(videos) == 2
+        assert len(videos) == 1
 
     def test_recursively_get_videos(self, conservator):
         collection = conservator.collections.from_remote_path("/Flight")
         videos = list(collection.recursively_get_videos())
-        assert len(videos) == 2
+        assert len(videos) == 1
 
     def test_get_media(self, conservator):
         collection = conservator.collections.from_remote_path("/Flight")
@@ -391,7 +391,7 @@ class TestCollectionsWithMedia:
     def test_recursively_get_media(self, conservator):
         collection = conservator.collections.from_remote_path("/Flight")
         media = list(collection.recursively_get_media())
-        assert len(media) == 4  # 2 images, 2 videos
+        assert len(media) == 3  # 2 images, 2 videos
 
     @pytest.mark.usefixtures("tmp_cwd")
     def test_download_metadata(self, conservator):
@@ -410,7 +410,8 @@ class TestCollectionsWithMedia:
             assert conservator.images.id_exists(media_id)
             media = conservator.images.from_id(media_id)
             media.populate()
-            assert media.name == "cat_2.jpg"
+            assert media.name == "Named cat pic.jpg"
+            assert media.filename == "cat_2.jpg"
 
     @pytest.mark.usefixtures("tmp_cwd")
     def test_download_images(self, conservator):
