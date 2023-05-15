@@ -37,7 +37,7 @@ pipeline {
       steps {
         echo "Running unit tests..."
         dir("unit-tests") {
-          sh "pytest $WORKSPACE/test/unit"
+          sh "pytest -v $WORKSPACE/test/unit"
         }
       }
     }
@@ -140,7 +140,7 @@ pipeline {
         stage("Run integration tests") {
           steps {
             dir("integration-tests") {
-              sh "pytest $WORKSPACE/test/integration"
+              sh "pytest -v $WORKSPACE/test/integration"
             }
           }
         }
