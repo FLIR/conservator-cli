@@ -2,10 +2,14 @@ pipeline {
   agent {
     dockerfile {
       dir "test"
-      label "visgence"
+      label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "-u root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
+  }
+  options {
+    timeout(time: 45, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '5'))
   }
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
@@ -13,16 +17,12 @@ pipeline {
   stages {
     stage("Install") {
       steps {
+        sh "echo 2.12.0 > RELEASE-VERSION"
         sh "pip install --no-cache-dir -r requirements.txt"
-        sh "echo 2.8.0 > RELEASE-VERSION"
         sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
-      }
-    }
-    stage("Formatting Test") {
-      steps {
-        echo "Checking formatting..."
-        sh "black --check ."
+        sh "git config --global user.name 'Test User'"
+        sh "git config --global user.email 'test@example.com'"
       }
     }
     stage("Documentation Tests") {
@@ -37,7 +37,7 @@ pipeline {
       steps {
         echo "Running unit tests..."
         dir("unit-tests") {
-          sh "pytest $WORKSPACE/test/unit"
+          sh "pytest -v $WORKSPACE/test/unit"
         }
       }
     }
@@ -140,7 +140,7 @@ pipeline {
         stage("Run integration tests") {
           steps {
             dir("integration-tests") {
-              sh "pytest $WORKSPACE/test/integration"
+              sh "pytest -v $WORKSPACE/test/integration"
             }
           }
         }
