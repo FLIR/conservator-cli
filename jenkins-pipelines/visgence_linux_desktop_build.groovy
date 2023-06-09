@@ -1,3 +1,5 @@
+pipelineTriggers([githubPullRequests(events: [Open(), commitChanged()], spec: '', triggerMode: 'HEAVY_HOOKS')])
+
 pipeline {
   agent {
     dockerfile {
