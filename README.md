@@ -10,5 +10,3 @@ Please visit the [Official Documentation](https://flir.github.io/conservator-cli
 to get started.
 
 Conservator CLI is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-# test
