@@ -1749,6 +1749,8 @@ class Dataset(sgqlc.types.Type):
         "annotations_human_count",
         "annotations_machine_count",
         "readme",
+        "archive_state",
+        "archive_error",
         "annotated_frames",
         "empty_frames",
         "un_annotated_frames",
@@ -1768,7 +1770,9 @@ class Dataset(sgqlc.types.Type):
         "video_ids",
         "preview_video_url",
         "preview_video_status",
+        "preview_video_error",
         "recalculate_stats_state",
+        "recalculate_stats_error",
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
         "has_changes",
@@ -1857,6 +1861,8 @@ class Dataset(sgqlc.types.Type):
         sgqlc.types.non_null(Int), graphql_name="annotationsMachineCount"
     )
     readme = sgqlc.types.Field(String, graphql_name="readme")
+    archive_state = sgqlc.types.Field(String, graphql_name="archiveState")
+    archive_error = sgqlc.types.Field(String, graphql_name="archiveError")
     annotated_frames = sgqlc.types.Field(
         sgqlc.types.non_null(Int), graphql_name="annotatedFrames"
     )
@@ -1902,8 +1908,12 @@ class Dataset(sgqlc.types.Type):
     )
     preview_video_url = sgqlc.types.Field(String, graphql_name="previewVideoUrl")
     preview_video_status = sgqlc.types.Field(String, graphql_name="previewVideoStatus")
+    preview_video_error = sgqlc.types.Field(String, graphql_name="previewVideoError")
     recalculate_stats_state = sgqlc.types.Field(
         String, graphql_name="recalculateStatsState"
+    )
+    recalculate_stats_error = sgqlc.types.Field(
+        String, graphql_name="recalculateStatsError"
     )
     allow_annotations_outside_frame = sgqlc.types.Field(
         Boolean, graphql_name="allowAnnotationsOutsideFrame"
@@ -2667,6 +2677,7 @@ class Image(sgqlc.types.Type):
         "annotation_import_state_modified_at",
         "process_video_error_message",
         "annotation_import_error_message",
+        "recalculate_stats_error",
         "custom_metadata",
         "collections",
         "datasets",
@@ -2747,6 +2758,9 @@ class Image(sgqlc.types.Type):
     )
     annotation_import_error_message = sgqlc.types.Field(
         String, graphql_name="annotationImportErrorMessage"
+    )
+    recalculate_stats_error = sgqlc.types.Field(
+        String, graphql_name="recalculateStatsError"
     )
     custom_metadata = sgqlc.types.Field(String, graphql_name="customMetadata")
     collections = sgqlc.types.Field(
@@ -2843,6 +2857,7 @@ class Job(sgqlc.types.Type):
         "duration",
         "object_link",
         "redelivery_count",
+        "retry_count",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="type")
@@ -2870,6 +2885,7 @@ class Job(sgqlc.types.Type):
     redelivery_count = sgqlc.types.Field(
         sgqlc.types.non_null(Int), graphql_name="redeliveryCount"
     )
+    retry_count = sgqlc.types.Field(Int, graphql_name="retryCount")
 
 
 class Jobs(sgqlc.types.Type):
@@ -9385,6 +9401,7 @@ class User(sgqlc.types.Type):
         "user_data_stats_running",
         "user_data_usage",
         "current_reset_password_email",
+        "user_data_stats_error",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     email = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="email")
@@ -9415,6 +9432,7 @@ class User(sgqlc.types.Type):
     current_reset_password_email = sgqlc.types.Field(
         Boolean, graphql_name="currentResetPasswordEmail"
     )
+    user_data_stats_error = sgqlc.types.Field(String, graphql_name="userDataStatsError")
 
 
 class UserDataStats(sgqlc.types.Type):
@@ -9526,12 +9544,16 @@ class Video(sgqlc.types.Type):
         "full_res_mp4_url",
         "full_res_mp4_status",
         "preview_generation_status",
+        "preview_generation_error",
         "processed_with_agc",
         "attached_label_set_ids",
         "attached_label_sets",
         "recalculate_stats_state",
+        "recalculate_stats_error",
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
+        "full_res_status",
+        "full_res_error",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     filename = sgqlc.types.Field(String, graphql_name="filename")
@@ -9646,6 +9668,9 @@ class Video(sgqlc.types.Type):
     preview_generation_status = sgqlc.types.Field(
         String, graphql_name="previewGenerationStatus"
     )
+    preview_generation_error = sgqlc.types.Field(
+        String, graphql_name="previewGenerationError"
+    )
     processed_with_agc = sgqlc.types.Field(String, graphql_name="processedWithAGC")
     attached_label_set_ids = sgqlc.types.Field(
         sgqlc.types.list_of(GraphqlID), graphql_name="attachedLabelSetIds"
@@ -9656,12 +9681,17 @@ class Video(sgqlc.types.Type):
     recalculate_stats_state = sgqlc.types.Field(
         String, graphql_name="recalculateStatsState"
     )
+    recalculate_stats_error = sgqlc.types.Field(
+        String, graphql_name="recalculateStatsError"
+    )
     allow_annotations_outside_frame = sgqlc.types.Field(
         Boolean, graphql_name="allowAnnotationsOutsideFrame"
     )
     allow_duplicate_target_id = sgqlc.types.Field(
         Boolean, graphql_name="allowDuplicateTargetId"
     )
+    full_res_status = sgqlc.types.Field(String, graphql_name="fullResStatus")
+    full_res_error = sgqlc.types.Field(String, graphql_name="fullResError")
 
 
 class VideoStats(sgqlc.types.Type):
