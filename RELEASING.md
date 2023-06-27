@@ -1,6 +1,6 @@
 # Releasing a new version
 
-## Tagging Release
+## Tagging Release#
 
 First checkout main and pull the latest commits. All releases 
 should be on `main` branch.
