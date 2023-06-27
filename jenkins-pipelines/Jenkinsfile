@@ -30,6 +30,7 @@ pipeline {
             sendNotifications("PR pipeline started")
             sh 'ls -la'
             sh 'echo test'
+            sh 'docker image ls'
             sleep 9000
 
             sh "pip install --no-cache-dir -r requirements.txt"
