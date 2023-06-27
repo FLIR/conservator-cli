@@ -1,17 +1,20 @@
 // //WORK IN PROGRESS/
 pipeline {
-  //agent any
-  agent { label 'desktop && ubuntu && conservator/jenkins' }
+  agent {
+    dockerfile {
+      dir "test"
+      label "docker"
+      additionalBuildArgs "-t conservator-cli/test"
+      args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+    }
+  }
+    options {
+    timeout(time: 45, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
 
-  // agent {
-  //   //Should be relevant only to PR
-  //   dockerfile {
-  //     dir "test"
-  //     label "docker"
-  //     additionalBuildArgs "-t conservator-cli/test"
-  //     args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
-  //   }
-  // }
+
+  
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
     CODEBASE = 'flirconservator-cli'
@@ -27,45 +30,38 @@ pipeline {
       }
       
       stages {
-        stage("Install") {
-           agent {           
-              dockerfile {
-                 dir "test"
-                 label "docker"
-                 additionalBuildArgs "-t conservator-cli/test"
-                 args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
-               }
-             }
+        stage("Install") {          
             steps {
            
             sendNotifications("PR pipeline started")
    
 
-            sh "pip install --no-cache-dir -r requirements.txt"
-            sh "python setup.py --version"
-            sh "pip install --no-cache-dir ."
-            sh "git config --global user.name 'Test User'"
-            sh "git config --global user.email 'test@example.com'"
-          }
-        }
+              sh "echo 2.12.0 > RELEASE-VERSION"
+              sh "pip install --no-cache-dir -r requirements.txt"
+              sh "python setup.py --version"
+              sh "pip install --no-cache-dir ."
+              sh "git config --global user.name 'Test User'"
+              sh "git config --global user.email 'test@example.com'"
         
-        stage("Documentation Tests") {
-          steps {
-            echo "Building docs..."
-            dir("docs") {
-              sh "make html"
-            }
           }
         }
-        
-        stage("Unit Tests") {
-          steps {
-            echo "Running unit tests..."
-            dir("unit-tests") {
-              sh "pytest $WORKSPACE/test/unit"
+                
+              stage("Documentation Tests") {
+              steps {
+                echo "Building docs..."
+                dir("docs") {
+                  sh "make html"
+                }
+              }
             }
-          }
-        }
+            stage("Unit Tests") {
+              steps {
+                echo "Running unit tests..."
+                dir("unit-tests") {
+                  sh "pytest -v $WORKSPACE/test/unit"
+                }
+              }
+            }
       }
     } 
     
