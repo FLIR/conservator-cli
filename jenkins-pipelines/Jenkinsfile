@@ -1,36 +1,37 @@
 // //WORK IN PROGRESS
 pipeline {
+  agent any 
 
-    agent any 
+   
     stages {
-      when {
-        beforeAgent true
-        anyOf {
-           branch 'main'
-        }
-      }
-      stage('main') { 
-        steps {
-          echo 'running main merge pipeline'
-        }
-      }
-    }
-    
-    stages {
-      when {
-        beforeAgent true
-        not {
+       stage('PR') {         
+        when {
+          beforeAgent true
+          not{
           anyOf {
             branch 'main'
           }
+          }
         }
-      }
-      
-      stage('pr') { 
+
         steps {
-          echo 'running pr branch'
+          echo 'running main merge pipeline'
         }
-      }
+      }     
+    }
+    
+    stages {
+       stage('main') {         
+        when {
+          beforeAgent true          
+          anyOf {
+            branch 'main'          
+          }
+        }
+        steps {
+          echo 'running main merge pipeline'
+        }
+      }     
     }
 }
 
