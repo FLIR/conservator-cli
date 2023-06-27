@@ -190,9 +190,10 @@ pipeline {
       }
     }
     stage("Release on PyPI") {
-      when {
-        buildingTag()
-      }
+      //not sure, check with conservator team
+    //      when {
+        //buildingTag()
+      //}
       environment {
         TWINE_REPOSITORY = "pypi"
         TWINE_USERNAME = "__token__"
