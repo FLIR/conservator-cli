@@ -122,7 +122,7 @@ pipeline {
       environment {
         TWINE_REPOSITORY = "pypi"
         TWINE_USERNAME = "__token__"
-        //TWINE_PASSWORD = credentials("pypi-conservator-cli")
+        TWINE_PASSWORD = credentials("pypi-conservator-cli")
       }
       steps {
         echo "here"
