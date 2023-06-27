@@ -1,15 +1,16 @@
 // //WORK IN PROGRESS
 pipeline {
   //agent any
-  agent {
-    //Should be relevant only to PR
-    dockerfile {
-      dir "test"
-      label "docker"
-      additionalBuildArgs "-t conservator-cli/test"
-      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
-    }
-  }
+  agent { label 'desktop && ubuntu && conservator/jenkins' }
+  // agent {
+  //   //Should be relevant only to PR
+  //   dockerfile {
+  //     dir "test"
+  //     label "docker"
+  //     additionalBuildArgs "-t conservator-cli/test"
+  //     args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+  //   }
+  // }
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
     CODEBASE = 'flirconservator-cli'
@@ -28,8 +29,9 @@ pipeline {
           steps {
            
             sendNotifications("PR pipeline started")
-            sh 'ls -la'
-            sh 'echo test'
+
+            // sh 'ls -la'
+            // sh 'echo test'
             sh 'docker image ls'
             sleep 9000
 
