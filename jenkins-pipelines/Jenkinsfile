@@ -20,9 +20,10 @@ pipeline {
     stage('PR') {
       when {
         beforeAgent true
-        not {
+        //this is just to run this without pr all the time, remove when results are good
+        //not {
           branch 'main'
-        }
+       // }
       }
       
       stages {
