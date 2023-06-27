@@ -186,7 +186,7 @@ def sendNotifications(String msg){
 //         AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
 
 //         // conservator source repo
-//          = "ssh://git@github.com/FLIR/flirconservator"
+//         FC_GIT_REPO = "ssh://git@github.com/FLIR/flirconservator"
 //         // version of conservator known to have working KInD config
 //         // only need to set this if running tests against fc image w/ broken kubernetes configs
 //         KIND_GIT_HASH = ""
@@ -200,7 +200,7 @@ def sendNotifications(String msg){
 //             echo "BUILD_UID=${env.BUILD_UID}"
 //             // check out conservator source code now, in case it is needed for build scripts
 //             sshagent(credentials: ["flir-service-key"]) {
-//               sh "git clone ${} fc && chown -R ${BUILD_UID} fc"
+//               sh "git clone ${FC_GIT_REPO} fc && chown -R ${BUILD_UID} fc"
 //               writeFile(file: "fc/deploy_key", text: "STUB")
 //             }
 //             script {
