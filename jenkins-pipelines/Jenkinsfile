@@ -29,7 +29,8 @@ pipeline {
           steps {
            
             sendNotifications("PR pipeline started")
-            dir('test')
+            sh 'ls -la'
+            sh 'cd test'
             sh 'docker build -t conservator-cli/test'
             sh 'docker run conservator-cli/test --add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock'
         
