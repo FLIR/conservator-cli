@@ -1,47 +1,62 @@
-// //WORK IN PROGRESS#
+// //WORK IN PROGRESS
 pipeline {
-  agent any 
-
-   
-    stages {
-       stage('PR') {
-        when {
-          beforeAgent true
-          not {
-            branch 'main'
-          }          
-        }
-        environment {
-          STAGE = 'PR'
-      }
-      stages {
-        stage('PR Build'){
-          steps {
-            script {
-              echo 'build1'
-              echo 'build2'
-            }
-          }
-        }
-        stage('PR Build2'){
-          steps {
-            script {
-              echo 'build3'
-              echo 'build4'
-            }
-          }
-        }
-      }
-      } 
-
-    stage('Main') {
-        when {
-          beforeAgent true
+  agent {
+    dockerfile {
+      dir "test"
+      label "docker"
+      additionalBuildArgs "-t conservator-cli/test"
+      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+    }
+  }
+  environment {
+    TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
+    CODEBASE = 'flirconservator'
+  }
+  stages {
+    stage('PR') {
+      when {
+        beforeAgent true
+        not {
           branch 'main'
-                  
         }
-        environment {
-          STAGE = 'MAIN'
+      }
+      
+      stages {
+        stage("Install") {
+          steps {
+            sendNotifications("PR pipeline started")
+            sh "pip install --no-cache-dir -r requirements.txt"
+            sh "python setup.py --version"
+            sh "pip install --no-cache-dir ."
+            sh "git config --global user.name 'Test User'"
+            sh "git config --global user.email 'test@example.com'"
+          }
+        }
+        
+        stage("Documentation Tests") {
+          steps {
+            echo "Building docs..."
+            dir("docs") {
+              sh "make html"
+            }
+          }
+        }
+        
+        stage("Unit Tests") {
+          steps {
+            echo "Running unit tests..."
+            dir("unit-tests") {
+              sh "pytest $WORKSPACE/test/unit"
+            }
+          }
+        }
+      }
+    } 
+    
+    stage('Main') {
+      when {
+        beforeAgent true
+        branch 'main'
       }
       stages {
         stage('MAIN Build'){
@@ -61,14 +76,46 @@ pipeline {
           }
         }
       }
-      }         
-   
-   
-   
     }
+  }
+  
+  post {
+    always {
+      script {
+        echo 'post'
+        cleanWs()
+        sendNotifications ("post")
+      }
     }
+    
+    success {
+      script {
+        echo 'success'
+      }
+    }
+    
+    failure {
+      echo 'fail'
+    }
+  }
+}
+
+def sendNotifications(String msg){
+  echo "sendNotification been called"
+  //Send Slack message about proccess
+  if (msg == "post"){
+    slackMsg = currentBuild.result
+  }
+  else {
+    slackMsg = "${msg}, code: ${CODEBASE}, URL:${env.BUILD_URL}"
+
+  }  
+  
+  println(slackMsg)
 
 
+
+}
 
 
 
@@ -139,7 +186,7 @@ pipeline {
 //         AWS_SECRET_ACCESS_KEY = credentials("docker-aws-secret-access-key-conservator")
 
 //         // conservator source repo
-//         FC_GIT_REPO = "ssh://git@github.com/FLIR/flirconservator"
+//          = "ssh://git@github.com/FLIR/flirconservator"
 //         // version of conservator known to have working KInD config
 //         // only need to set this if running tests against fc image w/ broken kubernetes configs
 //         KIND_GIT_HASH = ""
@@ -153,7 +200,7 @@ pipeline {
 //             echo "BUILD_UID=${env.BUILD_UID}"
 //             // check out conservator source code now, in case it is needed for build scripts
 //             sshagent(credentials: ["flir-service-key"]) {
-//               sh "git clone ${FC_GIT_REPO} fc && chown -R ${BUILD_UID} fc"
+//               sh "git clone ${} fc && chown -R ${BUILD_UID} fc"
 //               writeFile(file: "fc/deploy_key", text: "STUB")
 //             }
 //             script {
