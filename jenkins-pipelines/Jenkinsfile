@@ -13,12 +13,11 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
 
-
-  
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
     CODEBASE = 'flirconservator-cli'
   }
+  
   stages {
     stage('PR') {
       when {
