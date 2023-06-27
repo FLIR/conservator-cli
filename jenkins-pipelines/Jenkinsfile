@@ -1,6 +1,7 @@
 // //WORK IN PROGRESS
 pipeline {
   agent {
+    //Should be relevant only to PR
     dockerfile {
       dir "test"
       label "docker"
@@ -10,7 +11,7 @@ pipeline {
   }
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
-    CODEBASE = 'flirconservator'
+    CODEBASE = 'flirconservator-cli'
   }
   stages {
     stage('PR') {
