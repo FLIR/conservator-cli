@@ -4,36 +4,75 @@ pipeline {
 
    
     stages {
-       stage('PR') {         
+       stage('PR') {
         when {
           beforeAgent true
-          not{
-          anyOf {
+          not {
             branch 'main'
-          }
+          }          
+        }
+        environment {
+          STAGE = 'PR'
+      }
+      stages {
+        stage('PR Build'){
+          steps {
+            script {
+              echo 'build1'
+              echo 'build2'
+            }
           }
         }
+        stage('PR Build2'){
+          steps {
+            script {
+              echo 'build3'
+              echo 'build4'
+            }
+          }
+        }
+      }
+      } 
 
-        steps {
-          echo 'running main merge pipeline'
-        }
-      }     
-    }
-    
-    stages {
-       stage('main') {         
+    stage('Main') {
         when {
-          beforeAgent true          
-          anyOf {
-            branch 'main'          
+          beforeAgent true
+          branch 'main'
+                  
+        }
+        environment {
+          STAGE = 'MAIN'
+      }
+      stages {
+        stage('MAIN Build'){
+          steps {
+            script {
+              echo 'build1'
+              echo 'build2'
+            }
           }
         }
-        steps {
-          echo 'running main merge pipeline'
+        stage('MAIN Build2'){
+          steps {
+            script {
+              echo 'build3'
+              echo 'build4'
+            }
+          }
         }
-      }     
+      }
+      }         
+   
+   
+   
     }
-}
+    }
+
+
+
+
+
+    
 
 // pipeline {
 //   agent {
