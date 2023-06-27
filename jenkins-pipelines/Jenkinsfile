@@ -1,4 +1,4 @@
-// //WORK IN PROGRESS/ jenkinsfile
+// //WORK IN PROGRESS
 pipeline {
   agent {
     dockerfile {
