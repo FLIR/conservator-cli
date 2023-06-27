@@ -69,7 +69,7 @@ pipeline {
           steps {
             script {
               sendNotifications("Merge to main pipeline started")
-              def test = build job: 'Flirconservator+CLI_Integration_Testing', parameters: [string(name: 'IMAGE_TYPE', value: 'LOCAL'), string(name: 'LOCAL_BRANCH', value: 'master')]
+              //def test = build job: 'Flirconservator+CLI_Integration_Testing', parameters: [string(name: 'IMAGE_TYPE', value: 'LOCAL'), string(name: 'LOCAL_BRANCH', value: 'master')]
             }
           }
         }
