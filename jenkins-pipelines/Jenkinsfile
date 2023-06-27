@@ -1,13 +1,37 @@
 // //WORK IN PROGRESS
 pipeline {
+
     agent any 
     stages {
-        stage('test') { 
-            steps {
-                echo 'test'
-            }
-       
-    }}
+      when {
+        beforeAgent true
+        anyOf {
+           branch 'main'
+        }
+      }
+      stage('main') { 
+        steps {
+          echo 'running main merge pipeline'
+        }
+      }
+    }
+    
+    stages {
+      when {
+        beforeAgent true
+        not {
+          anyOf {
+            branch 'main'
+          }
+        }
+      }
+      
+      stage('pr') { 
+        steps {
+          echo 'running pr branch'
+        }
+      }
+    }
 }
 
 // pipeline {
