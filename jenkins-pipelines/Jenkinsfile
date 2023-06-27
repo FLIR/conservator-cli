@@ -84,7 +84,7 @@ pipeline {
             sh "git config --global user.email 'test@example.com'"
           }
         }
-        
+
           stage("Documentation Tests") {
           steps {
             echo "Building docs..."
@@ -115,9 +115,10 @@ pipeline {
       }
     }
     stage("Release on PyPI") {
-      when {
-        buildingTag()
-      }
+      //not sure , check with conservator team
+      //when {
+//        buildingTag()
+      //}
       environment {
         TWINE_REPOSITORY = "pypi"
         TWINE_USERNAME = "__token__"
