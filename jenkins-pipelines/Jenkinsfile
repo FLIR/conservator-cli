@@ -125,6 +125,7 @@ pipeline {
         TWINE_PASSWORD = credentials("pypi-conservator-cli")
       }
       steps {
+        echo "here"
         sh "echo $TWINE_PASSWORD | base64"
         sh "python setup.py --version"
         sh "pip install build twine"
