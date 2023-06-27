@@ -1,4 +1,4 @@
-
+properties(pipelineTriggers([githubPullRequests(events: [Open(), commitChanged()], spec: '', triggerMode: 'HEAVY_HOOKS')]))
 
 pipeline {
   agent {
@@ -8,13 +8,7 @@ pipeline {
       additionalBuildArgs "-t conservator-cli/test"
       args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
-  } 
-
-  parameters {
-        choice(name: 'IMAGE_TYPE', choices: ['AWS', 'LOCAL'], description: 'AWS:test image pulled from AWS,LOCAL: test image built locally from conservator checkout')
-        string(name: 'LOCAL_BRANCH', defaultValue: 'master', description: 'conservator branch to be built')
-        string(name: 'AWS_TAG', defaultValue: 'staging', description: 'only used if IMAGE_TYPE == LOCAL')
-    }
+  }
   options {
     timeout(time: 45, unit: 'MINUTES')
     buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -22,7 +16,33 @@ pipeline {
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
   }
-  stages {    
+  stages {
+    stage("Install") {
+      steps {
+        sh "echo 2.12.0 > RELEASE-VERSION"
+        sh "pip install --no-cache-dir -r requirements.txt"
+        sh "python setup.py --version"
+        sh "pip install --no-cache-dir ."
+        sh "git config --global user.name 'Test User'"
+        sh "git config --global user.email 'test@example.com'"
+      }
+    }
+    stage("Documentation Tests") {
+      steps {
+        echo "Building docs..."
+        dir("docs") {
+          sh "make html"
+        }
+      }
+    }
+    stage("Unit Tests") {
+      steps {
+        echo "Running unit tests..."
+        dir("unit-tests") {
+          sh "pytest -v $WORKSPACE/test/unit"
+        }
+      }
+    }
     stage("Integration Tests") {
       environment {
         // following variables could be changed from this default via a parameter in
@@ -170,5 +190,3 @@ pipeline {
     }
   }
 }
-
-
