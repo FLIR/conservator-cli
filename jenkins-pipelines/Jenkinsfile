@@ -2,6 +2,7 @@
 pipeline {
   //agent any
   agent { label 'desktop && ubuntu && conservator/jenkins' }
+
   // agent {
   //   //Should be relevant only to PR
   //   dockerfile {
@@ -26,22 +27,18 @@ pipeline {
       
       stages {
         stage("Install") {
-          steps {
+           agent {           
+              dockerfile {
+                 dir "test"
+                 label "docker"
+                 additionalBuildArgs "-t conservator-cli/test"
+                 args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+               }
+             }
+            steps {
            
             sendNotifications("PR pipeline started")
-            sh 'ls -la'
-       
-            sh 'docker build . -t conservator-cli/test -f test/Dockerfile'
-            sh """docker run --add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged  -v $(pwd):/code conservator-cli/test bash -c "cd /code && pip install --no-cache-dir -r requirements.txt && python setup.py --version && pip install --no-cache-dir . &&  git config --global user.name 'Test User' && git config --global user.email 'test@example.com' && cd ../docs && make html && pytest ../test/unit " """
-
-            //sh 'docker run --add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged  -v /var/run/docker.sock:/var/run/docker.sock conservator-cli/test  '
-        
-
-
-            // sh 'ls -la'
-            // sh 'echo test'
-           
-            sleep 9000
+   
 
             sh "pip install --no-cache-dir -r requirements.txt"
             sh "python setup.py --version"
