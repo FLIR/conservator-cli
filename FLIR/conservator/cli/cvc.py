@@ -389,13 +389,20 @@ def download(local_dataset, include_raw, include_analytics, pool_size, symlink, 
         )
     if include_analytics:
         click.echo("The -a option has been deprecated; please use -r instead.")
-    download_status = local_dataset.download(
-        include_raw=include_raw or include_analytics,
-        include_eight_bit=True,
-        process_count=pool_size,
-        use_symlink=symlink,
-        tries=tries,
-    )
+    try:
+        download_status = local_dataset.download(
+            include_raw=include_raw or include_analytics,
+            include_eight_bit=True,
+            process_count=pool_size,
+            use_symlink=symlink,
+            tries=tries,
+        )
+    except OSError as exc:
+        red = "\x1B[31m"
+        reset = "\x1b[0m"
+        click.echo(f"  {red}Files were downloaded but links were not created.{reset}")
+        click.echo(f"  {red}Run the command using the -s|--symlink flag.{reset}")
+        sys.exit(1)
     if not download_status:
         sys.exit(1)
 

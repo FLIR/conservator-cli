@@ -766,7 +766,10 @@ class LocalDataset:
                 no_meter=True,
                 max_retries=max_retries,
             )
-            LocalDataset._add_links(download_path, paths_to_link, use_symlink)
+            try:
+                LocalDataset._add_links(download_path, paths_to_link, use_symlink)
+            except OSError as exc:
+                raise OSError() from exc
             return result is not None and result.ok
         except FileDownloadException:
             return False
@@ -871,7 +874,10 @@ class LocalDataset:
         for md5, paths_to_link in hashes_required.items():
             cache_path = self.get_cache_path(md5)
             if self.exists_in_cache(md5):
-                LocalDataset._add_links(cache_path, paths_to_link, use_symlink)
+                try:
+                    LocalDataset._add_links(cache_path, paths_to_link, use_symlink)
+                except OSError as exc:
+                    raise OSError() from exc
                 cache_hits += 1
                 logger.debug("Skipping %s: already downloaded.", md5)
                 continue
@@ -895,9 +901,12 @@ class LocalDataset:
         progress_msg = "Downloading new frames"
         for attempt in range(tries):
             with multiprocessing.get_context("fork").Pool(process_count) as pool:
-                download_method = functools.partial(
-                    LocalDataset._download_and_link, self, max_retries=tries
-                )
+                try:
+                    download_method = functools.partial(
+                        LocalDataset._download_and_link, self, max_retries=tries
+                    )
+                except OSError as exc:
+                    raise OSError() from exc
                 progress = tqdm.tqdm(
                     iterable=pool.imap(download_method, current_assets),
                     desc=progress_msg,
