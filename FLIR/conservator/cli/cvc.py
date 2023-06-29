@@ -405,12 +405,14 @@ def download(local_dataset, include_raw, include_analytics, pool_size, symlink, 
             click.echo(
                 f"  {red}Error - Conservator cache directory (cache_dir) is on a different \
 volume, and cannot be used.{reset}"
-                )
+            )
             click.echo(
                 f"  {red}Either use the -s/--symlink flag with cvc download, or move your cache \
 directory to the same volume the dataset is on."
-                )
-            click.echo(f"  {red}See https://flir.github.io/conservator-cli/ for detail{reset}")
+            )
+            click.echo(
+                f"  {red}See https://flir.github.io/conservator-cli/ for detail{reset}"
+            )
             sys.exit(1)
 
         raise OSError from exc
