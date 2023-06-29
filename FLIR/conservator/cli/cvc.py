@@ -411,7 +411,9 @@ volume, and cannot be used.{reset}"
 directory to the same volume the dataset is on."
             )
             click.echo(
-                f"  {red}See https://flir.github.io/conservator-cli/ for detail{reset}"
+                f"  {red}See \
+https://flir.github.io/conservator-cli/usage/cvc_guide.html#downloading-frames \
+for details.{reset}"
             )
             sys.exit(1)
 
