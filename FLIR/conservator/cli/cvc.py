@@ -389,6 +389,7 @@ def download(local_dataset, include_raw, include_analytics, pool_size, symlink, 
         )
     if include_analytics:
         click.echo("The -a option has been deprecated; please use -r instead.")
+    download_status = None
     try:
         download_status = local_dataset.download(
             include_raw=include_raw or include_analytics,
@@ -398,11 +399,21 @@ def download(local_dataset, include_raw, include_analytics, pool_size, symlink, 
             tries=tries,
         )
     except OSError as exc:
-        red = "\x1B[31m"
-        reset = "\x1b[0m"
-        click.echo(f"  {red}Files were downloaded but links were not created.{reset}")
-        click.echo(f"  {red}Run the command using the -s|--symlink flag.{reset}")
-        sys.exit(1)
+        if exc.errno == 18:
+            red = "\x1B[31m"
+            reset = "\x1b[0m"
+            click.echo(
+                f"  {red}Error - Conservator cache directory (cache_dir) is on a different \
+volume, and cannot be used.{reset}"
+                )
+            click.echo(
+                f"  {red}Either use the -s/--symlink flag with cvc download, or move your cache \
+directory to the same volume the dataset is on."
+                )
+            click.echo(f"  {red}See https://flir.github.io/conservator-cli/ for detail{reset}")
+            sys.exit(1)
+
+        raise OSError from exc
     if not download_status:
         sys.exit(1)
 

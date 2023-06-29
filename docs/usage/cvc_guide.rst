@@ -235,7 +235,7 @@ you can increase this number by using the ``--pool-size`` option (``-p`` for sho
 
 When using a global cache, it may be necessary to run the download command using the
 ``-s`` | ``--symlink`` flag which will create a symlink versus a hard link in the 
-``data/`` directory of the cloned dataset.
+``data/`` directory of the cloned dataset. (i.e. if the cache is on a different volume)
 
     $ cvc download -s 
 

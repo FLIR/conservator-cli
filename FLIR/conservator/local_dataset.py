@@ -766,10 +766,7 @@ class LocalDataset:
                 no_meter=True,
                 max_retries=max_retries,
             )
-            try:
-                LocalDataset._add_links(download_path, paths_to_link, use_symlink)
-            except OSError as exc:
-                raise OSError() from exc
+            LocalDataset._add_links(download_path, paths_to_link, use_symlink)
             return result is not None and result.ok
         except FileDownloadException:
             return False
