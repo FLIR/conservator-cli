@@ -896,8 +896,8 @@ class LocalDataset:
         for attempt in range(tries):
             with multiprocessing.get_context("fork").Pool(process_count) as pool:
                 download_method = functools.partial(
-                        LocalDataset._download_and_link, self, max_retries=tries
-                    )
+                    LocalDataset._download_and_link, self, max_retries=tries
+                )
                 progress = tqdm.tqdm(
                     iterable=pool.imap(download_method, current_assets),
                     desc=progress_msg,
