@@ -1,17 +1,17 @@
 pipeline {
   agent {
-    // dockerfile {
-    //   dir "test"
-    //   label "docker"
-    //   additionalBuildArgs "-t conservator-cli/test"
-    //   args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
-    // }
     dockerfile {
       dir "test"
       label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
+    // dockerfile {
+    //   dir "test"
+    //   label "docker"
+    //   additionalBuildArgs "-t conservator-cli/test"
+    //   args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+    // }
   }
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
@@ -216,8 +216,7 @@ pipeline {
   }
   post {
     always{
-      script{
-        cleanup {
+      script{       
           sh "kind delete cluster"
           // This docker executes as root, so any files created (python cache, etc.) can't be deleted
           // by the Jenkins worker. We need to lower permissions before asking to clean up.
@@ -234,8 +233,7 @@ pipeline {
           // Note in --filter the "*" character will not match a "/"
           sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
           sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
-          sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
-        }
+          sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"        
       }
     }
   }
