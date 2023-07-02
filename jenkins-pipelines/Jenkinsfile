@@ -81,13 +81,20 @@ pipeline {
       when {
         buildingTag()
       }
-       stages {
-        stage('Releasing on pypi'){          
-          steps {
-            println('here')
-          }
-        }
-       }
+      environment {
+        TWINE_REPOSITORY = "pypi"
+        TWINE_USERNAME = "__token__"
+        TWINE_PASSWORD = credentials("pypi-conservator-cli")
+      }
+      steps {
+        print ("here")
+      }
+      
+      
+      }
+
+
+
 
 
   }
@@ -95,30 +102,27 @@ pipeline {
   post {
     always {
       script {
-        echo 'post'
-        cleanWs()
-        sendNotifications ("post")
+        cleanWs()        
       }
     }
     
     success {
-      script {
-        cleanWs()
-        echo 'success'
+      script {       
+         sendNotifications ("success")
       }
     }
     
     failure {
       script {      
-        cleanWs()
-        echo 'fail'
+        
+        sendNotifications ("fail")
       }
     }
   }
 }
 
 def sendNotifications(String msg){
-   if (msg == "post" || msg == "success" || msg == "fail"){  
+   if (msg == "success" || msg == "fail"){  
      teamsMsg = currentBuild.result   
    }
   else {
