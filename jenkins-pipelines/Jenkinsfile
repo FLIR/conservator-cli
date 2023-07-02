@@ -75,8 +75,7 @@ pipeline {
           }
         }
          stage("Install") {
-          steps {
-            sendNotifications("PR pipeline started")
+          steps {            
             sh "echo 2.12.0 > RELEASE-VERSION"
             sh "pip install --no-cache-dir -r requirements.txt"
             sh "python setup.py --version"
@@ -95,44 +94,7 @@ pipeline {
           }
         }
 
-        stage("Deploy Documentation") {
-      when {       
-        not { changeRequest() }
-      }
-      steps {
-        echo "Deploying..."
-        sh "mv docs/_build/html temp/"
-        sh "git reset --hard"
-        sh "rm -rf .git/hooks/*"
-        sh "git checkout gh_pages"
-        sh "rm -rf docs/"
-        sh "mv temp/ docs/"
-        sh "touch docs/.nojekyll"
-        sh "git add docs/"
-        sh "git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'"
-        sshagent(credentials: ["flir-service-key"]) {
-          sh "git push || echo 'Push failed. There is probably nothing to push.'"
-        }
-      }
-    }
-    stage("Release on PyPI") {       
-      when {
-        buildingTag()
-      }
-      environment {
-        TWINE_REPOSITORY = "pypi"
-        TWINE_USERNAME = "__token__"
-        TWINE_PASSWORD = credentials("pypi-conservator-cli")
-      }
-      steps {        
-        sh "echo $TWINE_PASSWORD | base64"
-        sh "python setup.py --version"
-        sh "pip install build twine"
-        sh "python -m build"
-        //check before
-        //sh "python -m twine upload dist/*"
-      }
-    }
+    
 
       }
     }
@@ -160,50 +122,17 @@ pipeline {
 }
 
 def sendNotifications(String msg){
- 
-  echo "sendNotification been called"
-  //sh """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}"""
-  // sh_command = sh(
-  //   script: """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}""",
-  //   returnStdout: true
-  // )
-   sh_command = sh(    
-    script: """curl -H 'Content-Type: application/json' -d '{"text": "$msg"}' ${TEAMS_WEBHOOK}""",    
+   if (msg == "post"){  
+     teamsMsg = currentBuild.result   
+   }
+  else {
+     teamsMsg = "${msg}, code: ${CODEBASE}, URL:${env.BUILD_URL}"  
+  }
+  
+  sh_command = sh(    
+    script: """curl -H 'Content-Type: application/json' -d '{"text": "$teamsMsg"}' ${TEAMS_WEBHOOK}""",    
     returnStdout: false
-  )
-  
-
-  // //Send Slack message about proccess/
-  // TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
-  // //println("TEAMS_WEBHOOK: ${TEAMS_WEBHOOK}")
-  // //sh "echo ${TEAMS_WEBHOOK} | base64"
-  // sh """"
-  // curl -H 'Content-Type: application/json' -d '{\"text\": \"Jenkins Started to deploy = ${BUILD_URL}console\"}' ${TEAMS_WEBHOOK}
-  // """
-  
-  // if (msg == "post"){
-  //   echo "here"
-  //   slackMsg = currentBuild.result
-  //   header = "'Content-Type: application/json'"
-  //   data = """ '{"text": "${slackMsg}"}' """
-
-  //   sh """ curl -H ${header} -d ${data}"""
-  //   sh '''curl -H 'Content-Type: application/json' -d '{"text": "${slackMsg}"' "${TEAMS_WEBHOOK}"}'''
-
-    
-  // }
-  // else {
-    
-  //   slackMsg = "${msg}, code: ${CODEBASE}, URL:${env.BUILD_URL}"
-  //   //sh """curl -H 'Content-Type: application/json' -d '{"text": ${slackMsg}' ${TEAMS_WEBHOOK}}"""
-  //   sh '''curl -H 'Content-Type: application/json' -d '{"text": "${slackMsg}"' "${TEAMS_WEBHOOK}"}'''
-
-  // }  
-  
-  // println(slackMsg)
-
-
-
+  ) 
 }
 
 
