@@ -164,13 +164,13 @@ def sendNotifications(String msg){
   echo "sendNotification been called"
   
 
-  //Send Slack message about proccess/
-  TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
-  //println("TEAMS_WEBHOOK: ${TEAMS_WEBHOOK}")
-  //sh "echo ${TEAMS_WEBHOOK} | base64"
-  sh """"
-  curl -H 'Content-Type: application/json' -d '{\"text\": \"Jenkins Started to deploy = ${BUILD_URL}console\"}' ${TEAMS_WEBHOOK}
-  """
+  // //Send Slack message about proccess/
+  // TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
+  // //println("TEAMS_WEBHOOK: ${TEAMS_WEBHOOK}")
+  // //sh "echo ${TEAMS_WEBHOOK} | base64"
+  // sh """"
+  // curl -H 'Content-Type: application/json' -d '{\"text\": \"Jenkins Started to deploy = ${BUILD_URL}console\"}' ${TEAMS_WEBHOOK}
+  // """
   
   // if (msg == "post"){
   //   echo "here"
