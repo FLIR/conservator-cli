@@ -1,5 +1,7 @@
 pipeline {
   agent {
+    label 'banana-conservator'
+
     dockerfile {
       dir "test"
       label "docker"
