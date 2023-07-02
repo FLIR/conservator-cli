@@ -169,7 +169,8 @@ def sendNotifications(String msg){
   //   returnStdout: true
   // )
    sh_command = sh(    
-    script: """echo test""",
+    //script: """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}""",
+    script: """echo $TEAMS_WEBHOOK""",
     returnStdout: true
   )
   print(sh_command)
