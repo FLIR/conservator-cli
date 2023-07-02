@@ -160,7 +160,7 @@ pipeline {
 
 def sendNotifications(String msg){
   echo "sendNotification been called"
-  //Send Slack message about proccess
+  //Send Slack message about proccess/
   TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
   
   if (msg == "post"){    
