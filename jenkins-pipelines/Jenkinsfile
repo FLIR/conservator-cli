@@ -15,6 +15,7 @@ pipeline {
 
   environment {    
     CODEBASE = 'flirconservator-cli'
+    TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
   }
   
   stages {
@@ -159,9 +160,7 @@ pipeline {
 }
 
 def sendNotifications(String msg){
-  //testing
-  msg = "post"
-  TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
+ 
   echo "sendNotification been called"
   //sh """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}"""
   // sh_command = sh(
@@ -169,11 +168,10 @@ def sendNotifications(String msg){
   //   returnStdout: true
   // )
    sh_command = sh(    
-    //script: """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}""",
-    script: "echo $TEAMS_WEBHOOK",
-    returnStdout: true
+    script: """curl -H 'Content-Type: application/json' -d '{"text": "$msg"}' ${TEAMS_WEBHOOK}""",    
+    returnStdout: false
   )
-  print(sh_command)
+  
 
   // //Send Slack message about proccess/
   // TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
