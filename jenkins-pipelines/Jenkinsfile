@@ -162,17 +162,19 @@ def sendNotifications(String msg){
   echo "sendNotification been called"
   //Send Slack message about proccess/
   TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
+  println("TEAMS_WEBHOOK: ${TEAMS_WEBHOOK}")
   
   if (msg == "post"){    
     slackMsg = currentBuild.result
-    sh """curl -H 'Content-Type: application/json' -d '{"text": ${slackMsg}' ${TEAMS_WEBHOOK}}"""
+    sh '''curl -H 'Content-Type: application/json' -d '{"text": "${slackMsg}"' "${TEAMS_WEBHOOK}"}'''
 
     
   }
   else {
     
     slackMsg = "${msg}, code: ${CODEBASE}, URL:${env.BUILD_URL}"
-    sh """curl -H 'Content-Type: application/json' -d '{"text": ${slackMsg}' ${TEAMS_WEBHOOK}}"""
+    //sh """curl -H 'Content-Type: application/json' -d '{"text": ${slackMsg}' ${TEAMS_WEBHOOK}}"""
+    sh '''curl -H 'Content-Type: application/json' -d '{"text": "${slackMsg}"' "${TEAMS_WEBHOOK}"}'''
 
   }  
   
