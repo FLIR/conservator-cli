@@ -6,21 +6,13 @@ pipeline {
       additionalBuildArgs "-t conservator-cli/test"
       args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
-    // dockerfile {
-    //   dir "test"
-    //   label "docker"
-    //   additionalBuildArgs "-t conservator-cli/test"
-    //   args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
-    // }
   }
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
-    TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
   }
   stages {
     stage("Install") {
       steps {
-        sendNotifications("flirconservator+cli integrations started")
         sh "pip install --no-cache-dir -r requirements.txt"
         sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
@@ -215,41 +207,24 @@ pipeline {
     }
   }
   post {
-    always{
-      script{       
-          sh "kind delete cluster"
-          // This docker executes as root, so any files created (python cache, etc.) can't be deleted
-          // by the Jenkins worker. We need to lower permissions before asking to clean up.
-          sh "chmod -R 777 ."
-          sh """
-          if [ -d $WORKSPACE/fc/docker/kubernetes ] ; then
-            echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-            echo '!!!!!! used external kubernetes config, please disable when fix has been deployed !!!!!!'
-            echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-          fi
-          """
-          cleanWs()
-          sh "docker image prune"
-          // Note in --filter the "*" character will not match a "/"
-          sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
-          sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
-          sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"        
-      }
+    cleanup {
+      sh "kind delete cluster"
+      // This docker executes as root, so any files created (python cache, etc.) can't be deleted
+      // by the Jenkins worker. We need to lower permissions before asking to clean up.
+      sh "chmod -R 777 ."
+      sh """
+      if [ -d $WORKSPACE/fc/docker/kubernetes ] ; then
+        echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+        echo '!!!!!! used external kubernetes config, please disable when fix has been deployed !!!!!!'
+        echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+      fi
+      """
+      cleanWs()
+      sh "docker image prune"
+      // Note in --filter the "*" character will not match a "/"
+      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
     }
   }
-}
-
-
-def sendNotifications(String msg){
-  //  if (msg == "success" || msg == "fail"){  
-  //    teamsMsg = currentBuild.result   
-  //  }
-  // else {
-  //    teamsMsg = "${msg}, code: ${CODEBASE}, URL:${env.BUILD_URL}"  
-  // }
-  
-  sh_command = sh(    
-    script: """curl -H 'Content-Type: application/json' -d '{"text": "$msg"}' ${TEAMS_WEBHOOK}""",    
-    returnStdout: false
-  ) 
 }
