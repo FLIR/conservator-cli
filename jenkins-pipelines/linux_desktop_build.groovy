@@ -245,7 +245,7 @@ def sendNotifications(String msg){
   // }
   
   sh_command = sh(    
-    script: """curl -H 'Content-Type: application/json' -d '{"text": "$teamsMsg"}' ${TEAMS_WEBHOOK}""",    
+    script: """curl -H 'Content-Type: application/json' -d '{"text": "$msg"}' ${TEAMS_WEBHOOK}""",    
     returnStdout: false
   ) 
 }
