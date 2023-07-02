@@ -163,8 +163,12 @@ def sendNotifications(String msg){
   msg = "post"
   TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
   echo "sendNotification been called"
-  sh """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}"""
-  
+  //sh """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}"""
+  sh_command = sh(
+    script: """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}""",
+    returnStdout: true
+  )
+  print(sh_command)
 
   // //Send Slack message about proccess/
   // TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
