@@ -161,7 +161,9 @@ pipeline {
 def sendNotifications(String msg){
   //testing
   msg = "post"
+  TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
   echo "sendNotification been called"
+  sh """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}"""
   
 
   // //Send Slack message about proccess/
