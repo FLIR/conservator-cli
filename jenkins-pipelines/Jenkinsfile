@@ -164,8 +164,12 @@ def sendNotifications(String msg){
   TEAMS_WEBHOOK = credentials("Conservator-CICD-Incoming")
   echo "sendNotification been called"
   //sh """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}"""
-  sh_command = sh(
-    script: """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}""",
+  // sh_command = sh(
+  //   script: """curl -H 'Content-Type: application/json' -d '{"text": "Hello World"}' ${TEAMS_WEBHOOK}""",
+  //   returnStdout: true
+  // )
+   sh_command = sh(    
+    script: """echo test""",
     returnStdout: true
   )
   print(sh_command)
