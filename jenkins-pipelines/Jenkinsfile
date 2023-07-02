@@ -118,7 +118,7 @@ pipeline {
 }
 
 def sendNotifications(String msg){
-   if (msg == "post" || msg = "success" || msg = "fail"){  
+   if (msg == "post" || msg == "success" || msg == "fail"){  
      teamsMsg = currentBuild.result   
    }
   else {
