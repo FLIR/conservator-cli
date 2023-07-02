@@ -237,12 +237,12 @@ pipeline {
 
 
 def sendNotifications(String msg){
-   if (msg == "success" || msg == "fail"){  
-     teamsMsg = currentBuild.result   
-   }
-  else {
-     teamsMsg = "${msg}, code: ${CODEBASE}, URL:${env.BUILD_URL}"  
-  }
+  //  if (msg == "success" || msg == "fail"){  
+  //    teamsMsg = currentBuild.result   
+  //  }
+  // else {
+  //    teamsMsg = "${msg}, code: ${CODEBASE}, URL:${env.BUILD_URL}"  
+  // }
   
   sh_command = sh(    
     script: """curl -H 'Content-Type: application/json' -d '{"text": "$teamsMsg"}' ${TEAMS_WEBHOOK}""",    
