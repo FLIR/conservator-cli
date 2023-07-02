@@ -1,10 +1,16 @@
 pipeline {
   agent {
+    // dockerfile {
+    //   dir "test"
+    //   label "docker"
+    //   additionalBuildArgs "-t conservator-cli/test"
+    //   args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+    // }
     dockerfile {
       dir "test"
       label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
   environment {
