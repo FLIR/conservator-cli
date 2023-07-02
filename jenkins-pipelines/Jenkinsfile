@@ -74,30 +74,22 @@ pipeline {
             }
           }
         }
-         stage("Install") {
-          steps {            
-            sh "echo 2.12.0 > RELEASE-VERSION"
-            sh "pip install --no-cache-dir -r requirements.txt"
-            sh "python setup.py --version"
-            sh "pip install --no-cache-dir ."
-            sh "git config --global user.name 'Test User'"
-            sh "git config --global user.email 'test@example.com'"
-          }
-        }
-
-          stage("Documentation Tests") {
-          steps {
-            echo "Building docs..."
-            dir("docs") {
-              sh "make html"
-            }
-          }
-        }
-
-    
-
       }
     }
+    
+    stage("Release on PyPI") {
+      when {
+        buildingTag()
+      }
+       stages {
+        stage('Releasing on pypi'){          
+          steps {
+            println('here')
+          }
+        }
+       }
+
+
   }
   
   post {
@@ -111,18 +103,22 @@ pipeline {
     
     success {
       script {
+        cleanWs()
         echo 'success'
       }
     }
     
     failure {
-      echo 'fail'
+      script {      
+        cleanWs()
+        echo 'fail'
+      }
     }
   }
 }
 
 def sendNotifications(String msg){
-   if (msg == "post"){  
+   if (msg == "post" || msg = "success" || msg = "fail"){  
      teamsMsg = currentBuild.result   
    }
   else {
