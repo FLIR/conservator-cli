@@ -13,15 +13,17 @@ pipeline {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
   }
   stages {
-    stage("Install") {
-      agent {
-         dockerfile {
-       dir "test"
-       label "docker"
-       additionalBuildArgs "-t conservator-cli/test"
-       args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
-     }
+    stage("temp"){
+      steps {
+        sh 'cat /etc/os-release'
+        sh 'git --version'
+        sh 'docker --version'
+        sh 'curl ifconfig.me'
+        sleep 9000
       }
+
+    }
+    stage("Install") {
       steps {
         sh "pip install --no-cache-dir -r requirements.txt"
         sh "python setup.py --version"
