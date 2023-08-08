@@ -329,6 +329,12 @@ you can increase this number by using the <code class="docutils literal notransl
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cvc download --pool-size 50  # download 50 frames at a time
 </pre></div>
 </div>
+<p>When using a global cache, it may be necessary to run the download command using the
+<code class="docutils literal notranslate"><span class="pre">-s</span></code> | <code class="docutils literal notranslate"><span class="pre">--symlink</span></code> flag which will create a symlink versus a hard link in the
+<code class="docutils literal notranslate"><span class="pre">data/</span></code> directory of the cloned dataset (i.e. if the cache is on a different volume).</p>
+<blockquote>
+<div><p>$ cvc download -s</p>
+</div></blockquote>
 </section>
 <section id="commit-history">
 <h3>Commit History<a class="headerlink" href="#commit-history" title="Permalink to this heading"></a></h3>
