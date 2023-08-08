@@ -252,13 +252,10 @@ class AddAttributeInput(sgqlc.types.Input):
 
 class AddAttributePrototypeInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("name", "type", "is_required", "options")
+    __field_names__ = ("name", "type", "options")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     type = sgqlc.types.Field(
         sgqlc.types.non_null(AttributePrototypeType), graphql_name="type"
-    )
-    is_required = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean), graphql_name="isRequired"
     )
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
@@ -928,10 +925,9 @@ class ModifyAttributeInput(sgqlc.types.Input):
 
 class ModifyAttributePrototypeInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("name", "type", "is_required", "options")
+    __field_names__ = ("name", "type", "options")
     name = sgqlc.types.Field(String, graphql_name="name")
     type = sgqlc.types.Field(AttributePrototypeType, graphql_name="type")
-    is_required = sgqlc.types.Field(Boolean, graphql_name="isRequired")
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
 
@@ -1386,14 +1382,11 @@ class Attribute(sgqlc.types.Type):
 
 class AttributePrototype(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("id", "name", "type", "is_required", "options")
+    __field_names__ = ("id", "name", "type", "options")
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     type = sgqlc.types.Field(
         sgqlc.types.non_null(AttributePrototypeType), graphql_name="type"
-    )
-    is_required = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean), graphql_name="isRequired"
     )
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
