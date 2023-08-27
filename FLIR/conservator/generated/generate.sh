@@ -19,8 +19,15 @@ sgqlc-codegen schema ${SCRIPT_PATH}/schema.json ${SCRIPT_PATH}/schema.py
 # HACK!!!
 # The built in sgqlc Date type doesn't work with Conservator.
 # We need to use our own instead.
-sed -i 's/sgqlc.types.datetime.Date/FLIR.conservator.generated.date.Date/g' ${SCRIPT_PATH}/schema.py
-sed -i 's/import sgqlc.types.datetime/import FLIR.conservator.generated.date/g' ${SCRIPT_PATH}/schema.py
+
+#For it to run on Macos
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  gsed -i 's/sgqlc.types.datetime.Date/FLIR.conservator.generated.date.Date/g' ${SCRIPT_PATH}/schema.py
+  gsed -i 's/import sgqlc.types.datetime/import FLIR.conservator.generated.date/g' ${SCRIPT_PATH}/schema.py
+else
+  sed -i 's/sgqlc.types.datetime.Date/FLIR.conservator.generated.date.Date/g' ${SCRIPT_PATH}/schema.py
+  sed -i 's/import sgqlc.types.datetime/import FLIR.conservator.generated.date/g' ${SCRIPT_PATH}/schema.py
+fi
 
 md5sum ${SCRIPT_PATH}/schema.json | cut -d ' ' -f 1 | tee "$BASE_PATH/api_version.txt"
 rm ${SCRIPT_PATH}/schema.json
