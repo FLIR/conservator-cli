@@ -75,13 +75,10 @@ class MediaTypeManager:
         :param collection: If specified, the Collection object, or `str` Collection ID to
             upload the media to. If not specified, the media is not uploaded to any
             specific collection (orphan).
-        :param remote_name: If given, the remote name of the media. Otherwise, the local file
-            name is used.
+        :param remote_name: If given, set the name for the media file on the server.
         """
         file_path = os.path.expanduser(file_path)
         assert os.path.isfile(file_path)
-        if remote_name is None:
-            remote_name = os.path.split(file_path)[-1]
 
         if isinstance(collection, str):
             collection_id = collection

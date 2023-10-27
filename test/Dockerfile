@@ -17,7 +17,7 @@ RUN curl -fsSL https://get.docker.com | sh
 # Install kubectl
 RUN apt-get update \
     && apt-get install -y apt-transport-https ca-certificates curl \
-    && curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg \
+    && curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" \
     | tee /etc/apt/sources.list.d/kubernetes.list \
     && apt-get update \
@@ -36,14 +36,11 @@ RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-
 # Install AWS CLI to pull docker images from ECR
 RUN apt-get update \
     && apt-get install unzip
-# aws cli v1
-RUN curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" \
-    && unzip awscli-bundle.zip \
-    && ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+
 # aws cli v2
-#RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-#    && unzip awscliv2.zip \
-#    && ./aws/install
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+   && unzip awscliv2.zip \
+   && ./aws/install
 
 RUN useradd --uid 1000 --gid 999 tester
 RUN mkdir /home/tester
