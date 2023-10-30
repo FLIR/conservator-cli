@@ -40,8 +40,6 @@ _UPLOAD_TYPE_VIDEO = "video"
 _UPLOAD_TYPE_IMAGES = "images"
 _UPLOAD_TYPE_PRISM = "prism"
 
-_VALID_CONSERVATOR_SPECTRUMS = ['RGB', 'Thermal', 'Mixed', 'Other', 'Unknown']
-
 # -------------------------------------
 #               Logging
 # -------------------------------------
@@ -1015,9 +1013,7 @@ def main():
             if default_metadata is None:
                 stats.upload_entry_invalid_count += 1
                 _logger.warning(
-                    'Hardware named "%s" could not be found (skipping entry). Please check %s',
-                    hardware_name,
-                    config_path,
+                    f'Hardware named "{hardware_name}" could not be found (skipping entry). Please check {config_path}'
                 )
                 continue
 
