@@ -165,7 +165,7 @@ def _update_string(key: str, data: dict, new_value: str) -> bool:
                 del data[key]
             except KeyError:
                 pass
-        _logger.debug("Metadata needs to be updated because of: %s", key)
+        _logger.debug(f'Metadata needs to be updated because of: "{key}"')
         return True
     return False
 
@@ -345,8 +345,8 @@ def get_video_and_collection(filename: str, conservator_location: str):
         ):
             if video.name == filename:
                 video_url = _conservator.get_url() + "/videos/" + video.id
-                _logger.info("Found %s/%s", conservator_location, filename)
-                _logger.info("       URL: %s", video_url)
+                _logger.info(f"Found {conservator_location}/{filename}")
+                _logger.info(f"       URL: {video_url}")
                 return video, collection
     return video, collection
 
@@ -373,17 +373,17 @@ def upload_video(
         return False
 
     try:
-        _logger.info('Uploading "%s"', filename)
-        _logger.info("   File on disk:         %s", full_file_path)
-        _logger.info("   Conservator location: %s", conservator_location)
+        _logger.info(f'Uploading "{filename}"', )
+        _logger.info(f"   File on disk:         {full_file_path}", )
+        _logger.info(f"   Conservator location: {conservator_location}", )
 
         video_id = upload_video_helper(full_file_path, filename, collection)
         video_url = _conservator.get_url() + "/videos/" + video_id
 
-        _logger.info("   Success! See:         %s", video_url)
+        _logger.info(f"   Success! See:         {video_url}", )
         return True
     except Exception as upload_error:
-        _logger.error('Could not upload the file: "%s" (continuing)', filename)
+        _logger.error(f'Could not upload the file: "{filename}" (continuing)')
         _logger.error(upload_error)
         return False
 
@@ -428,8 +428,7 @@ def get_metadata_if_ready(video: Video, metadata_path: str, stats: Stats, dry_ru
             # Processing is done and we can update the metadata
             video.download_metadata(osp.dirname(metadata_path))
             _logger.info(
-                "       Downloading video metadata to temporary file: %s",
-                metadata_path,
+                f"       Downloading video metadata to temporary file: {metadata_path}"
             )
 
             with open(metadata_path, "r", encoding="UTF-8") as meta_data_file:
@@ -503,7 +502,7 @@ def upload_video_capture(
             )
             stats.upload_video_count += 1
         else:
-            _logger.info("Video exists and is ready for upload: %s", local_path)
+            _logger.info(f"Video exists and is ready for upload: {local_path}")
     else:
         # Conservator has a record of the upload - has processing completed? If so get the metadata.
         video_metadata = get_metadata_if_ready(video, meta_data_path, stats, dry_run)
@@ -570,18 +569,16 @@ def upload_prism_capture(
     if not osp.exists(thermal_input_path) or not osp.isdir(thermal_input_path):
         stats.upload_entry_invalid_count += 1
         _logger.warning(
-            'The path "%s" is not a directory or does not exist (skipping entry).\
-                Please make sure this is a valid Prism recording...',
-            thermal_input_path,
+            f'The path "{thermal_input_path}" is not a directory or does not exist (skipping entry).\
+                Please make sure this is a valid Prism recording...'
         )
         return
 
     if not osp.exists(visible_input_path) or not osp.isdir(visible_input_path):
         stats.upload_entry_invalid_count += 1
         _logger.warning(
-            'The path "%s" is not a directory or does not exist (skipping entry).\
-                Please make sure this is a valid Prism recording...',
-            visible_input_path,
+            f'The path "{visible_input_path}" is not a directory or does not exist (skipping entry).\
+                Please make sure this is a valid Prism recording...'
         )
         return
 
@@ -593,9 +590,8 @@ def upload_prism_capture(
         stats.upload_entry_invalid_count += 1
 
         _logger.warning(
-            'Could not read the first thermal meta file at "%s" (skipping entry).\
-                Please make sure this is a valid Prism recording...',
-            thermal_meta_path,
+            f'Could not read the first thermal meta file at "{thermal_meta_path}" (skipping entry).\
+                Please make sure this is a valid Prism recording...'
         )
         return
 
@@ -947,8 +943,7 @@ def main():
 
     if not osp.exists(upload_list_path):
         _logger.fatal(
-            "missing upload list CSV file. Expected it here: %s",
-            upload_list_path,
+            f"missing upload list CSV file. Expected it here: {upload_list_path}"
         )
         sys.exit(1)
 
