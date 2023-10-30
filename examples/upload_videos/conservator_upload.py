@@ -36,6 +36,12 @@ DEFAULT_UPLOAD_CONFIG_ROOT = osp.join(
 
 os.environ["BASE_DIR"] = osp.dirname(osp.realpath(__file__))
 
+_UPLOAD_TYPE_VIDEO = "video"
+_UPLOAD_TYPE_IMAGES = "images"
+_UPLOAD_TYPE_PRISM = "prism"
+
+_VALID_CONSERVATOR_SPECTRUMS = ['RGB', 'Thermal', 'Mixed', 'Other', 'Unknown']
+
 # -------------------------------------
 #               Logging
 # -------------------------------------
@@ -54,8 +60,6 @@ _conservator = Conservator.default()
 # -------------------------------------
 #               Stats
 # -------------------------------------
-
-
 class Stats:
     def __init__(self):
         self.upload_entry_count = 0
@@ -169,6 +173,19 @@ def _update_string(key: str, data: dict, new_value: str) -> bool:
     return False
 
 
+def get_conservator_spectrum(value: str):
+    value_lower = value.lower()
+    if value_lower == "thermal":
+        return "Thermal"
+    elif value_lower == "rgb" or value_lower == "visible":
+        return "RGB"
+    elif value_lower == "mixed":
+        return "Mixed"
+    elif value_lower == "other":
+        return "Other"
+
+    return "Unknown"
+
 def update_video_meta_data(
     video,
     video_metadata_all: dict,
@@ -210,16 +227,16 @@ def update_video_meta_data(
     # ----------------------------------
     #       Preprocess Spectrum
     # ----------------------------------
-    if camera_name_or_spectrum == "thermal":
-        conservator_spectrum = "Thermal"
-    elif camera_name_or_spectrum == "rgb" or camera_name_or_spectrum == "visible":
-        conservator_spectrum = "RGB"
-    elif camera_name_or_spectrum == "mixed":
-        conservator_spectrum = "Mixed"
-    elif camera_name_or_spectrum == "other":
-        conservator_spectrum = "Other"
-    else:
-        conservator_spectrum = "Unknown"
+    # Prefer the explicitly provided spectrum
+    conservator_spectrum = 'Unknown'
+    try:
+        conservator_spectrum = get_conservator_spectrum(default_metadata.get_spectrum(camera_name_or_spectrum))
+    except Exception as e:
+        logging.warning(e)
+
+    if conservator_spectrum == 'Unknown':
+        # Revert to the camera "name"
+        conservator_spectrum = get_conservator_spectrum(camera_name_or_spectrum)
 
     # ----------------------------------
     #         Perform Updates
@@ -308,7 +325,7 @@ def upload_video_helper(local_path: str, remote_name: str, collection: Collectio
 
     # You can wait for processing in this manner (not required).
     # This script is designed to run multiples times to let Conservator process the upload.
-    # Afterwards metadata is updated.
+    # Afterward metadata is updated.
     # print("Waiting for processing")
     # _conservator.videos.wait_for_processing(video_id)
     return video_id
@@ -397,6 +414,36 @@ def still_processed_message():
     _logger.info("       Video is still being processed by Conservator")
 
 
+def get_metadata_if_ready(video: Video, metadata_path: str, stats: Stats, dry_run: bool) -> object:
+    """
+
+    :param video: Conservator video object
+    :param metadata_path: path to save video metadata (Conservator CLI must download first)
+    :param stats: keep track of stats (output)
+    :param dry_run: true - metadata will actually be downloaded,
+                    false - only display message if video is still processing
+    :return: None if metadata was not downloaded
+             dict of metadata file (if metadata was downloaded successfully)
+    """
+    video_metadata = None
+    if _conservator.videos.is_uploaded_media_id_processed(video.id):
+        if dry_run is False:
+            # Processing is done and we can update the metadata
+            video.download_metadata(osp.dirname(metadata_path))
+            _logger.info(
+                "       Downloading video metadata to temporary file: %s",
+                metadata_path,
+            )
+
+            with open(metadata_path, "r", encoding="UTF-8") as meta_data_file:
+                video_metadata = json.load(meta_data_file)
+    else:
+        stats.video_still_processing_count += 1
+        still_processed_message()
+
+    return video_metadata
+
+
 def upload_video_capture(
     row: dict,
     default_metadata: DefaultMetadata,
@@ -461,22 +508,8 @@ def upload_video_capture(
         else:
             _logger.info("Video exists and is ready for upload: %s", local_path)
     else:
-        if _conservator.videos.is_uploaded_media_id_processed(video.id):
-            if dry_run is False:
-                # When in dry run mode we only check location (no metadata)
-
-                # Processing is done and we can not update the metadata
-                video.download_metadata(osp.dirname(meta_data_path))
-                _logger.info(
-                    "       Downloading video metadata to temporary file: %s",
-                    meta_data_path,
-                )
-
-                with open(meta_data_path, "r", encoding="UTF-8") as meta_data_file:
-                    video_metadata = json.load(meta_data_file)
-        else:
-            stats.video_still_processing_count += 1
-            still_processed_message()
+        # Conservator has a record of the upload - has processing completed? If so get the metadata.
+        video_metadata = get_metadata_if_ready(video, meta_data_path, stats, dry_run)
 
     # -------------------------------
     #     Update Video Meta data
@@ -498,6 +531,21 @@ def upload_video_capture(
     # Newline for readability
     _logger.info("")
 
+def local_path_passes_sanity_checks(local_path: str, stats: Stats):
+    if not osp.exists(local_path):
+        stats.upload_entry_invalid_count += 1
+        _logger.warning(
+            f'The path "{local_path}" could not be found (skipping entry). Please check your upload.csv file...'
+        )
+        return False
+
+    if not osp.isdir(local_path):
+        stats.upload_entry_invalid_count += 1
+        _logger.warning(
+            f'The path "{local_path}" is not a directory (skipping entry). Please check your upload.csv file...'
+        )
+        return False
+    return True
 
 def upload_prism_capture(
     row: dict, default_metadata: DefaultMetadata, stats: Stats, dry_run: bool
@@ -512,21 +560,12 @@ def upload_prism_capture(
     local_path = osp.realpath(osp.expandvars(row["local_path"]))
     check_if_expanded_properly(local_path)
 
-    if not osp.exists(local_path):
-        stats.upload_entry_invalid_count += 1
-        _logger.warning(
-            'The path "%s" could not be found (skipping entry). Please check your upload.csv file...',
-            local_path,
-        )
+    if not local_path_passes_sanity_checks(local_path, stats):
         return
 
-    if not osp.isdir(local_path):
-        stats.upload_entry_invalid_count += 1
-        _logger.warning(
-            'The path "%s" is not a directory (skipping entry). Please check your upload.csv file...',
-            local_path,
-        )
-        return
+    upload_root_path = osp.realpath(osp.join(local_path, "upload"))
+    if not dry_run:
+        os.makedirs(upload_root_path, exist_ok=True)
 
     thermal_input_path = osp.join(local_path, "thermal")
     visible_input_path = osp.join(local_path, "visible")
@@ -548,11 +587,6 @@ def upload_prism_capture(
             visible_input_path,
         )
         return
-
-    upload_root_path = osp.realpath(osp.join(local_path, "", "upload"))
-
-    if not osp.exists(upload_root_path):
-        os.makedirs(upload_root_path, exist_ok=True)
 
     thermal_meta_path = osp.join(local_path, "thermal_meta")
 
@@ -629,24 +663,8 @@ def upload_prism_capture(
             )
             stats.upload_video_count += 1
     else:
-        if _conservator.videos.is_uploaded_media_id_processed(thermal_video.id):
-            if dry_run is False:
-                # When in dry run mode we only check location (no metadata)
-
-                # Processing is done and we can not update the metadata
-                thermal_video.download_metadata(osp.dirname(thermal_meta_data_path))
-                _logger.info(
-                    "       Downloading video metadata to temporary file: %s",
-                    thermal_meta_data_path,
-                )
-
-                with open(
-                    thermal_meta_data_path, "r", encoding="UTF-8"
-                ) as thermal_metadata:
-                    thermal_video_metadata = json.load(thermal_metadata)
-        else:
-            stats.video_still_processing_count += 1
-            still_processed_message()
+        # Conservator has a record of the upload - has processing completed? If so get the metadata.
+        thermal_video_metadata = get_metadata_if_ready(thermal_video, thermal_meta_data_path, stats, dry_run)
 
     # ---------------------------------------
     #  Visible: prepare zip files & upload
@@ -690,30 +708,15 @@ def upload_prism_capture(
             )
             stats.upload_video_count += 1
     else:
-        if _conservator.videos.is_uploaded_media_id_processed(visible_video.id):
-            if dry_run is False:
-                # When in dry run mode we only check location (no metadata)
-
-                # Processing is done and we can not update the metadata
-                visible_video.download_metadata(osp.dirname(visible_meta_data_path))
-                _logger.info(
-                    "       Downloading video metadata to temporary file: %s",
-                    visible_meta_data_path,
-                )
-
-                with open(
-                    visible_meta_data_path, "r", encoding="UTF-8"
-                ) as thermal_metadata:
-                    visible_video_metadata = json.load(thermal_metadata)
-
-        else:
-            stats.video_still_processing_count += 1
-            still_processed_message()
+        # Conservator has a record of the upload - has processing completed? If so get the metadata.
+        visible_video_metadata = get_metadata_if_ready(visible_video, visible_meta_data_path, stats, dry_run)
 
     # ---------------------------------------
     #     Joint Thermal <-> Visible data
     # ---------------------------------------
-    if thermal_video_metadata is not None and visible_video_metadata is not None:
+    if type(thermal_video_metadata) is dict and type(visible_video_metadata) is dict:
+        thermal_video_metadata: dict
+        visible_video_metadata: dict
         if len(thermal_video_metadata["videos"][0]["frames"]) == len(
             visible_video_metadata["videos"][0]["frames"]
         ):
@@ -760,6 +763,98 @@ def upload_prism_capture(
             override_location=row.get("location", ""),
             camera_name_or_spectrum="thermal",
             save_path=thermal_meta_data_path,
+            stats=stats,
+            dry_run=dry_run,
+        )
+
+    # Newline for readability
+    _logger.info("")
+
+def upload_image_capture(
+    row: dict, default_metadata: DefaultMetadata, stats: Stats, dry_run: bool, camera_name_or_spectrum: str
+):
+    """
+    :param row:
+    :param default_metadata:
+    :param stats: keep track of stats to display to user
+    :param dry_run: if False actually upload the Conservator
+    :param camera_name_or_spectrum: identifies the specific default metadata
+    :return:
+    """
+    local_path = osp.realpath(osp.expandvars(row["local_path"]))
+    check_if_expanded_properly(local_path)
+
+    if not local_path_passes_sanity_checks(local_path, stats):
+        return
+
+    upload_root_path = osp.realpath(osp.join(local_path, "..", "upload"))
+    if not dry_run:
+        os.makedirs(upload_root_path, exist_ok=True)
+
+    conservator_location = row["conservator_location"]
+    basename = osp.basename(local_path)
+    zip_filename = f"{basename}.zip"
+    zip_path = osp.join(upload_root_path, zip_filename)
+
+    metadata_path = osp.join(upload_root_path, f"{basename}.json")
+
+    # ---------------------------------------
+    #      prepare zip files & upload
+    # ---------------------------------------
+    video, collection = get_video_and_collection(
+        zip_filename, conservator_location
+    )
+
+    video_metadata = None
+    if video is None:
+        stats.would_upload_video_count += 1
+        if not osp.exists(zip_path):
+            # Create the zip file if needed
+            # (compress because these are typically 16-bit uncompressed tiffs)
+            cmd = f"cd {upload_root_path} && zip -q -j {zip_filename} {local_path}/*"
+
+            if dry_run:
+                _logger.info(f"     Would run: {cmd}")
+            else:
+                _logger.info(
+                    "     Creating zip archive for upload: %s/%s",
+                    upload_root_path,
+                    zip_filename,
+                )
+                _logger.debug("     Zip command:")
+                _logger.debug("         %s", cmd)
+                os.system(cmd)
+        else:
+            if dry_run:
+                _logger.info(f"Image exists and is ready for upload: {zip_path}")
+
+        if not dry_run:
+            if collection is None:
+                # We have not made the collection yet...
+                # Create it recursively (this will create a project if it does not exist)
+                collection = _conservator.collections.from_remote_path(
+                    conservator_location, make_if_no_exist=True, fields="id"
+                )
+
+            upload_video(
+                zip_path, zip_filename, collection, conservator_location
+            )
+            stats.upload_video_count += 1
+    else:
+        # Conservator has a record of the upload - has processing completed? If so get the metadata.
+        video_metadata = get_metadata_if_ready(video, metadata_path, stats, dry_run)
+
+    if type(video_metadata) is dict:
+        # Dry run flag is checked inside
+        update_video_meta_data(
+            video,
+            video_metadata,
+            default_metadata,
+            specific_description=row["description"],
+            additional_tags=row["tags"],
+            override_location=row.get("location", ""),
+            camera_name_or_spectrum=camera_name_or_spectrum,
+            save_path=metadata_path,
             stats=stats,
             dry_run=dry_run,
         )
@@ -875,6 +970,7 @@ def main():
         reader = csv.DictReader(list_data_file)
 
         for row in reader:
+            row: dict
             stats.upload_entry_count += 1
             upload_type = str(row["type"]).lower()
 
@@ -884,7 +980,8 @@ def main():
 
             hardware_name = str(row["hardware_name"]).lower()
             camera_name_or_spectrum = None
-            if upload_type == "video":
+            if upload_type in [_UPLOAD_TYPE_VIDEO, _UPLOAD_TYPE_IMAGES]:
+                # Extract camera name (or spectrum) from the hardware_name field
                 if "." in hardware_name:
                     parts = hardware_name.split(".")
                     hardware_name = parts[0]
@@ -924,18 +1021,20 @@ def main():
                 )
                 continue
 
-            if (
-                upload_type == "prism" or upload_type == "guardian"
-            ):  # For backwards compatibility
+            # guardian - for backwards compatibility (deprecated)
+            if upload_type in [_UPLOAD_TYPE_PRISM, "guardian"]:
                 upload_prism_capture(row, default_metadata, stats, dry_run)
-            elif upload_type == "video":
+            elif upload_type == _UPLOAD_TYPE_VIDEO:
                 upload_video_capture(
+                    row, default_metadata, stats, dry_run, camera_name_or_spectrum
+                )
+            elif upload_type == _UPLOAD_TYPE_IMAGES:
+                upload_image_capture(
                     row, default_metadata, stats, dry_run, camera_name_or_spectrum
                 )
             else:
                 _logger.warning(
-                    'unsupported upload type "%s" (skipping)',
-                    upload_type,
+                    f'unsupported upload type "{upload_type}" (skipping)'
                 )
                 continue
 
