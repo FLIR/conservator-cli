@@ -24,7 +24,6 @@ import FLIR.conservator.conservator
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.wrappers import Video, Collection
 
-
 # -------------------
 #   Description
 # -------------------
@@ -628,24 +627,20 @@ def upload_prism_capture(
     if thermal_video is None:
         # Only if the file has NOT already been uploaded
         if dry_run:
-            _logger.info(
-                "Prism AI thermal exists and is ready for upload: %s",
-                thermal_input_path,
-            )
+            _logger.info(f"Prism AI thermal exists and is ready for upload: {thermal_input_path}")
 
         stats.would_upload_video_count += 1
         if not osp.exists(thermal_zip_path):
             # Create the zip file if needed
             # (compress because these are typically 16-bit uncompressed tiffs)
-            cmd = f"cd {upload_root_path} && zip -q -j\
-                {thermal_zip_filename} {thermal_input_path}/*"
+            # Use -r rather than /* to avoid getting "zip: Argument list too long"
+            cmd = f"cd {thermal_input_path} && zip -q -j -r {thermal_zip_path} ."
+
             _logger.info(
-                "     Creating zip archive for upload: %s/%s",
-                upload_root_path,
-                thermal_zip_filename,
+                f"     Creating zip archive for upload: {thermal_basename}"
             )
             _logger.debug("     Zip command:")
-            _logger.debug("         %s", cmd)
+            _logger.debug(f"         {cmd}")
             os.system(cmd)
 
         if not dry_run:
@@ -674,23 +669,19 @@ def upload_prism_capture(
     if visible_video is None:
         # Only if the file has not already been uploaded
         if dry_run:
-            _logger.info(
-                "Prism AI visible exists and is ready for upload: %s",
-                visible_input_path,
-            )
+            _logger.info(f"Prism AI visible exists and is ready for upload: {visible_input_path}")
 
         stats.would_upload_video_count += 1
         if not osp.exists(visible_zip_path):
             # Important: this command is slightly different from above: -0 means no compression
-            cmd = f"cd {upload_root_path} && zip -0 -q -j\
-                {visible_zip_filename} {visible_input_path}/*"
+            # Use -r rather than /* to avoid getting "zip: Argument list too long"
+            cmd = f"cd {visible_input_path} && zip -0 -q -j -r {visible_zip_path} ."
+
             _logger.info(
-                "     Creating zip archive for upload: %s/%s",
-                upload_root_path,
-                visible_zip_filename,
+                f"     Creating zip archive for upload: {visible_basename}"
             )
             _logger.debug("     Zip command:")
-            _logger.debug("         %s", cmd)
+            _logger.debug(f"           {cmd}")
             os.system(cmd)
 
         if not dry_run:
@@ -809,18 +800,17 @@ def upload_image_capture(
         if not osp.exists(zip_path):
             # Create the zip file if needed
             # (compress because these are typically 16-bit uncompressed tiffs)
-            cmd = f"cd {upload_root_path} && zip -q -j {zip_filename} {local_path}/*"
+            # Use -r rather than /* to avoid getting "zip: Argument list too long"
+            cmd = f"cd {local_path} && zip -q -j -r {zip_path} ."
 
             if dry_run:
                 _logger.info(f"     Would run: {cmd}")
             else:
                 _logger.info(
-                    "     Creating zip archive for upload: %s/%s",
-                    upload_root_path,
-                    zip_filename,
+                    f"     Creating zip archive for upload: {upload_root_path}/{zip_filename}"
                 )
                 _logger.debug("     Zip command:")
-                _logger.debug("         %s", cmd)
+                _logger.debug(f"         {cmd}", )
                 os.system(cmd)
         else:
             if dry_run:
