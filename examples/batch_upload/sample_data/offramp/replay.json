@@ -1,0 +1,4 @@
+{
+  "image_list": "./sample_data/offramp/replay.csv",
+  "image_root_path": "./sample_data/offramp/"
+}

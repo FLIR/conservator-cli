@@ -11,11 +11,12 @@ The supported formats include:
 - Image: .jpg, .png, .bmp, .tiff
 - Annotation data: .json, .xgtf
 
+For more details see `Uploading a Video <https://docs.conservator.ai/sections/upload-video.html>`_ in the official Conservator docs.
 
-Scripted Uploads
-----------------
+Scripted Batch Upload
+----------------------
 
-The script ``examples/upload_videos/conservator_upload.py`` is provided to enable configurable, bulk upload of videos to your Conservator instance.
+The script ``examples/batch_upload/conservator_upload.py`` is provided to enable configurable, bulk upload of videos to your Conservator instance.
 The features of this script include:
 
 - Uploading data in batches using consistent naming conventions
@@ -80,6 +81,23 @@ The following table describes the fields used in the ``upload.csv`` file:
 | description          | Full-text description of the capture                                                                                                                                                   |
 +----------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
+List All Configuration Entries
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To list all available upload projects, run the script without any parameters (or with only a ``--config_root`` parameter):
+
+::
+
+ $ python examples/batch_upload/conservator_upload.py
+
+ No config path provided, using default (/home/user/conservator-cli/examples/batch_upload/config/upload)
+ +-----------------------+--------------------------------------------------------+
+ | Config                | Description                                            |
+ +-----------------------+--------------------------------------------------------+
+ | generic-video-example | Beamsplitter upload batch for generic video example    |
+ | prism-example         | Prism-formatted upload batch for generic video example |
+ +-----------------------+--------------------------------------------------------+
+
 Generic Video Example
 ---------------------
 
@@ -93,7 +111,7 @@ This example can be run using data included in this repository on any customer i
 
 Note that ``beamsplitter.thermal`` is referring to the metadata defined in ``["default_metadata"]["beamsplitter"]["thermal"]`` within ``upload.json``, and that the ``conservator_location`` and ``local_path`` fields may need to be edited to reflect your user environment, and Conservator project setup respectively.
 
-Here is an example from ``examples/upload_videos/config/upload/generic-video-example/upload.json``
+Here is an example from ``examples/batch_upload/config/upload/generic-video-example/upload.json``
 
 ::
 
@@ -120,24 +138,6 @@ Here is an example from ``examples/upload_videos/config/upload/generic-video-exa
   }
 
 
-List All Configuration Entries
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To list all available upload projects, run the script without any parameters (or with only a ``--config_root`` parameter):
-
-::
-
- $ python examples/upload_videos/conservator_upload.py
-
- No config path provided, using default (/home/user/conservator-cli/examples/upload_videos/config/upload)
- +-----------------------+--------------------------------------------------------+
- | Config                | Description                                            |
- +-----------------------+--------------------------------------------------------+
- | generic-video-example | Beamsplitter upload batch for generic video example    |
- | prism-example         | Prism-formatted upload batch for generic video example |
- +-----------------------+--------------------------------------------------------+
-
-
 
 Execute in Dry-Run Mode
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -146,7 +146,7 @@ This is useful to establish sanity checks before kicking off a large upload job.
 
 ::
 
-  $ python3 examples/upload_videos/conservator_upload.py generic-video-example
+  $ python3 examples/batch_upload/conservator_upload.py generic-video-example
 
   Video exists and is ready for upload: /home/user/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4
 
@@ -173,7 +173,7 @@ Execute Actual Upload
 
 ::
 
-  $ python examples/upload_videos/conservator_upload.py generic-video-example --dry_run=false
+  $ python examples/batch_upload/conservator_upload.py generic-video-example --dry_run=false
 
   20:53:56 | Uploading "thermal-video-B7JTS4i4hpoRgPsi2.mp4"
   20:53:56 |    File on disk:         /home/user/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4
@@ -202,7 +202,7 @@ Prism Example
 -------------
 
 Here is an example of `upload.csv` with 3 Prism uploads (3 thermal videos + 3 frame synced visible videos).
-The full contents are in ``examples/upload_videos/config/upload/prism-example/upload.csv``.
+The full contents are in ``examples/batch_upload/config/upload/prism-example/upload.csv``.
 
 **The example will fail if you do not have the original data, but it provides a batch upload blueprint**
 
@@ -212,7 +212,7 @@ The full contents are in ``examples/upload_videos/config/upload/prism-example/up
   prism,dc,/ADAS/Upload Test/20220112_prism-example/,$CORTEX_ROOT/sample_data/night_fog,"fog, night, parking lot, person","Person walking in parking lot at 60m"
 
 
-Here is an example from ``examples/upload_videos/config/upload/prism-example/upload.json``:
+Here is an example from ``examples/batch_upload/config/upload/prism-example/upload.json``:
 ::
 
     {
@@ -241,7 +241,7 @@ Execute in Dry-Run Mode
 ^^^^^^^^^^^^^^^^^^^^^^^
 ::
 
-  $ python examples/upload_videos/conservator_upload.py 20211129_heavy-night-fog
+  $ python examples/batch_upload/conservator_upload.py 20211129_heavy-night-fog
 
   2021-12-06 16:47:49,192 - upload - INFO - Zipping 1636345107_thermal.zip (conservator_upload.py:314)
   2021-12-06 16:48:04,901 - upload - INFO - Zipping 1636345107_visible.zip (no compression) (conservator_upload.py:336)
@@ -267,7 +267,7 @@ Execute
 
 ::
 
-  $ python examples/upload_videos/conservator_upload.py 20211129_heavy-night-fog --dry_run=false
+  $ python examples/batch_upload/conservator_upload.py 20211129_heavy-night-fog --dry_run=false
 
   2021-12-06 16:00:57,925 - upload - INFO - Uploading 1636345107_thermal.zip to project: "/ADAS/007 Weather/20211129_heavy-night-fog" (conservator_upload.py:196)
   2021-12-06 16:05:42,730 - upload - INFO - Uploaded video with id: "fPEhjR7yhebcvrJBS" (conservator_upload.py:233)
