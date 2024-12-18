@@ -1,4 +1,5 @@
 pipeline {
+  agent any
   // agent {
   //   dockerfile {
   //     dir "test"
@@ -16,7 +17,7 @@ pipeline {
         println "im here"
 
         sleep 9999
-        
+
         sh 'docker image ls'
         sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
