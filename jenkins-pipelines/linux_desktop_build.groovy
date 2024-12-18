@@ -1,23 +1,25 @@
 pipeline {
-  agent any
-  // agent {
-  //   dockerfile {
-  //     dir "test"
-  //     label "docker"
-  //     additionalBuildArgs "-t conservator-cli/test"
-  //     args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+  //  agent {
+  //       label 'worker01'
   //   }
-  // }
+
+
+  agent {
+    dockerfile {
+      dir "test"
+      label "docker"
+      additionalBuildArgs "-t conservator-cli/test"
+      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+    }
+  }
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
   }
   stages {
     stage("Install") {
       steps {
-        println "im here"
 
         sleep 9999
-
         sh 'docker image ls'
         sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
