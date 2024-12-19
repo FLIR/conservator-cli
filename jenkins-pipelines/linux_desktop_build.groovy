@@ -17,7 +17,8 @@ pipeline {
   }
   stages {
     stage("Install") {
-      steps {        
+      steps {
+        println('im here')
         sh 'docker image ls'
         sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
