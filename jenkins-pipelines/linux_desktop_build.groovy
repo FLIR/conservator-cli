@@ -17,9 +17,7 @@ pipeline {
   }
   stages {
     stage("Install") {
-      steps {
-
-        sleep 9999
+      steps {        
         sh 'docker image ls'
         sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
@@ -177,43 +175,45 @@ pipeline {
         }
       }
     }
-    stage("Deploy Documentation") {
-      when {
-        branch "main"
-        not { changeRequest() }
-      }
-      steps {
-        echo "Deploying..."
-        sh "mv docs/_build/html temp/"
-        sh "git reset --hard"
-        sh "rm -rf .git/hooks/*"
-        sh "git checkout gh_pages"
-        sh "rm -rf docs/"
-        sh "mv temp/ docs/"
-        sh "touch docs/.nojekyll"
-        sh "git add docs/"
-        sh "git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'"
-        sshagent(credentials: ["flir-service-key"]) {
-          sh "git push || echo 'Push failed. There is probably nothing to push.'"
-        }
-      }
-    }
-    stage("Release on PyPI") {
-      when {
-        buildingTag()
-      }
-      environment {
-        TWINE_REPOSITORY = "pypi"
-        TWINE_USERNAME = "__token__"
-        TWINE_PASSWORD = credentials("pypi-conservator-cli")
-      }
-      steps {
-        sh "python setup.py --version"
-        sh "pip install build twine"
-        sh "python -m build"
-        sh "python -m twine upload dist/*"
-      }
-    }
+    //DEV - DONT UPDATE ANYTHING
+    // stage("Deploy Documentation") {
+    //   when {
+    //     branch "main"
+    //     not { changeRequest() }
+    //   }
+    //   steps {
+    //     echo "Deploying..."
+    //     sh "mv docs/_build/html temp/"
+    //     sh "git reset --hard"
+    //     sh "rm -rf .git/hooks/*"
+    //     sh "git checkout gh_pages"
+    //     sh "rm -rf docs/"
+    //     sh "mv temp/ docs/"
+    //     sh "touch docs/.nojekyll"
+    //     sh "git add docs/"
+    //     sh "git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'"
+    //     sshagent(credentials: ["flir-service-key"]) {
+    //       sh "git push || echo 'Push failed. There is probably nothing to push.'"
+    //     }
+    //   }
+    // }
+    //DEV - DONT RELEASE ON PYPI
+    // stage("Release on PyPI") {
+    //   when {
+    //     buildingTag()
+    //   }
+    //   environment {
+    //     TWINE_REPOSITORY = "pypi"
+    //     TWINE_USERNAME = "__token__"
+    //     TWINE_PASSWORD = credentials("pypi-conservator-cli")
+    //   }
+    //   steps {
+    //     sh "python setup.py --version"
+    //     sh "pip install build twine"
+    //     sh "python -m build"
+    //     sh "python -m twine upload dist/*"
+    //   }
+    // }
   }
   post {
     cleanup {
