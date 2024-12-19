@@ -18,7 +18,12 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        println('im here')
+       sh 'whoami'
+       
+         sh 'docker --version || echo "Docker not found"'
+    sh 'ls /var/run/docker.sock || echo "Docker socket not found"'
+    sh 'docker ps || echo "Docker ps failed"'
+
         sh 'docker image ls'
         sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
