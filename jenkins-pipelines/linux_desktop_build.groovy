@@ -9,7 +9,9 @@ pipeline {
       dir "test"
       label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      //args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--add-host conservator-mongo:127.0.0.1 --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+
     }
   }
   environment {
@@ -18,8 +20,10 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-       sh 'whoami'
+        sh "echo 'Debugging container'; whoami; ls -la; env"
+
        
+
          sh 'docker --version || echo "Docker not found"'
     sh 'ls /var/run/docker.sock || echo "Docker socket not found"'
     sh 'docker ps || echo "Docker ps failed"'
