@@ -252,13 +252,10 @@ class AddAttributeInput(sgqlc.types.Input):
 
 class AddAttributePrototypeInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("name", "type", "is_required", "options")
+    __field_names__ = ("name", "type", "options")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     type = sgqlc.types.Field(
         sgqlc.types.non_null(AttributePrototypeType), graphql_name="type"
-    )
-    is_required = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean), graphql_name="isRequired"
     )
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
@@ -928,10 +925,9 @@ class ModifyAttributeInput(sgqlc.types.Input):
 
 class ModifyAttributePrototypeInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("name", "type", "is_required", "options")
+    __field_names__ = ("name", "type", "options")
     name = sgqlc.types.Field(String, graphql_name="name")
     type = sgqlc.types.Field(AttributePrototypeType, graphql_name="type")
-    is_required = sgqlc.types.Field(Boolean, graphql_name="isRequired")
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
 
@@ -1386,14 +1382,11 @@ class Attribute(sgqlc.types.Type):
 
 class AttributePrototype(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("id", "name", "type", "is_required", "options")
+    __field_names__ = ("id", "name", "type", "options")
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     type = sgqlc.types.Field(
         sgqlc.types.non_null(AttributePrototypeType), graphql_name="type"
-    )
-    is_required = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean), graphql_name="isRequired"
     )
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
@@ -1587,6 +1580,7 @@ class Commit(sgqlc.types.Type):
         "archive_url",
         "archived_at",
         "archive_state",
+        "archive_error",
         "last_accessed_date",
         "dataset_name",
         "dataset_id",
@@ -1614,6 +1608,7 @@ class Commit(sgqlc.types.Type):
     archive_url = sgqlc.types.Field(String, graphql_name="archiveUrl")
     archived_at = sgqlc.types.Field(Date, graphql_name="archivedAt")
     archive_state = sgqlc.types.Field(String, graphql_name="archiveState")
+    archive_error = sgqlc.types.Field(String, graphql_name="archiveError")
     last_accessed_date = sgqlc.types.Field(Date, graphql_name="lastAccessedDate")
     dataset_name = sgqlc.types.Field(String, graphql_name="datasetName")
     dataset_id = sgqlc.types.Field(String, graphql_name="datasetId")
@@ -1766,8 +1761,6 @@ class Dataset(sgqlc.types.Type):
         "annotations_human_count",
         "annotations_machine_count",
         "readme",
-        "archive_state",
-        "archive_error",
         "annotated_frames",
         "empty_frames",
         "un_annotated_frames",
@@ -1878,8 +1871,6 @@ class Dataset(sgqlc.types.Type):
         sgqlc.types.non_null(Int), graphql_name="annotationsMachineCount"
     )
     readme = sgqlc.types.Field(String, graphql_name="readme")
-    archive_state = sgqlc.types.Field(String, graphql_name="archiveState")
-    archive_error = sgqlc.types.Field(String, graphql_name="archiveError")
     annotated_frames = sgqlc.types.Field(
         sgqlc.types.non_null(Int), graphql_name="annotatedFrames"
     )

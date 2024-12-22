@@ -4,7 +4,7 @@ pipeline {
       dir "test"
       label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
   environment {
@@ -13,8 +13,6 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        sh 'docker image ls'
-        sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
         sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
