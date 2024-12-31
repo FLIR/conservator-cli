@@ -33,4 +33,7 @@ cat defaults.sh
 echo "## using tarball, skip installing ssh key" > ssh_key_template.sh
 
 # run the image build
+ls -la
+cat build_pipeline.sh
+sleep 600
 ./build_pipeline.sh --local-only
