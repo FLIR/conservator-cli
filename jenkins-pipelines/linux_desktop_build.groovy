@@ -20,13 +20,7 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        sh "echo 'Debugging container'; whoami; ls -la; env"
-
-       
-
-         sh 'docker --version || echo "Docker not found"'
-    sh 'ls /var/run/docker.sock || echo "Docker socket not found"'
-    sh 'docker ps || echo "Docker ps failed"'
+      
 
         sh 'docker image ls'
         sh 'docker ps'
@@ -239,7 +233,7 @@ pipeline {
       fi
       """
       cleanWs()
-      sh "docker image prune"
+      sh "docker image prune -f"
       // Note in --filter the "*" character will not match a "/"
       sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
       sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
