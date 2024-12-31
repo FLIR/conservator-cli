@@ -11,7 +11,7 @@ tqdm
 pytest
 requests
 #We are using this version since black is breaking if we use latest
-black=22.3.0
+black==22.3.0
 Pillow
 jsonschema
 dataclasses; python_version<'3.7'
