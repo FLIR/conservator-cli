@@ -26,6 +26,7 @@ def pass_valid_local_dataset(func):
 
         if "conservator" in ctx_obj:
             conservator = ctx_obj["conservator"]
+            path = ctx_obj["cvc_local_path"]
         elif "url" in ctx_obj and "api_key" in ctx_obj:
             path = ctx_obj["cvc_local_path"]
             config_dict = {
@@ -219,8 +220,7 @@ def checkout_(local_dataset, commit):
     local_dataset.checkout(commit)
 
 
-# pylint: disable=unused-argument
-def is_image_file(ctx, param, value):
+def is_image_file(_ctx, _param, value):
     for filename in value:
         if not LocalDataset.get_image_info(filename):
             raise click.BadParameter(
@@ -303,11 +303,11 @@ def log_(local_dataset):
 @click.argument("hash", default=None, required=False)
 @pass_valid_local_dataset
 @check_git_config
-def show(local_dataset, hash):
-    if hash is None:
+def show(local_dataset, commit_hash):
+    if commit_hash is None:
         subprocess.call(["git", "show"], cwd=local_dataset.path)
     else:
-        subprocess.call(["git", "show", hash], cwd=local_dataset.path)
+        subprocess.call(["git", "show", commit_hash], cwd=local_dataset.path)
 
 
 @main.command(help="Print staged images and files")

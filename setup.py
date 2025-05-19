@@ -59,6 +59,7 @@ INSTALL_REQUIRES = [
     "dataclasses; python_version<'3.7'",
     "pyreadline; platform_system=='Windows'",
     "semver == 2.13.0",
+    "GitPython",
 ]
 
 setuptools.setup(

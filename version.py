@@ -40,7 +40,7 @@ from subprocess import Popen, PIPE
 def call_git_describe(abbrev):
     try:
         p = Popen(
-            ["git", "describe", "--match", "[0-9]*", "--abbrev=%d" % abbrev],
+            ["git", "describe", "--match", "[0-9]*", f"--abbrev={abbrev}"],
             stdout=PIPE,
             # stderr=PIPE,
         )
@@ -59,7 +59,7 @@ def call_git_describe(abbrev):
 
 def read_release_version():
     try:
-        f = open("RELEASE-VERSION", "r")
+        f = open("RELEASE-VERSION", "r", encoding="utf-8")
 
         try:
             version = f.readlines()[0]
@@ -73,8 +73,8 @@ def read_release_version():
 
 
 def write_release_version(version):
-    f = open("RELEASE-VERSION", "w")
-    f.write("%s\n" % version)
+    f = open("RELEASE-VERSION", "w", encoding="utf-8")
+    f.write(f"{version}\n")
     f.close()
 
 

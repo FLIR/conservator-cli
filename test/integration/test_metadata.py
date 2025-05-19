@@ -2,6 +2,7 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-module-docstring
 import os
+import string
 import json
 from time import sleep
 
@@ -13,6 +14,12 @@ from FLIR.conservator.generated.schema import AnnotationCreate
 # can't be hard-coded test data. Also, can't use a class
 # and split download/upload because file system is wiped
 # between tests.
+
+def compare(s1, s2):
+    remove = string.punctuation + string.whitespace
+    mapping = {ord(c): None for c in remove}
+
+    return s1.translate(mapping) == s2.translate(mapping)
 
 
 @pytest.mark.usefixtures("tmp_cwd")
@@ -35,6 +42,7 @@ def test_metadata_download_upload_for_media(conservator, test_data):
     assert os.path.isfile("bicycle_0.json")
     with open("bicycle_0.json", encoding="UTF-8") as metadata_file:
         local_metadata = json.load(metadata_file)
+
     assert local_metadata == json.loads(image.metadata)
 
     # Double-check format
