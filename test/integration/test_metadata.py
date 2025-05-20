@@ -15,12 +15,6 @@ from FLIR.conservator.generated.schema import AnnotationCreate
 # and split download/upload because file system is wiped
 # between tests.
 
-def compare(s1, s2):
-    remove = string.punctuation + string.whitespace
-    mapping = {ord(c): None for c in remove}
-
-    return s1.translate(mapping) == s2.translate(mapping)
-
 
 @pytest.mark.usefixtures("tmp_cwd")
 def test_metadata_download_upload_for_media(conservator, test_data):

@@ -181,6 +181,7 @@ def main(ctx, log, path, config, url, api_key):
     if api_key is not None:
         ctx.obj["api_key"] = api_key
 
+
 @main.command(help="Clone a dataset by id, path, or name (if unique)")
 @click.argument("identifier")
 @click.option(
@@ -393,7 +394,7 @@ def download(local_dataset, include_raw, include_analytics, pool_size, symlink, 
         )
     except OSError as exc:
         if exc.errno == 18:
-            red = "\x1B[31m"
+            red = "\x1b[31m"
             reset = "\x1b[0m"
             click.echo(
                 f"  {red}Error - Conservator cache directory (cache_dir) is on a different \

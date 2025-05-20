@@ -91,7 +91,9 @@ class LocalDataset:
         """
         try:
             remote = self.repo.remote()
-            remote.pull(progress=SimpleProgressPrinter(), verbose=verbose, rebase="merges")
+            remote.pull(
+                progress=SimpleProgressPrinter(), verbose=verbose, rebase="merges"
+            )
 
             return 0
         except Exception as exc:
@@ -183,7 +185,6 @@ class LocalDataset:
             print(f"Git Show exception: {exc}")
             print(exc)
             return -1
-
 
     def validate_jsonl(self):
         """
@@ -1049,7 +1050,9 @@ class LocalDataset:
                 break
             time.sleep(timeout)
             remote = repo.remote()
-            remote.pull(progress=SimpleProgressPrinter(), verbose=verbose, rebase="merges")
+            remote.pull(
+                progress=SimpleProgressPrinter(), verbose=verbose, rebase="merges"
+            )
         else:
             # raise RuntimeError for compatibility with dataset-toolkit (see #165)
             raise RuntimeError("The repository exists, but does not contain index.json")
