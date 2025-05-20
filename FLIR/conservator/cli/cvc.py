@@ -181,7 +181,6 @@ def main(ctx, log, path, config, url, api_key):
     if api_key is not None:
         ctx.obj["api_key"] = api_key
 
-
 @main.command(help="Clone a dataset by id, path, or name (if unique)")
 @click.argument("identifier")
 @click.option(
@@ -286,28 +285,22 @@ def pull(local_dataset):
 @pass_valid_local_dataset
 @check_git_config
 def diff(local_dataset):
-    subprocess.call(
-        ["git", "diff", "*.jsonl", "index.json", "associated_files"],
-        cwd=local_dataset.path,
-    )
+    local_dataset.diff()
 
 
 @main.command("log", help="Show log of commits")
 @pass_valid_local_dataset
 @check_git_config
 def log_(local_dataset):
-    subprocess.call(["git", "log"], cwd=local_dataset.path)
+    local_dataset.log()
 
 
 @main.command(help="Shows information on a specific commit or object")
-@click.argument("hash", default=None, required=False)
+@click.argument("commit_hash", default=None, required=False)
 @pass_valid_local_dataset
 @check_git_config
 def show(local_dataset, commit_hash):
-    if commit_hash is None:
-        subprocess.call(["git", "show"], cwd=local_dataset.path)
-    else:
-        subprocess.call(["git", "show", commit_hash], cwd=local_dataset.path)
+    local_dataset.show(commit_hash)
 
 
 @main.command(help="Print staged images and files")

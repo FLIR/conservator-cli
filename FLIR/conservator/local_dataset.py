@@ -6,7 +6,6 @@
 # pylint: disable=too-many-lines
 import collections
 import multiprocessing
-import subprocess
 import os
 import json
 import shutil
@@ -17,10 +16,11 @@ import functools
 import requests
 import jsonschema
 import tqdm
-from FLIR.conservator.simple_progress_printer import SimpleProgressPrinter
 from PIL import Image
 from git import Repo
+from colorama import Fore, Style, deinit, init
 
+from FLIR.conservator.simple_progress_printer import SimpleProgressPrinter
 from FLIR.conservator.file_transfers import FileDownloadException
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.util import md5sum_file, chunks
@@ -103,8 +103,6 @@ class LocalDataset:
         """
         Checks out a specific commit. This will delete any local changes in
         `index.json` or `associated_files`.
-
-        :param verbose: If False, run git commands with the `-q` option.
         """
         try:
             past_branch = self.repo.create_head(commit_hash, commit_hash)
@@ -115,6 +113,77 @@ class LocalDataset:
             print(f"Git Checkout exception: {exc}")
             print(exc)
             return -1
+
+    def diff(self):
+        """
+        Prints a diff between the working tree and the server
+        """
+        try:
+            diff = self.repo.git.diff()
+            diff_lines = diff.split("\n")
+
+            init(autoreset=True)
+
+            for line in diff_lines:
+                if line.startswith("- "):
+                    print(f"{Style.BRIGHT}{Fore.RED}{line}")
+                elif line.startswith("+ "):
+                    print(f"{Style.BRIGHT}{Fore.GREEN}{line}")
+                elif line.startswith("@@"):
+                    print(f"{Fore.CYAN}{line}")
+                else:
+                    print(line)
+            deinit()
+            return 0
+        except Exception as exc:
+            print(f"Git Diff exception: {exc}")
+            print(exc)
+            return -1
+
+    def log(self):
+        """
+        Prints a log of commits
+        """
+        try:
+            diff = self.repo.git.log()
+            diff_lines = diff.split("\n")
+
+            init(autoreset=True)
+
+            for line in diff_lines:
+                if line.startswith("commit "):
+                    print(f"{Fore.YELLOW}{line}")
+                else:
+                    print(line)
+            deinit()
+            return 0
+        except Exception as exc:
+            print(f"Git Log exception: {exc}")
+            print(exc)
+            return -1
+
+    def show(self, commit_hash=None):
+        """
+        Prints details of a given commit
+        """
+        try:
+            diff = self.repo.git.show(commit_hash)
+            diff_lines = diff.split("\n")
+
+            init(autoreset=True)
+
+            for line in diff_lines:
+                if line.startswith("commit "):
+                    print(f"{Fore.YELLOW}{line}")
+                else:
+                    print(line)
+            deinit()
+            return 0
+        except Exception as exc:
+            print(f"Git Show exception: {exc}")
+            print(exc)
+            return -1
+
 
     def validate_jsonl(self):
         """
@@ -958,7 +1027,7 @@ class LocalDataset:
         repo = Repo.init(clone_path)
         origin = repo.create_remote("origin", url)
 
-        origin.fetch(verbose=verbose)
+        origin.fetch(progress=SimpleProgressPrinter(), verbose=verbose)
         repo.create_head("master", origin.refs.master).set_tracking_branch(
             origin.refs.master
         ).checkout()
