@@ -1,8 +1,12 @@
 # Releasing a new version
 
+## Schema Updates
+
+Note that, if the Conservator GraphQL API changes, the Conservator CLI schema should be updated. This can be done by running `FLIR/conservator/generated/generate.sh`. This will regenerate the `FLIR/conservator/generated/schema.py` file to match the deployed schema.
+
 ## Tagging Release
 
-First checkout main and pull the latest commits. All releases 
+First checkout main and pull the latest commits. All releases
 should be on `main` branch.
 
 ```bash
