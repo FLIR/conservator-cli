@@ -13,12 +13,19 @@ pipeline {
   stages {
     stage("Install") {
       steps {
+        echo "Running docker image ls"
         sh 'docker image ls'
+        echo "Running docker ps"
         sh 'docker ps'
+        echo "Running pip install"
         sh "pip install --no-cache-dir -r requirements.txt"
+        echo "Running python setup.py"
         sh "python setup.py --version"
+        echo "Running pip install"
         sh "pip install --no-cache-dir ."
+        echo "Configuring git username"
         sh "git config --global user.name 'Test User'"
+        echo "Configuring git user email"
         sh "git config --global user.email 'test@example.com'"
       }
     }
