@@ -17,7 +17,7 @@ There are currently two test suites:
 - In order to run the integration tests, you will need `git-lfs` installed, in order to pull the test data correctly. `git-lfs` can be installed through your package manager (e.g. `sudo apt install git-lfs`). If the files in `test/data` do not look as expected (e.g. `ls -alh` reports that they are only 100B in size, or if `file <file_name>` reports that all the files are ASCII text), running `git lfs pull` should resolve that.
 - The integration tests also require `conservator-mongo` to be a resolvable hostname. To do this, add:
 
- ```
+ ```bash
  127.0.0.1        conservator-mongo
  ```
 
