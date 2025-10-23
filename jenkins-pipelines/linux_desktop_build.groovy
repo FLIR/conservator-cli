@@ -13,19 +13,12 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        echo "Running docker image ls"
         sh 'docker image ls'
-        echo "Running docker ps"
         sh 'docker ps'
-        echo "Running pip install"
         sh "pip install --no-cache-dir -r requirements.txt"
-        echo "Running python setup.py"
         sh "python setup.py --version"
-        echo "Running pip install"
         sh "pip install --no-cache-dir ."
-        echo "Configuring git username"
         sh "git config --global user.name 'Test User'"
-        echo "Configuring git user email"
         sh "git config --global user.email 'test@example.com'"
       }
     }
@@ -163,9 +156,11 @@ pipeline {
               CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
               echo "Conservator Host is ${CONSERVATOR_HOST}"
               sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' http://${CONSERVATOR_HOST}:8080/graphql schema.json"
-              LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
+              sh "cat schema.json"
+              def LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
               echo "API version on K8S: ${LATEST_API_VERSION}"
-              BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
+              def BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
+              echo "API version in github: ${LATEST_API_VERSION}"
               sh "rm schema.json"
               if (LATEST_API_VERSION == BUILT_API_VERSION) {
                 echo "API Versions match ($BUILT_API_VERSION)"
