@@ -13,8 +13,24 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        echo "Wh am i?"
-        sh 'whoami'
+        script {
+          DOCKER_USER = sh (
+            script: 'whoami',
+            returnStdout: true
+          ).trim()
+          LS_OUTPUT = sh (
+            script: 'ls -alh',
+            returnStdout: true
+          )
+          UID_OUTPUT = sh (
+            script: 'id',
+            returnStdout: true
+          )
+        }
+
+        echo "${DOCKER_USER}"
+        echo "${LS_OUTPUT}"
+        echo "${UID_OUTPUT}"
         echo "Running docker image ls"
         sh 'docker image ls'
         echo "Running docker ps"
