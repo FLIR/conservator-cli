@@ -153,9 +153,11 @@ pipeline {
         stage("Compare API versions") {
           steps {
             script {
-              CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
+              def CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
               echo "Conservator Host is ${CONSERVATOR_HOST}"
+              sh "pip freeze | grep sgqlc"
               sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' http://${CONSERVATOR_HOST}:8080/graphql schema.json"
+              sh "tail schema.json"
               def LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
               echo "API version on K8S: ${LATEST_API_VERSION}"
               def BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
