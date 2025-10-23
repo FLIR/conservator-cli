@@ -13,6 +13,7 @@ pipeline {
   stages {
     stage("Install") {
       steps {
+        echo "Wh am i?"
         sh 'whoami'
         echo "Running docker image ls"
         sh 'docker image ls'
