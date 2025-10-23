@@ -1,6 +1,6 @@
 FROM python:3.8-slim-bullseye
 
-ARG UID=1000
+ARG UID=1004
 ARG DOCKER_GID=999
 
 # Install standalone apt dependencies

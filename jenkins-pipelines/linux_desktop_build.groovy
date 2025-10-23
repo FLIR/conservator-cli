@@ -1,15 +1,4 @@
 pipeline {
-  environment {
-    TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
-        UID = sh (
-      script: 'id',
-      returnStdout: true
-    ).trim()
-    DOCKER_GID = sh (
-      script: 'getent group docker | cut -f3 -d:',
-      returnStdout: true
-    ).trim()
-  }
   agent {
     dockerfile {
       dir "test"
@@ -17,6 +6,9 @@ pipeline {
       additionalBuildArgs "-t conservator-cli/test --build-arg DOCKER_GID=${DOCKER_GID} --build-arg UID=${UID}"
       args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
+  }
+  environment {
+    TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
   }
   stages {
     stage("Install") {
