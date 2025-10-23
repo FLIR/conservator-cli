@@ -1,6 +1,8 @@
 pipeline {
-  script {
-    UID = sh (
+  agent none
+  environment {
+    TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
+        UID = sh (
       script: 'id',
       returnStdout: true
     ).trim()
@@ -9,18 +11,15 @@ pipeline {
       returnStdout: true
     ).trim()
   }
-  agent {
-    dockerfile {
-      dir "test"
-      label "docker"
-      additionalBuildArgs "-t conservator-cli/test --build-arg DOCKER_GID=${DOCKER_GID} --build-arg UID=${UID}"
-      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
-    }
-  }
-  environment {
-    TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
-  }
   stages {
+    agent {
+      dockerfile {
+        dir "test"
+        label "docker"
+        additionalBuildArgs "-t conservator-cli/test --build-arg DOCKER_GID=${DOCKER_GID} --build-arg UID=${UID}"
+        args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      }
+    }
     stage("Install") {
       steps {
         echo "Running docker image ls"
