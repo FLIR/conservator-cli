@@ -1,9 +1,19 @@
 pipeline {
+  script {
+    UID = sh (
+      script: 'id',
+      returnStdout: true
+    ).trim()
+    DOCKER_GID = sh (
+      script: 'getent group docker | cut -f3 -d:',
+      returnStdout: true
+    ).trim()
+  }
   agent {
     dockerfile {
       dir "test"
       label "docker"
-      additionalBuildArgs "-t conservator-cli/test"
+      additionalBuildArgs "-t conservator-cli/test --build-arg DOCKER_GID=${DOCKER_GID} --build-arg UID=${UID}"
       args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
@@ -13,24 +23,6 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        script {
-          DOCKER_USER = sh (
-            script: 'whoami',
-            returnStdout: true
-          ).trim()
-          LS_OUTPUT = sh (
-            script: 'ls -alh',
-            returnStdout: true
-          )
-          UID_OUTPUT = sh (
-            script: 'id',
-            returnStdout: true
-          )
-        }
-
-        echo "${DOCKER_USER}"
-        echo "${LS_OUTPUT}"
-        echo "${UID_OUTPUT}"
         echo "Running docker image ls"
         sh 'docker image ls'
         echo "Running docker ps"

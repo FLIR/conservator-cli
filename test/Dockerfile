@@ -1,5 +1,8 @@
 FROM python:3.8-slim-bullseye
 
+ARG UID=1000
+ARG DOCKER_GID=999
+
 # Install standalone apt dependencies
 RUN apt-get update \
     && apt-get install -y git make curl iproute2 git-lfs file
@@ -47,7 +50,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
    && unzip -qq awscliv2.zip \
    && ./aws/install
 
-RUN useradd --uid 1000 --gid 999 tester
+RUN useradd --uid $UID --gid $DOCKER_GID tester
 RUN mkdir /home/tester
 RUN chown tester:docker /home/tester
 USER tester
