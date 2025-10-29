@@ -9493,7 +9493,6 @@ class Settings(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
         "commit",
-        "jira_collector_url",
         "max_login_attempts",
         "top_banner",
         "object_detect_enabled",
@@ -9502,7 +9501,6 @@ class Settings(sgqlc.types.Type):
         "always_allow_duplicate_target_id",
     )
     commit = sgqlc.types.Field(String, graphql_name="commit")
-    jira_collector_url = sgqlc.types.Field(String, graphql_name="jiraCollectorUrl")
     max_login_attempts = sgqlc.types.Field(Int, graphql_name="maxLoginAttempts")
     top_banner = sgqlc.types.Field(String, graphql_name="topBanner")
     object_detect_enabled = sgqlc.types.Field(
