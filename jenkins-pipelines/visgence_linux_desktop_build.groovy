@@ -4,12 +4,8 @@ pipeline {
       dir "test"
       label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
-  }
-  options {
-    timeout(time: 45, unit: 'MINUTES')
-    buildDiscarder(logRotator(numToKeepStr: '5'))
   }
   environment {
     TEST_API_KEY='Wfose208FveQAeosYHkZ5w'
@@ -17,12 +13,19 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        sh "echo 2.12.0 > RELEASE-VERSION"
+        sh 'docker image ls'
+        sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
         sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
         sh "git config --global user.name 'Test User'"
         sh "git config --global user.email 'test@example.com'"
+      }
+    }
+    stage("Formatting Test") {
+      steps {
+        echo "Checking formatting..."
+        sh "black --check ."
       }
     }
     stage("Documentation Tests") {
@@ -37,10 +40,12 @@ pipeline {
       steps {
         echo "Running unit tests..."
         dir("unit-tests") {
-          sh "pytest -v $WORKSPACE/test/unit"
+          sh "pytest $WORKSPACE/test/unit"
         }
       }
     }
+
+
     stage("Integration Tests") {
       environment {
         // following variables could be changed from this default via a parameter in
@@ -140,7 +145,7 @@ pipeline {
         stage("Run integration tests") {
           steps {
             dir("integration-tests") {
-              sh "pytest -v $WORKSPACE/test/integration"
+              sh "pytest $WORKSPACE/test/integration"
             }
           }
         }
@@ -148,12 +153,15 @@ pipeline {
         stage("Compare API versions") {
           steps {
             script {
-              CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
+              def CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
               echo "Conservator Host is ${CONSERVATOR_HOST}"
+              sh "pip freeze | grep sgqlc"
               sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' http://${CONSERVATOR_HOST}:8080/graphql schema.json"
-              LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
+              sh "tail schema.json"
+              def LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
               echo "API version on K8S: ${LATEST_API_VERSION}"
-              BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
+              def BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
+              echo "API version in github: ${BUILT_API_VERSION}"
               sh "rm schema.json"
               if (LATEST_API_VERSION == BUILT_API_VERSION) {
                 echo "API Versions match ($BUILT_API_VERSION)"
@@ -163,6 +171,43 @@ pipeline {
             }
           }
         }
+      }
+    }
+    stage("Deploy Documentation") {
+      when {
+        branch "main"
+        not { changeRequest() }
+      }
+      steps {
+        echo "Deploying..."
+        sh "mv docs/_build/html temp/"
+        sh "git reset --hard"
+        sh "rm -rf .git/hooks/*"
+        sh "git checkout gh_pages"
+        sh "rm -rf docs/"
+        sh "mv temp/ docs/"
+        sh "touch docs/.nojekyll"
+        sh "git add docs/"
+        sh "git commit -m 'Build docs for ${BUILD_TAG}' || echo 'Commit failed. There is probably nothing to commit.'"
+        sshagent(credentials: ["flir-service-key"]) {
+          sh "git push || echo 'Push failed. There is probably nothing to push.'"
+        }
+      }
+    }
+    stage("Release on PyPI") {
+      when {
+        buildingTag()
+      }
+      environment {
+        TWINE_REPOSITORY = "pypi"
+        TWINE_USERNAME = "__token__"
+        TWINE_PASSWORD = credentials("pypi-conservator-cli")
+      }
+      steps {
+        sh "python setup.py --version"
+        sh "pip install build twine"
+        sh "python -m build"
+        sh "python -m twine upload dist/*"
       }
     }
   }
@@ -180,11 +225,11 @@ pipeline {
       fi
       """
       cleanWs()
-      sh "docker image prune"
       // Note in --filter the "*" character will not match a "/"
-      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
-      sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
-      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
+      sh "docker image prune"
     }
   }
 }

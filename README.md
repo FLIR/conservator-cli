@@ -1,6 +1,6 @@
 # Conservator CLI
 
-[![Build Status](https://jenkins.conservator.ai/buildStatus/icon?job=conservator_cli)](https://jenkins.conservator.ai/job/conservator_cli/)
+[![Build Status](https://jenkins.conservator.ai/buildStatus/icon?job=FLIR-Ubuntu-Native-Build%2Fconservator-cli%2Fmain)](https://jenkins.conservator.ai/job/FLIR-Ubuntu-Native-Build/job/conservator-cli/job/main/)
 
 This library provides a Python API to interface with
 [Conservator](https://flirconservator.com/), as well as a CLI for

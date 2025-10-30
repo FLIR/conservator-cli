@@ -6,7 +6,6 @@
 # pylint: disable=too-many-lines
 import collections
 import multiprocessing
-import subprocess
 import os
 import json
 import shutil
@@ -18,7 +17,10 @@ import requests
 import jsonschema
 import tqdm
 from PIL import Image
+from git import Repo
+from colorama import Fore, Style, deinit, init
 
+from FLIR.conservator.simple_progress_printer import SimpleProgressPrinter
 from FLIR.conservator.file_transfers import FileDownloadException
 from FLIR.conservator.generated.schema import Query
 from FLIR.conservator.util import md5sum_file, chunks
@@ -54,6 +56,7 @@ class LocalDataset:
         self.index_path = os.path.join(self.path, "index.json")
         if not os.path.exists(self.index_path):
             raise InvalidLocalDatasetPath(self.path)
+
         # The following three paths may not exist depending on how long ago the
         # last dataset commit happened.  "frames.jsonl" and "videos.jsonl"
         # won't exist if there are no frames in the dataset.
@@ -65,6 +68,7 @@ class LocalDataset:
         self.cvc_path = os.path.join(self.path, ".cvc")
         self.staging_path = os.path.join(self.cvc_path, ".staging.json")
         self.cache_path = conservator.config.cvc_cache_path
+        self.repo = Repo(self.path)
 
         if not os.path.isabs(self.cache_path):
             self.cache_path = os.path.join(self.path, self.cache_path)
@@ -85,26 +89,102 @@ class LocalDataset:
 
         :param verbose: If False, run git commands with the `-q` option.
         """
-        fetch_cmd = ["git", "fetch"]
-        if not verbose:
-            fetch_cmd.append("-q")
-        subprocess.call(fetch_cmd, cwd=self.path)
-        checkout_cmd = ["git", "checkout", "origin/master", "-B", "master"]
-        if not verbose:
-            checkout_cmd.append("-q")
-        return subprocess.call(checkout_cmd, cwd=self.path)
+        try:
+            remote = self.repo.remote()
+            remote.pull(
+                progress=SimpleProgressPrinter(), verbose=verbose, rebase="merges"
+            )
 
-    def checkout(self, commit_hash, verbose=True):
+            return 0
+        except Exception as exc:
+            print(f"Git Pull exception: {exc}")
+            print(exc)
+            return -1
+
+    def checkout(self, commit_hash):
         """
         Checks out a specific commit. This will delete any local changes in
         `index.json` or `associated_files`.
-
-        :param verbose: If False, run git commands with the `-q` option.
         """
-        checkout_cmd = ["git", "reset", "--hard"]
-        if not verbose:
-            checkout_cmd.append("-q")
-        return subprocess.call(checkout_cmd + [commit_hash], cwd=self.path)
+        try:
+            past_branch = self.repo.create_head(commit_hash, commit_hash)
+            self.repo.head.reference = past_branch
+            self.repo.head.reset(index=True, working_tree=True)
+            return 0
+        except Exception as exc:
+            print(f"Git Checkout exception: {exc}")
+            print(exc)
+            return -1
+
+    def diff(self):
+        """
+        Prints a diff between the working tree and the server
+        """
+        try:
+            diff = self.repo.git.diff()
+            diff_lines = diff.split("\n")
+
+            init(autoreset=True)
+
+            for line in diff_lines:
+                if line.startswith("- "):
+                    print(f"{Style.BRIGHT}{Fore.RED}{line}")
+                elif line.startswith("+ "):
+                    print(f"{Style.BRIGHT}{Fore.GREEN}{line}")
+                elif line.startswith("@@"):
+                    print(f"{Fore.CYAN}{line}")
+                else:
+                    print(line)
+            deinit()
+            return 0
+        except Exception as exc:
+            print(f"Git Diff exception: {exc}")
+            print(exc)
+            return -1
+
+    def log(self):
+        """
+        Prints a log of commits
+        """
+        try:
+            diff = self.repo.git.log()
+            diff_lines = diff.split("\n")
+
+            init(autoreset=True)
+
+            for line in diff_lines:
+                if line.startswith("commit "):
+                    print(f"{Fore.YELLOW}{line}")
+                else:
+                    print(line)
+            deinit()
+            return 0
+        except Exception as exc:
+            print(f"Git Log exception: {exc}")
+            print(exc)
+            return -1
+
+    def show(self, commit_hash=None):
+        """
+        Prints details of a given commit
+        """
+        try:
+            diff = self.repo.git.show(commit_hash)
+            diff_lines = diff.split("\n")
+
+            init(autoreset=True)
+
+            for line in diff_lines:
+                if line.startswith("commit "):
+                    print(f"{Fore.YELLOW}{line}")
+                else:
+                    print(line)
+            deinit()
+            return 0
+        except Exception as exc:
+            print(f"Git Show exception: {exc}")
+            print(exc)
+            return -1
 
     def validate_jsonl(self):
         """
@@ -159,24 +239,7 @@ class LocalDataset:
         """
         Return the git branch name for the dataset repository, if any.
         """
-        branch_args = ["git", "branch"]
-        branch_proc = subprocess.run(
-            branch_args,
-            cwd=self.path,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            check=False,
-        )
-        if branch_proc.returncode != 0:
-            logger.error("'%s' failed:\n%s", " ".join(branch_args), branch_proc.stdout)
-            raise RuntimeError(f"`git branch` failed for {self.path}")
-
-        branch_name = ""
-        for bline in branch_proc.stdout.splitlines():
-            if bline.startswith("*"):
-                branch_name = bline[2:].rstrip()
-        return branch_name
+        return self.repo.active_branch.name
 
     def git_status(self):
         """
@@ -196,56 +259,27 @@ class LocalDataset:
             * "working" contains a list of modified files in the working
                 directory.
 
-        other -- contains a list of dictionaries; for each dictionary in the
-            list:
-
-            * "index" contains the index status character (e.g. 'A', 'D', etc).
-            * "working" contains the working directory status character.
-            * "source" contains the file name associated with the status.
-            * A rename or copy status will also contain a "dest" key.
         """
         status_table = {}
-        status_args = ["git", "status", "--porcelain=v1"]
-        status_proc = subprocess.run(
-            status_args,
-            cwd=self.path,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            check=False,
-        )
-        if status_proc.returncode != 0:
-            logger.error("'%s' failed:\n%s", " ".join(status_args), status_proc.stderr)
-            raise RuntimeError(f"`git status` failed for {self.path}")
 
-        status_table["added"] = {"staged": [], "working": []}
-        status_table["modified"] = {"staged": [], "working": []}
-        status_table["other"] = []
-        for status_line in status_proc.stdout.splitlines():
-            index_stat = status_line[0]
-            wdir_stat = status_line[1]
-            if index_stat == "M":
-                status_table["modified"]["staged"].append(status_line[3:])
-            elif index_stat == "A":
-                status_table["added"]["staged"].append(status_line[3:])
-            if wdir_stat == "M":
-                status_table["modified"]["working"].append(status_line[3:])
-            elif wdir_stat == "?":
-                status_table["added"]["working"].append(status_line[3:])
-            if index_stat not in ("M", "A") and wdir_stat not in ("M", "?"):
-                other_entry = {}
-                if index_stat != " ":
-                    other_entry["index"] = index_stat
-                if wdir_stat != " ":
-                    other_entry["working"] = wdir_stat
-                operation = status_line[3:]
-                if " -> " in operation:
-                    entries = operation.split(" -> ")
-                    other_entry["source"] = entries[0].strip()
-                    other_entry["dest"] = entries[1].strip()
-                else:
-                    other_entry["source"] = operation
-                status_table["other"].append(other_entry)
+        # Get list of files from previous commit
+        prev_commit = list(self.repo.iter_commits(all=True))[-1]
+        old_diffs = [d.a_path for d in self.repo.head.commit.diff(prev_commit)]
+
+        diffs = [d.a_path for d in self.repo.index.diff(self.repo.head.commit)]
+
+        untracked_changes = [d.a_path for d in self.repo.index.diff(None)]
+
+        status_table["added"] = {
+            "staged": [d for d in diffs if d not in old_diffs],
+            "working": [f for f in self.repo.untracked_files if f not in old_diffs],
+        }
+
+        status_table["modified"] = {
+            "staged": [d for d in diffs if d in old_diffs],
+            "working": [f for f in untracked_changes],
+        }
+
         return status_table
 
     def add_local_changes(self, skip_validation=False):
@@ -292,14 +326,14 @@ class LocalDataset:
                 stage_files.append(modded)
         jsonl_warning_printed = False
         for added in repo_status["added"]["working"]:
+            if added == "videos.jsonl":
+                logger.warning("Will not stage changes to read-only file '%s'.", added)
+                continue
+
             if os.path.dirname(added) == "associated_files" and os.path.isfile(added):
                 stage_files.append(added)
             if added.endswith(".jsonl") and added in self.WRITABLE_TRACKED_FILES:
-                if added == "videos.jsonl":
-                    logger.warning(
-                        "Will not stage changes to read-only file '%s'.", added
-                    )
-                elif not os.path.exists(self.dataset_info_path):
+                if not os.path.exists(self.dataset_info_path):
                     if not jsonl_warning_printed:
                         logger.warning(
                             "'%s' cannot be added to a repository.  Move it aside, commit the current \
@@ -350,14 +384,17 @@ class LocalDataset:
                     "You may be able to skip this check with '--skip-validation' if you're sure your file conforms."
                 )
                 sys.exit(-1)
+        try:
+            self.repo.index.add(stage_files)
+            return 0
+        except Exception as exc:
+            print(exc)
+            return -1
 
-        return subprocess.call(["git", "add"] + stage_files, cwd=self.path)
-
-    def commit(self, message, verbose=True):
+    def commit(self, message):
         """
         Commit added changes to the local git repo, with the given commit `message`.
 
-        :param verbose: If False, run git commands with the `-q` option.
         """
         dataset = Dataset.from_local_path(self.conservator, self.path)
         dataset.populate(["has_changes", "is_locked"])
@@ -374,11 +411,12 @@ class LocalDataset:
         if not repo_status["modified"]["staged"] and not repo_status["added"]["staged"]:
             logger.warning("No changes staged, nothing to commit.")
             return None
-        commit_cmd = ["git", "commit"]
-        if not verbose:
-            commit_cmd.append("-q")
-        commit_cmd += ["-m", message]
-        return subprocess.call(commit_cmd, cwd=self.path)
+        try:
+            self.repo.index.commit(message)
+            return 0
+        except Exception as exc:
+            print(exc)
+            return -1
 
     def push_commits(self, verbose=True):
         """
@@ -401,24 +439,18 @@ class LocalDataset:
 
         num_initial_commits = len(dataset.get_commit_history())
 
-        # The subprocess will return a non-zero exit code even if it succeeded.
-        # Check its output to determine whether it worked.
-        push_proc = subprocess.run(
-            ["git", "push"],
-            cwd=self.path,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            check=False,
-        )
-        if "updated in conservator" not in push_proc.stdout:
-            if "Everything up-to-date" in push_proc.stdout:
-                logger.warning(push_proc.stdout)
-            else:
-                logger.error(
-                    "Server did not accept changes to index.json:\n%s", push_proc.stdout
-                )
-                raise RuntimeError("Failed to push changes to index.json")
+        try:
+            remote = self.repo.remote()
+            result = remote.push(progress=SimpleProgressPrinter(), verbose=verbose)
+
+            if len(result) == 0:
+                print("Push failed!")
+                return -1
+            return 0
+
+        except Exception as exc:
+            print(exc)
+            return -1
 
         # wait for another commit to appear
         found_new_commit = dataset.wait_for_history_len(num_initial_commits + 1)
@@ -992,18 +1024,21 @@ class LocalDataset:
             return
 
         url = dataset.get_git_url()
-        clone_cmd = ["git", "clone"]
-        if not verbose:
-            clone_cmd.append("-q")
-        clone_cmd += [url, clone_path]
-        result = subprocess.call(clone_cmd)
-        if result != 0:
-            logging.error("Error %s when cloning.", result)
-            return
+
+        repo = Repo.init(clone_path)
+        origin = repo.create_remote("origin", url)
+
+        origin.fetch(progress=SimpleProgressPrinter(), verbose=verbose)
+        repo.create_head("master", origin.refs.master).set_tracking_branch(
+            origin.refs.master
+        ).checkout()
 
         # pylint: disable=protected-access
         email = dataset._conservator.get_email()
-        subprocess.call(["git", "config", "user.email", email], cwd=clone_path)
+
+        config_writer = repo.config_writer()
+        config_writer.set_value(section="user", option="email", value=email)
+        config_writer.release()
 
         # it's possible for the repository to exist, but for
         # the clone to go through before index.json has been downloaded.
@@ -1014,7 +1049,10 @@ class LocalDataset:
             if os.path.exists(index_path):
                 break
             time.sleep(timeout)
-            subprocess.call(["git", "pull"], cwd=clone_path)
+            remote = repo.remote()
+            remote.pull(
+                progress=SimpleProgressPrinter(), verbose=verbose, rebase="merges"
+            )
         else:
             # raise RuntimeError for compatibility with dataset-toolkit (see #165)
             raise RuntimeError("The repository exists, but does not contain index.json")

@@ -26,6 +26,7 @@ def pass_valid_local_dataset(func):
 
         if "conservator" in ctx_obj:
             conservator = ctx_obj["conservator"]
+            path = ctx_obj["cvc_local_path"]
         elif "url" in ctx_obj and "api_key" in ctx_obj:
             path = ctx_obj["cvc_local_path"]
             config_dict = {
@@ -219,8 +220,7 @@ def checkout_(local_dataset, commit):
     local_dataset.checkout(commit)
 
 
-# pylint: disable=unused-argument
-def is_image_file(ctx, param, value):
+def is_image_file(_ctx, _param, value):
     for filename in value:
         if not LocalDataset.get_image_info(filename):
             raise click.BadParameter(
@@ -286,28 +286,22 @@ def pull(local_dataset):
 @pass_valid_local_dataset
 @check_git_config
 def diff(local_dataset):
-    subprocess.call(
-        ["git", "diff", "*.jsonl", "index.json", "associated_files"],
-        cwd=local_dataset.path,
-    )
+    local_dataset.diff()
 
 
 @main.command("log", help="Show log of commits")
 @pass_valid_local_dataset
 @check_git_config
 def log_(local_dataset):
-    subprocess.call(["git", "log"], cwd=local_dataset.path)
+    local_dataset.log()
 
 
 @main.command(help="Shows information on a specific commit or object")
-@click.argument("hash", default=None, required=False)
+@click.argument("commit_hash", default=None, required=False)
 @pass_valid_local_dataset
 @check_git_config
-def show(local_dataset, hash):
-    if hash is None:
-        subprocess.call(["git", "show"], cwd=local_dataset.path)
-    else:
-        subprocess.call(["git", "show", hash], cwd=local_dataset.path)
+def show(local_dataset, commit_hash):
+    local_dataset.show(commit_hash)
 
 
 @main.command(help="Print staged images and files")
@@ -400,7 +394,7 @@ def download(local_dataset, include_raw, include_analytics, pool_size, symlink, 
         )
     except OSError as exc:
         if exc.errno == 18:
-            red = "\x1B[31m"
+            red = "\x1b[31m"
             reset = "\x1b[0m"
             click.echo(
                 f"  {red}Error - Conservator cache directory (cache_dir) is on a different \

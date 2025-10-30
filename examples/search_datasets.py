@@ -1,6 +1,7 @@
 """
 Demonstrates some of the search functionality
 """
+
 from FLIR.conservator.conservator import Conservator
 
 conservator = Conservator.default()
