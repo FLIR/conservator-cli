@@ -252,13 +252,10 @@ class AddAttributeInput(sgqlc.types.Input):
 
 class AddAttributePrototypeInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("name", "type", "is_required", "options")
+    __field_names__ = ("name", "type", "options")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     type = sgqlc.types.Field(
         sgqlc.types.non_null(AttributePrototypeType), graphql_name="type"
-    )
-    is_required = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean), graphql_name="isRequired"
     )
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
@@ -928,10 +925,9 @@ class ModifyAttributeInput(sgqlc.types.Input):
 
 class ModifyAttributePrototypeInput(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("name", "type", "is_required", "options")
+    __field_names__ = ("name", "type", "options")
     name = sgqlc.types.Field(String, graphql_name="name")
     type = sgqlc.types.Field(AttributePrototypeType, graphql_name="type")
-    is_required = sgqlc.types.Field(Boolean, graphql_name="isRequired")
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
 
@@ -1237,6 +1233,16 @@ class UpdateUserNoteInput(sgqlc.types.Input):
 ########################################################################
 # Output Objects and Interfaces
 ########################################################################
+class AccessRequest(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("success", "error", "error_args")
+    success = sgqlc.types.Field(Boolean, graphql_name="success")
+    error = sgqlc.types.Field(String, graphql_name="error")
+    error_args = sgqlc.types.Field(
+        sgqlc.types.list_of("ErrorArg"), graphql_name="errorArgs"
+    )
+
+
 class Acl(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = ("admin", "write", "read")
@@ -1386,14 +1392,11 @@ class Attribute(sgqlc.types.Type):
 
 class AttributePrototype(sgqlc.types.Type):
     __schema__ = schema
-    __field_names__ = ("id", "name", "type", "is_required", "options")
+    __field_names__ = ("id", "name", "type", "options")
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     type = sgqlc.types.Field(
         sgqlc.types.non_null(AttributePrototypeType), graphql_name="type"
-    )
-    is_required = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean), graphql_name="isRequired"
     )
     options = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="options")
 
@@ -1587,6 +1590,10 @@ class Commit(sgqlc.types.Type):
         "archive_url",
         "archived_at",
         "archive_state",
+        "archive_error",
+        "last_accessed_date",
+        "dataset_name",
+        "dataset_id",
     )
     _id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="_id")
     author_name = sgqlc.types.Field(
@@ -1611,6 +1618,21 @@ class Commit(sgqlc.types.Type):
     archive_url = sgqlc.types.Field(String, graphql_name="archiveUrl")
     archived_at = sgqlc.types.Field(Date, graphql_name="archivedAt")
     archive_state = sgqlc.types.Field(String, graphql_name="archiveState")
+    archive_error = sgqlc.types.Field(String, graphql_name="archiveError")
+    last_accessed_date = sgqlc.types.Field(Date, graphql_name="lastAccessedDate")
+    dataset_name = sgqlc.types.Field(String, graphql_name="datasetName")
+    dataset_id = sgqlc.types.Field(String, graphql_name="datasetId")
+
+
+class CommitsWithArchiveAndCount(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("commits", "commit_count_next_two_pages")
+    commits = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(Commit)), graphql_name="commits"
+    )
+    commit_count_next_two_pages = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="commitCountNextTwoPages"
+    )
 
 
 class ConservatorStats(sgqlc.types.Type):
@@ -1768,7 +1790,9 @@ class Dataset(sgqlc.types.Type):
         "video_ids",
         "preview_video_url",
         "preview_video_status",
+        "preview_video_error",
         "recalculate_stats_state",
+        "recalculate_stats_error",
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
         "has_changes",
@@ -1902,8 +1926,12 @@ class Dataset(sgqlc.types.Type):
     )
     preview_video_url = sgqlc.types.Field(String, graphql_name="previewVideoUrl")
     preview_video_status = sgqlc.types.Field(String, graphql_name="previewVideoStatus")
+    preview_video_error = sgqlc.types.Field(String, graphql_name="previewVideoError")
     recalculate_stats_state = sgqlc.types.Field(
         String, graphql_name="recalculateStatsState"
+    )
+    recalculate_stats_error = sgqlc.types.Field(
+        String, graphql_name="recalculateStatsError"
     )
     allow_annotations_outside_frame = sgqlc.types.Field(
         Boolean, graphql_name="allowAnnotationsOutsideFrame"
@@ -2667,6 +2695,7 @@ class Image(sgqlc.types.Type):
         "annotation_import_state_modified_at",
         "process_video_error_message",
         "annotation_import_error_message",
+        "recalculate_stats_error",
         "custom_metadata",
         "collections",
         "datasets",
@@ -2747,6 +2776,9 @@ class Image(sgqlc.types.Type):
     )
     annotation_import_error_message = sgqlc.types.Field(
         String, graphql_name="annotationImportErrorMessage"
+    )
+    recalculate_stats_error = sgqlc.types.Field(
+        String, graphql_name="recalculateStatsError"
     )
     custom_metadata = sgqlc.types.Field(String, graphql_name="customMetadata")
     collections = sgqlc.types.Field(
@@ -2843,6 +2875,7 @@ class Job(sgqlc.types.Type):
         "duration",
         "object_link",
         "redelivery_count",
+        "retry_count",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="id")
     type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="type")
@@ -2870,6 +2903,7 @@ class Job(sgqlc.types.Type):
     redelivery_count = sgqlc.types.Field(
         sgqlc.types.non_null(Int), graphql_name="redeliveryCount"
     )
+    retry_count = sgqlc.types.Field(Int, graphql_name="retryCount")
 
 
 class Jobs(sgqlc.types.Type):
@@ -2985,6 +3019,15 @@ class Md5VideoDetails(sgqlc.types.Type):
     frame = sgqlc.types.Field(Frame, graphql_name="frame")
 
 
+class MultiDatasetCommitStatus(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("datasets_to_commit", "errors")
+    datasets_to_commit = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="datasetsToCommit"
+    )
+    errors = sgqlc.types.Field(sgqlc.types.list_of(String), graphql_name="errors")
+
+
 class Mutation(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
@@ -3005,6 +3048,7 @@ class Mutation(sgqlc.types.Type):
         "sign_out",
         "forgot_password",
         "reset_local_password_with_token",
+        "access_request",
         "create_collection",
         "update_collection",
         "delete_collection",
@@ -3015,6 +3059,7 @@ class Mutation(sgqlc.types.Type):
         "recalculate_collection_stats",
         "move_collection",
         "commit_dataset",
+        "commit_datasets",
         "create_dataset",
         "update_dataset",
         "lock_datasets",
@@ -3186,6 +3231,8 @@ class Mutation(sgqlc.types.Type):
         "share_saved_search",
         "update_commit_version_note",
         "archive_dataset_commit",
+        "update_commit_last_accessed_date",
+        "delete_dataset_archives",
         "create_project",
         "update_project",
         "delete_project",
@@ -3554,6 +3601,58 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    access_request = sgqlc.types.Field(
+        sgqlc.types.non_null(AccessRequest),
+        graphql_name="accessRequest",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "first_name",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="firstName",
+                        default=None,
+                    ),
+                ),
+                (
+                    "last_name",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="lastName",
+                        default=None,
+                    ),
+                ),
+                (
+                    "email",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String), graphql_name="email", default=None
+                    ),
+                ),
+                (
+                    "manager",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="manager",
+                        default=None,
+                    ),
+                ),
+                (
+                    "team",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String), graphql_name="team", default=None
+                    ),
+                ),
+                (
+                    "location",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(String),
+                        graphql_name="location",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
     create_collection = sgqlc.types.Field(
         sgqlc.types.non_null(Collection),
         graphql_name="createCollection",
@@ -3752,6 +3851,26 @@ class Mutation(sgqlc.types.Type):
                         graphql_name="userId",
                         default=None,
                     ),
+                ),
+            )
+        ),
+    )
+    commit_datasets = sgqlc.types.Field(
+        sgqlc.types.non_null(MultiDatasetCommitStatus),
+        graphql_name="commitDatasets",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "dataset_ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(GraphqlID)),
+                        graphql_name="datasetIds",
+                        default=None,
+                    ),
+                ),
+                (
+                    "commit_message",
+                    sgqlc.types.Arg(String, graphql_name="commitMessage", default=None),
                 ),
             )
         ),
@@ -4145,7 +4264,7 @@ class Mutation(sgqlc.types.Type):
         ),
     )
     copy_dataset_annotations_to_video = sgqlc.types.Field(
-        sgqlc.types.non_null(Boolean),
+        sgqlc.types.non_null("copyDatasetAnnotationsToVideoResults"),
         graphql_name="copyDatasetAnnotationsToVideo",
         args=sgqlc.types.ArgDict(
             (
@@ -4163,6 +4282,12 @@ class Mutation(sgqlc.types.Type):
                         sgqlc.types.non_null(GraphqlID),
                         graphql_name="videoId",
                         default=None,
+                    ),
+                ),
+                (
+                    "mark_key_frames",
+                    sgqlc.types.Arg(
+                        Boolean, graphql_name="markKeyFrames", default=None
                     ),
                 ),
             )
@@ -7454,6 +7579,36 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    update_commit_last_accessed_date = sgqlc.types.Field(
+        sgqlc.types.non_null(Commit),
+        graphql_name="updateCommitLastAccessedDate",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ID), graphql_name="id", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_dataset_archives = sgqlc.types.Field(
+        sgqlc.types.non_null(Int),
+        graphql_name="deleteDatasetArchives",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(ID)),
+                        graphql_name="ids",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
     create_project = sgqlc.types.Field(
         sgqlc.types.non_null("Project"),
         graphql_name="createProject",
@@ -7767,6 +7922,7 @@ class Query(sgqlc.types.Type):
         "saved_searches_by_user_id",
         "classifiers",
         "commit_history_by_id",
+        "commits_with_archive_and_count",
         "conservator_stats",
         "all_stats",
         "last_nstats",
@@ -7928,7 +8084,7 @@ class Query(sgqlc.types.Type):
         ),
     )
     get_first_nimages = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of("Video")),
+        sgqlc.types.non_null(sgqlc.types.list_of(Image)),
         graphql_name="getFirstNImages",
         args=sgqlc.types.ArgDict(
             (
@@ -8918,6 +9074,16 @@ class Query(sgqlc.types.Type):
             )
         ),
     )
+    commits_with_archive_and_count = sgqlc.types.Field(
+        sgqlc.types.non_null(CommitsWithArchiveAndCount),
+        graphql_name="commitsWithArchiveAndCount",
+        args=sgqlc.types.ArgDict(
+            (
+                ("page", sgqlc.types.Arg(Int, graphql_name="page", default=None)),
+                ("limit", sgqlc.types.Arg(Int, graphql_name="limit", default=None)),
+            )
+        ),
+    )
     conservator_stats = sgqlc.types.Field(
         ConservatorStats,
         graphql_name="conservatorStats",
@@ -9327,15 +9493,14 @@ class Settings(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
         "commit",
-        "jira_collector_url",
         "max_login_attempts",
         "top_banner",
         "object_detect_enabled",
         "conservator_insights_docs_url",
         "data_dog_config",
+        "always_allow_duplicate_target_id",
     )
     commit = sgqlc.types.Field(String, graphql_name="commit")
-    jira_collector_url = sgqlc.types.Field(String, graphql_name="jiraCollectorUrl")
     max_login_attempts = sgqlc.types.Field(Int, graphql_name="maxLoginAttempts")
     top_banner = sgqlc.types.Field(String, graphql_name="topBanner")
     object_detect_enabled = sgqlc.types.Field(
@@ -9345,6 +9510,9 @@ class Settings(sgqlc.types.Type):
         String, graphql_name="conservatorInsightsDocsUrl"
     )
     data_dog_config = sgqlc.types.Field(DataDogConfig, graphql_name="dataDogConfig")
+    always_allow_duplicate_target_id = sgqlc.types.Field(
+        Boolean, graphql_name="alwaysAllowDuplicateTargetID"
+    )
 
 
 class SignedUrl(sgqlc.types.Type):
@@ -9385,6 +9553,7 @@ class User(sgqlc.types.Type):
         "user_data_stats_running",
         "user_data_usage",
         "current_reset_password_email",
+        "user_data_stats_error",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     email = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="email")
@@ -9415,6 +9584,7 @@ class User(sgqlc.types.Type):
     current_reset_password_email = sgqlc.types.Field(
         Boolean, graphql_name="currentResetPasswordEmail"
     )
+    user_data_stats_error = sgqlc.types.Field(String, graphql_name="userDataStatsError")
 
 
 class UserDataStats(sgqlc.types.Type):
@@ -9526,12 +9696,17 @@ class Video(sgqlc.types.Type):
         "full_res_mp4_url",
         "full_res_mp4_status",
         "preview_generation_status",
+        "preview_generation_error",
         "processed_with_agc",
         "attached_label_set_ids",
         "attached_label_sets",
         "recalculate_stats_state",
+        "recalculate_stats_error",
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
+        "full_res_status",
+        "full_res_error",
+        "analytics_state",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     filename = sgqlc.types.Field(String, graphql_name="filename")
@@ -9646,6 +9821,9 @@ class Video(sgqlc.types.Type):
     preview_generation_status = sgqlc.types.Field(
         String, graphql_name="previewGenerationStatus"
     )
+    preview_generation_error = sgqlc.types.Field(
+        String, graphql_name="previewGenerationError"
+    )
     processed_with_agc = sgqlc.types.Field(String, graphql_name="processedWithAGC")
     attached_label_set_ids = sgqlc.types.Field(
         sgqlc.types.list_of(GraphqlID), graphql_name="attachedLabelSetIds"
@@ -9656,12 +9834,18 @@ class Video(sgqlc.types.Type):
     recalculate_stats_state = sgqlc.types.Field(
         String, graphql_name="recalculateStatsState"
     )
+    recalculate_stats_error = sgqlc.types.Field(
+        String, graphql_name="recalculateStatsError"
+    )
     allow_annotations_outside_frame = sgqlc.types.Field(
         Boolean, graphql_name="allowAnnotationsOutsideFrame"
     )
     allow_duplicate_target_id = sgqlc.types.Field(
         Boolean, graphql_name="allowDuplicateTargetId"
     )
+    full_res_status = sgqlc.types.Field(String, graphql_name="fullResStatus")
+    full_res_error = sgqlc.types.Field(String, graphql_name="fullResError")
+    analytics_state = sgqlc.types.Field(String, graphql_name="analyticsState")
 
 
 class VideoStats(sgqlc.types.Type):
@@ -9676,6 +9860,17 @@ class VideoStats(sgqlc.types.Type):
         sgqlc.types.non_null(String), graphql_name="assetType"
     )
     is_removed = sgqlc.types.Field(Boolean, graphql_name="isRemoved")
+
+
+class copyDatasetAnnotationsToVideoResults(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("annotation_count", "key_frame_count")
+    annotation_count = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="annotationCount"
+    )
+    key_frame_count = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="keyFrameCount"
+    )
 
 
 class file(sgqlc.types.Type):

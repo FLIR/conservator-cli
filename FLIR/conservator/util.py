@@ -98,27 +98,47 @@ def get_conservator_cli_version():
 
 
 def compare_conservator_cli_version():
-    current_version = semver.VersionInfo.parse(cli_ver)
-    latest_version = semver.VersionInfo.parse(get_conservator_cli_version())
+    installed_version = semver.VersionInfo.parse(cli_ver)
+    released_version = semver.VersionInfo.parse(get_conservator_cli_version())
 
-    if latest_version == current_version:
+    installed_version_simple = semver.VersionInfo.parse(
+        f"{installed_version.major}.{installed_version.minor}.{installed_version.patch}"
+    )
+
+    if released_version == installed_version:
         return True
-    if latest_version < current_version:
-        logger.warning("You are using Conservator-cli version %s", current_version)
-        logger.warning("Please upgrade to the latest version %s", latest_version)
-        return False
-    if latest_version > current_version:
+    if released_version == installed_version_simple and installed_version.build:
         logger.warning(
             "You are using an unreleased version of Conservator-cli (%s)",
-            current_version,
+            installed_version,
         )
         logger.warning(
             "Please be aware that this version may not be supported in the future"
         )
         logger.warning(
             "For reference, the current supported version of Conservator-cli is %s",
-            latest_version,
+            released_version,
         )
+        return False
+    if released_version < installed_version_simple:
+        logger.warning(
+            "You are using an unreleased version of Conservator-cli (%s)",
+            installed_version,
+        )
+        logger.warning(
+            "Please be aware that this version may not be supported in the future"
+        )
+        logger.warning(
+            "For reference, the current supported version of Conservator-cli is %s",
+            released_version,
+        )
+        return False
+    if released_version > installed_version_simple:
+        logger.warning(
+            "You are using a deprecated version of Conservator-cli (%s)",
+            installed_version,
+        )
+        logger.warning("Please upgrade to the latest version (%s)", released_version)
         return False
 
 

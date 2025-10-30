@@ -4,7 +4,7 @@ pipeline {
       dir "test"
       label "docker"
       additionalBuildArgs "-t conservator-cli/test"
-      args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+      args "--add-host conservator-mongo:127.0.0.1 --user root --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
   environment {
@@ -13,8 +13,6 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        sh 'docker image ls'
-        sh 'docker ps'
         sh "pip install --no-cache-dir -r requirements.txt"
         sh "python setup.py --version"
         sh "pip install --no-cache-dir ."
@@ -153,15 +151,12 @@ pipeline {
         stage("Compare API versions") {
           steps {
             script {
-              def CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
+              CONSERVATOR_HOST = sh ( script: "ip route list default | sed 's/.*via //; s/ .*//'", returnStdout: true).trim()
               echo "Conservator Host is ${CONSERVATOR_HOST}"
-              sh "pip freeze | grep sgqlc"
               sh "python3 -m sgqlc.introspection --exclude-description -H 'authorization: ${env.TEST_API_KEY}' http://${CONSERVATOR_HOST}:8080/graphql schema.json"
-              sh "tail schema.json"
-              def LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
+              LATEST_API_VERSION = sh ( script: "md5sum schema.json | cut -d ' ' -f 1", returnStdout: true).trim()
               echo "API version on K8S: ${LATEST_API_VERSION}"
-              def BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
-              echo "API version in github: ${BUILT_API_VERSION}"
+              BUILT_API_VERSION = readFile("$WORKSPACE/api_version.txt").trim()
               sh "rm schema.json"
               if (LATEST_API_VERSION == BUILT_API_VERSION) {
                 echo "API Versions match ($BUILT_API_VERSION)"
@@ -225,11 +220,11 @@ pipeline {
       fi
       """
       cleanWs()
-      // Note in --filter the "*" character will not match a "/"
-      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
-      sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
-      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
       sh "docker image prune"
+      // Note in --filter the "*" character will not match a "/"
+      sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
+      sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm -f || echo 'Error cleaning up docker!'"
     }
   }
 }

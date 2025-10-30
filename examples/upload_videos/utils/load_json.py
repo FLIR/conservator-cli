@@ -1,7 +1,8 @@
-""" Utility function for load JSON file, with
+"""Utility function for load JSON file, with
 support for { "$ref": "$ENVIRON/xyz.json" } fields.
 Originally from: https://github.com/FLIR/task_runner/blob/main/FLIR/task_runner/lib/load_json.py
 """
+
 import json
 import os
 

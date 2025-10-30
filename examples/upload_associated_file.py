@@ -1,6 +1,7 @@
 """
 Example code to demonstrate uploading an associated file
 """
+
 from FLIR.conservator.conservator import Conservator
 
 conservator = Conservator.default()

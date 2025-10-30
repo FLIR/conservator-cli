@@ -2,6 +2,7 @@
 Sample code demonstrating how to recursively retrieve
 all media (i.e., videos and images) in a project/folder.
 """
+
 from FLIR.conservator.conservator import Conservator
 
 # Unless you want to keep the media with the collections
