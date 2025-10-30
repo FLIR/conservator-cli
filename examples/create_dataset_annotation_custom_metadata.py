@@ -1,6 +1,7 @@
 """
 Demonstrates adding custom metadata to a dataset annotation
 """
+
 import json
 
 from FLIR.conservator.conservator import Conservator

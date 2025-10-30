@@ -1,6 +1,7 @@
 """
 Example of how to upload multiple videos to a folder in parallel
 """
+
 from FLIR.conservator.conservator import Conservator
 
 conservator = Conservator.default()

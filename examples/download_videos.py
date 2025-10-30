@@ -1,6 +1,7 @@
 """
 Sample code for downloading multiple videos
 """
+
 import os
 
 from FLIR.conservator.conservator import Conservator

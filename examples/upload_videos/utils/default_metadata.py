@@ -38,9 +38,7 @@ class DefaultMetadata:
             )
         else:
             for i, tag in enumerate(tags_input):
-                tags_input[
-                    i
-                ] = (
+                tags_input[i] = (
                     tag.lower()
                 )  # Conservator wants this to be lowercase or it fails (wtf, but ok)
             tags = tags_input
