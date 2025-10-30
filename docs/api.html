@@ -1,25 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
   <title>API Reference &mdash; Conservator CLI  documentation</title>
     
     <meta name="robots" content="noindex">
   
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="shortcut icon" href="_static/favicon.ico"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -284,6 +284,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.checkout"><code class="docutils literal notranslate"><span class="pre">LocalDataset.checkout()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.clone"><code class="docutils literal notranslate"><span class="pre">LocalDataset.clone()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.commit"><code class="docutils literal notranslate"><span class="pre">LocalDataset.commit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.diff"><code class="docutils literal notranslate"><span class="pre">LocalDataset.diff()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.download"><code class="docutils literal notranslate"><span class="pre">LocalDataset.download()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_dataset_info"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_dataset_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_frames"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_frames()</span></code></a></li>
@@ -295,9 +296,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.get_videos"><code class="docutils literal notranslate"><span class="pre">LocalDataset.get_videos()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.git_branch"><code class="docutils literal notranslate"><span class="pre">LocalDataset.git_branch()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.git_status"><code class="docutils literal notranslate"><span class="pre">LocalDataset.git_status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.log"><code class="docutils literal notranslate"><span class="pre">LocalDataset.log()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.pull"><code class="docutils literal notranslate"><span class="pre">LocalDataset.pull()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.push_commits"><code class="docutils literal notranslate"><span class="pre">LocalDataset.push_commits()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.push_staged_images"><code class="docutils literal notranslate"><span class="pre">LocalDataset.push_staged_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.show"><code class="docutils literal notranslate"><span class="pre">LocalDataset.show()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.stage_local_images"><code class="docutils literal notranslate"><span class="pre">LocalDataset.stage_local_images()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.unstage_local_images"><code class="docutils literal notranslate"><span class="pre">LocalDataset.unstage_local_images()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#FLIR.conservator.local_dataset.LocalDataset.validate_index"><code class="docutils literal notranslate"><span class="pre">LocalDataset.validate_index()</span></code></a></li>
@@ -2505,14 +2508,9 @@ update the schema.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.checkout">
-<span class="sig-name descname"><span class="pre">checkout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.checkout" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">checkout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_hash</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.checkout" title="Permalink to this definition"></a></dt>
 <dd><p>Checks out a specific commit. This will delete any local changes in
 <cite>index.json</cite> or <cite>associated_files</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2540,13 +2538,14 @@ immediately available.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.commit">
-<span class="sig-name descname"><span class="pre">commit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.commit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">commit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.commit" title="Permalink to this definition"></a></dt>
 <dd><p>Commit added changes to the local git repo, with the given commit <cite>message</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>verbose</strong> – If False, run git commands with the <cite>-q</cite> option.</p>
-</dd>
-</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.diff">
+<span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.diff" title="Permalink to this definition"></a></dt>
+<dd><p>Prints a diff between the working tree and the server</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2665,16 +2664,12 @@ using the <cite>index.json</cite> file.</p>
 </li>
 </ul>
 </div></blockquote>
-<dl class="simple">
-<dt>other – contains a list of dictionaries; for each dictionary in the</dt><dd><p>list:</p>
-<ul class="simple">
-<li><p>“index” contains the index status character (e.g. ‘A’, ‘D’, etc).</p></li>
-<li><p>“working” contains the working directory status character.</p></li>
-<li><p>“source” contains the file name associated with the status.</p></li>
-<li><p>A rename or copy status will also contain a “dest” key.</p></li>
-</ul>
-</dd>
-</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.log" title="Permalink to this definition"></a></dt>
+<dd><p>Prints a log of commits</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2716,6 +2711,12 @@ downloading the images back from conservator (but without downloading).</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="FLIR.conservator.local_dataset.LocalDataset.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#FLIR.conservator.local_dataset.LocalDataset.show" title="Permalink to this definition"></a></dt>
+<dd><p>Prints details of a given commit</p>
 </dd></dl>
 
 <dl class="py method">
