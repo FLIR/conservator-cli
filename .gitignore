@@ -140,6 +140,9 @@ cython_debug/
 # Jetbrains
 .idea/
 
+# VS Code
+.vscode/
+
 # version.py
 RELEASE-VERSION
 FLIR/conservator/version.py

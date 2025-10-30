@@ -12,4 +12,10 @@ class Image(MediaType):
         Get the frame of the Image. Because images only have one frame, this is
         the same as :meth:`MediaType.get_frame_by_index` with index `0`.
         """
-        return self.get_frame_by_index(0, fields=fields)
+        frame_filter = schema.FrameFilter(video_id=self.id, frame_index=0)
+
+        image = self._conservator.query(
+            query=schema.Query.frame, filter=frame_filter, fields=fields
+        )
+
+        return image

@@ -40,11 +40,11 @@ from subprocess import Popen, PIPE
 def call_git_describe(abbrev):
     try:
         p = Popen(
-            ["git", "describe", "--match", "[0-9]*", "--abbrev=%d" % abbrev],
+            ["git", "describe", "--match", "[0-9]*", f"--abbrev={abbrev}"],
             stdout=PIPE,
-            stderr=PIPE,
+            # stderr=PIPE,
         )
-        p.stderr.close()
+        # p.stderr.close()
         line = p.stdout.readlines()[0]
         version = line.strip().decode("utf-8")
         # Find the second -, replace it with + - otherwise pip just break
@@ -52,13 +52,14 @@ def call_git_describe(abbrev):
         version = version.replace("-", "+", 2)
         version = version.replace("+", "-", 1)
         return version
-    except:
+    except Exception as exc:
+        print(f"git describe exception: {exc}")
         return None
 
 
 def read_release_version():
     try:
-        f = open("RELEASE-VERSION", "r")
+        f = open("RELEASE-VERSION", "r", encoding="utf-8")
 
         try:
             version = f.readlines()[0]
@@ -72,8 +73,8 @@ def read_release_version():
 
 
 def write_release_version(version):
-    f = open("RELEASE-VERSION", "w")
-    f.write("%s\n" % version)
+    f = open("RELEASE-VERSION", "w", encoding="utf-8")
+    f.write(f"{version}\n")
     f.close()
 
 

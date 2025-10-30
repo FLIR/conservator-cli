@@ -2,6 +2,7 @@
 These tests are very simple. They ensure that the default fields
 in FieldsManager are valid.
 """
+
 from FLIR.conservator.fields_manager import FieldsManager
 
 from FLIR.conservator.generated.schema import Query

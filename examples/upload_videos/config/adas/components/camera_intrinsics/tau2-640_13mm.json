@@ -1,0 +1,23 @@
+{
+  "#sensor": "see: https://www.flir.com/products/tau-2/",
+  "sensor": {
+    "#name": "Tau2 640",
+    "size": [640, 512],
+    "pixel_pitch_mm": 0.017
+  },
+  "lens": {
+    "#comment": "45 degree HFOV: 2*arctan(320*0.017/13))",
+    "f_mm": 13.0,
+    "zoomable": false,
+    "fmin_mm": 13.0,
+    "fmax_mm": 13.0
+  },
+  "principal_point": [320, 256],
+  "spectral_bands": ["lwir"],
+  "dist_coeffs": [-0.2707745400376884, 0.586728912016195, -0.002304196433752337, -0.0040499205979977115, -0.9694018417796785],
+  "#camera_matrix": [
+    764.7058823529411, 0.0, 320.0,
+    0.0, 764.7058823529411, 256.0,
+    0.0, 0.0, 1.0
+  ]
+}
