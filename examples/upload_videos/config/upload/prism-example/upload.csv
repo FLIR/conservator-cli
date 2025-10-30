@@ -1,0 +1,2 @@
+type,hardware_name,conservator_location,local_path,tags,description
+prism,dc,/test/Upload Test/20220112_prism-example/,$BASE_DIR/sample_data/night_fog,"fog, night, parking lot, person","Person walking in parking lot at 60m"

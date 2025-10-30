@@ -1,0 +1,17 @@
+{
+    "name": "Folder download example",
+    "description": "Demonstrate downloading a folder from Conservator",
+    "plugin_registry": { "$discover_tasks": "FLIR/*/run_tasks_plugins"},
+    "tasks": [
+        {
+            "name": "download_folder",
+            "description": "download a test folder from Conservator",
+            "task_type": "conservator_cli",
+            "task_config": {
+                "cmd": "collections",
+                "args": ["download", "--media", "--recursive", "/SomeTestFolder", "/tmp/dl"],
+                "log": "DEBUG"
+            }
+        }
+    ]
+}

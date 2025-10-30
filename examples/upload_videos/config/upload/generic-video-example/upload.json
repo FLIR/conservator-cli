@@ -1,0 +1,35 @@
+{
+  "default_metadata": {
+    "beamsplitter": {
+      "thermal": {
+        "tags": [
+          "ADK",
+          "boson",
+          "lwir",
+          "thermal",
+          "adas",
+          "automotive"
+        ],
+        "spectrum": "thermal",
+        "location": "Santa Barbara, California",
+        "#description": "This description gets uploaded to Conservator and corresponds to all videos capture with beamsplitter.thermal",
+        "description": "Captured with Boson sensor core in ADK"
+      },
+      "visible": {
+        "tags": [
+          "blackfly",
+          "55hfov",
+          "imx250",
+          "adas",
+          "automotive"
+        ],
+        "spectrum": "rgb",
+        "location": "Santa Barbara, California",
+        "#description": "This description gets uploaded to Conservator and corresponds to all videos capture with beamsplitter.rgb",
+        "description": "Captured with BlackFly S USB3"
+      }
+    }
+  },
+  "#description": "This description is for the upload batch",
+  "description": "Beamsplitter upload batch for generic video example"
+}
