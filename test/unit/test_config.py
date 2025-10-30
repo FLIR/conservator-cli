@@ -29,9 +29,10 @@ def test_defaults():
     c = Config.from_dict(
         {
             "CONSERVATOR_API_KEY": "testAPIkey",
+            "CONSERVATOR_URL": "https://myconservator.com",
         }
     )
 
     assert c.key == "testAPIkey"
-    assert c.url == "https://flirconservator.com/"
+    assert c.url == "https://myconservator.com"
     assert c.max_retries == 5

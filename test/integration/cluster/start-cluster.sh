@@ -11,8 +11,10 @@
 #  cd /home/conservator_cli/test/integration/cluster
 #  ./start-cluster.sh
 
-if [ -z "$AWS_DOMAIN" -o -z "$AWS_ACCESS_KEY_ID" -o -z "$AWS_SECRET_ACCESS_KEY" ] ; then
-  echo "ERROR: must set env vars AWS_DOMAIN, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY"
+echo "IMAGE_TYPE=$IMAGE_TYPE, IMAGE=$IMAGE"
+
+if [ -z "$IMAGE_TYPE" -o -z "$IMAGE" ] ; then
+  echo "ERROR: must set env vars IMAGE_TYPE and IMAGE"
   exit 1
 fi
 
@@ -25,16 +27,23 @@ if ! grep conservator-mongo /etc/hosts ; then
 EOF
 fi
 
-export AWS_DOMAIN AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
-
 # IMAGE is used in kubernetes templates as well as loading the image, must be literal
-sed "s:\$AWS_DOMAIN:$AWS_DOMAIN:" kind-init.env.tmpl > kind-init.env
+sed "s|\$IMAGE|$IMAGE|" kind-init.env.tmpl > kind-init.env
 . ./kind-init.env
 
-echo "** Pull Conservator Image"
-env aws ecr get-login-password --region us-east-1 \
+if [ "$IMAGE_TYPE" = "AWS" ] ; then
+  echo "** Pull Conservator Image"
+  if [ -z "$AWS_DOMAIN" -o -z "$AWS_ACCESS_KEY_ID" -o -z "$AWS_SECRET_ACCESS_KEY" ] ; then
+    echo "ERROR: must set env vars AWS_DOMAIN, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY"
+    exit 1
+  fi
+
+  export AWS_DOMAIN AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+  env aws ecr get-login-password --region us-east-1 \
                | docker login --username AWS --password-stdin $AWS_DOMAIN
-docker pull $IMAGE -q
+  docker pull $IMAGE -q
+fi
+
 echo "** Create Conservator Cluster"
 rm -rf ./kubernetes
 if [ -d "$1" ] ; then

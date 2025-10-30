@@ -1,0 +1,24 @@
+{
+  "#sensor": "BlackFly S BFS-U3-51S5C. See: http://softwareservices.flir.com/BFS-U3-51S5/latest/Model/spec.html",
+  "sensor": {
+    "#comment": "Sony IMX250 (3.45 micrometer per pixel), 8.5mm x 7.1mm, diagonal: 11.1 mm. Configured with ISP binning=2 or 2x decimation (doubles effective pixel pitch)",
+    "size": [1224, 1024],
+    "pixel_pitch_mm": 0.0069
+  },
+  "#lens": "Edmund Optics 68215. See: https://www.edmundoptics.com/p/85mm-200mm-infin-primary-wd-hp-series-fixed-focal-length-lens/22903/",
+  "lens": {
+    "#comment": "52.8 degree HFOV: 2*arctan(612*0.0069/8.5))",
+    "f_mm": 8.5,
+    "zoomable": false,
+    "fmin_mm": 8.5,
+    "fmax_mm": 8.5
+  },
+  "principal_point": [612, 512],
+  "spectral_bands": ["visible"],
+  "dist_coeffs": [-0.19352892485942047, 0.023143382443559044, 0.002136208381064925, -0.0023221448589364375, 0.20959247295083647],
+  "#camera_matrix": [
+    1231.8840579710145, 0.0, 612.0,
+    0.0, 1231.8840579710145, 512.0,
+    0.0, 0.0, 1.0
+  ]
+}

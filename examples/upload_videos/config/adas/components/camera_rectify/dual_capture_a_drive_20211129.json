@@ -1,0 +1,16 @@
+{
+  "#comment": "Dual Capture camera system recalibrated for heavy fog capture November 29 2021",
+  "source": {
+    "point_tl": [0, 0],
+    "point_tr": [640, 0],
+    "point_bl": [0, 512],
+    "point_br": [640, 512]
+  },
+  "destination": {
+    "point_tl": [113, 116],
+    "point_tr": [1109, 111],
+    "point_bl": [113, 903],
+    "point_br": [1114, 905]
+  },
+  "apply_undistort": true
+}

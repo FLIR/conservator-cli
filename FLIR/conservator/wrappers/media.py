@@ -4,7 +4,12 @@ import traceback
 from dataclasses import dataclass
 
 from FLIR.conservator.fields_request import FieldsRequest
-from FLIR.conservator.generated.schema import Mutation, Query
+from FLIR.conservator.generated.schema import (
+    Mutation,
+    Query,
+    FrameFilter,
+    MetadataInput,
+)
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import QueryableType
 from FLIR.conservator.wrappers.file_locker import FileLockerType
@@ -204,32 +209,36 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         assert isinstance(upload_request, MediaUploadRequest)
         file_path = upload_request.file_path
+        original_name = os.path.split(file_path)[-1]
         remote_name = upload_request.remote_name
         collection_id = upload_request.collection_id or None
 
         file_path = os.path.expanduser(file_path)
         assert os.path.isfile(file_path)
-        if remote_name is None:
-            remote_name = os.path.split(file_path)[-1]
 
         media = None
         try:
-            media = MediaType._create(conservator, remote_name, collection_id)
-            upload_id = media._initiate_upload(remote_name)
+            media = MediaType._create(conservator, original_name, collection_id)
+            if remote_name:
+                mdata = MetadataInput(name=remote_name)
+                conservator.query(
+                    Mutation.update_video, fields="id", id=media.id, metadata=mdata
+                )
+            upload_id = media._initiate_upload(original_name)
 
             url = media._generate_signed_upload_url(upload_id)
             response = conservator.files.upload(url=url, local_path=file_path)
             completion_tag = response.headers["ETag"]
 
             media._complete_upload(
-                remote_name, upload_id, completion_tags=[completion_tag]
+                original_name, upload_id, completion_tags=[completion_tag]
             )
             media._trigger_processing()
 
             upload_request.complete = True
             upload_request.error_message = ""
             upload_request.media_id = media.id
-        except Exception as e:
+        except Exception:
             if media:
                 # clean up partial upload if possible
                 try:
@@ -267,51 +276,49 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         """
         Returns a single frame at a specific `index` in the video.
         """
-        frames = self._query_frames(frame_index=index, fields=fields)
-        if len(frames) != 1:
+        frame_filter = FrameFilter(video_id=self.id, frame_index=index)
+
+        query_fields = fields
+
+        frame = self._conservator.query(
+            query=Query.frame, filter=frame_filter, fields=query_fields
+        )
+
+        if frame is None:
             raise IndexError(f"Invalid frame index: {index}")
-        return frames[0]
+        return frame
 
     def get_all_frames_paginated(self, fields=None):
         """
-        Yields all frames in the video, 15 at a time, using
-        :meth:`get_paginated_frames`.
-
+        Yields all frames in the video, 15 at a time
         This is only useful if you're dealing with very long videos
         and want to paginate frames yourself. If the video is short,
-        you could just use ``populate("frames")`` to get all frames.
+        you could just use ``get_frames()`` to get all frames.
         """
         start = 0
+        frame_filter = FrameFilter(video_id=self.id)
+
+        query_fields = fields
+
+        if query_fields is None:
+            query_fields = ["frames"]
+        elif isinstance(query_fields, FieldsRequest):
+            if "frames" not in query_fields.paths:
+                query_fields.include_field("frames")
+        elif "frames" not in query_fields:
+            query_fields.append("frames")
+
         while True:
-            frames = self._paginated_frames(start, fields=fields)
-            yield from frames
-            # frame pagination size is hard-coded to 15 in conservator
-            if len(frames) < 15:
+            frames = self._conservator.query(
+                query=Query.frames,
+                filter=frame_filter,
+                offset=start,
+                limit=15,
+                fields=query_fields,
+            )
+
+            yield from frames.frames
+
+            if len(frames.frames) < 15:
                 break
             start += 15
-
-    def _paginated_frames(self, start_index=0, fields=None):
-        """
-        Returns 15 frames, starting with `start_index`.
-        """
-        return self._query_frames(start_frame_index=start_index, fields=fields)
-
-    def _query_frames(self, start_frame_index=None, frame_index=None, fields=None):
-        fields = FieldsRequest.create(fields)
-
-        video_fields = {
-            "frames": {
-                "start_frame_index": start_frame_index,
-                "frame_index": frame_index,
-            }
-        }
-        for path, value in fields.paths.items():
-            new_path = "frames." + path
-            video_fields[new_path] = value
-
-        video = self._conservator.query(
-            query=self.by_id_query,
-            fields=video_fields,
-            id=self.id,
-        )
-        return video.frames

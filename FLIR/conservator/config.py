@@ -8,6 +8,10 @@ In general, use :func:`Config.default`.
 import os
 import json
 import logging
+from collections import OrderedDict
+
+import requests
+from FLIR.conservator.connection import ConservatorConnection
 
 logger = logging.getLogger(__name__)
 
@@ -17,11 +21,83 @@ class ConfigError(Exception):
 
 
 class ConfigAttribute:
-    def __init__(self, internal_name, friendly_name, default=None, type_=str):
+    def __init__(
+        self, internal_name, friendly_name, default=None, type_=str, validator=None
+    ):
         self.internal_name = internal_name
         self.friendly_name = friendly_name
         self.default = default
         self.type_ = type_
+        self.validator = validator
+
+
+def validate_max_retries(config_dict):
+    """
+    Validates max retries value in a config
+    """
+    retries_ok = False
+    try:
+        max_retries = int(config_dict["CONSERVATOR_MAX_RETRIES"])
+        if max_retries > 0:
+            retries_ok = True
+        else:
+            print("Error: invalid retries count, please try again")
+    except Exception:
+        print("Error: invalid retries count, please try again")
+    return retries_ok
+
+
+def validate_cache_path(config_dict):
+    """
+    Validates cache path value in a config
+    """
+    cache_path = config_dict["CONSERVATOR_CVC_CACHE_PATH"]
+    dir_ok = False
+    try:
+        os.makedirs(cache_path, exist_ok=True)
+        os.chmod(cache_path, 0o755)
+        dir_ok = True
+    except Exception:
+        print("Error: invalid cache path, please try again")
+    return dir_ok
+
+
+def validate_url(config_dict):
+    """
+    Validates URL value in a config
+    """
+    url_ok = False
+    try:
+        # does url have graphql endpoint?
+        check_url = ConservatorConnection.to_graphql_url(config_dict["CONSERVATOR_URL"])
+        response = requests.head(check_url, timeout=10)
+        if response.status_code == 405:
+            url_ok = True
+    except Exception:
+        pass
+
+    if not url_ok:
+        print("Error: invalid url, please try again")
+    return url_ok
+
+
+def validate_key(config_dict):
+    """
+    Validates API Key value in a config
+    """
+    key_ok = False
+
+    # check whether this is a valid config
+    config = Config.from_dict(config_dict)
+
+    # is API key accepted by server?
+    connection = ConservatorConnection(config)
+    try:
+        connection.get_email()
+        key_ok = True
+    except Exception:
+        print("Error: invalid API Key, please try again")
+    return key_ok
 
 
 class Config:
@@ -32,7 +108,7 @@ class Config:
 
     Config attribute names (environment variables, dictionary keys):
      - ``CONSERVATOR_API_KEY``
-     - ``CONSERVATOR_URL`` (default: https://flirconservator.com/)
+     - ``CONSERVATOR_URL``
      - ``CONSERVATOR_MAX_RETRIES`` (default: 5)
      - ``CONSERVATOR_CVC_CACHE_PATH`` (default: .cvc/cache)
 
@@ -42,35 +118,50 @@ class Config:
     """
 
     DEFAULT_NAME = "default"
-    ATTRIBUTES = {
-        "key": ConfigAttribute("CONSERVATOR_API_KEY", "Conservator API Key"),
-        "url": ConfigAttribute(
-            "CONSERVATOR_URL", "Conservator URL", default="https://flirconservator.com/"
-        ),
-        "max_retries": ConfigAttribute(
-            "CONSERVATOR_MAX_RETRIES", "Conservator Max Retries", default=5, type_=int
-        ),
-        "cvc_cache_path": ConfigAttribute(
-            "CONSERVATOR_CVC_CACHE_PATH",
-            "CVC Cache Path",
-            default=os.path.join(".cvc", "cache"),
-        ),
-    }
+    ATTRIBUTES = OrderedDict(
+        {
+            "max_retries": ConfigAttribute(
+                "CONSERVATOR_MAX_RETRIES",
+                "Conservator Max Retries",
+                default=5,
+                type_=int,
+                validator=validate_max_retries,
+            ),
+            "cvc_cache_path": ConfigAttribute(
+                "CONSERVATOR_CVC_CACHE_PATH",
+                "CVC Cache Path",
+                default=os.path.join(".cvc", "cache"),
+                validator=validate_cache_path,
+            ),
+            "url": ConfigAttribute(
+                "CONSERVATOR_URL",
+                "Conservator URL (The URL you use to access Conservator in a browser)",
+                validator=validate_url,
+            ),
+            # from_input() needs 'key' to come after 'url'
+            "key": ConfigAttribute(
+                "CONSERVATOR_API_KEY", "Conservator API Key", validator=validate_key
+            ),
+        }
+    )
 
     def __init__(self, **kwargs):
         for name, attr in Config.ATTRIBUTES.items():
-            v = kwargs.get(attr.internal_name, None)
-            if v is not None:
-                v = attr.type_(v)
-            if v is None:
-                v = attr.default
-            if v is None:
+            value = kwargs.get(attr.internal_name, None)
+            if value is not None:
+                value = attr.type_(value)
+            if value is None:
+                value = attr.default
+            if value is None:
                 raise ConfigError(f"Missing value for '{name}'")
-            assert type(v) == attr.type_
-            setattr(self, name, v)
+            assert isinstance(value, attr.type_)
+            setattr(self, name, value)
 
     @staticmethod
     def from_dict(data):
+        """
+        Construct a Config object from a dict
+        """
         return Config(**data)
 
     @staticmethod
@@ -85,17 +176,32 @@ class Config:
         """
         Creates a :class:`Config` object from standard input.
         """
-        d = {}
+
+        # just show prompts, not errors from functions used to validate config
+        logging.disable(logging.CRITICAL)
+
+        config_dict = {}
         for name, attr in Config.ATTRIBUTES.items():
-            if attr.default is None:
-                v = input(f"{attr.friendly_name}: ")
-            else:
-                v = input(f"{attr.friendly_name} (leave empty for {attr.default}): ")
-            v = v.strip()
-            if len(v) == 0:
-                v = None
-            d[attr.internal_name] = v
-        return Config.from_dict(d)
+            # loop until user supplies a config that actually works
+            while True:
+                if attr.default is None:
+                    value = input(f"{attr.friendly_name}: ")
+                else:
+                    value = input(
+                        f"{attr.friendly_name} (leave empty for {attr.default}): "
+                    )
+                value = value.strip()
+                if len(value) == 0:
+                    value = attr.default
+                config_dict[attr.internal_name] = value
+                # move on to next field if validator passes
+                if attr.validator(config_dict):
+                    break
+
+        # restore logging level to normal
+        logging.disable(logging.NOTSET)
+
+        return Config.from_dict(config_dict)
 
     @staticmethod
     def from_file(path):
@@ -107,7 +213,7 @@ class Config:
         :param path: The path to the JSON config file.
         """
         try:
-            with open(path, "r") as config:
+            with open(path, "r", encoding="utf-8") as config:
                 data = json.load(config)
             if os.stat(path).st_mode & 0o777 != 0o600:
                 logger.warning("Changing config file mode to 0600.")
@@ -118,10 +224,16 @@ class Config:
 
     @classmethod
     def from_named_config_file(cls, name):
+        """
+        Create a config object from a named config file
+        """
         return Config.from_file(Config.named_config_path(name))
 
     @staticmethod
     def from_name(name):
+        """
+        Create a config object by config name
+        """
         return Config.from_named_config_file(name)
 
     @staticmethod
@@ -155,13 +267,16 @@ class Config:
         """
         directory = os.path.split(path)[0]
         os.makedirs(directory, exist_ok=True)
-        with open(path, "w") as f:
-            json.dump(self.to_dict(), f)
+        with open(path, "w", encoding="utf-8") as json_file:
+            json.dump(self.to_dict(), json_file)
         if os.stat(path).st_mode & 0o777 != 0o600:
             logger.warning("Changing config file mode to 600.")
             os.chmod(path, 0o600)
 
     def to_dict(self):
+        """
+        Return config object as a dict
+        """
         return {
             attr.internal_name: getattr(self, name)
             for name, attr in self.ATTRIBUTES.items()
@@ -200,6 +315,9 @@ class Config:
 
     @staticmethod
     def saved_config_names():
+        """
+        Returns a list of config names
+        """
         root_path = os.path.join(os.path.expanduser("~"), ".config", "conservator-cli")
         files = os.listdir(root_path)
         return [file[: -len(".json")] for file in files]
@@ -245,7 +363,7 @@ class Config:
             except Exception:
                 pass
             if creds is not None:
-                logger.debug(f"Created config from source: {source}")
+                logger.debug("Created config from source: %s", source)
                 if save and source == Config.from_input:
                     creds.save_to_default_config()
                 return creds
