@@ -1,5 +1,8 @@
 FROM python:3.8-slim-bullseye
 
+ARG UID=1004
+ARG DOCKER_GID=999
+
 # Install standalone apt dependencies
 RUN apt-get update \
     && apt-get install -y git make curl iproute2 git-lfs file
@@ -15,13 +18,18 @@ RUN mkdir -p ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 RUN curl -fsSL https://get.docker.com | sh
 
 # Install kubectl
-RUN apt-get update \
-    && apt-get install -y apt-transport-https ca-certificates curl \
-    && curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" \
-    | tee /etc/apt/sources.list.d/kubernetes.list \
-    && apt-get update \
-    && apt-get install -y kubectl
+# RUN apt-get update \
+#     && apt-get install -y apt-transport-https ca-certificates curl \
+#     && curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg \
+#     && echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-bullseye main" \
+#     | tee /etc/apt/sources.list.d/kubernetes.list \
+#     && apt-get update 
+#     #&& apt-get install -y kubectl
+
+# Install kubectl directly from the official Kubernetes binaries
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x kubectl \
+    && mv kubectl /usr/local/bin/kubectl
 
 # Install kind
 RUN curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64 \
@@ -29,9 +37,8 @@ RUN curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64 \
     && mv ./kind /bin/kind
 
 # Install kubetpl
-RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-0.9.0-$( \
-    bash -c '[[ $OSTYPE == darwin* ]] && echo darwin || echo linux' \
-    )-amd64 -o kubetpl && chmod a+x kubetpl && mv kubetpl /usr/local/bin/
+RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-0.9.0-linux-amd64 \
+    -o kubetpl && chmod a+x kubetpl && mv kubetpl /usr/local/bin/
 
 # Install AWS CLI to pull docker images from ECR
 RUN apt-get update \
@@ -39,10 +46,10 @@ RUN apt-get update \
 
 # aws cli v2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-   && unzip awscliv2.zip \
+   && unzip -qq awscliv2.zip \
    && ./aws/install
 
-RUN useradd --uid 1000 --gid 999 tester
+RUN useradd --uid $UID --gid $DOCKER_GID tester
 RUN mkdir /home/tester
 RUN chown tester:docker /home/tester
 USER tester

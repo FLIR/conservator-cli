@@ -2,6 +2,7 @@
 Brief script that demonstrates how to use the GraphQL API to
 perform QA operations on a dataset annotation
 """
+
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated.schema import Mutation
 

@@ -1,8 +1,12 @@
 # Releasing a new version
 
+## Schema Updates
+
+Note that, if the Conservator GraphQL API changes, the Conservator CLI schema should be updated. This can be done by running `FLIR/conservator/generated/generate.sh`. This will regenerate the `FLIR/conservator/generated/schema.py` file to match the deployed schema.
+
 ## Tagging Release
 
-First checkout main and pull the latest commits. All releases 
+First checkout main and pull the latest commits. All releases
 should be on `main` branch.
 
 ```bash
@@ -24,7 +28,7 @@ git push origin [version]
 
 ## Deploying Release
 
-Open Conservator CLI in FLIR Jenkins, go click the new version under the Tags tab.
+Open Conservator CLI (FLIR-Ubuntu-Native-Build -> conservator-cli) in FLIR Jenkins, go click the new version under the Tags tab.
 On the side, click `Build Now`. This runs all tests, and if they pass, releases to PyPI.
 
 Nathan Wachholz and Andres Prieto-Moreno currently have access to the PyPI account.

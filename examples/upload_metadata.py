@@ -1,6 +1,7 @@
 """
 Shows how to upload a metadata file for a dataset or image
 """
+
 from FLIR.conservator.conservator import Conservator
 
 conservator = Conservator.default()
