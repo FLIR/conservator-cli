@@ -1,6 +1,7 @@
 """
 See class comment below for details
 """
+
 from FLIR.conservator.fields_manager import FieldsManager
 
 

@@ -216,7 +216,8 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             if frame_id in associated_frame_table:
                 if frame_id not in dset_frame_id_map:
                     logger.warning(
-                        f"Missing dataset frame ID for frame ID {frame_id}, cannot associate frame"
+                        "Missing dataset frame ID for frame ID %s, cannot associate frame",
+                        frame_id,
                     )
                     continue
                 dset_frame = dset_frame_id_map[frame_id]

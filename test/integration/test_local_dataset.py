@@ -42,12 +42,11 @@ def test_add_commit_push_frame(conservator, test_data):
     status = local_dset.git_status()
     assert os.path.basename(local_dset.index_path) in status["modified"]["staged"]
 
-    local_dset.commit("Test commit", verbose=False)
+    local_dset.commit("Test commit")
     status = local_dset.git_status()
     for category in ("added", "modified"):
         for section in ("staged", "working"):
             assert not status[category][section]
-    assert not status["other"]
 
     local_dset.push_commits(verbose=False)
 

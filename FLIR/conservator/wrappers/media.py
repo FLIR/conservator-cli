@@ -238,7 +238,7 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
             upload_request.complete = True
             upload_request.error_message = ""
             upload_request.media_id = media.id
-        except Exception as e:
+        except Exception:
             if media:
                 # clean up partial upload if possible
                 try:
@@ -303,9 +303,9 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
         if query_fields is None:
             query_fields = ["frames"]
         elif isinstance(query_fields, FieldsRequest):
-            if not "frames" in query_fields.paths:
+            if "frames" not in query_fields.paths:
                 query_fields.include_field("frames")
-        elif not "frames" in query_fields:
+        elif "frames" not in query_fields:
             query_fields.append("frames")
 
         while True:

@@ -17,7 +17,7 @@ class Video(MediaType):
 
         if query_fields is None:
             query_fields = ["frames"]
-        elif not "frames" in query_fields:
+        elif "frames" not in query_fields:
             query_fields.append("frames")
 
         frames = self._conservator.query(

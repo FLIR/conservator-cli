@@ -1,6 +1,7 @@
 """
 Demonstrates searching for videos within a collection
 """
+
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.wrappers.collection import InvalidRemotePathException
 

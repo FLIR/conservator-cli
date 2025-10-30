@@ -1,6 +1,7 @@
 """
 Demonstrates QA actions on a video/image annotation
 """
+
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.generated.schema import Mutation, UpdateQaStatusNoteInput
 

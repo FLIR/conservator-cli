@@ -2,6 +2,7 @@
 # pylint: disable=missing-class-docstring
 # pylint: disable=missing-module-docstring
 import os
+import string
 import json
 from time import sleep
 
@@ -35,6 +36,7 @@ def test_metadata_download_upload_for_media(conservator, test_data):
     assert os.path.isfile("bicycle_0.json")
     with open("bicycle_0.json", encoding="UTF-8") as metadata_file:
         local_metadata = json.load(metadata_file)
+
     assert local_metadata == json.loads(image.metadata)
 
     # Double-check format

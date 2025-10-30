@@ -72,7 +72,7 @@ class MetadataType(TypeProxy):
         json_data = json.loads(self.metadata)
         json_file = ".".join(self.filename.split(".")[:-1]) + ".json"
         json_path = os.path.join(path, json_file)
-        with open(json_path, "w") as file:
+        with open(json_path, "w", encoding="utf-8") as file:
             json.dump(json_data, file, indent=4, separators=(",", ": "))
 
     def upload_metadata(self, file_path, content_type=None):
