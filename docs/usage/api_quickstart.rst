@@ -80,7 +80,7 @@ Specifying Fields
 ^^^^^^^^^^^^^^^^^
 
 The ability to specify fields is a powerful feature of GraphQL, the API framework
-used by FLIR Conservator. In many API requests in Conservator CLI, you will have to
+used by Conservator. In many API requests in Conservator CLI, you will have to
 specify which fields you are interested in. Usually, these are provided using
 a :class:`~FLIR.conservator.fields_request.FieldsRequest`. These let you `include`
 or `exclude` fields in your request.
@@ -101,7 +101,7 @@ Conservator also provides utilities for querying Collections,
 Datasets and Videos.
 
 Each query endpoint can list all of its type (as used above), or
-perform searches using FLIR Conservator's Advanced Search feature.
+perform searches using Conservator's Advanced Search feature.
 
 For example, if we wanted to print the names of all datasets that
 contains the word `ADAS`, we could do the following:

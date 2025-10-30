@@ -1,8 +1,10 @@
+import dataclasses
 import pathlib
 import os
 import secrets
 import shutil
 import subprocess
+import socket
 
 import pytest
 import pymongo
@@ -12,17 +14,110 @@ from FLIR.conservator.conservator import Conservator
 
 ADMIN_ROLE = "Conservator Administrator"
 
+PATH = os.path.dirname(os.path.realpath(__file__))
+DATA_FOLDER = os.path.realpath(os.path.join(PATH, "..", "data"))
+MP4_FOLDER = os.path.join(DATA_FOLDER, "mp4")
 
-@pytest.fixture(scope="session")
-def using_kubernetes():
-    if shutil.which("kubectl") is None:
-        return False
-    kube_services = subprocess.getoutput(
-        "kubectl --insecure-skip-tls-verify get services -o name"
+
+@dataclasses.dataclass
+class TestSettings:
+    server_deployment: str = ""
+    conservator_url: str = ""
+    mongo_url: str = ""
+    pytest_inside_docker: bool = False
+
+
+test_settings = TestSettings()
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--server-deployment",
+        choices=["kind", "minikube"],
+        default="kind",
+        help="Type of deployment for tested conservator instance",
     )
-    if "conservator-webapp" in kube_services:
-        return True
-    return False
+
+
+def pytest_configure(config):
+    lfs_is_ok = check_git_lfs()
+
+    if not lfs_is_ok:
+        error_msg = """
+            git-lfs is not installed, or the repository was not initialized correctly
+            Please ensure that git-lfs is installed on your system, and then run `git lfs pull`
+            to ensure all binary files are checked out correctly
+            """
+        pytest.exit(error_msg)
+
+    mongo_dns_is_ok = check_conservator_mongo()
+
+    if not mongo_dns_is_ok:
+        error_msg = """
+            `conservator-mongo` is not configured as a host.
+            Please edit your `/etc/hosts` file to contain the following entry:
+            `127.0.0.1        conservator-mongo`
+            """
+        pytest.exit(error_msg)
+
+    # deployment type of Conservator server comes from command-line parser
+    test_settings.server_deployment = config.option.server_deployment
+
+    # pytest runtime context (native host or inside container) comes from environment
+    test_settings.pytest_inside_docker = (
+        os.environ.get("RUNNING_IN_CLI_TESTING_DOCKER") == "True"
+    )
+
+    # if using kubernetes, make sure kubectl commands default to using correct cluster
+    if test_settings.server_deployment == "kind":
+        (code, out) = subprocess.getstatusoutput(
+            "kubectl --insecure-skip-tls-verify config use-context kind-kind"
+        )
+        if code:
+            raise RuntimeError(
+                f"Could not select '{test_settings.server_deployment} cluster: {out}"
+            )
+    elif test_settings.server_deployment == "minikube":
+        (code, out) = subprocess.getstatusoutput(
+            "kubectl --insecure-skip-tls-verify config use-context minikube"
+        )
+        if code:
+            raise RuntimeError(
+                f"Could not select '{test_settings.server_deployment} cluster: {out}"
+            )
+
+    # conservator URL depends on both server deployment type and runtime context
+    conservator_ip = ""
+    conservator_port = 0
+
+    if test_settings.server_deployment == "kind":
+        # KInD sets up access to webapp at localhost:8080 of the host system,
+        # but that is not available at localhost if pytest is inside a container
+        conservator_port = 8080
+
+        if test_settings.pytest_inside_docker:
+            # If we are in a container, we connect to host.
+            conservator_ip = subprocess.getoutput(
+                "ip route list default | sed 's/.*via //; s/ .*//' "
+            )
+        else:
+            # Running on host
+            conservator_ip = "localhost"
+    elif test_settings.server_deployment == "minikube":
+        # minikube sets up access to webapp at $MINIKUBE_IP:80
+        # where $MINIKUBE_IP is dynamically allocated IP for the minikube container
+        conservator_port = 80
+        conservator_ip = subprocess.getoutput("minikube ip")
+
+    test_settings.conservator_url = f"http://{conservator_ip}:{conservator_port}"
+
+    # there will be a kubernetes port-forward for mongo access,
+    # so it will be available at localhost
+    mongo_ip = "localhost"
+    mongo_port = (
+        27017  # leave port alone -- must match port in mongo replica set config
+    )
+    test_settings.mongo_url = f"mongodb://{mongo_ip}:{mongo_port}/"
 
 
 def get_mongo_pod_name():
@@ -37,47 +132,27 @@ def get_mongo_pod_name():
     raise RuntimeError("Can't find mongo pod")
 
 
-def running_in_testing_docker():
-    # We might be running in test Docker, we have an environment
-    # variable set to be able to check. This determines how we
-    # connect to docker or k8s.
-    return os.environ.get("RUNNING_IN_CLI_TESTING_DOCKER") == "True"
-
-
 @pytest.fixture(scope="session")
-def conservator_domain(using_kubernetes):
-    # If we are in a container, we connect to host.
-    if running_in_testing_docker():
-        host_ip = subprocess.getoutput(
-            "ip route list default | sed 's/.*via //; s/ .*//' "
-        )
-        return host_ip  # Host IP
-    # Running on host
-    return "localhost"
+def mongo_client():
+    mongo_pod_name = get_mongo_pod_name()
+    # Port forward 27017 in the background...
+    # note that it should be the standard mongo port,
+    # anything else causes problems if mongodb server
+    # has been configured with replica set
+    port_forward_proc = subprocess.Popen(
+        [
+            "kubectl",
+            "--insecure-skip-tls-verify",
+            "port-forward",
+            "service/conservator-mongo",
+            "27017:27017",
+        ]
+    )
 
+    yield pymongo.MongoClient(test_settings.mongo_url)
 
-@pytest.fixture(scope="session")
-def mongo_client(using_kubernetes, conservator_domain):
-    if using_kubernetes:
-        mongo_pod_name = get_mongo_pod_name()
-        # Port forward 27030 in the background...
-        port_forward_proc = subprocess.Popen(
-            [
-                "kubectl",
-                "--insecure-skip-tls-verify",
-                "port-forward",
-                mongo_pod_name,
-                f"27030:27017",
-            ]
-        )
-        # Because of the port forward process, mongo will be accessible on localhost
-        yield pymongo.MongoClient(f"mongodb://localhost:27030/")
-        port_forward_proc.terminate()
-    else:  # Using docker
-        domain = subprocess.getoutput(
-            "docker inspect conservator_mongo -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
-        ).strip()
-        yield pymongo.MongoClient(host=[f"{domain}:27017"])
+    # clean up port-forward process
+    port_forward_proc.terminate()
 
 
 @pytest.fixture(scope="session")
@@ -90,7 +165,7 @@ def db(mongo_client):
 
 @pytest.fixture(scope="class")
 def empty_db(db):
-    PRESERVED_COLLECTIONS = ["groups", "organizations", "allowedDomains"]
+    PRESERVED_COLLECTIONS = ["users", "groups", "organizations", "allowedDomains"]
     for name in db.list_collection_names():
         if name.startswith("system."):
             continue
@@ -101,7 +176,7 @@ def empty_db(db):
 
 
 @pytest.fixture(scope="class")
-def conservator(empty_db, conservator_domain):
+def conservator(empty_db):
     """
     Provides a Conservator connection to be used for testing.
 
@@ -112,21 +187,42 @@ def conservator(empty_db, conservator_domain):
     # TODO: Initialize an organization, groups.
     organization = empty_db.organizations.find_one({})
     assert organization is not None, "Make sure conservator is initialized"
-    api_key = secrets.token_urlsafe(16)
-    empty_db.users.insert_one(
-        {
-            "_id": Conservator.generate_id(),
-            "role": ADMIN_ROLE,
-            "name": "admin user",
-            "email": "admin@example.com",
-            "apiKey": api_key,
-            "organizationId": organization["_id"],
-        }
-    )
+    if "TEST_API_KEY" in os.environ:
+        api_key = os.environ["TEST_API_KEY"]
+    else:
+        api_key = secrets.token_urlsafe(16)
+    if "TEST_ADMIN_EMAIL" in os.environ:
+        admin_email = os.environ["TEST_ADMIN_EMAIL"]
+    else:
+        admin_email = "admin@example.com"
+
+    user = empty_db.users.find_one({"email": admin_email})
+    if user:
+        if "apiKey" not in user or (
+            "TEST_API_KEY" in os.environ and user["apiKey"] != api_key
+        ):
+            empty_db.users.update_one(
+                {"_id": user["_id"]}, {"$set": {"apiKey": api_key}}
+            )
+        else:
+            api_key = user["apiKey"]
+    else:
+        empty_db.users.insert_one(
+            {
+                "_id": Conservator.generate_id(),
+                "role": ADMIN_ROLE,
+                "name": "admin user",
+                "email": admin_email,
+                "apiKey": api_key,
+                "organizationId": organization["_id"],
+            }
+        )
     config = Config(
-        CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=f"http://{conservator_domain}:8080"
+        CONSERVATOR_API_KEY=api_key, CONSERVATOR_URL=test_settings.conservator_url
     )
-    print(f"Using key={api_key}, url=http://{conservator_domain}:8080")
+    print(
+        f"Using key={api_key[0]}***{api_key[-1]}, email={admin_email} url={test_settings.conservator_url}"
+    )
     yield Conservator(config)
 
 
@@ -186,3 +282,29 @@ def upload_media(conservator, media):
         )
         media_ids.append(media_id)
     conservator.media.wait_for_processing(media_ids)
+
+
+def check_git_lfs():
+    which_result = subprocess.call(["which", "git-lfs"], stdout=subprocess.DEVNULL)
+
+    print(f"which result is: {which_result}")
+
+    if which_result != 0:
+        return False
+
+    mp4_file = os.path.join(MP4_FOLDER, "tower_gimbal.mp4")
+
+    result = str(subprocess.check_output(["file", mp4_file]))
+
+    if result.find("ASCII") != -1:
+        return False
+
+    return True
+
+
+def check_conservator_mongo():
+    try:
+        socket.gethostbyname("conservator-mongo")
+    except Exception:
+        return False
+    return True

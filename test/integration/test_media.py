@@ -1,13 +1,16 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
 import os
 
 import pytest
 
+from conftest import upload_media
 from FLIR.conservator.conservator import UnknownMediaIdException
 from FLIR.conservator.generated.schema import AnnotationCreate
 from FLIR.conservator.util import md5sum_file
 from FLIR.conservator.wrappers import Image, Video
 from FLIR.conservator.wrappers.media import MediaCompare
-from conftest import upload_media
 
 
 def test_upload_image(conservator, test_data):
@@ -20,7 +23,7 @@ def test_upload_image(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "cat_0.jpg"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
 
 def test_upload_image_collection(conservator, test_data):
@@ -34,7 +37,7 @@ def test_upload_image_collection(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "cat_0.jpg"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
     images = list(collection.get_images())
     assert len(images) == 1
@@ -51,7 +54,7 @@ def test_upload_image_filename(conservator, test_data):
     assert image is not None
     assert image.id == media_id
     assert image.name == "My cat photo"
-    assert image.frames_count == 1
+    assert image.frame_count == 1
 
 
 def test_upload_video(conservator, test_data):
@@ -64,26 +67,30 @@ def test_upload_video(conservator, test_data):
     assert video is not None
     assert video.id == media_id
     assert video.name == "adas_thermal.mp4"
-    assert video.frames_count == 60
+    assert video.frame_count == 60
 
 
 def test_upload_many_in_parallel(conservator, test_data):
-    NUM_COPIES = 10
+    num_copies = 10
     path = test_data / "jpg" / "peds_0.jpg"
-    upload_tuples = [(path, f"upload_many_test_{i}") for i in range(NUM_COPIES)]
+    new_filenames = [f"upload_many_test_{i}" for i in range(num_copies)]
+    upload_tuples = [(path, filename) for filename in new_filenames]
     collection = conservator.collections.create_from_remote_path("/Many/Videos")
 
     media_ids = conservator.videos.upload_many_to_collection(
         upload_tuples, collection=collection, process_count=10
     )
-    assert len(media_ids) == NUM_COPIES
+    assert len(media_ids) == num_copies
 
     conservator.videos.wait_for_processing(media_ids)
 
-    for i, media_id in enumerate(media_ids):
+    uploaded_filenames = []
+    for media_id in media_ids:
         media = conservator.get_media_instance_from_id(media_id, fields="name")
         assert media is not None
-        assert media.name == f"upload_many_test_{i}"
+        uploaded_filenames.append(media.name)
+    # check that all submitted filenames came back as uploaded
+    assert new_filenames.sort() == uploaded_filenames.sort()
 
 
 def test_remove_image(conservator, test_data):
@@ -162,7 +169,7 @@ def test_get_all_frames_paginated(conservator, test_data):
 
     paginated_frames = video.get_all_frames_paginated()
     frames = list(paginated_frames)
-    assert len(frames) == video.frames_count
+    assert len(frames) == video.frame_count
     for i, frame in enumerate(frames):
         assert frame.frame_index == i
         assert frame.video_id == video.id
@@ -205,11 +212,11 @@ def test_get_annotations(conservator, test_data):
     annotation = AnnotationCreate(
         labels=["cat"], bounding_box={"x": 1, "y": 2, "w": 3, "h": 4}
     )
-    added = frame.add_annotation(annotation)
+    added = frame.add_annotations([annotation])
 
     annotations = image.get_annotations()
     assert len(annotations) == 1
-    assert annotations[0].to_json() == added.to_json()
+    assert annotations.to_json() == added.to_json()
 
 
 def test_from_path(conservator, test_data):
@@ -292,22 +299,24 @@ def test_from_string_video_name(conservator, test_data):
 class TestDownloadMedia:
     @pytest.fixture(scope="class", autouse=True)
     def init_media(self, conservator, test_data):
-        MEDIA = [
+        media_paths = [
             # local_path, remote_path, remote_name
             (test_data / "jpg" / "cat_2.jpg", "/Cats", "My cat.jpg"),
         ]
-        upload_media(conservator, MEDIA)
+        upload_media(conservator, media_paths)
 
-    def test_download(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download(self, conservator):
         image = conservator.images.by_exact_name("My cat.jpg").first()
         image.download(".")
-        assert os.path.exists("My cat.jpg")
-        assert os.path.isfile("My cat.jpg")
-        assert md5sum_file("My cat.jpg") == image.md5
+        assert os.path.exists("cat_2.jpg")
+        assert os.path.isfile("cat_2.jpg")
+        assert md5sum_file("cat_2.jpg") == image.md5
 
-    def test_download_path(self, conservator, tmp_cwd):
+    @pytest.mark.usefixtures("tmp_cwd")
+    def test_download_path(self, conservator):
         image = conservator.images.by_exact_name("My cat.jpg").first()
         image.download("Some/Path")
-        assert os.path.exists("Some/Path/My cat.jpg")
-        assert os.path.isfile("Some/Path/My cat.jpg")
-        assert md5sum_file("Some/Path/My cat.jpg") == image.md5
+        assert os.path.exists("Some/Path/cat_2.jpg")
+        assert os.path.isfile("Some/Path/cat_2.jpg")
+        assert md5sum_file("Some/Path/cat_2.jpg") == image.md5

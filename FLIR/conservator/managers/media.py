@@ -75,13 +75,10 @@ class MediaTypeManager:
         :param collection: If specified, the Collection object, or `str` Collection ID to
             upload the media to. If not specified, the media is not uploaded to any
             specific collection (orphan).
-        :param remote_name: If given, the remote name of the media. Otherwise, the local file
-            name is used.
+        :param remote_name: If given, set the name for the media file on the server.
         """
         file_path = os.path.expanduser(file_path)
         assert os.path.isfile(file_path)
-        if remote_name is None:
-            remote_name = os.path.split(file_path)[-1]
 
         if isinstance(collection, str):
             collection_id = collection
@@ -136,7 +133,7 @@ class MediaTypeManager:
         if isinstance(media_ids, str):
             media_ids = [media_ids]
 
-        pool = multiprocessing.Pool()
+        pool = multiprocessing.get_context("fork").Pool()
         args = [(media_id, check_frequency_seconds) for media_id in media_ids]
         results = pool.starmap_async(self._wait_for_single_processing, args)
         try:
@@ -160,7 +157,7 @@ class MediaTypeManager:
             for a file, if the initial attempt to upload that file fails. Value less
             than zero is interpreted as infinite retries.
         """
-        pool = multiprocessing.Pool(process_count)
+        pool = multiprocessing.get_context("fork").Pool(process_count)
         upload_func = functools.partial(
             MediaType.upload, self._conservator
         )  # pass in conservator instance

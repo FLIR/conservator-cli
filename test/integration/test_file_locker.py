@@ -1,9 +1,14 @@
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
 import os
+import pytest
 
 from FLIR.conservator.util import md5sum_file
 
 
-def test_media_file_locker(conservator, test_data, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_media_file_locker(conservator, test_data):
     path = test_data / "jpg" / "cat_0.jpg"
     media_id = conservator.media.upload(path)
     conservator.media.wait_for_processing(media_id, check_frequency_seconds=1)
@@ -36,8 +41,10 @@ def test_media_file_locker(conservator, test_data, tmp_cwd):
     assert len(image.file_locker_files) == 0
 
 
-def test_dataset_file_locker(conservator, test_data, tmp_cwd):
-    conservator.datasets.create("Test dataset")
+@pytest.mark.usefixtures("tmp_cwd")
+def test_dataset_file_locker(conservator, test_data):
+    new_dset = conservator.datasets.create("Test dataset")
+    assert new_dset.wait_for_dataset_commit()
 
     dataset = conservator.datasets.all().first()
     dataset.populate("file_locker_files")
@@ -68,7 +75,8 @@ def test_dataset_file_locker(conservator, test_data, tmp_cwd):
     assert len(dataset.file_locker_files) == 0
 
 
-def test_collection_file_locker(conservator, test_data, tmp_cwd):
+@pytest.mark.usefixtures("tmp_cwd")
+def test_collection_file_locker(conservator, test_data):
     conservator.collections.create_from_remote_path("/Test")
 
     collection = conservator.collections.all().first()

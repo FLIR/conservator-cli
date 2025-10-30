@@ -1,9 +1,16 @@
 import sys
-
-import setuptools
+import platform
 import re
+import setuptools
 
-import version
+current_platform = platform.system()
+
+if current_platform.lower() == "windows":
+    print("Conservator-CLI is currently only supported on Windows through WSL.")
+    print(
+        "Please see https://flir.github.io/conservator-cli/usage/installation.html#installation-on-windows for details"
+    )
+    sys.exit(1)
 
 
 try:
@@ -20,10 +27,19 @@ except ImportError:
 
     find_namespace_packages = fix_PEP420PackageFinder_find
 
-git_version = version.get_git_version()
-print("VERSION: ", git_version)
+# if this is run from git repo, create updated version file,
+# otherwise there should be a previously created version file
+try:
+    import version
 
-with open("README.md", "r") as fh:
+    version = version.get_git_version()
+    print("GIT VERSION: ", version)
+    with open("FLIR/conservator/version.py", "w", encoding="utf-8") as fp:
+        fp.write(f'version = "{version}"\n')
+except:
+    from FLIR.conservator.version import version
+
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 
@@ -32,21 +48,25 @@ with open("README.md", "r") as fh:
 # Packages only used for developing (pytest, black, etc.) should be placed
 # in requirements.txt instead.
 INSTALL_REQUIRES = [
-    "sgqlc",
-    "click >= 7",
+    "graphql-core == 3.2.1; python_version<'3.7'",
+    "sgqlc >= 13,<= 16.4; python_version>='3.7'",
+    "sgqlc == 16.0; python_version<'3.7'",
+    "click >= 8",
     "tqdm",
     "requests",
     "Pillow",
     "jsonschema",
     "dataclasses; python_version<'3.7'",
     "pyreadline; platform_system=='Windows'",
+    "semver == 2.13.0",
+    "GitPython",
 ]
 
 setuptools.setup(
     name="conservator-cli",
-    version=git_version,
-    author="FLIR Systems, INC",
-    description="A library for using the FLIR Conservator API, with a nice command line interface.",
+    version=version,
+    author="Teledyne FLIR LLC",
+    description="A library for using the Teledyne FLIR Conservator API, with a nice command line interface.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/FLIR/conservator-cli",

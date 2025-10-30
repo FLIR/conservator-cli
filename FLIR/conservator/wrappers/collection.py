@@ -1,21 +1,23 @@
 import logging
 import os
+import re
+import shutil
 
 from FLIR.conservator.fields_request import FieldsRequest
 from FLIR.conservator.file_transfers import DownloadRequest
+from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.generated import schema
 from FLIR.conservator.generated.schema import (
     Query,
     Mutation,
     CreateCollectionInput,
     DeleteCollectionInput,
-    MetadataInput,
+    MoveAssetInput,
 )
 from FLIR.conservator.local_dataset import LocalDataset
 from FLIR.conservator.paginated_query import PaginatedQuery
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 from FLIR.conservator.wrappers.file_locker import FileLockerType
-from FLIR.conservator.wrappers.queryable import QueryableType
 
 
 logger = logging.getLogger(__name__)
@@ -136,17 +138,23 @@ class Collection(QueryableType, FileLockerType):
         If `make_if_no_exist` is `True`, then collection(s) will be created to
         reach that path if it doesn't exist.
         """
+        # Remove repeated '/' characters.
+        clean_path = re.sub("/+", "/", path)
+
         if not path.startswith("/"):
-            path = "/" + path
+            clean_path = "/" + path
+
+        if clean_path.endswith("/"):
+            clean_path = clean_path[:-1]
 
         collection = conservator.query(
-            Query.collection_by_path, path=path, fields=fields
+            Query.collection_by_path, path=clean_path, fields=fields
         )
         if collection is None:
             if make_if_no_exist:
-                return cls.create_from_remote_path(conservator, path, fields)
+                return cls.create_from_remote_path(conservator, clean_path, fields)
             else:
-                raise InvalidRemotePathException(path)
+                raise InvalidRemotePathException(clean_path)
         return collection
 
     def recursively_get_children(self, include_self=False, fields=None):
@@ -230,6 +238,7 @@ class Collection(QueryableType, FileLockerType):
         return datasets
 
     def create_dataset(self, name, fields=None):
+        """Creates a dataset in the current folder/project"""
         return self._conservator.datasets.create(
             name, collections=[self], fields=fields
         )
@@ -238,13 +247,23 @@ class Collection(QueryableType, FileLockerType):
         """
         Remove given media from this collection.
         """
-        metadata = MetadataInput(mode="remove", collections=[self.id])
+        input_ = MoveAssetInput(asset_id=media_id, from_collection=self.id)
         return self._conservator.query(
-            Mutation.update_video,
-            id=media_id,
-            metadata=metadata,
-            fields="id",
+            Mutation.move_video,
+            input=input_,
         )
+
+    def move(self, parent):
+        """
+        Move the collection into another collection.
+        """
+        result = self._conservator.query(
+            Mutation.move_collection,
+            id=self.id,
+            parent_id=parent.id,
+        )
+        self.populate(fields="path")
+        return result
 
     def delete(self):
         """
@@ -264,6 +283,7 @@ class Collection(QueryableType, FileLockerType):
         include_metadata=False,
         include_associated_files=False,
         include_media=False,
+        overwrite_datasets=False,
         preview_videos=False,
         recursive=False,
     ):
@@ -284,7 +304,7 @@ class Collection(QueryableType, FileLockerType):
         if include_media:
             self.download_media(path, preview_videos=preview_videos)
         if include_datasets:
-            self.download_datasets(path)
+            self.download_datasets(path, overwrite=overwrite_datasets)
         if recursive:
             for id_ in self.child_ids:
                 child = Collection.from_id(self._conservator, id_)
@@ -296,6 +316,8 @@ class Collection(QueryableType, FileLockerType):
                     include_metadata,
                     include_associated_files,
                     include_media,
+                    overwrite_datasets,
+                    preview_videos,
                     recursive,
                 )
 
@@ -360,12 +382,25 @@ class Collection(QueryableType, FileLockerType):
             downloads.append(download)
         self._conservator.files.download_many(downloads, no_meter=no_meter)
 
-    def download_datasets(self, path, no_meter=False):
+    def download_datasets(self, path, no_meter=False, overwrite=False):
         """Clones and pulls all datasets in the collection."""
         fields = FieldsRequest()
         fields.include_field("name", "repository.master")
         datasets = self.get_datasets(fields=fields)
         for dataset in datasets:
             clone_path = os.path.join(path, dataset.name)
+            if os.path.exists(clone_path):
+                if not os.path.isdir(clone_path):
+                    logger.error(
+                        "The file at '%s' has the same name as a dataset, please remove or rename it.",
+                        clone_path,
+                    )
+                    continue
+                if overwrite:
+                    logger.warning("Replacing existing dataset at %s", clone_path)
+                    shutil.rmtree(clone_path)
+                else:
+                    logger.warning("Skipping existing dataset at %s", clone_path)
+                    continue
             lds = LocalDataset.clone(dataset, clone_path=clone_path)
             lds.download(no_meter=no_meter)

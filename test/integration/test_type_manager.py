@@ -1,4 +1,7 @@
-import pytest as pytest
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-module-docstring
+import pytest
 
 from FLIR.conservator.wrappers.queryable import InvalidIdException
 

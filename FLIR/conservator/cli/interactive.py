@@ -204,7 +204,7 @@ def details(filename):
             "file_size",
             "location",
             "tags",
-            "asset_type",
+            "spectrum",
             "description",
         )
         item.populate(detail_fields)
@@ -215,7 +215,7 @@ def details(filename):
         click.echo(f"File Size: {item.file_size / 1024 / 1024:.2f} MB")
         click.echo(f"Location: {item.location}")
         click.echo(f"Tags: {item.tags}")
-        click.echo(f"Spectrum: {item.asset_type}")
+        click.echo(f"Spectrum: {item.spectrum}")
         click.echo(f"Description: {item.description}")
     else:
         click.echo("Unknown type")

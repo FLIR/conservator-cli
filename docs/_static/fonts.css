@@ -1,0 +1,53 @@
+@font-face {
+  font-family: 'Nunito Sans Regular';
+  src: url('fonts/NunitoSans-Regular/NunitoSans-Regular.eot?#iefix')
+      format('embedded-opentype'),
+    url('fonts/NunitoSans-Regular/NunitoSans-Regular.woff2') format('woff2'),
+    url('fonts/NunitoSans-Regular/NunitoSans-Regular.woff') format('woff'),
+    url('fonts/NunitoSans-Regular/NunitoSans-Regular.svg#NunitoSans-Regular') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nunito Sans';
+  src: url('fonts/NunitoSans-Bold/NunitoSans-Bold.eot?#iefix') format('embedded-opentype'),
+    url('fonts/NunitoSans-Bold/NunitoSans-Bold.woff2') format('woff2'),
+    url('fonts/NunitoSans-Bold/NunitoSans-Bold.woff') format('woff'),
+    url('fonts/NunitoSans-Bold/NunitoSans-Bold.svg#NunitoSans-Bold') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nunito Sans';
+  src: url('fonts/NunitoSans-ExtraBold/NunitoSans-ExtraBold.eot?#iefix')
+      format('embedded-opentype'),
+    url('fonts/NunitoSans-ExtraBold/NunitoSans-ExtraBold.woff2') format('woff2'),
+    url('fonts/NunitoSans-ExtraBold/NunitoSans-ExtraBold.woff') format('woff'),
+    url('fonts/NunitoSans-ExtraBold/NunitoSans-ExtraBold.svg#NunitoSans-ExtraBold')
+      format('svg');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nunito Sans';
+  src: url('fonts/NunitoSans-Regular/NunitoSans-Regular.eot?#iefix')
+      format('embedded-opentype'),
+    url('fonts/NunitoSans-Regular/NunitoSans-Regular.woff2') format('woff2'),
+    url('fonts/NunitoSans-Regular/NunitoSans-Regular.woff') format('woff'),
+    url('fonts/NunitoSans-Regular/NunitoSans-Regular.svg#NunitoSans-Regular') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Industry Book';
+  src: url('fonts/Industry-Book/Industry-Book.eot?#iefix') format('embedded-opentype'),
+    url('fonts/Industry-Book/Industry-Book.svg#Industry-Book') format('svg'),
+    url('fonts/Industry-Book/Industry-Book.otf') format('opentype'),
+    url('fonts/Industry-Book/Industry-Book.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}

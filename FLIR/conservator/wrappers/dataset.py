@@ -1,4 +1,6 @@
 import json
+import logging
+import time
 import os
 
 from FLIR.conservator.generated import schema
@@ -6,14 +8,20 @@ from FLIR.conservator.generated.schema import (
     Mutation,
     Query,
     AddFramesToDatasetInput,
+    RemoveFramesFromDatasetInput,
+    RemoveFramesFromDatasetByIdsInput,
     CreateDatasetInput,
     DeleteDatasetInput,
 )
 from FLIR.conservator.paginated_query import PaginatedQuery
+from FLIR.conservator.wrappers.frame import Frame
+from FLIR.conservator.wrappers.dataset_frame import DatasetFrame
 from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.queryable import QueryableType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
+
+logger = logging.getLogger(__name__)
 
 
 class Dataset(QueryableType, FileLockerType, MetadataType):
@@ -96,6 +104,22 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             search_text=search_text,
         )
 
+    def get_frames_reversed(self, search_text="", fields=None):
+        """
+        Returns a paginated query for dataset frames within this dataset, filtering
+        with `search_text` in reverse order.
+        """
+        return PaginatedQuery(
+            self._conservator,
+            query=Query.dataset_frames_only,
+            unpack_field="dataset_frames",
+            fields=fields,
+            reverse=True,
+            total_unpack_field="total_count",
+            id=self.id,
+            search_text=search_text,
+        )
+
     def add_frames(self, frames, fields=None, overwrite=False):
         """
         Given a list of `frames`, add them to the dataset.  If overwrite
@@ -111,6 +135,94 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
             fields=fields,
             input=_input,
         )
+
+    def remove_frames(self, frames, fields=None):
+        """
+        Given a list of `frames` remove them from the dataset.
+        Detects whether list contains video Frames or DatasetFrames,
+        but will fail if you mix both types together in the same list.
+        """
+        frame_ids = [frame.id for frame in frames]
+        if isinstance(frames[0], Frame):
+            _input = RemoveFramesFromDatasetInput(
+                dataset_id=self.id, frame_ids=frame_ids
+            )
+            result = self._conservator.query(
+                Mutation.remove_frames_from_dataset,
+                fields=fields,
+                input=_input,
+            )
+        elif isinstance(frames[0], DatasetFrame):
+            _input = RemoveFramesFromDatasetByIdsInput(
+                dataset_id=self.id, ids=frame_ids
+            )
+            result = self._conservator.query(
+                Mutation.remove_frames_from_dataset_by_ids,
+                fields=fields,
+                input=_input,
+            )
+        else:
+            raise TypeError("Expected list of Frame or DatasetFrame")
+
+        return result
+
+    def associate_frame(self, dataset_frame_id, associated_frame_input):
+        """
+        Associate the given dataset frame ID with another frame specified in
+        `associated_frame_input`.
+
+        :param dataset_frame_id: The ID of a dataset frame to associate with
+            another frame.
+        :param associated_frame_input: An `AddAssociatedFrameInput` object,
+            which references either another dataset frame ID or a video frame
+            ID, but not both.
+        """
+        self._conservator.query(
+            Mutation.add_associated_frame_to_dataset_frame,
+            dataset_frame_id=dataset_frame_id,
+            input=associated_frame_input,
+        )
+
+    def add_frames_with_associations(
+        self, frames, associated_frame_table, fields=None, overwrite=False
+    ):
+        """
+        Given a list of `frames`, add them to the dataset and associate them
+        with the frames found in `associated_frame_table`.  If overwrite is
+        True and the frame was already in the dataset, the dataset frame
+        attributes will be replaced with the source frame attributes.
+
+        :param frames: A list of Frame objects to be added to the dataset.
+        :param associated_frame_table: A dictionary mapping source video frame
+            IDs to a list of `AddAssociatedFrameInput` objects.
+            Each `AddAssociatedFrameInput` object can refer to either a video
+            frame ID or a dataset frame ID, but not both at once.
+        """
+        self.add_frames(frames, fields, overwrite)
+        frame_ids = [frame.id for frame in frames]
+        # Map input video frame IDs to their corresponding dataset frame IDs.
+        dset_frame_id_map = {}
+        for new_frame in self.get_frames_reversed(
+            fields=["dataset_frames.id", "dataset_frames.frame_id"]
+        ):
+            if new_frame.frame_id in frame_ids:
+                dset_frame_id_map[new_frame.frame_id] = new_frame.id
+            if len(dset_frame_id_map) >= len(frame_ids):
+                break
+        if len(dset_frame_id_map) < len(frame_ids):
+            logger.warning("One or more new dataset frame IDs were not found!")
+        # Add associations between frames.
+        for frame_id in frame_ids:
+            if frame_id in associated_frame_table:
+                if frame_id not in dset_frame_id_map:
+                    logger.warning(
+                        "Missing dataset frame ID for frame ID %s, cannot associate frame",
+                        frame_id,
+                    )
+                    continue
+                dset_frame = dset_frame_id_map[frame_id]
+                for assoc_frame_input in associated_frame_table[frame_id]:
+                    self.associate_frame(dset_frame, assoc_frame_input)
 
     def get_git_url(self):
         """Returns the Git URL used for cloning this Dataset."""
@@ -247,6 +359,47 @@ class Dataset(QueryableType, FileLockerType, MetadataType):
         clone for some operations.
         """
         self.download_blob_by_name("index.json", path, commit_id="HEAD")
+
+    def wait_for_history_len(self, num_expected_commits, max_tries=10):
+        """
+        Waits until the number of commits in Dataset's history is at least the
+        requested number. Intended as heuristic for checking whether a recent
+        commit has finished processing on the server, though it could be
+        misleading if multiple commits are being pushed to the dataset from
+        different sources (e.g. if local clone and web UI are being used
+        to make changes in parallel)
+        """
+        got_new_commit = False
+        tries = 0
+        while tries < max_tries:
+            self.populate(fields="git_commit_state")
+            commits = self.get_commit_history()
+            if (
+                len(commits) >= num_expected_commits
+                and self.git_commit_state == "completed"
+            ):
+                got_new_commit = True
+                break
+            else:
+                tries += 1
+                if tries < max_tries:
+                    time.sleep(1)
+                else:
+                    break
+
+        return got_new_commit
+
+    def wait_for_dataset_commit(self):
+        """Wait for the server to create the first commit to a new dataset."""
+        done = False
+        for _ in range(60):
+            time.sleep(1)
+            dset = self._conservator.datasets.from_id(self.id)
+            dset.populate(["git_commit_state"])
+            if dset and dset.git_commit_state == "completed":
+                done = True
+                break
+        return done
 
     @classmethod
     def from_local_path(cls, conservator, path="."):
