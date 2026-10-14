@@ -17,6 +17,9 @@ from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 
 
+# Files larger than this are split into multiple parts when uploading.
+MAX_UPLOAD_PART_SIZE = 1_000_000_000
+
 class MediaUploadException(Exception):
     """Raised if an exception occurs during a media upload"""
 
@@ -226,12 +229,24 @@ class MediaType(QueryableType, FileLockerType, MetadataType):
                 )
             upload_id = media._initiate_upload(original_name)
 
-            url = media._generate_signed_upload_url(upload_id)
-            response = conservator.files.upload(url=url, local_path=file_path)
-            completion_tag = response.headers["ETag"]
+            # Split large files into a multipart upload, using the fewest
+            # parts that keep each part under MAX_UPLOAD_PART_SIZE.
+            file_size = os.path.getsize(file_path)
+            num_parts = max(1, math.ceil(file_size / MAX_UPLOAD_PART_SIZE))
+            part_size = math.ceil(file_size / num_parts)
+
+            completion_tags = []
+            for part_number in range(1, num_parts + 1):
+                offset = (part_number - 1) * part_size
+                length = min(part_size, file_size - offset)
+                url = media._generate_signed_upload_url(upload_id, part_number)
+                response = conservator.files.upload(
+                    url=url, local_path=file_path, offset=offset, length=length
+                )
+                completion_tags.append(response.headers["ETag"])
 
             media._complete_upload(
-                original_name, upload_id, completion_tags=[completion_tag]
+                original_name, upload_id, completion_tags=completion_tags
             )
             media._trigger_processing()
 
