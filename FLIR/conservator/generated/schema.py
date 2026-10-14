@@ -1,7 +1,6 @@
 import sgqlc.types
 import FLIR.conservator.generated.date
 
-
 schema = sgqlc.types.Schema()
 
 
@@ -125,6 +124,7 @@ class AcceptAnnotation(sgqlc.types.Input):
         "point",
         "source",
         "target_id",
+        "identity_id",
         "attributes",
         "label_id",
     )
@@ -145,6 +145,7 @@ class AcceptAnnotation(sgqlc.types.Input):
         sgqlc.types.non_null("InputSource"), graphql_name="source"
     )
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null("AddAttributeInput")),
         graphql_name="attributes",
@@ -163,6 +164,7 @@ class AcceptDatasetAnnotationInput(sgqlc.types.Input):
         "bounding_polygon",
         "point",
         "target_id",
+        "identity_id",
         "attributes",
     )
     original_id = sgqlc.types.Field(
@@ -185,6 +187,7 @@ class AcceptDatasetAnnotationInput(sgqlc.types.Input):
     )
     point = sgqlc.types.Field("InputPoint", graphql_name="point")
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null("AddAttributeInput")),
         graphql_name="attributes",
@@ -333,6 +336,7 @@ class AnnotationCreate(sgqlc.types.Input):
         "bounding_box",
         "bounding_polygon",
         "target_id",
+        "identity_id",
         "custom",
         "source",
         "attributes",
@@ -353,6 +357,7 @@ class AnnotationCreate(sgqlc.types.Input):
         graphql_name="boundingPolygon",
     )
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     custom = sgqlc.types.Field(String, graphql_name="custom")
     source = sgqlc.types.Field("AnnotationSourceInput", graphql_name="source")
     attributes = sgqlc.types.Field(
@@ -420,6 +425,7 @@ class CreateDatasetAnnotationInput(sgqlc.types.Input):
         "bounding_polygon",
         "point",
         "target_id",
+        "identity_id",
         "source",
         "attributes",
         "custom",
@@ -443,6 +449,7 @@ class CreateDatasetAnnotationInput(sgqlc.types.Input):
     )
     point = sgqlc.types.Field("InputPoint", graphql_name="point")
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     source = sgqlc.types.Field(AnnotationSourceInput, graphql_name="source")
     attributes = sgqlc.types.Field(
         sgqlc.types.list_of(AddAttributeInput), graphql_name="attributes"
@@ -980,7 +987,14 @@ class MoveAssetInput(sgqlc.types.Input):
 
 class PredictionCreate(sgqlc.types.Input):
     __schema__ = schema
-    __field_names__ = ("labels", "bounding_box", "classifier_id", "target_id", "custom")
+    __field_names__ = (
+        "labels",
+        "bounding_box",
+        "classifier_id",
+        "target_id",
+        "identity_id",
+        "custom",
+    )
     labels = sgqlc.types.Field(
         sgqlc.types.non_null(
             sgqlc.types.list_of(sgqlc.types.non_null(AllowedLabelCharacters))
@@ -994,6 +1008,7 @@ class PredictionCreate(sgqlc.types.Input):
         sgqlc.types.non_null(String), graphql_name="classifierId"
     )
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     custom = sgqlc.types.Field(String, graphql_name="custom")
 
 
@@ -1105,6 +1120,7 @@ class UpdateAnnotationInput(sgqlc.types.Input):
         "labels",
         "label_id",
         "target_id",
+        "identity_id",
         "qa_status",
         "qa_status_note",
         "custom_metadata",
@@ -1115,6 +1131,7 @@ class UpdateAnnotationInput(sgqlc.types.Input):
     )
     label_id = sgqlc.types.Field(GraphqlID, graphql_name="labelId")
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     qa_status = sgqlc.types.Field(String, graphql_name="qaStatus")
     qa_status_note = sgqlc.types.Field(String, graphql_name="qaStatusNote")
     custom_metadata = sgqlc.types.Field(String, graphql_name="customMetadata")
@@ -1283,6 +1300,7 @@ class Annotation(sgqlc.types.Type):
     __field_names__ = (
         "id",
         "target_id",
+        "identity_id",
         "label",
         "labels",
         "label_id",
@@ -1298,6 +1316,7 @@ class Annotation(sgqlc.types.Type):
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     label = sgqlc.types.Field(
         sgqlc.types.non_null(AllowedLabelCharacters), graphql_name="label"
     )
@@ -1949,6 +1968,7 @@ class DatasetAnnotation(sgqlc.types.Type):
     __field_names__ = (
         "id",
         "target_id",
+        "identity_id",
         "label",
         "labels",
         "label_id",
@@ -1964,6 +1984,7 @@ class DatasetAnnotation(sgqlc.types.Type):
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     target_id = sgqlc.types.Field(Int, graphql_name="targetId")
+    identity_id = sgqlc.types.Field(Int, graphql_name="identityId")
     label = sgqlc.types.Field(
         sgqlc.types.non_null(AllowedLabelCharacters), graphql_name="label"
     )
@@ -3044,6 +3065,8 @@ class Mutation(sgqlc.types.Type):
         "request_changes_annotation",
         "unset_qa_status_annotation",
         "update_qa_status_note_annotation",
+        "set_identity_id",
+        "initialize_identity_ids",
         "sign_in",
         "sign_out",
         "forgot_password",
@@ -3521,6 +3544,50 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(UpdateQaStatusNoteInput),
                         graphql_name="input",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    set_identity_id = sgqlc.types.Field(
+        sgqlc.types.non_null(Annotation),
+        graphql_name="setIdentityId",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "frame_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="frameId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "annotation_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="annotationId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "identity_id",
+                    sgqlc.types.Arg(Int, graphql_name="identityId", default=None),
+                ),
+            )
+        ),
+    )
+    initialize_identity_ids = sgqlc.types.Field(
+        sgqlc.types.non_null(Boolean),
+        graphql_name="initializeIdentityIds",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "video_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="videoId",
                         default=None,
                     ),
                 ),
