@@ -589,6 +589,18 @@ class DatasetFrameMetadataInput(sgqlc.types.Input):
     spectrum = sgqlc.types.Field(Spectrum, graphql_name="spectrum")
 
 
+class DatasetIdentityIdMappingInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ("video_id", "target_id", "identity_id")
+    video_id = sgqlc.types.Field(
+        sgqlc.types.non_null(GraphqlID), graphql_name="videoId"
+    )
+    target_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="targetId")
+    identity_id = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="identityId"
+    )
+
+
 class DeleteCollectionInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ("id",)
@@ -1815,6 +1827,7 @@ class Dataset(sgqlc.types.Type):
         "allow_annotations_outside_frame",
         "allow_duplicate_target_id",
         "has_changes",
+        "identity_id_mapping",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(GraphqlID), graphql_name="id")
     user_id = sgqlc.types.Field(GraphqlID, graphql_name="userId")
@@ -1960,6 +1973,10 @@ class Dataset(sgqlc.types.Type):
     )
     has_changes = sgqlc.types.Field(
         sgqlc.types.non_null(Boolean), graphql_name="hasChanges"
+    )
+    identity_id_mapping = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of("DatasetIdentityIdMapping")),
+        graphql_name="identityIdMapping",
     )
 
 
@@ -2310,6 +2327,21 @@ class DatasetFramesOnly(sgqlc.types.Type):
     )
 
 
+class DatasetIdentityIdMapping(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("video_id", "video_name", "target_id", "identity_id")
+    video_id = sgqlc.types.Field(
+        sgqlc.types.non_null(GraphqlID), graphql_name="videoId"
+    )
+    video_name = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="videoName"
+    )
+    target_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="targetId")
+    identity_id = sgqlc.types.Field(
+        sgqlc.types.non_null(Int), graphql_name="identityId"
+    )
+
+
 class DatasetVideo(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = ("_id", "filename")
@@ -2350,6 +2382,21 @@ class DatasetVideoStatsResult(sgqlc.types.Type):
         sgqlc.types.non_null(sgqlc.types.list_of("VideoStats")), graphql_name="results"
     )
     count = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="count")
+
+
+class DatasetVideoTargetIdDetails(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ("video_id", "video_file_name", "video_name", "target_ids")
+    video_id = sgqlc.types.Field(
+        sgqlc.types.non_null(GraphqlID), graphql_name="videoId"
+    )
+    video_file_name = sgqlc.types.Field(
+        sgqlc.types.non_null(String), graphql_name="videoFileName"
+    )
+    video_name = sgqlc.types.Field(String, graphql_name="videoName")
+    target_ids = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(Int)), graphql_name="targetIds"
+    )
 
 
 class ErrorArg(sgqlc.types.Type):
@@ -3115,6 +3162,7 @@ class Mutation(sgqlc.types.Type):
         "move_dataset",
         "add_datasets_to_collection",
         "recalculate_dataset_stats",
+        "set_identity_id_mapping",
         "create_dataset_annotations",
         "accept_dataset_annotations",
         "update_dataset_annotation",
@@ -4556,6 +4604,32 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(GraphqlID),
                         graphql_name="datasetId",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    set_identity_id_mapping = sgqlc.types.Field(
+        sgqlc.types.non_null(Dataset),
+        graphql_name="setIdentityIdMapping",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetId",
+                        default=None,
+                    ),
+                ),
+                (
+                    "identity_id_mapping",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(
+                            sgqlc.types.list_of(DatasetIdentityIdMappingInput)
+                        ),
+                        graphql_name="identityIdMapping",
                         default=None,
                     ),
                 ),
@@ -7938,6 +8012,7 @@ class Query(sgqlc.types.Type):
         "get_dataset_jsonl",
         "get_dataset_videos_jsonl",
         "get_dataset_frames_jsonl",
+        "get_dataset_video_target_id_data",
         "dataset_frame",
         "dataset_frames",
         "dataset_frames_by_ids",
@@ -8405,6 +8480,22 @@ class Query(sgqlc.types.Type):
     get_dataset_frames_jsonl = sgqlc.types.Field(
         sgqlc.types.non_null(String),
         graphql_name="getDatasetFramesJsonl",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "dataset_id",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GraphqlID),
+                        graphql_name="datasetId",
+                        default=None,
+                    ),
+                ),
+            )
+        ),
+    )
+    get_dataset_video_target_id_data = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(DatasetVideoTargetIdDetails)),
+        graphql_name="getDatasetVideoTargetIdData",
         args=sgqlc.types.ArgDict(
             (
                 (
