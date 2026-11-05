@@ -18,7 +18,6 @@ from FLIR.conservator.wrappers import (
     Image,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

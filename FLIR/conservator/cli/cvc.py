@@ -97,10 +97,8 @@ def check_git_config(func):
             host_name = f"{host_name}:{split_result.port}"
 
         if not conservator.get_email() == split_result.username:
-            click.echo(
-                f"This dataset was checked out as {split_result.username},\
-                    not {conservator.get_email()}!"
-            )
+            click.echo(f"This dataset was checked out as {split_result.username},\
+                    not {conservator.get_email()}!")
             click.echo("Run ", nl=False)
             click.echo(click.style("conservator config view", bold=True), nl=False)
             click.echo(" to see your current configuration")
@@ -119,10 +117,8 @@ def check_git_config(func):
             sys.exit(1)
 
         if conservator.config.key != split_result.password:
-            click.echo(
-                "Your currently configured API key does not match\
-                    the API key used to check out this dataset"
-            )
+            click.echo("Your currently configured API key does not match\
+                    the API key used to check out this dataset")
             click.echo("Run ", nl=False)
             click.echo(click.style("conservator config view", bold=True), nl=False)
             click.echo(" to see your current configuration")
@@ -404,11 +400,9 @@ volume, and cannot be used.{reset}"
                 f"  {red}Either use the -s/--symlink flag with cvc download, or move your cache \
 directory to the same volume the dataset is on."
             )
-            click.echo(
-                f"  {red}See \
+            click.echo(f"  {red}See \
 https://flir.github.io/conservator-cli/usage/cvc_guide.html#downloading-frames \
-for details.{reset}"
-            )
+for details.{reset}")
             sys.exit(1)
 
         raise OSError from exc

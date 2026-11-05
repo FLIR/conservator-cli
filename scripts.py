@@ -2,6 +2,7 @@
 """
 Simple functions to run black, pytest, etc.
 """
+
 import os
 import subprocess
 import click

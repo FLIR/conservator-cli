@@ -70,7 +70,7 @@ def pytest_configure(config):
 
     # if using kubernetes, make sure kubectl commands default to using correct cluster
     if test_settings.server_deployment == "kind":
-        (code, out) = subprocess.getstatusoutput(
+        code, out = subprocess.getstatusoutput(
             "kubectl --insecure-skip-tls-verify config use-context kind-kind"
         )
         if code:
@@ -78,7 +78,7 @@ def pytest_configure(config):
                 f"Could not select '{test_settings.server_deployment} cluster: {out}"
             )
     elif test_settings.server_deployment == "minikube":
-        (code, out) = subprocess.getstatusoutput(
+        code, out = subprocess.getstatusoutput(
             "kubectl --insecure-skip-tls-verify config use-context minikube"
         )
         if code:
