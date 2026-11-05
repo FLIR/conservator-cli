@@ -38,6 +38,33 @@ class UploadRequest:
         self.local_path = local_path
 
 
+class _FileSlice:
+    """
+    A read-only, file-like view of `length` bytes of an open file, starting
+    at `offset`. Lets ``requests`` stream part of a file without loading it
+    into memory. Defines ``__len__`` so ``requests`` sends the slice's length
+    as the Content-Length (rather than the length of the underlying file).
+    """
+
+    def __init__(self, f, offset, length):
+        self._f = f
+        self._remaining = length
+        self._length = length
+        self._f.seek(offset)
+
+    def __len__(self):
+        return self._length
+
+    def read(self, size=-1):
+        if self._remaining <= 0:
+            return b""
+        if size is None or size < 0 or size > self._remaining:
+            size = self._remaining
+        data = self._f.read(size)
+        self._remaining -= len(data)
+        return data
+
+
 class FileTransferException(Exception):
     """
     Something went wrong when uploading or downloading a file.
@@ -176,18 +203,24 @@ class ConservatorFileTransfers:
             logger.warning("Encountered FileUploadException with %s", upload_request)
             return False
 
-    def upload(self, url, local_path, max_retries=5):
+    def upload(self, url, local_path, max_retries=5, offset=0, length=None):
         """
         Upload the file at `local_path` to Conservator `url`.
+
+        :param offset: Byte offset in the file to start uploading from.
+        :param length: Number of bytes to upload. If `None`, uploads from
+            `offset` to the end of the file.
         """
         url = self.full_url(url)
         path = os.path.abspath(local_path)
         logger.info("Uploading '%s'", path)
+        if length is None:
+            length = os.path.getsize(path) - offset
         response = None
         retries = 0
         while retries < max_retries:
             with open(path, "rb") as f:
-                response = requests.put(url, f)
+                response = requests.put(url, _FileSlice(f, offset, length))
             if response.ok:
                 break
             logger.warning("Got status code %s", response.status_code)
