@@ -3,7 +3,7 @@ pipeline {
     dockerfile {
       dir "test"
       label "docker"
-      additionalBuildArgs "-t conservator-cli/test"
+      additionalBuildArgs "--add-host github.com:172.182.252.133 -t conservator-cli/test"
       args "--add-host conservator-mongo:127.0.0.1 --user tester:docker --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
     }
   }
