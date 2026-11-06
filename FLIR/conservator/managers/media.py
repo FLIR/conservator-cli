@@ -210,7 +210,7 @@ class MediaTypeManager:
         collection.populate("path")
         # iterate copy of list since items might be removed
         for path in list(file_paths):
-            (local_path, remote_name) = path
+            local_path, remote_name = path
             if remote_name is None:
                 remote_name = os.path.split(local_path)[-1]
             remote_path = "/".join((collection.path, remote_name))

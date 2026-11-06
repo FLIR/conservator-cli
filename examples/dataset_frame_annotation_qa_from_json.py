@@ -11,7 +11,6 @@ from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.wrappers.dataset_frame import DatasetFrame
 from FLIR.conservator.generated.schema import DatasetAnnotation, UpdateAnnotationInput
 
-
 # JSON format
 # {
 #   "dataset_id": string,

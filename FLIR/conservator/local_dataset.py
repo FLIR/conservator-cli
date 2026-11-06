@@ -1010,10 +1010,8 @@ class LocalDataset:
             logging.error(
                 "Dataset %s has no repository. Unable to clone.", dataset.name
             )
-            logging.error(
-                "This dataset can be fixed by browsing to it in\
-                    Conservator Web UI and clicking 'Commit Changes'."
-            )
+            logging.error("This dataset can be fixed by browsing to it in\
+                    Conservator Web UI and clicking 'Commit Changes'.")
             return
 
         if clone_path is None:

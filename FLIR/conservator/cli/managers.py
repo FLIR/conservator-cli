@@ -162,8 +162,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
                 click.echo(f"No media found in collection {identifier}")
             return True
 
-        @group.command(
-            help="""
+        @group.command(help="""
             Download a Collection to the current directory, or to the specified
             path.
 
@@ -171,8 +170,7 @@ def get_manager_command(type_manager, sgqlc_type, name):
             where the previous run left off.  Partially-downloaded or
             corrupted files will be downloaded again.  Datasets will only be
             re-downloaded if the `--overwrite-datasets` option is supplied.
-            """
-        )
+            """)
         @click.argument("identifier")
         @click.argument("localpath", default=".")
         @click.option("-d", "--datasets", is_flag=True, help="Pull datasets")

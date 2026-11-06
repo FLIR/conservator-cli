@@ -17,9 +17,9 @@ from FLIR.conservator.wrappers.file_locker import FileLockerType
 from FLIR.conservator.wrappers.metadata import MetadataType
 from FLIR.conservator.wrappers.type_proxy import requires_fields
 
-
 # Files larger than this are split into multiple parts when uploading.
 MAX_UPLOAD_PART_SIZE = 1_000_000_000
+
 
 class MediaUploadException(Exception):
     """Raised if an exception occurs during a media upload"""

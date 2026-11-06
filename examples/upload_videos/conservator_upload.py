@@ -4,6 +4,7 @@
 """
 Script to upload videos with metadata to a Conservator instance
 """
+
 import argparse
 import csv
 import json
@@ -22,7 +23,6 @@ from utils.config_reader import read_subfolder_config
 import FLIR.conservator.conservator
 from FLIR.conservator.conservator import Conservator
 from FLIR.conservator.wrappers import Video, Collection
-
 
 # -------------------
 #   Description
@@ -385,10 +385,8 @@ def check_if_expanded_properly(path: str) -> None:
             continue
 
         if path_part[0] == "$":
-            raise Exception(
-                f"Error: could not expand environment variable {path_part}.\
-                    Do you forget to set it? Try: export {path_part}=some_path"
-            )
+            raise Exception(f"Error: could not expand environment variable {path_part}.\
+                    Do you forget to set it? Try: export {path_part}=some_path")
 
 
 def still_processed_message():
@@ -417,10 +415,8 @@ def upload_video_capture(
         raise Exception(f'The file could not be found: "{local_path}"')
 
     if not osp.isfile(local_path):
-        raise Exception(
-            f'For a video upload the "local_path" is expected to be a file.\
-                The following is not a file: "{local_path}"'
-        )
+        raise Exception(f'For a video upload the "local_path" is expected to be a file.\
+                The following is not a file: "{local_path}"')
 
     head_tail = osp.split(local_path)
     path = head_tail[0]
