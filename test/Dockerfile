@@ -3,6 +3,11 @@ FROM python:3.12-slim-trixie
 ARG UID=1004
 ARG DOCKER_GID=999
 
+RUN groupadd -g $DOCKER_GID docker
+RUN useradd --uid $UID --gid $DOCKER_GID tester
+RUN mkdir /home/tester
+RUN chown tester:docker /home/tester
+
 # Install standalone apt dependencies
 RUN apt-get update \
     && apt-get install -y git make curl iproute2 git-lfs file jq
@@ -50,9 +55,6 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
    && unzip -qq awscliv2.zip \
    && ./aws/install
 
-RUN useradd --uid $UID --gid $DOCKER_GID tester
-RUN mkdir /home/tester
-RUN chown tester:docker /home/tester
 USER tester
 
 ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/home/tester/.local/bin
