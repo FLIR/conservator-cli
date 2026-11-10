@@ -64,3 +64,4 @@ RUN curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/
 
 ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/home/tester/.local/bin
 ENV RUNNING_IN_CLI_TESTING_DOCKER=True
+ENV FLOCI_PORT=4566
