@@ -14,7 +14,10 @@ try:
     s3.create_bucket(Bucket=bucket_name)
     print(f"created bucket {bucket_name}")
 except ClientError as e:
-    if e.response["Error"]["Code"] not in ("BucketAlreadyExists", "BucketAlreadyOwnedByYou"):
+    if e.response["Error"]["Code"] not in (
+        "BucketAlreadyExists",
+        "BucketAlreadyOwnedByYou",
+    ):
         raise
     print(f"bucket {bucket_name} already exists")
 
