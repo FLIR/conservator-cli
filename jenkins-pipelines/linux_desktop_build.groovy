@@ -246,12 +246,13 @@ pipeline {
           fi
           """
           cleanWs()
-          // Note in --filter the "*" character will not match a "/"
-          sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
-          sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
-// Running cleanup from inside conservator-cli docker, so can't clean this one
+// Running cleanup from inside conservator-cli docker; cleanup of non-cluster docker images is not working right now
+
+//          // Note in --filter the "*" character will not match a "/"
+//          sh "docker image ls --filter reference='*/*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
+//          sh "docker image ls --filter reference='*conservator*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
 //          sh "docker image ls --filter reference='*conservator-cli*/*' --quiet | xargs -r docker image rm || echo 'Error cleaning up docker!'"
-          sh "docker image prune"
+//          sh "docker image prune"
         }
       }
     }
