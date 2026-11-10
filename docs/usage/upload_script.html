@@ -1,7 +1,7 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -11,15 +11,15 @@
     <meta name="robots" content="noindex">
   
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-      <script src="../_static/doctools.js?v=888ff710"></script>
-      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -101,7 +101,7 @@
            <div itemprop="articleBody">
              
   <section id="conservator-upload-guide">
-<h1>Conservator Upload Guide<a class="headerlink" href="#conservator-upload-guide" title="Permalink to this heading"></a></h1>
+<h1>Conservator Upload Guide<a class="headerlink" href="#conservator-upload-guide" title="Link to this heading"></a></h1>
 <p>Conservator has several options to upload video data.
 The supported formats include:</p>
 <ul class="simple">
@@ -113,7 +113,7 @@ The supported formats include:</p>
 <li><p>Annotation data: .json, .xgtf</p></li>
 </ul>
 <section id="scripted-uploads">
-<h2>Scripted Uploads<a class="headerlink" href="#scripted-uploads" title="Permalink to this heading"></a></h2>
+<h2>Scripted Uploads<a class="headerlink" href="#scripted-uploads" title="Link to this heading"></a></h2>
 <p>The script <code class="docutils literal notranslate"><span class="pre">examples/upload_videos/conservator_upload.py</span></code> is provided to enable configurable, bulk upload of videos to your Conservator instance.
 The features of this script include:</p>
 <ul class="simple">
@@ -124,7 +124,7 @@ The features of this script include:</p>
 <li><p>Dry-run mode to preview upload/update operations before executing them</p></li>
 </ul>
 <section id="pre-requisites">
-<h3>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Permalink to this heading"></a></h3>
+<h3>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Please ensure that you have Conservator-CLI installed and configured per the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> guide.</p></li>
 <li><p>Please ensure that you have Python 3.x installed.</p></li>
@@ -132,7 +132,7 @@ The features of this script include:</p>
 </ul>
 </section>
 <section id="upload-configs">
-<h3>Upload Configs<a class="headerlink" href="#upload-configs" title="Permalink to this heading"></a></h3>
+<h3>Upload Configs<a class="headerlink" href="#upload-configs" title="Link to this heading"></a></h3>
 <p>Each batch of uploads is stored in a separate folder and configured by:
 - <cite>upload.csv</cite>  - list of videos to upload
 - <cite>upload.json</cite> - metadata to associate with uploads (tags, description, intrinsics, extrinsics)</p>
@@ -188,40 +188,40 @@ For the <cite>video</cite> type use JSON dot notation to specify the specific co
 </section>
 </section>
 <section id="generic-video-example">
-<h2>Generic Video Example<a class="headerlink" href="#generic-video-example" title="Permalink to this heading"></a></h2>
+<h2>Generic Video Example<a class="headerlink" href="#generic-video-example" title="Link to this heading"></a></h2>
 <p>This example can be run using data included in this repository on any customer instance of Conservator.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>type,hardware_name,conservator_location,local_path,tags,description
-video,beamsplitter.thermal,/ADAS/Upload Test/20220112_generic-video-example,$CORTEX_ROOT/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4,&quot;offramp, night&quot;,&quot;offramp at night with semi truck&quot;
-video,beamsplitter.visible,/ADAS/Upload Test/20220112_generic-video-example,$CORTEX_ROOT/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4,&quot;offramp, night&quot;,&quot;offramp at night with semi truck&quot;
+video,beamsplitter.thermal,/ADAS/Upload Test/20220112_generic-video-example,$CORTEX_ROOT/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4,"offramp, night","offramp at night with semi truck"
+video,beamsplitter.visible,/ADAS/Upload Test/20220112_generic-video-example,$CORTEX_ROOT/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4,"offramp, night","offramp at night with semi truck"
 </pre></div>
 </div>
 <p>Note that <code class="docutils literal notranslate"><span class="pre">beamsplitter.thermal</span></code> is referring to the metadata defined in <code class="docutils literal notranslate"><span class="pre">[&quot;default_metadata&quot;][&quot;beamsplitter&quot;][&quot;thermal&quot;]</span></code> within <code class="docutils literal notranslate"><span class="pre">upload.json</span></code>, and that the <code class="docutils literal notranslate"><span class="pre">conservator_location</span></code> and <code class="docutils literal notranslate"><span class="pre">local_path</span></code> fields may need to be edited to reflect your user environment, and Conservator project setup respectively.</p>
 <p>Here is an example from <code class="docutils literal notranslate"><span class="pre">examples/upload_videos/config/upload/generic-video-example/upload.json</span></code></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;default_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;beamsplitter&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;thermal&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;ADK&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;boson&quot;</span><span class="p">,</span>
+    <span class="s2">"default_metadata"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"beamsplitter"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"thermal"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"tags"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">"ADK"</span><span class="p">,</span>
+                    <span class="s2">"boson"</span><span class="p">,</span>
                     <span class="o">//</span> <span class="o">..</span>
                 <span class="p">],</span>
-                <span class="s2">&quot;spectrum&quot;</span><span class="p">:</span> <span class="s2">&quot;thermal&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Santa Barbara, California&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Captured with Boson sensor core (ADK)&quot;</span>
+                <span class="s2">"spectrum"</span><span class="p">:</span> <span class="s2">"thermal"</span><span class="p">,</span>
+                <span class="s2">"location"</span><span class="p">:</span> <span class="s2">"Santa Barbara, California"</span><span class="p">,</span>
+                <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Captured with Boson sensor core (ADK)"</span>
             <span class="p">},</span>
-            <span class="s2">&quot;visible&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"visible"</span><span class="p">:</span> <span class="p">{</span>
                 <span class="o">//</span> <span class="o">..</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
-    <span class="s2">&quot;#description&quot;</span><span class="p">:</span> <span class="s2">&quot;The description here is only for reference and does not get uploaded&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Beamsplitter upload batch for generic video example&quot;</span><span class="p">,</span>
+    <span class="s2">"#description"</span><span class="p">:</span> <span class="s2">"The description here is only for reference and does not get uploaded"</span><span class="p">,</span>
+    <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Beamsplitter upload batch for generic video example"</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <section id="list-all-configuration-entries">
-<h3>List All Configuration Entries<a class="headerlink" href="#list-all-configuration-entries" title="Permalink to this heading"></a></h3>
+<h3>List All Configuration Entries<a class="headerlink" href="#list-all-configuration-entries" title="Link to this heading"></a></h3>
 <p>To list all available upload projects, run the script without any parameters (or with only a <code class="docutils literal notranslate"><span class="pre">--config_root</span></code> parameter):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python examples/upload_videos/conservator_upload.py
 
@@ -236,7 +236,7 @@ No config path provided, using default (/home/user/conservator-cli/examples/uplo
 </div>
 </section>
 <section id="execute-in-dry-run-mode">
-<h3>Execute in Dry-Run Mode<a class="headerlink" href="#execute-in-dry-run-mode" title="Permalink to this heading"></a></h3>
+<h3>Execute in Dry-Run Mode<a class="headerlink" href="#execute-in-dry-run-mode" title="Link to this heading"></a></h3>
 <p>This is useful to establish sanity checks before kicking off a large upload job.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 examples/upload_videos/conservator_upload.py generic-video-example
 
@@ -262,15 +262,15 @@ Video exists and is ready for upload: /home/user/sample_data/offramp/visible-vid
 </div>
 </section>
 <section id="execute-actual-upload">
-<h3>Execute Actual Upload<a class="headerlink" href="#execute-actual-upload" title="Permalink to this heading"></a></h3>
+<h3>Execute Actual Upload<a class="headerlink" href="#execute-actual-upload" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python examples/upload_videos/conservator_upload.py generic-video-example --dry_run=false
 
-20:53:56 | Uploading &quot;thermal-video-B7JTS4i4hpoRgPsi2.mp4&quot;
+20:53:56 | Uploading "thermal-video-B7JTS4i4hpoRgPsi2.mp4"
 20:53:56 |    File on disk:         /home/user/sample_data/offramp/thermal-video-B7JTS4i4hpoRgPsi2.mp4
 20:53:56 |    Conservator location: /ADAS/Upload Test/20220112_generic-video-example
 20:54:02 |    Success! See:         https://flirconservator.com/videos/6PGfdWgAoHa2tnx2o
 20:54:02 |
-20:54:03 | Uploading &quot;visible-video-aJANTbw3WAW3oGkQB.mp4&quot;
+20:54:03 | Uploading "visible-video-aJANTbw3WAW3oGkQB.mp4"
 20:54:03 |    File on disk:         /home/user/prism-ai-tools/sample_data/offramp/visible-video-aJANTbw3WAW3oGkQB.mp4
 20:54:03 |    Conservator location: /ADAS/Upload Test/20220112_generic-video-example
 20:54:07 |    Success! See:         https://flirconservator.com/videos/bGGbuopzoKjvoYixv
@@ -291,40 +291,40 @@ Video exists and is ready for upload: /home/user/sample_data/offramp/visible-vid
 </section>
 </section>
 <section id="prism-example">
-<h2>Prism Example<a class="headerlink" href="#prism-example" title="Permalink to this heading"></a></h2>
+<h2>Prism Example<a class="headerlink" href="#prism-example" title="Link to this heading"></a></h2>
 <p>Here is an example of <cite>upload.csv</cite> with 3 Prism uploads (3 thermal videos + 3 frame synced visible videos).
 The full contents are in <code class="docutils literal notranslate"><span class="pre">examples/upload_videos/config/upload/prism-example/upload.csv</span></code>.</p>
 <p><strong>The example will fail if you do not have the original data, but it provides a batch upload blueprint</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>type,hardware_name,conservator_location,local_path,tags,description
-prism,dc,/ADAS/Upload Test/20220112_prism-example/,$CORTEX_ROOT/sample_data/night_fog,&quot;fog, night, parking lot, person&quot;,&quot;Person walking in parking lot at 60m&quot;
+prism,dc,/ADAS/Upload Test/20220112_prism-example/,$CORTEX_ROOT/sample_data/night_fog,"fog, night, parking lot, person","Person walking in parking lot at 60m"
 </pre></div>
 </div>
 <p>Here is an example from <code class="docutils literal notranslate"><span class="pre">examples/upload_videos/config/upload/prism-example/upload.json</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;default_metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;dc&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;thermal&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s2">&quot;45hfov&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;16bit&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;lwir&quot;</span>
+  <span class="s2">"default_metadata"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"dc"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"thermal"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"tags"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"45hfov"</span><span class="p">,</span>
+                <span class="s2">"raw"</span><span class="p">,</span>
+                <span class="s2">"16bit"</span><span class="p">,</span>
+                <span class="s2">"lwir"</span>
             <span class="p">],</span>
-            <span class="s2">&quot;spectrum&quot;</span><span class="p">:</span> <span class="s2">&quot;thermal&quot;</span><span class="p">,</span>
+            <span class="s2">"spectrum"</span><span class="p">:</span> <span class="s2">"thermal"</span><span class="p">,</span>
             <span class="o">//..</span>
         <span class="p">},</span>
-        <span class="s2">&quot;rgb&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"rgb"</span><span class="p">:</span> <span class="p">{</span>
             <span class="o">//</span> <span class="o">..</span>
         <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">},</span>
-  <span class="s2">&quot;#description&quot;</span><span class="p">:</span> <span class="s2">&quot;This description is for the upload batch&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Prism-formatted upload batch for generic video example&quot;</span>
+  <span class="s2">"#description"</span><span class="p">:</span> <span class="s2">"This description is for the upload batch"</span><span class="p">,</span>
+  <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Prism-formatted upload batch for generic video example"</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <section id="id1">
-<h3>Execute in Dry-Run Mode<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>Execute in Dry-Run Mode<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python examples/upload_videos/conservator_upload.py 20211129_heavy-night-fog
 
 2021-12-06 16:47:49,192 - upload - INFO - Zipping 1636345107_thermal.zip (conservator_upload.py:314)
@@ -348,12 +348,12 @@ prism,dc,/ADAS/Upload Test/20220112_prism-example/,$CORTEX_ROOT/sample_data/nigh
 </div>
 </section>
 <section id="execute">
-<h3>Execute<a class="headerlink" href="#execute" title="Permalink to this heading"></a></h3>
+<h3>Execute<a class="headerlink" href="#execute" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python examples/upload_videos/conservator_upload.py 20211129_heavy-night-fog --dry_run=false
 
-2021-12-06 16:00:57,925 - upload - INFO - Uploading 1636345107_thermal.zip to project: &quot;/ADAS/007 Weather/20211129_heavy-night-fog&quot; (conservator_upload.py:196)
-2021-12-06 16:05:42,730 - upload - INFO - Uploaded video with id: &quot;fPEhjR7yhebcvrJBS&quot; (conservator_upload.py:233)
-2021-12-06 16:06:00,369 - upload - INFO - Uploading 1636345107_visible.zip to project: &quot;/ADAS/007 Weather/20211129_heavy-night-fog&quot; (conservator_upload.py:196)
+2021-12-06 16:00:57,925 - upload - INFO - Uploading 1636345107_thermal.zip to project: "/ADAS/007 Weather/20211129_heavy-night-fog" (conservator_upload.py:196)
+2021-12-06 16:05:42,730 - upload - INFO - Uploaded video with id: "fPEhjR7yhebcvrJBS" (conservator_upload.py:233)
+2021-12-06 16:06:00,369 - upload - INFO - Uploading 1636345107_visible.zip to project: "/ADAS/007 Weather/20211129_heavy-night-fog" (conservator_upload.py:196)
 +-------------------------------------------------+-------+
 | Name                                            | Count |
 +-------------------------------------------------+-------+
@@ -370,13 +370,16 @@ prism,dc,/ADAS/Upload Test/20220112_prism-example/,$CORTEX_ROOT/sample_data/nigh
 </div>
 </section>
 <section id="expected-data-in-conservator">
-<h3>Expected Data in Conservator<a class="headerlink" href="#expected-data-in-conservator" title="Permalink to this heading"></a></h3>
+<h3>Expected Data in Conservator<a class="headerlink" href="#expected-data-in-conservator" title="Link to this heading"></a></h3>
 <p>For this example the videos can be found in the <strong>ADAS</strong> project under the <strong>007 Weather</strong> / <strong>20211129_heavy-night-fog</strong> collection.</p>
-<a class="reference internal image-reference" href="../_images/upload-in-conservator.png"><img alt="List of videos in project" src="../_images/upload-in-conservator.png" style="width: 820px;" /></a>
+<a class="reference internal image-reference" href="../_images/upload-in-conservator.png"><img alt="List of videos in project" src="../_images/upload-in-conservator.png" style="width: 820px;" />
+</a>
 <p>The basic information can be found from the “Edit Details” dialog</p>
-<a class="reference internal image-reference" href="../_images/conservator-edit-details.png"><img alt="Conservator edit video details dialog" src="../_images/conservator-edit-details.png" style="width: 500px;" /></a>
+<a class="reference internal image-reference" href="../_images/conservator-edit-details.png"><img alt="Conservator edit video details dialog" src="../_images/conservator-edit-details.png" style="width: 500px;" />
+</a>
 <p>All camera and related parameters can be found in the <strong>Video Details</strong> in <strong>Custom Metadata</strong></p>
-<a class="reference internal image-reference" href="../_images/video-upload-custom-details.png"><img alt="Conservator edit video details dialog" src="../_images/video-upload-custom-details.png" style="width: 820px;" /></a>
+<a class="reference internal image-reference" href="../_images/video-upload-custom-details.png"><img alt="Conservator edit video details dialog" src="../_images/video-upload-custom-details.png" style="width: 820px;" />
+</a>
 </section>
 </section>
 </section>
