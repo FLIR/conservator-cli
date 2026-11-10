@@ -49,10 +49,12 @@ rm -rf ./kubernetes
 if [ -d "$1" ] ; then
   echo "-- Copy external kubernetes configs from '$1'"
   cp -r $1 kubernetes
+  cp -r $1 floci
 else
   echo "-- Copy kubernetes configs from docker image"
   id=$(docker create $IMAGE)
   docker cp $id:/home/centos/flirmachinelearning/docker/kubernetes/ kubernetes/
+  docker cp $id:/home/centos/flirmachinelearning/docker/floci/ floci/
   docker rm -v $id
 fi
 

@@ -1,18 +1,16 @@
-FROM python:3.8-slim-bullseye
+FROM python:3.12-slim-trixie
 
 ARG UID=1004
 ARG DOCKER_GID=999
 
+RUN groupadd -g $DOCKER_GID docker
+RUN useradd --uid $UID --gid $DOCKER_GID tester
+RUN mkdir /home/tester
+RUN chown tester:docker /home/tester
+
 # Install standalone apt dependencies
 RUN apt-get update \
-    && apt-get install -y git make curl iproute2 git-lfs file
-
-# Configure git
-RUN git config --global user.name "FLIR QA SERVICE" \
-    && git config --global user.email flir-qa-service@muncasterconsulting.com
-
-# Add GitHub to known_hosts so we can push via ssh
-RUN mkdir -p ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+    && apt-get install -y git make curl iproute2 git-lfs file jq
 
 # Install docker
 RUN curl -fsSL https://get.docker.com | sh
@@ -32,9 +30,14 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     && mv kubectl /usr/local/bin/kubectl
 
 # Install kind
-RUN curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64 \
+RUN curl -v -L --fail -o ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64 \
     && chmod +x ./kind \
     && mv ./kind /bin/kind
+
+# Install Helm
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+RUN chmod 700 get_helm.sh
+RUN ./get_helm.sh
 
 # Install kubetpl
 RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-0.9.0-linux-amd64 \
@@ -49,15 +52,16 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
    && unzip -qq awscliv2.zip \
    && ./aws/install
 
-RUN useradd --uid $UID --gid $DOCKER_GID tester
-RUN mkdir /home/tester
-RUN chown tester:docker /home/tester
 USER tester
+
+# Configure git
+RUN git config --global user.name "FLIR QA SERVICE" \
+    && git config --global user.email flir-qa-service@muncasterconsulting.com
+
+# Add GitHub to known_hosts so we can push via ssh
+RUN mkdir ~/.ssh && chmod 700 ~/.ssh
+RUN curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
 
 ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/home/tester/.local/bin
 ENV RUNNING_IN_CLI_TESTING_DOCKER=True
-
-# address "host key verification error" on clone
-RUN mkdir ~/.ssh
-RUN chmod 700 ~/.ssh
-RUN ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+ENV FLOCI_PORT=4566
