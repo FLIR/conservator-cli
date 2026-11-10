@@ -25,7 +25,7 @@ pipeline {
           dir "test"
           label "docker"
           additionalBuildArgs "--add-host github.com:172.182.252.133 --build-arg UID=${env.UID} --build-arg DOCKER_GID=${env.DOCKER_GID} -t conservator-cli/test"
-          args "--add-host conservator-mongo:127.0.0.1 --user ${env.UID}:${env.DOCKER_GID} --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+          args "--add-host github.com:140.82.113.35 --add-host conservator-mongo:127.0.0.1 --user ${env.UID}:${env.DOCKER_GID} --init --privileged -v /var/run/docker.sock:/var/run/docker.sock"
         }
       }
       environment {
