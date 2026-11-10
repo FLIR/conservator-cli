@@ -34,6 +34,11 @@ RUN curl -v -L --fail -o ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-a
     && chmod +x ./kind \
     && mv ./kind /bin/kind
 
+# Install Helm
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+RUN chmod 700 get_helm.sh
+RUN ./get_helm.sh
+
 # Install kubetpl
 RUN curl -sSL https://github.com/shyiko/kubetpl/releases/download/0.9.0/kubetpl-0.9.0-linux-amd64 \
     -o kubetpl && chmod a+x kubetpl && mv kubetpl /usr/local/bin/
