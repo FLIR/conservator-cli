@@ -1,9 +1,5 @@
 pipeline {
-  agent {
-    node {
-      label "docker"
-    }
-  }
+  agent none
 
   stages {
     stage("Discover IDs") {
