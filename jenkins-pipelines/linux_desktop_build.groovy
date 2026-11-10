@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    node {
+      label: "docker"
+    }
+    
+  }
 
   stages {
     stage("Discover IDs") {
@@ -11,10 +16,10 @@ pipeline {
           env.UID = sh(returnStdout: true, script: "stat -c '%u' ${WORKSPACE}").trim()
           env.DOCKER_GID = sh(returnStdout: true, script: "getent group docker | cut -d: -f3").trim()
           env.HOSTNAME = sh(returnStdout: true, script: "hostname").trim()
-	  def uid = env.UID
-	  def gid = env.DOCKER_GID
-	  def hostname = env.HOSTNAME
-	  println "Lookup on $hostname: UID = $uid, GID = $gid"
+	        def uid = env.UID
+	        def gid = env.DOCKER_GID
+	        def hostname = env.HOSTNAME
+	        println "Lookup on $hostname: UID = $uid, GID = $gid"
         }
       }
     }
