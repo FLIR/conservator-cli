@@ -298,7 +298,8 @@ def test_from_string_video_name(conservator, test_data):
 
 class TestDownloadMedia:
     @pytest.fixture(scope="class", autouse=True)
-    def init_media(self, conservator, test_data):
+    @classmethod
+    def init_media(cls, conservator, test_data):
         media_paths = [
             # local_path, remote_path, remote_name
             (test_data / "jpg" / "cat_2.jpg", "/Cats", "My cat.jpg"),

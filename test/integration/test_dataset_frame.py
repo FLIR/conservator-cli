@@ -12,7 +12,8 @@ from FLIR.conservator.generated.schema import (
 
 class TestDatasetFrame:
     @pytest.fixture(scope="class", autouse=True)
-    def init_dataset(self, conservator, test_data):
+    @classmethod
+    def init_dataset(cls, conservator, test_data):
         local_path = test_data / "png" / "flight_0.png"
         media_id = conservator.media.upload(local_path)
         conservator.media.wait_for_processing(media_id)

@@ -1,4 +1,4 @@
-FROM python:3.12-slim-trixie
+FROM python:3.14-slim-trixie
 
 ARG UID=1004
 ARG DOCKER_GID=999
@@ -30,7 +30,7 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     && mv kubectl /usr/local/bin/kubectl
 
 # Install kind
-RUN curl -v -L --fail -o ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64 \
+RUN curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64 \
     && chmod +x ./kind \
     && mv ./kind /bin/kind
 

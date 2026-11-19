@@ -134,7 +134,6 @@ def get_mongo_pod_name():
 
 @pytest.fixture(scope="session")
 def mongo_client():
-    mongo_pod_name = get_mongo_pod_name()
     # Port forward 27017 in the background...
     # note that it should be the standard mongo port,
     # anything else causes problems if mongodb server
