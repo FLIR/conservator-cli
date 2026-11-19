@@ -759,7 +759,7 @@ class LocalDataset:
                     "fileSize": os.path.getsize(path),
                     "md5": md5sum_file(path),
                 }
-                
+
                 return info
         except IOError:
             logger.error("'%s' is not an image", path)
