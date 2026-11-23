@@ -37,7 +37,7 @@ import logging
 @click.version_option(
     prog_name="conservator-cli",
     package_name="conservator-cli",
-    message="%(prog)s, version %(version)s \nLatest version on PyPi is {}".format(
+    message="%(prog)s, version %(version)s \nLatest version on github is {}".format(
         get_conservator_cli_version()
     ),
 )
