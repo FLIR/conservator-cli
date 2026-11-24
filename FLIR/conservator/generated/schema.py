@@ -2938,7 +2938,6 @@ class Job(sgqlc.types.Type):
         "created_at",
         "modified_at",
         "started_at",
-        "ecs_task_link",
         "log_message",
         "duration",
         "object_link",
@@ -2964,7 +2963,6 @@ class Job(sgqlc.types.Type):
         sgqlc.types.non_null(Float), graphql_name="modifiedAt"
     )
     started_at = sgqlc.types.Field(Float, graphql_name="startedAt")
-    ecs_task_link = sgqlc.types.Field(String, graphql_name="ecsTaskLink")
     log_message = sgqlc.types.Field(String, graphql_name="logMessage")
     duration = sgqlc.types.Field(sgqlc.types.non_null(Float), graphql_name="duration")
     object_link = sgqlc.types.Field(String, graphql_name="objectLink")

@@ -133,16 +133,16 @@ class MediaTypeManager:
         if isinstance(media_ids, str):
             media_ids = [media_ids]
 
-        pool = multiprocessing.get_context("fork").Pool()
-        args = [(media_id, check_frequency_seconds) for media_id in media_ids]
-        results = pool.starmap_async(self._wait_for_single_processing, args)
-        try:
-            processed = results.get(timeout=timeout_seconds)
-            logger.debug(f"All media process checks returned, checking success")
-            assert all(processed)
-        except multiprocessing.TimeoutError:
-            logger.debug(f"Media processing check timed out!")
-            raise ProcessingTimeoutError()
+        with multiprocessing.get_context("fork").Pool() as pool:
+            args = [(media_id, check_frequency_seconds) for media_id in media_ids]
+            results = pool.starmap_async(self._wait_for_single_processing, args)
+            try:
+                processed = results.get(timeout=timeout_seconds)
+                logger.debug(f"All media process checks returned, checking success")
+                assert all(processed)
+            except multiprocessing.TimeoutError:
+                logger.debug(f"Media processing check timed out!")
+                raise ProcessingTimeoutError()
 
     def _upload_many(self, upload_requests, process_count=None, max_retries=-1):
         """
@@ -157,39 +157,39 @@ class MediaTypeManager:
             for a file, if the initial attempt to upload that file fails. Value less
             than zero is interpreted as infinite retries.
         """
-        pool = multiprocessing.get_context("fork").Pool(process_count)
-        upload_func = functools.partial(
-            MediaType.upload, self._conservator
-        )  # pass in conservator instance
-        pending_uploads = list(upload_requests)
-        complete_uploads = []
+        with multiprocessing.get_context("fork").Pool(process_count) as pool:
+            upload_func = functools.partial(
+                MediaType.upload, self._conservator
+            )  # pass in conservator instance
+            pending_uploads = list(upload_requests)
+            complete_uploads = []
 
-        tries = 0
-        while pending_uploads:
-            if max_retries >= 0 and tries > max_retries:
-                logger.info("Ran out of retries, giving up")
-                break
+            tries = 0
+            while pending_uploads:
+                if max_retries >= 0 and tries > max_retries:
+                    logger.info("Ran out of retries, giving up")
+                    break
 
-            logger.info("Upload attempt #%d", tries)
-            results = pool.map(upload_func, pending_uploads)
-            for upload in results:
-                if upload.complete:
-                    complete_uploads.append(upload)
-                    pending_uploads.remove(upload)
-                else:
-                    logger.warning(
-                        "Failed attempt to upload %s: %s",
-                        upload.file_path,
-                        upload.error_message,
-                    )
-            tries += 1
+                logger.info("Upload attempt #%d", tries)
+                results = pool.map(upload_func, pending_uploads)
+                for upload in results:
+                    if upload.complete:
+                        complete_uploads.append(upload)
+                        pending_uploads.remove(upload)
+                    else:
+                        logger.warning(
+                            "Failed attempt to upload %s: %s",
+                            upload.file_path,
+                            upload.error_message,
+                        )
+                tries += 1
 
-        if pending_uploads:
-            file_list = [upload.file_path for upload in pending_uploads]
-            logger.warning("Following files failed to upload: %s", file_list)
+            if pending_uploads:
+                file_list = [upload.file_path for upload in pending_uploads]
+                logger.warning("Following files failed to upload: %s", file_list)
 
-        media_ids = [upload.media_id for upload in complete_uploads]
-        return media_ids
+            media_ids = [upload.media_id for upload in complete_uploads]
+            return media_ids
 
     def _clean_upload_list(self, file_paths, collection):
         """

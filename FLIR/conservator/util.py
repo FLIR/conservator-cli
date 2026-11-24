@@ -91,10 +91,12 @@ def chunks(list_to_chunk, chunk_size):
 
 
 def get_conservator_cli_version():
-    # Get latest version from PyPi programatically
-    # See https://stackoverflow.com/a/62571316
-    response = requests.get("https://pypi.org/pypi/conservator-cli/json", timeout=10)
-    return response.json()["info"]["version"]
+    # Get latest version from github programatically
+    response = requests.get(
+        "https://api.github.com/repos/FLIR/conservator-cli/tags", timeout=10
+    )
+    latest_tag = response.json()[0]
+    return latest_tag["name"]
 
 
 def compare_conservator_cli_version():
@@ -140,6 +142,7 @@ def compare_conservator_cli_version():
         )
         logger.warning("Please upgrade to the latest version (%s)", released_version)
         return False
+    return False
 
 
 def check_platform():

@@ -747,23 +747,23 @@ class LocalDataset:
         and get the dimensions.
         """
         try:
-            image = Image.open(path)
+            with Image.open(path) as image:
+                if image.format != "JPEG":
+                    logger.error("'%s' is not a JPEG", path)
+                    return
+
+                info = {
+                    "filename": path,
+                    "width": image.width,
+                    "height": image.height,
+                    "fileSize": os.path.getsize(path),
+                    "md5": md5sum_file(path),
+                }
+
+                return info
         except IOError:
             logger.error("'%s' is not an image", path)
             return
-
-        if image.format != "JPEG":
-            logger.error("'%s' is not a JPEG", path)
-            return
-
-        info = {
-            "filename": path,
-            "width": image.width,
-            "height": image.height,
-            "fileSize": os.path.getsize(path),
-            "md5": md5sum_file(path),
-        }
-        return info
 
     @staticmethod
     def get_max_frame_index(dataset_frames):

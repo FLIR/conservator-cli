@@ -26,13 +26,4 @@ Then, push the tag:
 git push origin [version]
 ```
 
-## Deploying Release
-
-Open Conservator CLI (FLIR-Ubuntu-Native-Build -> conservator-cli) in FLIR Jenkins, go click the new version under the Tags tab.
-On the side, click `Build Now`. This runs all tests, and if they pass, releases to PyPI.
-
-Nathan Wachholz and Andres Prieto-Moreno currently have access to the PyPI account.
-
-## Check Release
-
-Verify the new version is released on the [PyPI page](https://pypi.org/project/conservator-cli/), and try `pip install conservator-cli` from a new venv.
+The latest tagged version of Conservator-CLI should be considered as the latest release; Conservator-CLI on PyPi will no longer be maintained.

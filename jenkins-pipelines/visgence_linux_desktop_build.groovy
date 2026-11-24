@@ -194,22 +194,22 @@ pipeline {
         }
       }
     }
-    stage("Release on PyPI") {
-      when {
-        buildingTag()
-      }
-      environment {
-        TWINE_REPOSITORY = "pypi"
-        TWINE_USERNAME = "__token__"
-        TWINE_PASSWORD = credentials("pypi-conservator-cli")
-      }
-      steps {
-        sh "python setup.py --version"
-        sh "pip install build twine"
-        sh "python -m build"
-        sh "python -m twine upload dist/*"
-      }
-    }
+    // stage("Release on PyPI") {
+    //   when {
+    //     buildingTag()
+    //   }
+    //   environment {
+    //     TWINE_REPOSITORY = "pypi"
+    //     TWINE_USERNAME = "__token__"
+    //     TWINE_PASSWORD = credentials("pypi-conservator-cli")
+    //   }
+    //   steps {
+    //     sh "python setup.py --version"
+    //     sh "pip install build twine"
+    //     sh "python -m build"
+    //     sh "python -m twine upload dist/*"
+    //   }
+    // }
   }
   post {
     cleanup {

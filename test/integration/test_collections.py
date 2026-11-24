@@ -339,7 +339,8 @@ def test_download_datasets(conservator):
 
 class TestCollectionsWithMedia:
     @pytest.fixture(scope="class", autouse=True)
-    def init_media(self, conservator, test_data):
+    @classmethod
+    def init_media(cls, conservator, test_data):
         media_paths = [
             # local_path, remote_path, remote_name
             (test_data / "jpg" / "cat_0.jpg", "/Cats", None),
